@@ -1,0 +1,174 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1445> Here's the reworking of the statetransfer logic",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Fix statetransfer failure on back to back execution by jyellick \u00b7 Pull Request #1445 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1445",
+                "text": "Description This changeset adds a test case for multiply invoked statetransfer, as well as fixes the logic of state transfer in the pbft test framework. It also modifies the behavior of state tra...",
+                "fallback": "GitHub: Fix statetransfer failure on back to back execution by jyellick \u00b7 Pull Request #1445 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1445",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1462979521.001531"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great",
+        "ts": "1462979643.001533"
+    },
+    {
+        "user": "U1802P5D3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1802P5D3|jianzhang98> has joined the channel",
+        "ts": "1462983719.001534"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so #756  ... how it's done right now is that we put the PeerIDs in a list, sort by PeerID.name  and use the index of the sorted list as the replica id",
+        "ts": "1463013192.001535"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "we can't create the consenter until we have a list of the N validating peers  since we won't have the correct id until the list is complete",
+        "ts": "1463013294.001536"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so, when we do `newObcXXXX`, we wait for the list to be completed before we get our own id and finish up `newPbftCore` etc ...",
+        "ts": "1463013384.001537"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i do this by using a channel,  `newObcXXX` waits on the channel,   over in Peer,  when the list is complete, i  put a bool on the channel",
+        "ts": "1463013474.001538"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the question now is, how do i make the engine wait until `obcXXXX` is ready to receiveMsg ?",
+        "ts": "1463013613.001539"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i can wait on another channel but that means it's one more method added to consenter interface ?",
+        "ts": "1463013666.001540"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: Does the value of the `bool` matter? In general, if you are using channels to communicate an event that has no value, I think the accepted go practice is to use a `chan struct{}`, and then simply write to it with a `ch&lt;-struct{}{}`.",
+        "ts": "1463014171.001541"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the value doesn't matter ... it's just to wake up the other end",
+        "ts": "1463014208.001542"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd vote for the `struct{}{}` approach then, still trying to process the rest of your message",
+        "ts": "1463014234.001543"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I think it's also important that you remember we need to support the `N=1` case",
+        "ts": "1463014293.001544"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Where you can't expect any `handler.go` activity to speak of",
+        "ts": "1463014318.001545"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "good point,  i'll have to handle that when i initialize the list ( in `newPeerWithEngine` right now)",
+        "ts": "1463014418.001546"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, in order to keep things general, I think that the `Consenter` interface should maybe have PeerJoined` and `PeerLeft` calls.",
+        "ts": "1463014573.001547"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's making the consensus interface slightly more complex, but I think it's easy to ignore them if you don't care",
+        "ts": "1463014649.001548"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Just like the state transfer callbacks that were added)",
+        "ts": "1463014661.001549"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ya ... along the same lines, i was thinking Consenter interface would have a Ready()  that the engine could wait on before doing RecvMesg()",
+        "ts": "1463014706.001550"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, so I think I wouldn't make the engine wait",
+        "ts": "1463014719.001551"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would actually push the logic into the consenter",
+        "ts": "1463014730.001552"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Simply have the plugin thread not read from the other end of the message channel until it is satisfied that it's connected to enough peers",
+        "ts": "1463014753.001553"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think <@U0XR6J961> agreed on the phone that the right place for this is definitely inside PBFT, the fact that it's been pushed towards the helper\/handler is unfortunate, and if we have an opportunity to push it back, we should.",
+        "ts": "1463014791.001554"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "not exactly how we summarized it on the issue but i like that better. I can wait in the `obcXXXX.RecvMsg()` method",
+        "ts": "1463014955.001555"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The way I would envision it, would be that prior to entering into the primary event loop, the thread would wait for the 'whitelist available' event (as it would only occur once) then enter into the normal event loop, which would handle the events from `RecvMsg`",
+        "ts": "1463028847.001556"
+    },
+    {
+        "user": "U17F0A68Y",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U17F0A68Y|lhy555> has joined the channel",
+        "ts": "1463033954.001557"
+    }
+]

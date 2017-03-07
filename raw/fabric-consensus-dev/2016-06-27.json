@@ -1,0 +1,1115 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you around?",
+        "ts": "1467032557.000872"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep",
+        "ts": "1467033646.000873"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What's up?",
+        "ts": "1467033648.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "^@simon",
+        "ts": "1467033653.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi",
+        "ts": "1467033658.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "trying to implement that sub-client registry",
+        "ts": "1467033666.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wondering how to hook it into the manager",
+        "ts": "1467033688.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, thought you were doing the Consensus\/Transaction split",
+        "ts": "1467033703.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i did already",
+        "ts": "1467033720.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Including the flow control?",
+        "ts": "1467033731.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/fabric\/commit\/65a66d546eb7028805723ec851053a39d59c29e0>",
+        "ts": "1467033749.000882"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, for flow control i need the structure that allows me to do flow control",
+        "ts": "1467033767.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. a structure that will allow me to take a new transaction",
+        "ts": "1467033799.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure what you mean",
+        "ts": "1467033887.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i need to make RecvRequest() unblock when a previous request has executed, and now a new slot is free",
+        "ts": "1467034274.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i need a structure that keeps record of these slots, and a way to communicate to the RecvRequest routine that it can continue",
+        "ts": "1467034346.000887"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess recvrequest can read from a channel",
+        "ts": "1467034357.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and whenever a request is executing, we write to that channel",
+        "ts": "1467034374.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and we just use the context of that recvrequest routine",
+        "ts": "1467034421.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that would work",
+        "ts": "1467034425.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: did you want to implement the sub-client stuff?",
+        "ts": "1467034450.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then i'll just mock up a small counting thing",
+        "ts": "1467034463.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(counting what?)",
+        "ts": "1467034524.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "outstanding requests",
+        "ts": "1467034824.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: If you'd like to implement that, it's fine, there is plenty of work to go around, just thought it was on my plate",
+        "ts": "1467035676.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no",
+        "ts": "1467035688.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "please go ahead",
+        "ts": "1467035691.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you must have something in mind",
+        "ts": "1467035696.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i started with this",
+        "ts": "1467035705.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```type clientTxStore struct {\n\tReady chan int\n\ttxToClient map[string]int\n\tfreeClient map[int]struct{}\n}\n```",
+        "ts": "1467035707.000901"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but not sure it is the right choice",
+        "ts": "1467035714.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i don't know how to put the subclient into the request",
+        "ts": "1467035735.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I assumed we would need to modify the Request message format",
+        "ts": "1467036054.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "so that we include the slot?",
+        "ts": "1467036090.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1467036093.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Another thing I've considered, what would everyone think about allowing the PrePrepare messages to include a repeated Request section",
+        "ts": "1467036196.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The marshaling and unmarshaling back and forth between batch and core seems inefficient and unnecessary",
+        "ts": "1467036230.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Especially as they merge)",
+        "ts": "1467036241.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1467036259.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought about that too",
+        "ts": "1467036262.000911"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I agree",
+        "ts": "1467036266.000912"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we now work on master or on release?",
+        "ts": "1467036277.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "master ",
+        "ts": "1467036286.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think there should be a merge of release into master",
+        "ts": "1467036289.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because there are commits in release that are not in master, no?",
+        "ts": "1467036300.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think that would have been the clean way to do things, but we should have frozen master and did not",
+        "ts": "1467036311.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well yes",
+        "ts": "1467036318.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not out of a release playbook",
+        "ts": "1467036328.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I believe I have rebased \/ cherry-picked commits in both",
+        "ts": "1467036333.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "who came up with that release process?",
+        "ts": "1467036356.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(although also a number of outstanding PRs)",
+        "ts": "1467036359.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not really sure...",
+        "ts": "1467036362.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought the linux foundation knew about these things",
+        "ts": "1467036370.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "doesn't seem like it, honestly",
+        "ts": "1467036376.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i've done releases with dragonfly before - it's not that complicated",
+        "ts": "1467036395.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so everything is in master?",
+        "ts": "1467036409.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because so far i've been working on release",
+        "ts": "1467036424.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "given that more stuff went into release than into master",
+        "ts": "1467036435.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I believe new features should be being built on master, but there's a big PR backlog against master",
+        "ts": "1467036447.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure, but i'm not going to build new stuff against master unless master contains all the bug fixes, etc.",
+        "ts": "1467036485.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've pushed a parallel PR to master for every PR that's gone to release",
+        "ts": "1467037063.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Granted, 4 of them are outstanding, though one of those is also not yet in release)",
+        "ts": "1467037091.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This is being discussed in the technical planning call right now by the way. ",
+        "ts": "1467037284.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nope, there are still some not committed",
+        "ts": "1467037323.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have no invitation to any technical planing call",
+        "ts": "1467037354.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Forwarded to you",
+        "ts": "1467037518.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess now is too late",
+        "ts": "1467037669.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They're still discussing to some extent... think you could still speak up",
+        "ts": "1467037722.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't even know the swiss dial in number - if they're interested in my input, they can ask me directly",
+        "ts": "1467037771.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, heard someone connect, had assumed it was you",
+        "ts": "1467037866.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nope",
+        "ts": "1467037873.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You can join the meeting online. (Had to disconnect as I had to join another mtg so I don't know if it's still on, but keep it in mind for next time.)",
+        "ts": "1467037995.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the webex doesnt run on my linux, i need a phone #...",
+        "ts": "1467038074.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "same here",
+        "ts": "1467038101.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XV1HDL3> I had the same problem... <https:\/\/github.com\/fgsch\/docker-webex>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "fgsch\/docker-webex",
+                "title_link": "https:\/\/github.com\/fgsch\/docker-webex",
+                "text": "docker-webex - Cisco WebEx inside docker",
+                "fallback": "GitHub: fgsch\/docker-webex",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/241785?v=3&s=400",
+                "from_url": "https:\/\/github.com\/fgsch\/docker-webex",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467038145.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Works surprisingly well",
+        "ts": "1467038153.000948"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ah, I see.",
+        "ts": "1467038154.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Though I've not tried to do audio through it, just looking at the screen share)",
+        "ts": "1467038173.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh my",
+        "ts": "1467038180.000951"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Rather than litter my system with obsolete random 32 bit libraries... docker seemed like a good option",
+        "ts": "1467038215.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should that request counting thing live in batch or in externaleventreceiver?",
+        "ts": "1467038358.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As I envisioned it, there would be some sort of queue in externaleventreceiver, which would preserve ordering (rather than just having a bunch of different go routines waiting on a channel, for instance)",
+        "ts": "1467038500.000954"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then, batch would remove the first item from the queue whenever it has room to do so",
+        "ts": "1467038522.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think we need to decide how the engine side is going to work first",
+        "ts": "1467038580.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If the engine side only ever sends in one transaction at a time, then blocking on an unbuffered channel would be the way to do it, waiting for batch to come read from it",
+        "ts": "1467038625.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i think if we block in RecvRequest, we can just inject a new event when we unblock",
+        "ts": "1467038645.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But what causes us to unblock?",
+        "ts": "1467038664.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "execute writes to a chan",
+        "ts": "1467038691.000960"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure that I like that.  I would prefer a simple flag which indicates whether a request is pending or not (this would be set to true whever an `newBlockedRequestEvent` came in, and cleared once read).  If it is, then when we get an execution done event, or maybe a state transfered event, or whatever, then the event manager thread would simply go read from an unbuffered `pendingRequest` channel in `externalEventReceiver`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467039097.000000"
+        },
+        "ts": "1467038832.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I suppose it would be easy enough to have a `unblockOneRequest` call, and do it that was instead, which would be invoked in the execute path, or wherever else.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467038952.000000"
+        },
+        "ts": "1467038943.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think i understand",
+        "ts": "1467039137.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the proposed ingress path would be:\n\n1. Enter `RecvRequest`, pbft `pendingRequest` is false\n2. Send the manager a `newBlockedRequestEvent`, once processed `pendingRequest` is true\n3. Block on an unbuffered channel, waiting for the manager thread to read the request from this channel\n4. Unblock as PBFT reads from this channel, `pendingRequest` is now false",
+        "ts": "1467039252.000967"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also, how does the sub-client id get communicated?",
+        "ts": "1467039260.000968"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, `RecvRequest` is only for locally generated trans, no? So we can assign any free virtual client ID",
+        "ts": "1467039289.000969"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1467039305.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand your path, sorry",
+        "ts": "1467039326.000971"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe I can clarify",
+        "ts": "1467039347.000972"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you want to introduce knowledge of two channels to the manager?",
+        "ts": "1467039385.000973"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not to the manager, no.  The manager would have no knowledge of the other channel.  The second channel would live in `external.go` and PBFT would maintain state, as to whether a transaction is waiting on that channel or not. Whenever a go routine arrived with a tran, it would send an event via the event manager, to tell PBFT to update its state that a new transaction is waiting.  When PBFT is able to absorb a new transaction, it checks to see if a tran is waiting, and if so, goes and reads off the channel in `external.go`",
+        "ts": "1467039528.000974"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1467039577.000975"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I like your model because the ingress of the trans is through the event manager",
+        "ts": "1467039758.000976"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The thing I don't like about it, is that PBFT doesn't know whether or not there's an outstanding tran until it arrives.  Maybe that's not a problem",
+        "ts": "1467039808.000977"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think I've talked myself out of the ingress model I proposed, I'm back on board with how you were planning to do it, basically a toggle to block incoming transactions we flip on once our client slots are full, and flip off once there is room.",
+        "ts": "1467040373.000978"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "#1171 is the issue we're working on",
+        "ts": "1467045028.000979"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep",
+        "ts": "1467046043.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> What is your status for merging batch\/core?",
+        "ts": "1467046519.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "On whitelisting now, batch\/core comes next. As we discussed last week, we can spread the tasks. Are you about to start on this?",
+        "ts": "1467046610.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm trying to figure out exactly how to fit the work on",
+        "ts": "1467046711.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As I look at this slotting stuff, trying to decide if I should implement it in batch or core, or, on top of some merged batch\/core.",
+        "ts": "1467046789.000984"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I was actually wondering whether that would go into batch or core.",
+        "ts": "1467046810.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(If it goes in the merged batch\/core, the dilemma goes away :simple_smile: )",
+        "ts": "1467046844.000986"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.  The right place I think is in core, but, it doesn't fit there today, so it could be done in batch for now, but that means it's one more thing to merge into core.",
+        "ts": "1467046889.000987"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Shall we tackle the unification now?",
+        "ts": "1467046897.000988"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I can set the whitelisting aside for a few days.",
+        "ts": "1467046913.000989"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Up to you, but if you are willing, I think unification sooner is better than later",
+        "ts": "1467046937.000990"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Agreed; I'm in.",
+        "ts": "1467046997.000991"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am on site in RTP today if you are, could come chat physically if you think that would be faster",
+        "ts": "1467047013.000992"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Let's do that and then we can document the process in an issue on Github.",
+        "ts": "1467047078.000993"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good",
+        "ts": "1467047106.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So if we are to remove `sieve` and all `obc-classic` references we should eventually be looking at a `consensus` package that looks roughly like this:\n\n```\nconsensus.go\ncontroller package\nexecutor package\nhelper package\nnoops package\npbft package\nutil package\n```",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1467056386.000000"
+        },
+        "ts": "1467056375.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Where the `util` package contains the `events` package.",
+        "ts": "1467056396.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And within the `pbft` package all `obc-*.go` files are replaced by the `pbft.go` + `pbft_test.go` pair.",
+        "ts": "1467056410.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Still running CI, but here is the initial PR to remove Sieve and its references:\n\n<https:\/\/github.com\/hyperledger\/fabric\/pull\/2030>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Remove the sieve PBFT consensus plugin and all references to it by jyellick \u00b7 Pull Request #2030 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/2030",
+                "text": "Description This changeset removes the code for the Sieve PBFT variant, as well as references to it, and 'classic' in both the documentation and tests. Motivation and Context Sieve and classic a...",
+                "fallback": "GitHub: Remove the sieve PBFT consensus plugin and all references to it by jyellick \u00b7 Pull Request #2030 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/2030",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467056884.000999"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Hi",
+        "ts": "1467058723.001001"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Which is that part of the code that is executed right after a consensus is made e.g. pbft or a noops (as far that is a consensus)? If I m right it is exectxs in helper",
+        "ts": "1467058757.001002"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> Ultimately, to create a block first call `BeginTxBatch` followed by `ExecTxs` followed by `CommitTxBatch`.  All of the consensus plugins follow this pattern in some fashion.",
+        "ts": "1467059013.001003"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Be aware, that PBFT now uses the `executor` package to perform this task, in order to serialize executions and state transfer, as calling those methods references above while in state transfer can cause a panic.  Noops never triggers state transfer, so its usage is safe.",
+        "ts": "1467059075.001004"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Is it possible that obcpbft batch calls exectxs more than once in a row?",
+        "ts": "1467059079.001005"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It should not be today, no.",
+        "ts": "1467059105.001006"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I was 'playing' with it and it did so. I made some changes maybe that caused the problematic operation ",
+        "ts": "1467059204.001007"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah.  yes. obcpbft batch uses `executor.go`, you can take a look there, it should be okay to multiply invoke execute, but the code path is usually invoke `Execute` (which invokes `BeginTxBatch` if necessary, then `ExecTxs` and calls back), which then invokes `Commit` (which invokes `CommitTxBatch`)",
+        "ts": "1467059311.001008"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, be careful to wait until the callback has been made before invoking the second `Execute`, if the callback is still pending, you will likely deadlock that node's consensus.",
+        "ts": "1467059357.001009"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "It seemed to log a critical message saying that Replica %d is missing request for seqNo=%d with digest '%s' for assigned prepare after fetching, this indicates a serious bug",
+        "ts": "1467059364.001010"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which commit level of the code are you at? There was a benign scenario which would spew that message erroneously.",
+        "ts": "1467059398.001011"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think I was at committed ",
+        "ts": "1467059433.001012"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "But not sure ",
+        "ts": "1467059438.001013"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "When can that message be spewed? ",
+        "ts": "1467059545.001014"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "In what scenario exactly ",
+        "ts": "1467059573.001015"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/viewchange.go#L476>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/viewchange.go#L476",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/viewchange.go#L476",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467059691.001016"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You can check to make sure your code has that second check for a digest of \"\"",
+        "ts": "1467059714.001018"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Essentially, on view change, if there are null requests included in the Xset, then we will not have a corresponding request in our request store, and that message will be displayed.  This is benign because null requests are a sort of psuedo-request which we never expect to be in our request store.  When this error message was added, that possibility was not taken into account.",
+        "ts": "1467059803.001019"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Oh I see ",
+        "ts": "1467059836.001020"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "And let me ask more about exectxs and pbft batch. If you have only 1 TX, I mean the client has sent only one TX, is it possible that exectxs gets called more than once? ",
+        "ts": "1467059938.001021"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, it should not be.  There was a bug, fixed in PR #2007 \/ #2008 (for 0.5 \/ master respectively), which would sometimes cause transaction duplication, especially deploys.",
+        "ts": "1467060020.001022"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(your question makes me think you might be observing that behavior)",
+        "ts": "1467060050.001023"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I am doing my experiments with a week old master. May that bug affect that? ",
+        "ts": "1467060181.001024"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(^^ Yes.)",
+        "ts": "1467060203.001025"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Definitely, that was only merged into 0.5 earlier today, and is still not merged into master.",
+        "ts": "1467060218.001026"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I strongly recommend that you do your experimentation with the current 0.5 branch.",
+        "ts": "1467060235.001027"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "BTW aren't you talking about the \"system chain code deployment bug\"? You mentioned deploy ",
+        "ts": "1467060259.001028"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There was a significant amount of churn and bug fixing in obcpbft over the last week.",
+        "ts": "1467060275.001029"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not certain, do you have an issue number?",
+        "ts": "1467060291.001030"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Ok I will switch to that :-) ",
+        "ts": "1467060307.001031",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "No but I m trying to find one ",
+        "ts": "1467060319.001032"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/2015>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "PBFT Batch: All chaincode deploys generate 2 transactions \u00b7 Issue #2015 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/2015",
+                "text": "Description Deploying a chaincode to a network running PBFT Batch generates 2 transactions: The original transaction, and also a duplicate transaction that seems to be marked as an error. This b...",
+                "fallback": "GitHub: PBFT Batch: All chaincode deploys generate 2 transactions \u00b7 Issue #2015 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/11968347?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/2015",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467060412.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "^ This is an issue which reported the symptoms, though the fix was already in queue",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467060453.000000"
+        },
+        "ts": "1467060432.001035"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I may have something similar but with invoke txs ",
+        "ts": "1467060666.001037"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, it can happen with invokes as well as deploys",
+        "ts": "1467060676.001038"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Especially if you only send a single one",
+        "ts": "1467060681.001039"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then you will end up with a duplicated invoke  tx",
+        "ts": "1467060690.001040"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It just so happens that in most of the test, people send a single deploy tx, wait for it to finish, and then send many invokes.",
+        "ts": "1467060735.001041"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I will try the 0.5 branch and inform you what happened and whether I had that problem again ",
+        "ts": "1467060749.001042"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, good luck",
+        "ts": "1467060755.001043"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Thanks for the help, I will check out the consensus modules again and maybe I will have new questions :-P ",
+        "ts": "1467060907.001044"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You're welcome, happy to help, we'll be here.",
+        "ts": "1467060931.001045"
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U1AU8DRQR",
+        "item_type": "C",
+        "attachments": [
+            {
+                "fallback": "[June 27th, 2016 1:19 PM] hgabor: Which is that part of the code that is executed right after a consensus is made e.g. pbft or a noops (as far that is a consensus)? If I m right it is exectxs in helper",
+                "ts": "1467058757.001002",
+                "author_subname": "hgabor",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "Which is that part of the code that is executed right after a consensus is made e.g. pbft or a noops (as far that is a consensus)? If I m right it is exectxs in helper",
+                "author_name": "Gabor Hosszu",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/hgabor",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/00f4290e36c198abb7d4f0ea586245db.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0012-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ]
+            }
+        ],
+        "text": "<@U1AU8DRQR|hgabor> pinned a message to this channel.",
+        "ts": "1467060939.001046"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> <@U0UGH3X7X> <@U0XR6J961> If you guys have a chance, could you review and sign off on 1976 and 2030?",
+        "ts": "1467061002.001047"
+    },
+    {
+        "user": "U1LP4T69E",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1LP4T69E|jeffprestes> has joined the channel",
+        "ts": "1467063018.001048"
+    }
+]

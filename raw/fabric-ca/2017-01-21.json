@@ -1,0 +1,149 @@
+[
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I changed the default listening port from 8888 to 7054 in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4671\/>",
+        "ts": "1485021976.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U11MANG9G> <@U0KM61BCP> To a large part, the \"because we're using CFSSL\" comments apply to difficulty in changing CFSSL.  I've issued a couple of pull requests to CFSSL to provide the extensibility hooks we've needed.  The 1st one was processed pretty quickly but the 2nd one, and even smaller change, is taking longer.  Changing the default port wasn't as easy as you'd think, but was able to do without changing CFSSL code, but not always possible.  Anyway, I raised the white flag and see everyone's point ... so we're at 7054 now, or will be once merged",
+        "ts": "1485022589.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U11MANG9G> Speaking of the home directory, the default home directory is currently the following for both client and server",
+        "ts": "1485023090.001311"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0S5KF44D|keithsmith> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/keithsmith\/F3VBN76MC\/-.txt|Untitled>",
+        "file": {
+            "id": "F3VBN76MC",
+            "created": 1485023102,
+            "timestamp": 1485023102,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0S5KF44D",
+            "editable": true,
+            "size": 394,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3VBN76MC\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3VBN76MC\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/keithsmith\/F3VBN76MC\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3VBN76MC-3b76986ebf",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/keithsmith\/F3VBN76MC\/-.txt\/edit",
+            "preview": "func GetDefaultHomeDir() string {\r\n        home := os.Getenv(\"FABRIC_CA_HOME\")\r\n        if home == \"\" {\r\n                home = os.Getenv(\"HOME\")\r\n                if home != \"\" {\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>func GetDefaultHomeDir() string {<\/pre><\/div>\n<div><pre>        home := os.Getenv(&quot;FABRIC_CA_HOME&quot;)<\/pre><\/div>\n<div><pre>        if home == &quot;&quot; {<\/pre><\/div>\n<div><pre>                home = os.Getenv(&quot;HOME&quot;)<\/pre><\/div>\n<div><pre>                if home != &quot;&quot; {<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 13,
+            "lines_more": 8,
+            "preview_is_truncated": false,
+            "channels": [
+                "C2Y3CPP16"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0S5KF44D",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0S5KF44D|keithsmith>",
+        "bot_id": null,
+        "ts": "1485023103.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Two thoughts:",
+        "ts": "1485023163.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "1) Consistency for client and server would say is it best to make the home directory the same for both client and server",
+        "ts": "1485023198.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "2) However, clients such as ssh and cf (the cloud foundry command line tool) and probably others seem to auto-create a hidden directory off of the HOME directory, which would argue for making the client's default home directory different and be $HOME\/.fabric-ca for example",
+        "ts": "1485023297.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "#2 would also have the advantage that if client and server are on the same host, they would not collide",
+        "ts": "1485023329.001316"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "What does everyone think?",
+        "ts": "1485023348.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Or option #3 would be that both server and client are hidden directories, which is what we did at first",
+        "ts": "1485023449.001318"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0S5KF44D> thanks",
+        "ts": "1485023526.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "One other thing I should mention is that one place cfssl \"bleeds thru\" is that the REST API URI's all have \"cfssl\" in the prefix.   This is hidden in the sense that if folks use the SDKs, they don't see it.  I did try to change the context root very early but would have required CFSSL code changes again, and at the time didn't seem worth it.  Anyway, thoughts welcome on this also in terms of \"hiding CFSSL\".",
+        "ts": "1485023764.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U0S5KF44D> for these three options, suggest we can add some corresponding explanation in the documentation, to tell where people can find what. Thanks!",
+        "ts": "1485040578.001323"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0S5KF44D> - personally, I believe that you should explicitly set the folder used as the fabric-ca home directory in the config file.  I think you can use the same \"path\" model that <@U1KJY9BJQ> just put it - it's either explicit or relative to the location of the config file (I believe)",
+        "ts": "1485041141.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'm fine with adding \"client\" and \"server\" to that path respectively",
+        "ts": "1485041161.001325"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Hi guys - sorry I was away for 24 hours. So, first, <@U0S5KF44D>, many thanks for sharing!\nI like(d) the `GetDefaultHomeDir()` encapsulation!",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1485050796.000000"
+        },
+        "ts": "1485050402.001326"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I would too vote for either a prefix or a postfix of \u201cclient\u201d\/\u201cserver\u201d respectively in a non-hidden directory, adding it to the documentation, and if there are any support issues, we can easily point people\/users to check these directories. I believe (and hope) that this will save us all huge support headaches\u2026. and if worse comes to worst, we can ask them to `rm` these sub-subfolders or even just `mv` (rename) them and (re)try.",
+        "ts": "1485050559.001327"
+    }
+]

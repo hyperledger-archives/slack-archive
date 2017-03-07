@@ -1,0 +1,1921 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4> So, if I got correctly atomicbroadcast.Payload looks like the protos.TransactionAction",
+        "ts": "1477995304.001350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "now I understand your proposal of starting from the configuration and then generalize.",
+        "ts": "1477995341.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Again, if I get it correctly, you wanted to have atomicbroadcast.Payload as the most basic transaction unit",
+        "ts": "1477995373.001352"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and then potentially compose this to have more complex transactions, right?",
+        "ts": "1477995393.001353"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "A potenital approach that <@U0ULK2JPP>, <@U0XPR4NP4> and I discussed was to converge on\n```\nEnvelope\n|\\_ Signature \n \\_ Payload\n    |\\_ TransactionHeader (MESSAGE = 0; CONFIGURATION_TRANSACTION = 1; CONFIGURATION_ITEM = 2; ENDORSER_TRANSACTION = 3;)\n     \\_ Transaction\n         \\_ TransactionAction (1...n)\n            |\\_ ActionHeader\n             \\_ ChaincodeActionPayload\n```",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477997378.000000"
+        },
+        "ts": "1477997087.001354"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "for the normal proposal\/endorsement flow",
+        "ts": "1477997117.001355"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "and\n```\nEnvelope\n|\\_ Signature \n \\_ Payload\n    |\\_ TransactionHeader (MESSAGE = 0; CONFIGURATION_TRANSACTION = 1; CONFIGURATION_ITEM = 2; ENDORSER_TRANSACTION = 3;)\n     \\_ Configuration\n```\nfor configuration messages",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477997384.000000"
+        },
+        "ts": "1477997174.001356"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "`TransactionHeader` might look like\n```\nmessage TransactionHeader {\n\tint32 version = 1;\n\tType type = 2;\n\tbytes creator = 3;\n\tbytes chainID = 4;\n}\n```",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477997264.000000"
+        },
+        "ts": "1477997208.001357"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "which is fine as far as the endorsement flow is concerned because it factors all fields that have to be common to all actions in a transaction",
+        "ts": "1477997254.001358"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "which header will you use then in the Proposal?",
+        "ts": "1478003537.001362"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "One possible way would be\n```\nSignedProposal\n|\\_ Signature                                    (signature on the Proposal message by the creator specified in the header)\n \\_ Proposal\n    |\\_ ProposalHeader                           (the header for this proposal containing both TransactionHeader and ActionHeader)\n    |\\_ ChaincodeProposalPayload                 (the payload for this proposal)\n     \\_ ChaincodeAction                          (the actions for this proposal - optional for a proposal)\n```\nwhere\n```\nmessage ProposalHeader {\n   bytes txHeaderBytes = 1;\n   bytes actHeaderBytes = 2;\n}\n```",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1478003696.000000"
+        },
+        "ts": "1478003624.001363"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "and\n```\nmessage TransactionHeader {\n\tint32 version = 1;\n\tType type = 2;\n\tbytes creator = 3;\n\tbytes chainID = 4;\n}\n\nmessage ActionHeader {\n\tint32 version = 1;\n\tgoogle.protobuf.Timestamp timestamp = 2;\n\tType type = 3;\n\tbytes nonce = 4;\n\tbytes extensions = 5;\n}\n```",
+        "ts": "1478003654.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "+1",
+        "ts": "1478005385.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds like everyone's on board with this new scheme then?",
+        "ts": "1478006025.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah yeah :slightly_smiling_face:",
+        "ts": "1478006070.001368"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "+1",
+        "ts": "1478006113.001369"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "has <@U0KN2SSKE> weighed in?",
+        "ts": "1478006135.001370"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "and I guess <@U0PB67X4K> is okay with it too?",
+        "ts": "1478006171.001371"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "+0.5 \u2026 only because I think we\u2019ll know more only when we try this. But definitely close IMO",
+        "ts": "1478006419.001372"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "btw, <@U26T99AQ4>, may you clarify this: TransactionHeader (MESSAGE = 0; CONFIGURATION_TRANSACTION = 1; CONFIGURATION_ITEM = 2; ENDORSER_TRANSACTION = 3; )",
+        "ts": "1478010079.001373",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what's the difference between CONFIGURATION_TX and CONFIGURATION_ITEM, for example?",
+        "ts": "1478010101.001374"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "that's meant to be the enumeration of types",
+        "ts": "1478010152.001375"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "chaincodes will have type equal to ENDORSER_TRANSACTION",
+        "ts": "1478010167.001376"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "whereas config will have one of CONFIGURATION_TRANSACTION, CONFIGURATION_ITEM and possibly more",
+        "ts": "1478010181.001377"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and what is the diff between configuration-transaction, and configuration-item?",
+        "ts": "1478010224.001378"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> I had a comment on the changeset about documenting this further.  `CONFIGURATION_TRANSACTION` is intended to be made up of `CONFIGURATION_ITEM`s.  I did not document extensively for the moment, because the usage\/implementation of this was not in the changeset",
+        "ts": "1478010225.001379"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The idea being that each configuration item will need to be a set of signed data, and the whole configuration transaction is made up of many of these",
+        "ts": "1478010278.001380"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0XPR4NP4> so you just need one type and not two then? if so, sorry about the confusion",
+        "ts": "1478010307.001381"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so, this would be a way to atomically commit a bunch of config changes that may need endorsement from different or same entities?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1478010382.000000"
+        },
+        "ts": "1478010345.001382"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> Yes\n<@U26T99AQ4> a `CONFIGURATION_TRANSACTION` would have a payload data of a repeated number of `Envelopes` which would all be of type `CONFIGURATION_ITEM` which would have a payload data of the actual config object",
+        "ts": "1478010390.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "got it, okay!",
+        "ts": "1478010391.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "aha, nested payloads?",
+        "ts": "1478010406.001386"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1478010439.001387"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So would the configuration item play a role similar to \"action field\" in transaction related to chaincodes?",
+        "ts": "1478010453.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "isn't it a lot of unmashalling work?",
+        "ts": "1478010472.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Where do I see the latest Block definition?",
+        "ts": "1478010561.001390"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> Somewhat, though all it needs is endorsements\n<@U0ZR63HLK> Possibly, though I'm not sure of a way to do it less so.  But reconfiguration should be relatively infrequent, it does not need to be an especially high speed path.",
+        "ts": "1478010566.001391"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> In `ab.proto` in the code you pulled with the new tran format",
+        "ts": "1478010588.001392"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0XQ35CDD|kostas> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F2WTQ68JE\/screen_shot_2016-11-01_at_10.30.31.png|Screen Shot 2016-11-01 at 10.30.31> and commented: It was hidden here.",
+        "file": {
+            "id": "F2WTQ68JE",
+            "created": 1478010653,
+            "timestamp": 1478010653,
+            "name": "Screen Shot 2016-11-01 at 10.30.31.png",
+            "title": "Screen Shot 2016-11-01 at 10.30.31",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0XQ35CDD",
+            "editable": false,
+            "size": 56285,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2WTQ68JE\/screen_shot_2016-11-01_at_10.30.31.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2WTQ68JE\/download\/screen_shot_2016-11-01_at_10.30.31.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 136,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 181,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 272,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2WTQ68JE-256ad4f95a\/screen_shot_2016-11-01_at_10.30.31_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 363,
+            "image_exif_rotation": 1,
+            "original_w": 984,
+            "original_h": 372,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F2WTQ68JE\/screen_shot_2016-11-01_at_10.30.31.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2WTQ68JE-55b73d8b95",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2WT2LYHJ",
+                "created": 1478010653,
+                "timestamp": 1478010653,
+                "user": "U0XQ35CDD",
+                "is_intro": true,
+                "comment": "It was hidden here.",
+                "channel": ""
+            }
+        },
+        "user": "U0XQ35CDD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0XQ35CDD|kostas>",
+        "bot_id": null,
+        "ts": "1478010656.001393"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0XPR4NP4> will you have nonces inside your `Configuration` message somewhere to protect against replays?",
+        "ts": "1478010676.001394"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U26T99AQ4> Yes, I intend to use sequence numbers",
+        "ts": "1478010706.001395"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Would like to discuss the replay potentials here more generally too for the top level message and how we detect it inexpensively",
+        "ts": "1478010780.001396"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U26T99AQ4>, <@U0XPR4NP4>: so instead of having the transaction header content as part of the action header (included in each transaction action) you made transaction header sort of common header shifted higher up. Am I correct to say this?",
+        "ts": "1478010784.001397"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I would say so",
+        "ts": "1478010804.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think we will likely need a timestamp or nonce or some other thing at the top level for replay",
+        "ts": "1478010826.001399"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "that's tricky for chaincodes",
+        "ts": "1478010841.001400"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "each action must have a common \"top-level\" header",
+        "ts": "1478010856.001401"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "if there's a nonce in there, it must be repeated",
+        "ts": "1478010867.001402"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "which is no big deal from a security perspective because the internal header will guarantee freshness",
+        "ts": "1478010883.001403"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "mhhh",
+        "ts": "1478010885.001404"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but it can be chosen by the \"submitting peer\"",
+        "ts": "1478010893.001405"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "or the first peer that is asked",
+        "ts": "1478010899.001406"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "the client can choose that for that matter",
+        "ts": "1478010911.001407"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and adopted by the rest, no?",
+        "ts": "1478010912.001408"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that too",
+        "ts": "1478010919.001409"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0ZR63HLK> why\n&gt; mhhh\ndid you have some concerns?",
+        "ts": "1478010989.001410"
+    },
+    {
+        "type": "message",
+        "user": "U2L9F7VL1",
+        "text": "<@U0XPR4NP4> are you available to chat sometime about FAB-704? I watched the video and think we may be trying to solve a similar problem and could collaborate.",
+        "ts": "1478011059.001411"
+    },
+    {
+        "type": "message",
+        "user": "U2L9F7VL1",
+        "text": "really depends on the scope you\u2019re working within",
+        "ts": "1478011097.001412"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2L9F7VL1> Absolutely, am on a call right now, and have another 12-1 ET, but am free otherwise",
+        "ts": "1478011115.001413"
+    },
+    {
+        "type": "message",
+        "user": "U2L9F7VL1",
+        "text": "<@U0XPR4NP4> cool, will take this to PM to setup a good time",
+        "ts": "1478011152.001414"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Btw, <@U0XPR4NP4>, <@U26T99AQ4>, is there a reason why you need to specify a configuration item structure so clearly in the protobuf instead of, e.g., having it contain a jason format representation of config changes?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1478011303.000000"
+        },
+        "ts": "1478011288.001415"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> I'm not sure what you mean.  The configuration structure was made to withstand replay and validate against signature policies, and is otherwise essentially key\/value pairs where the key is a string, and the value is arbitrary bytes.",
+        "ts": "1478011529.001417"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so values are opaque?",
+        "ts": "1478011623.001418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and untyped?",
+        "ts": "1478011628.001419"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For now, yes.",
+        "ts": "1478011656.001420"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They do have a type",
+        "ts": "1478011662.001421"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But only a high level service type, like \"This is fabric config\" or \"This is kafka config\"",
+        "ts": "1478011678.001422"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But the mapping of keys to underlying data types is not defined by the proto",
+        "ts": "1478011702.001423"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For `Policy` type config, the structure is well defined in the proto",
+        "ts": "1478011736.001424"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Nothing prevents us from more formally defining the config structures for other types, but it is generic for now.",
+        "ts": "1478011757.001425"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Well replay has to do with the inclusion of a nonce, that to my understanding you discussed that is included in the tx header somewhere no?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1478011891.000000"
+        },
+        "ts": "1478011831.001426"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "There is a nonce in the payload's header (in the envelope).",
+        "ts": "1478011903.001428"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "although replay attacks can occur at multiple levels. I could replay an entire tx, or only a `Configuration` message, or some signed message inside of it - we need to make sure that nothing can be replayed",
+        "ts": "1478011933.001429"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But I am asking about the specific way you use to represent candidate configuration changes inside configurationitem.",
+        "ts": "1478011937.001430"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Protecting the config from replay is relatively easy, by requiring that a sequence number is incremented, and rejecting old sequence numbers.  I'm more interested in preventing replay in a performant way for more generic transactions.  Because we have unlinkability between messages, it seems hard to do efficiently.",
+        "ts": "1478011961.001431"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Well if the client wants to replay a transation, nothing can prevent him.",
+        "ts": "1478011970.001432"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "And since the client\/creator is the one signing the tx i think we are safe on this aspect no?",
+        "ts": "1478011989.001433"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I don't think there is a client in the case of config transaction",
+        "ts": "1478012019.001434"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "There has to be. The one triggering the config change.",
+        "ts": "1478012038.001435"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U26T99AQ4> There is, there must be.  Someone must inject the new config into the system and sign this message",
+        "ts": "1478012042.001436"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Unless you refer this is part of config item.",
+        "ts": "1478012059.001437"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The signature that is, and creator.",
+        "ts": "1478012069.001438"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0XPR4NP4> right, although I guess it wouldn't be a normal client of the system but more like an admin - but I get your point, there is a creator always",
+        "ts": "1478012123.001439"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I would expect often this would be some admin running a CLI tool, though in the channel creation case, it may be more automated",
+        "ts": "1478012159.001440",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U26T99AQ4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "For replay attack, one would need to use epochs in transactions, as discussed in the past with Chet and <@U0ZR63HLK>, and <@U26T99AQ4>. Replays of transactions strictly speaking would not cause a huge issue due to version dependencies.",
+        "ts": "1478012262.001441"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is more of a DoS concern for me",
+        "ts": "1478012286.001442"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "For DoS, you may have epoch numbers in transactions (chosen again by the submitting peer) included in tx header and only allow tx-es with the appropriate epoch number...",
+        "ts": "1478012345.001443"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How do you know the appropriate epoch number?",
+        "ts": "1478012359.001444"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Especially if it is chosen by the peer)",
+        "ts": "1478012376.001445"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But anyway, my question was referring to the config item structure :slightly_smiling_face:",
+        "ts": "1478012380.001446"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0Y14MWA2> mentioned that there will be some clock",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1478012679.000000"
+        },
+        "ts": "1478012411.001447"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "There is a buffer for the epoch numbers,. As long as it's not older than, say, X epochs it can be processed.",
+        "ts": "1478012460.001448"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "why not block height?",
+        "ts": "1478012466.001449"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "in the ordering service. Is this still the possibility? If so epochs can be changing per specific clock cycles of that clock, or can be set er channel per number of blockk, etc.",
+        "ts": "1478012468.001450"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U26T99AQ4> I like that, makes much more sense to me",
+        "ts": "1478012481.001451"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U26T99AQ4> Block height was the more natural fit to me.",
+        "ts": "1478012485.001452"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With the config item structure, we have a sequence number associated with each configuration. which must be incremented by exactly one to be valid.  This prevents replay",
+        "ts": "1478012498.001453"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right, e.g., epoch number can be set to increase per X blocks.",
+        "ts": "1478012499.001454"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I just went with Elli's term.",
+        "ts": "1478012505.001455"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "got it",
+        "ts": "1478012516.001456"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; The configuration manager will verify that all configuration changes satisfy system policy, that all configuration changes have a LastModified field equal to Sequence, that no configuration has been deleted without corresponding authorization, that the configuration is well formed, and that some configuration item corresponds to the new ConfigurationEnvelope sequence number.",
+        "ts": "1478012578.001457"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If all configuration changes have a LastModified field equal to Sequence, why is the last check in that quote needed?",
+        "ts": "1478012602.001458"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why a seqno?",
+        "ts": "1478012890.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not a \"lastconfig\" hash pointer?",
+        "ts": "1478012899.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; If all configuration changes have a LastModified field equal to Sequence, why is the last check in that quote needed?\n\nIn case the configuration tx doesn't actually contain any changes",
+        "ts": "1478012970.001462"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how will a new config be authorized?  i really hope it will require an admin sign the new config transaction on an airgapped machine",
+        "ts": "1478012981.001463"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; why not a \"lastconfig\" hash pointer?\n\nI considered this, sequence number seemed smaller and easier without any obvious disadvantages",
+        "ts": "1478013040.001464"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1478013049.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Why don't you just write that \"all configuration items have a LastModified field equal to Sequence\" and be done with it?",
+        "ts": "1478013052.001466"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So you would not have the need of paralellizing config changes?",
+        "ts": "1478013079.001467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; how will a new config be authorized?  \n\nEach config entry has a modification policy tied to it dictating which signatures are required to modify it\n\n&gt;i really hope it will require an admin sign the new config transaction on an airgapped machine\n\nThat seems like a good idea to me, and generally I would expect to require signatures from multiple admins.",
+        "ts": "1478013124.001468"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Why don't you just write that \"all configuration items have a LastModified field equal to Sequence\" and be done with it?\n\nThe idea is that in general, sets of users will only be authorized to modify a subset of the configuration, it is to support changing only pieces of the configuration.  The set of peer admins is authorized to change the set of peer orgs, they are not authorized to modify the orderer config, so they cannot change the sequence number of the orderer config and still have the signatures be valid.",
+        "ts": "1478013227.001469"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Oh, this goes back to the fact that a ConfigurationEnvelope cannot just say \"I want to modify this and that\" and call it a day, it needs to carry Entries for all the configuration keys that apply, regardless of whether it modifies them or not.",
+        "ts": "1478013348.001470"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; So you would not have the need of paralellizing config changes?\n\nI've been thinking a lot about this.  We could make the sequence number local to each config item, which would allow for total parallelization, but, this invites someone splitting up a transaction which was meant to be committed atomically and picking pieces of it.",
+        "ts": "1478013366.001471"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "_All_ configuration for a chain.",
+        "ts": "1478013369.001472"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Oh, this goes back to the fact that a ConfigurationEnvelope cannot just say \"I want to modify this and that\" and call it a day, it needs to carry Entries for all the configuration keys that apply, regardless of whether it modifies them or not.\n\nI've also been thinking maybe we should allow submission of type `CONFIGURATION_ITEM` which would then generate the new `CONFIGURATION_TRANSACTION` based on the current state, but am not sold that this is a good idea yet.",
+        "ts": "1478013433.001473"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The signatures in the `ConfigurationEntry` are of type `Envelope`. I assume that the `Data` field of the `Payload` in that `Envelope` is set to the `Configuration` of the `ConfigurationEntry` in question?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478013874.000000"
+        },
+        "ts": "1478013869.001474"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The data of the payload should be the hash of the configuration (so as not to repeat the configuration over and over again)",
+        "ts": "1478013929.001476"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Properly documenting this is on my TODO list, and was planned for when I reworked the configuration to sit on top of the new Envelope type",
+        "ts": "1478013999.001477"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That makes sense.",
+        "ts": "1478014001.001478"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That's also badly needed. I'm going through the changeset, and I'm not sure if all of this is properly documented elsewhere, dead obvious, or about to be documented.",
+        "ts": "1478014041.001479"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So the changeset you are reviewing is meant to be about the new base `Envelope` and friends format",
+        "ts": "1478014082.001480"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The configuration stuff was always a somewhat temporary data structure, designed to allow the proving out of the concept and the writing of code.  It wasn't clear whether it would be rewritten on top of the fabric transaction, or some other thing at the time.  Now that we know what 'the other thing' is, it can be formalized",
+        "ts": "1478014128.001481"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The changeset that I'm going through is a chance for me to catch up on all the latest message-related developments honestly. I've stopped commenting there so as not to pollute it with out-of-scope comments.",
+        "ts": "1478014150.001482"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since the form was going to change, extensive documentation didn't seem worthwhile at the time, but obviously this needs to be well documented going forward.",
+        "ts": "1478014174.001483"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So what is your opinion on the parallelization of configuration updates?  Should there be a global sequence number, ala the `ConfigurationEnvelope` or should we simply require that the `Configuration` `lastModified` be incremented sequentially",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478014354.000000"
+        },
+        "ts": "1478014224.001484"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Another option I considered, was to make submitted `CONFIGURATION_TRANSACTION` act as an overlay.  Basically, require sequential modification of each config item, and if a config change has 'version dependencies' include those dependent `CONFIGURATION_ITEM`s in the `CONFIGURATION_TRANSACTION`.  The transaction is processed by the orderer into the fully populated transaction only if all of the dependencies match.  But this is definitely more complex.",
+        "ts": "1478014785.001486"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I haven't thought much about it, but I am probably against parallelization, mainly because (I think?) it allows mixing and matching of items that were not meant to be grouped togethere.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478014839.000000"
+        },
+        "ts": "1478014824.001487"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what does that mean",
+        "ts": "1478014859.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "parallelisation",
+        "ts": "1478014863.001490"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It also seems like an issue we shouldn't be concerned about. How often do we expect these to happen?",
+        "ts": "1478014863.001491"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Why parallelize them?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478014876.000000"
+        },
+        "ts": "1478014867.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yeah, exactly.",
+        "ts": "1478014871.001493"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Parallelization meaning, should we allow two configuration updates to be created in parallel, but not together, and have them each be able to be submitted and processed.  Or, should the first one in 'win' and the second one be reconstructed.",
+        "ts": "1478015006.001495"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In general, I would expect that reconfiguration should be infrequent and require significant human intervention.",
+        "ts": "1478015036.001496"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; Parallelization meaning, should we allow two configuration updates to be created in parallel, but not together, and have them each be able to be submitted and processed.  Or, should the first one in 'win' and the second one be reconstructed.",
+        "ts": "1478015100.001497"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This doesn't make sense to me.",
+        "ts": "1478015104.001498"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Example?",
+        "ts": "1478015106.001499"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure",
+        "ts": "1478015124.001500"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I thought by parallelization you referred to individual configuration items.",
+        "ts": "1478015134.001501"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I do",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478015150.000000"
+        },
+        "ts": "1478015144.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But now you're talking about configuration transactions where the first one wins? This is why this doesn't make sense to me.",
+        "ts": "1478015204.001504"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah all of this is about channels?",
+        "ts": "1478015228.001505"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because orderer config really shouldn't change often",
+        "ts": "1478015244.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "All types of configs.",
+        "ts": "1478015294.001507"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "are we overengineering?",
+        "ts": "1478015327.001508"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Always.",
+        "ts": "1478015331.001509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure seems like it",
+        "ts": "1478015333.001510"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The current configuration looks like this:\n\n```\nSeqNo: 7, [ A: {LastModified: 5, Val: foo} B: {LastModified: 7, Val: bar}]\n```\n\nThe entities in control of A and in control of B both want to update the values. Today, the flow goes as:\n\nA entities create: \n\n```\nSeqNo: 8, [ A: {LastModified: 8, Val: foo2} B: {LastModified: 7, Val: bar}]\n```\n\nB entities create:\n\n```\nSeqNo: 8, [ A: {LastModified: 5, Val: foo} B: {LastModified: 8, Val: bar2}]\n```\n\nThen, whoever submits first would be adopted, and the second would fail because it would be attempting to backlevel the other's config.  However, consider instead doing away with the top level SeqNo, then you could have\n\n\n```\n [ A: {LastModified: 5, Val: foo} B: {LastModified: 7, Val: bar}]\n```\n\nThe entities in control of A and in control of B both want to update the values. The new flow would go as:\n\nA entities create: \n\n```\nItem{ A: {LastModified: 6, Val: foo2} }\n```\n\nB entities create:\n\n```\nItem{ B: {LastModified: 8, Val: bar2}}\n```\n\nAnd when submitted, they both would apply cleanly.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478015475.000000"
+        },
+        "ts": "1478015431.001511"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I get it now. Good idea, but would be low on my priority list, as I don't expect this to be a significant problem where collisions happen.",
+        "ts": "1478015573.001513"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The thing that got me thinking about collisions was the DoS possibility, where some group starts constantly changing the config to prevent another group from being able to modify their own config.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478015724.000000"
+        },
+        "ts": "1478015694.001514"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But on the background, isn't this CONFIG_ITEM translated to a CONFIG_TX that reads the current state?",
+        "ts": "1478015695.001515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct.",
+        "ts": "1478015705.001516"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is a permissioned network, no?",
+        "ts": "1478015788.001518"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The reality is, that this sort of attack seems unlikely, since it would be attributable, and usually requires signatures from multiple parties.  Still, if someone misconfigured their system to allow a single signer to modify something, then it would be annoying to fix.",
+        "ts": "1478015798.001519"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Probably not a problem worth worrying too much about.",
+        "ts": "1478015815.001520"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not at all about",
+        "ts": "1478015821.001521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "again, airgapped machines with certificates, etc.",
+        "ts": "1478015859.001522"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, at the end of the day if the admins go and lose their keys, then there is no limit to the bad things that an attacker can do to the network.",
+        "ts": "1478015919.001523"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> <@U26T99AQ4> <@U0ZR63HLK> Then for the new transaction format, should we add an epoch into the top level header and leverage exactly that for replay prevention? Do we also need a nonce to prevent some sort of signature attacks, or is that only for replay?",
+        "ts": "1478016396.001524"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "a nonce might be used also at signing time by certain schemes with the guarantee that it is unique",
+        "ts": "1478016478.001525"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I obviously defer on these crypto related decision, just trying to nail down everything that needs to be in this outer header.  Per the changeset, there is the timestamp and nonce, it sounds then like this should be an epoch and nonce?",
+        "ts": "1478016574.001526"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Or, do we want to leave the timestamp for some reason?)",
+        "ts": "1478016629.001527"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm fine with epoch and nonce. timestamp is not reliable",
+        "ts": "1478016709.001528"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "+1",
+        "ts": "1478016718.001529"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Remember that Marko wanted a timestamp for the \"raw ledger\" batches, and had suggested a mechanism with skews, etc.",
+        "ts": "1478016720.001530"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And just to be clear, the nonce would not need to be verified against some 'set of used nonces' to validate the signature, instead it would be the client's job to guarantee the uniqueness or lose security.  Instead, the only replay detection the orderer would need to perform is to validate the epoch which would be based on the block height",
+        "ts": "1478016736.001531"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XQ35CDD> this was i think the clock that i referred to before i think :slightly_smiling_face:",
+        "ts": "1478016743.001532"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ah, okay",
+        "ts": "1478016753.001533"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1BC5A0F9> Yes.",
+        "ts": "1478016759.001534"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and what's the purpose for having that in the raw ledger?",
+        "ts": "1478016768.001535"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4> sounds good so far",
+        "ts": "1478016807.001536"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, thanks <@U0ZR63HLK>",
+        "ts": "1478016906.001537"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What's not clear to me yet is this:",
+        "ts": "1478028015.001540"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How do we go from a `CONFIG_TRANSACTION` that specifies the creation of a new channel to a genesis block for that channel?",
+        "ts": "1478028079.001541"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And I mean from a low-level, code perspective.",
+        "ts": "1478028096.001542"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Do we leverage the `bootstrap` package that's out there? Because if that's the case, the `bootstrap.Helper` interface will need to be extended with one more method that allows us to load config data into the helper.",
+        "ts": "1478028157.001543"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If the `bootstrap` package is not used, I want to know what we have in mind.",
+        "ts": "1478028186.001544"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This affects the way I'm rewriting the Kafka orderer for multiple channels, since I'm touching on that path.",
+        "ts": "1478028250.001545"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've actually wanted to discuss this with you, as I had a conversation with <@U1BC5A0F9> around this and she brought up an interesting point about channel creation being potentially non-deterministic which makes everything a little trickier.",
+        "ts": "1478028465.001546"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Cool, shoot.",
+        "ts": "1478028508.001547"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, consider for a moment, that a channel creation request is received (as a configuration transaction).  My original thought had been \"have the orderers implicitly form a channel and consense about the genesis block for this channel\".  This was to prevent two different people from trying to create the same channel at once with different genesis material.",
+        "ts": "1478028632.001548"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If you don't mind, can we make things explicit?",
+        "ts": "1478028680.001549"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure",
+        "ts": "1478028684.001550"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I want us to expand on the \"have the orders implicitly form a channel\" clause.",
+        "ts": "1478028694.001551"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Which brings me back to this question I guess: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478028015001540>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478028015001540",
+                "fallback": "[November 1st, 2016 12:20 PM] kostas: What's not clear to me yet is this:",
+                "ts": "1478028015.001540",
+                "author_subname": "kostas",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "What's not clear to me yet is this:",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1478028714.001552"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How do you get to a genesis block?",
+        "ts": "1478028730.001554"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "`bootstrap` to the rescue, or something else? And if it's something else, what?",
+        "ts": "1478028744.001555"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was trying to side-step that for the moment, because the punchline about the non-determinism at the end I think informs the decision here.  I'm not really sure what \n&gt; `bootstrap` to the rescue\nmeans, but the format is not that complicated, it can be generated either by paring down the system chain config, or building it manually.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478029090.000000"
+        },
+        "ts": "1478029078.001556"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "`bootstrap` to the rescue is a reference to the expanded form of this statement, 10 lines up: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478028157001543>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478028157001543",
+                "fallback": "[November 1st, 2016 12:22 PM] kostas: Do we leverage the `bootstrap` package that's out there? Because if that's the case, the `bootstrap.Helper` interface will need to be extended with one more method that allows us to load config data into the helper.",
+                "ts": "1478028157.001543",
+                "author_subname": "kostas",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "Do we leverage the `bootstrap` package that's out there? Because if that's the case, the `bootstrap.Helper` interface will need to be extended with one more method that allows us to load config data into the helper.",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1478029159.001558"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I want to narrow down the interfaces, and figure out whether a new package\/abstraction is needed.",
+        "ts": "1478029206.001560"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "For instance:",
+        "ts": "1478029217.001561"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; it can be generated either by paring down the system chain config, or building it manually.",
+        "ts": "1478029231.001562"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm looking for a decomposition of that statement. What does build it manually mean?",
+        "ts": "1478029265.001563"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, okay, sorry, I didn't realize by \"the `bootstrap` package\" you meant the little shim I had added to allow the genesis block to be specified at runtime.  I think no, I would not expect for this package to be re-used for creating a genesis block, it was more meant as a way to statically specify one for testing, or to load a real one from a file.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478029395.000000"
+        },
+        "ts": "1478029311.001564"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Great, so the `bootstrap` package is out of this conversation.",
+        "ts": "1478029341.001565",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, I've got a `CONFIG_TRANSACTION`. And let's assume it passes all the validation\/policy checks.",
+        "ts": "1478029382.001566"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What's next? Think lifecycle of this message.",
+        "ts": "1478029397.001568"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, so, going by the flows I've seen.  Given this TX, the App sends it via a broadcast to ordering.",
+        "ts": "1478029440.001569"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The orderer recognizes this as a configuration for a channel it hasn't seen, so, assuming that it is well formed, appropriately signed, etc.  It creates a new channel with the parameters specified by the TX.",
+        "ts": "1478029478.001570"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And then it needs to post the genesis block (via broadcast) to that channel.",
+        "ts": "1478029524.001571"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The app on the other side is polling on `Deliver` waiting for the channel to exist.  Once it does, it gets back a genesis block with the config tx it submitted, and it can give this block to the peers to subscribe to the channel.",
+        "ts": "1478029526.001572"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But you're glossing over my question :simple_smile:",
+        "ts": "1478029551.001573"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; And then it needs to post the genesis block (via broadcast) to that channel.\n\nYes, sorry to omit this",
+        "ts": "1478029559.001574"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How do we actually get that genesis block is my question. Everything else, I'm totally fine with.",
+        "ts": "1478029588.001575"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, in the simplest route, the orderer which receives the transaction simply creates a new block by setting the payload to the config tx, setting the hashes appropriately, setting the block number to 0, and that's it?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478029675.000000"
+        },
+        "ts": "1478029652.001576"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I'm not sure why the 'creating the block' is hard, we have to do this for a normal reconfiguration tx, not just channel creation",
+        "ts": "1478029721.001579"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I didn't say anything about it being hard. This is my only goal here: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478029206001560>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478029206001560",
+                "fallback": "[November 1st, 2016 12:40 PM] kostas: I want to narrow down the interfaces, and figure out whether a new package\/abstraction is needed.",
+                "ts": "1478029206.001560",
+                "author_subname": "kostas",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "I want to narrow down the interfaces, and figure out whether a new package\/abstraction is needed.",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1478029754.001580"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I understand the goal, but there are larger unresolved holes that need to be resolved first.",
+        "ts": "1478029802.001582"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Related to that path?",
+        "ts": "1478029835.001583"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes.",
+        "ts": "1478029901.001584"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For instance, does the genesis block of the channel redefine all of the same parameters as the 'system chain'?",
+        "ts": "1478029932.001585"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You'll need to expand on \"all of the same parameters as the 'system chain'.\"",
+        "ts": "1478029985.001586"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For instance, in the PBFT case, does the channel define `f` `K` `L` etc.",
+        "ts": "1478030027.001587"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "just jumping in here - and sure lacking context -  i think for simplicity (now) we should assume channel is independent so each should have its own complete config block",
+        "edited": {
+            "user": "U0KN2SSKE",
+            "ts": "1478030086.000000"
+        },
+        "ts": "1478030059.001588"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You cannot make the right call with what you have right now, can you? For instance, the support of multiple channels in PBFT is still fuzzy. So complete config blocks is the right way to go. Depending on what the system runs on (e.g. PBFT), the orderer logic should figure out whether you're trying to overlap a config key (e.g. `f`) that you shouldn't, and reject it.",
+        "ts": "1478030245.001590"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Complete config blocks seems like the safer choice.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478030444.000000"
+        },
+        "ts": "1478030287.001591"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "we could allow some common config to effect all channels by specifying a nil channel \u2014 for example, removing a CA member",
+        "ts": "1478030558.001593"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I generally agree that complete config blocks is a safer choice, but, then I see there being essentially two options:\n\n1.  The client is responsible for filling out all of the fields of the transaction, likely by taking the system chain config, removing the signatures, and modifying the chainID on all of the configuration items.  Then, the orderer ensures that things match, and then processes the transaction normally.  The advantage to this is that it makes the order's life very easy, but obviously pushes complexity to the client.  It also loses some flexibility which I'll mention in a moment.\n2. The client is responsible for filling out all of the fields which it is entitled to modify, leaving the rest for the ordering service to populate.  The ordering service then completes the configuration with the parameters it is authorized to do, and creates the final configuration transaction.  The downside to this is some limited additional complexity at the orderer, but it does allow for neat things, like given a set of 100 different pbft nodes, at channel creation time, the ordering service could pick 4 of them for the channel.",
+        "ts": "1478030583.001594"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Waiting to hear the flexibility lost with approach number 1.",
+        "ts": "1478030678.001595"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The last sentence of number 2.  If the orderer wants to specify a different configuration for that chain, configuration which the client cannot know in advance",
+        "ts": "1478030709.001596"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But that is not even a requirement (that I know of), and for all we know, this may be a feature that nobody is after.",
+        "ts": "1478030888.001597"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So we're adding complexity to a core component for something that is of questionable value.",
+        "ts": "1478030894.001598"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am against this. (And approach number 2 as a result.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478031047.000000"
+        },
+        "ts": "1478030918.001599"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's fine.  I think 1 is probably the correct direction, but I think these things need to be nailed down first.",
+        "ts": "1478030990.001600"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "i think we should separate config\u2019s into 2 buckets:  1) client can specify\/modify 2) managed by the ordering service",
+        "ts": "1478031065.001602"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "IE option 2, I think?",
+        "ts": "1478031110.001603"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I don't see why this is option 2?",
+        "ts": "1478031158.001604"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Option 1 along with logic on the orderer that rejects the config if tries to modify a key managed by the ordering service would work, no?",
+        "ts": "1478031191.001605"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Basically: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478030245001590>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478031202.000000"
+        },
+        "ts": "1478031196.001606"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "right, client would never know about those config\u2019s ,  so i think like the list of orderers should not be allowed to change by the client",
+        "ts": "1478031268.001609"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But then the thing you advocating for <@U0KN2SSKE> would be that the peer does _not_ specify the complete config tx, that the orderer supplements it somehow?",
+        "ts": "1478031306.001610"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Why would the client *not* know about these configs? They're in the system chain genesis block that it can access.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478031387.000000"
+        },
+        "ts": "1478031377.001611"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "right, the rest is considered fixed, supplied by the orderer to fill in the config block",
+        "ts": "1478031389.001613"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "we don\u2019t document them \u2014 as you said, if modified, orderer would reject",
+        "ts": "1478031474.001614"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, so then the client _does_ specify the entire config, but it does not understand the orderer config, simply copies it verbatim.  Which would be (1) which I support.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478031537.000000"
+        },
+        "ts": "1478031525.001615"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(I honestly think that Binh _just_ made the case for option 2.)",
+        "ts": "1478031586.001617"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "To me the simplest way of going at is the orderer saying: \"Give me _everything_ I need to know about the new channel. (Internally, if this config is to overwrite a key which for, whatever reason, we keep locked, the config is rejected with the appropriate error message.)\" Maybe I'm biased, but this feels easier and a better design than saying \"Give me something, and I'll fill in the rest with what applies currently.\"",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478031977.000000"
+        },
+        "ts": "1478031883.001618"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I agree, additionally, this also easily keeps the original attribution for the channel creation, because as soon as we modify the config tx, the signature over it in the submission is invalidated.",
+        "ts": "1478031999.001620"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "if we envision the client gets the config block and modifies it, i am ok with that, but they still need to read the doc to figure out which values can be modified",
+        "ts": "1478032089.001621"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(I guess the key word there being \"easily\" right? Because for that specific concern, I would assume that the signature of the `ConfigurationEntry` that calls for the channel creation remains, and can be linked to the creator.)",
+        "ts": "1478032121.001622"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0KN2SSKE> But that is always going to be the case.",
+        "ts": "1478032144.001623"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The configuration items are all typed",
+        "ts": "1478032144.001624"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which should make it fairly obvious, \"Do not modify the ones typed orderer\"",
+        "ts": "1478032172.001625"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "&gt; But that is always going to be the case.\n:slightly_smiling_face:",
+        "ts": "1478032212.001626"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "why wouldn\u2019t we just have a json object, which we define the structure, and the client gets it, modifies it, and submits it back as a payload of the config transaction, the client signs the payload",
+        "ts": "1478032356.001627"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think that's more or less the plan, just proto instead of json",
+        "ts": "1478032415.001628"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Could be rendered as JSON I suppose, but I'm not sure what the purpose would be, it's all machine manipulated?",
+        "ts": "1478032449.001629"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "json option on the GET would be nice for debug and inspection",
+        "ts": "1478032519.001630"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The bootstrapping tool will need to support pretty printing of the genesis block for analysis, maybe even to HTML or some such",
+        "ts": "1478032579.001631"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "ok, so are we set on proto?",
+        "ts": "1478032691.001632"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would say yes.  Unless we wanted to switch all of our persistent data to another encoding like ANS.1 or something, but I thought that was ruled 'too expensive' for the time being",
+        "ts": "1478032765.001633"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would not support a move to JSON, that seems like a step back to me",
+        "ts": "1478032782.001634"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Keep that asterisk on the need for a timestamp, I've emailed Marko.)",
+        "ts": "1478032787.001635"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "i say to move on with CR and change re timestamp if needed later since we need this to hammer out other stuff this week",
+        "ts": "1478032936.001636"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> I would rephrase\u2026 we need time to evaluate ASN.1 or no but (1) moving towards a good base set and (2) keeping serialization encapsulated would give us most flexibility",
+        "ts": "1478032940.001637"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(so not ruled out becaue of expense\u2026 although performance is clearly the big unknown tipping point here)",
+        "ts": "1478032979.001638"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "fair ?",
+        "ts": "1478032983.001639"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "By expense, I meant from a development time perspective, not a performance one",
+        "ts": "1478033000.001640"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(So, yes, I think I agree)",
+        "ts": "1478033030.001641"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah ok",
+        "ts": "1478033060.001642"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1478033061.001643"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also we do need to do the consolidation <@U26T99AQ4> and <@U0XPR4NP4> were working on ?",
+        "ts": "1478033094.001644"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you like we can do it in two steps (1) pull what you have in ab.proto and (2) consolidate fabric and ab",
+        "ts": "1478033266.001645"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I can take a stab at the consolidation based on",
+        "ts": "1478033344.001646"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2X4RV0DR\/pasted_image_at_2016_11_01_04_49_pm.png|Pasted image at 2016-11-01, 4:49 PM>",
+        "file": {
+            "id": "F2X4RV0DR",
+            "created": 1478033348,
+            "timestamp": 1478033348,
+            "name": "Pasted image at 2016_11_01 04_49 PM.png",
+            "title": "Pasted image at 2016-11-01, 4:49 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 185208,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2X4RV0DR\/pasted_image_at_2016_11_01_04_49_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2X4RV0DR\/download\/pasted_image_at_2016_11_01_04_49_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 237,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 316,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 473,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 631,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2X4RV0DR-cb2445d4c5\/pasted_image_at_2016_11_01_04_49_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 673,
+            "image_exif_rotation": 1,
+            "original_w": 1938,
+            "original_h": 1274,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2X4RV0DR\/pasted_image_at_2016_11_01_04_49_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2X4RV0DR-2fa79638b5",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1478033351.001647"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "is that better approach ?",
+        "ts": "1478033366.001648"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So I think some of the fields need to additionally be in the outer header, like the nonce (to allow signing over this), and possibly a date (we're waiting on info on this) and will likely need to add an epoch as well",
+        "ts": "1478033434.001649"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1478033449.001650"
+    }
+]

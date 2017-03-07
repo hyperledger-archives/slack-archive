@@ -1,0 +1,50 @@
+[
+    {
+        "type": "message",
+        "user": "U2NNLN56V",
+        "text": "Hi, one question about lockbased-txmgr. 'read your writes\u2019 not supported?  I found lockBasedQueryExecutor would not query rwset.",
+        "ts": "1483528331.000164"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U39S0S55F> \u2018updates\u2019 are the updates to be applied by prior trans in the block.  So if this transaction has read a key that has already been updated by a prior tran, we know right away that it will fail MVCC check, and can return false.",
+        "ts": "1483529903.000165"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U2NNLN56V> \u2018read your writes\u2019 will not be supported.  We query the state database, which at simulation time is not yet updated.  Therefore there are no writes there to be read. This could be worked around easily enough for simple key reads, but not for complex queries that use the state database query engine, therefore we need to consistently not \u2018read your writes\u2019.  Remember, the transaction being simulated is simply a proposal of what to apply to the ledger\u2026 nothing has been written yet. This will need to be documented so that application developers keep it in mind when writing chaincode.  If they need to be aware of a prior write in the tran, they will need to factor that into the chaincode.",
+        "ts": "1483530294.000166"
+    },
+    {
+        "type": "message",
+        "user": "U2NNLN56V",
+        "text": "If rwset is associated with transaction, it could be OK to \u2018read your writes\u2019?",
+        "ts": "1483532084.000167"
+    },
+    {
+        "type": "message",
+        "user": "U2NNLN56V",
+        "text": "another question: same behaviour with couchdb-txmgr?",
+        "ts": "1483532171.000168"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, it could be ok to \u2018read your writes\u2019, however it is not practical, especially in the case of couchdb where we push down queries to the database engine.  It would not be practical to write a similar behaving query engine over the rwset.",
+        "ts": "1483536668.000169"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "better to delegate and leverage the capabilities of the battle tested database engines",
+        "ts": "1483536713.000170"
+    },
+    {
+        "type": "message",
+        "user": "U39S0S55F",
+        "text": "<@U1KFCPFQA> Thank you!",
+        "ts": "1483578841.000171"
+    }
+]

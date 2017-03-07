@@ -1,0 +1,374 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XPR4NP4> ?",
+        "ts": "1476800469.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> Am here.",
+        "ts": "1476800487.002189"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476723783002186> :slightly_smiling_face:",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476723783002186",
+                "fallback": "[October 17th, 2016 10:03 AM] hgabor: Yes, but then what to do in the tests? That is what I said, that the test's System implementation could terminate after it thinks it is only receiving pull and hello messages ",
+                "ts": "1476723783.002186",
+                "author_subname": "hgabor",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "Yes, but then what to do in the tests? That is what I said, that the test's System implementation could terminate after it thinks it is only receiving pull and hello messages ",
+                "author_name": "Gabor Hosszu",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/hgabor",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/00f4290e36c198abb7d4f0ea586245db.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0012-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1476800506.002190"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I've been thinking on that, trying to come up with a good solution.  Especially how to differentiate the case where \"Now there are only pulls scheduled, but one of them will cause more work to happen\" from \"Now there are only pulls scheduled and nothing will happen\"",
+        "ts": "1476800718.002192"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The most elegant way I can come up with is essentially to set a flag for testing, which tracks the last pull from every replica, and, if all the pulls match, and the pull timer fires again, to stop the pull timer.  I don't like it, but struggling to come up with a better way to handle it",
+        "ts": "1476801084.002193"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Yeah but that way it will be needed to change the sbft implementation, as I see",
+        "ts": "1476801430.002194"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I'm certainly open to other ideas, not wild about that solution, just the cleanest that comes to mind",
+        "ts": "1476801503.002195"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I meant changing it and hack some logic into it only used for testing",
+        "ts": "1476801523.002196"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "My idea was \"checking if there are only pulls\" but as you said the case \"Now there are only pulls scheduled, but one of them will cause more work to happen\" will break it",
+        "ts": "1476801603.002197"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1476802328.002198"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, I'm working on adding support for channels on the Kafka orderer. For reference, you have Alice, Bob interacting with two different Kafka orderers\/shims, and the Kafka cluster \/ ZK ensemble standing behind that.",
+        "ts": "1476806366.002199"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Client - &gt; Shim -&gt; Kafka Cluster | ZK Ensemble)",
+        "ts": "1476806398.002200"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What you want to do is have Alice send a transaction that says \"I want a channel where only Bob and I can transact on\",   and in the end get a partition that only you two can read to\/write from. (We of course assume that all shims play nicely, and conform to that partition's ACL. No byzantine faults here.)",
+        "ts": "1476806583.002201"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I looked at the relevant KIPs, etc. and I think my options come down to these.",
+        "ts": "1476806651.002202"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "1. The ACL is maintained by the shim. You need some custom form of consensus among the shims to establish order. (Congratulations, you've added yet another headache.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476807430.000000"
+        },
+        "ts": "1476806735.002203"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "2. The ACL is handled by Kafka, which in turns posts it to ZK. This is the native way that Kafka does ACLs but it presents a few issues. One, there's no API for this yet, as the underlying protocol is still at KIP\/RFC level. We would get this by literally having the shim call the authorizer CLI. Two, even if that solves the ACL issue for channels (since Kafka can handle it natively), there will always be ordering-related metadata that we want to use at the shim level that is not already covered by Kafka, whether it's at KIP-level or not.",
+        "ts": "1476806995.002204"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "3. Taking a cue from the above, have the shims interact _directly_ with the ZK ensemble. (This is essentially config info that you wish to persist in a distributed manner, think etcd.) This means we don't use Kafka's ACL feature, and instead enforce ACL on the shim level.",
+        "ts": "1476807105.002205"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "4. Have the shims maintain the ACL (and all other related config metadata), but don't go with ZK, etcd, or any custom consensus mechanism between them. Instead, use a special Kafka topic for such kind of config metadata. The shims write to a special Kafka topic\/partition, and apply the ACL once they've read it back from the partition.",
+        "ts": "1476807224.002206"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I like Option 4 more. (3 is nice as well, but probably adds more overhead.)",
+        "ts": "1476807273.002207"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't know how Kafka works, but I have some experience with ZK and I think that option 3 is cool because it gives you:\n- a notification to Alice (Bob) when Bob (Alive) has selected a channel for them (in case they come up at the same time) you can register everyone under a shared path and set a watcher, or maybe decide some other method.\nBut now when I think of it- why did you think only of alive and bob? is there something special for pairs or is this just an example for any K? because, if it's only for pairs- you can simply always decide that for each A,B the channel will be something like A &lt; B? AB : BA or something like that",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476808636.000000"
+        },
+        "ts": "1476808541.002209"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, to offer dissenting opinion, I'll postulate that it is (1) that is the best answer.  And, it can be accomplished with no _additional_ consensus.",
+        "ts": "1476811050.002212"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF> Alice and Bob is just a simplification. It can and should work with multiple participants.",
+        "ts": "1476811080.002213"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So if the set is A1,A2,A3... Ak why not arrange then lexically and define the shared channel to be the concatenation of the A_i's?",
+        "ts": "1476811124.002214"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The problem is not the naming of the channel. Imagine you wish to add or remove participants from it. These changes need to be ordered.",
+        "ts": "1476811225.002215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Each shim must be able to interpret the output from kafka for a partition as a blockchain, otherwise, it cannot fulfill the ab.proto definition.  Additionally, there must be some consensus on the contents of a block, assuming the batch size is greater than one.  So, there is a blockchain, which embeds the ACL, the contents of which are already consensed on, so each shim can evaluate requests against the ACL, I don't see the problem.",
+        "ts": "1476811254.002216"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This is essentially option 4.",
+        "ts": "1476811322.002217"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How are blocks cut?",
+        "ts": "1476811366.002218"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "By passing all the messages in a partition and cutting every, say, 100 messages you get back on that partition. Same underlying logic.",
+        "ts": "1476811420.002219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But what if I want to create a channel\/partition and send 3 transactions on it?",
+        "ts": "1476811440.002220"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "kostas, regarding 4- what is the retention for the topic? it needs to be preserved for ever because if Alice joins next month she should be able to read that ACL, right?",
+        "ts": "1476811495.002221"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: For now, yes.",
+        "ts": "1476811568.002222"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0XPR4NP4>: What about it?",
+        "ts": "1476811596.002223"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, no block would ever be created?  Because there were not 100 messages, only 3?  What I am driving at, is that I think in order to cut blocks, that there must be some sort of leader election among the shims.  Whether this is done through ZK, a special topic, or whatnot.  And at this point, it seems like the ACL problem sort of 'goes away'",
+        "ts": "1476811688.002224"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right, there is a timeout after which a \"time-to-cut\" message is sent, and when you read it back you know you can cut.",
+        "ts": "1476811756.002225"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It's the same logic as in Option 4. You are describing option 4.",
+        "ts": "1476811777.002226"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Option 4 is build on top of Kafka. Option 1 is have comms between the shims, leaving Kafka and ZK out of it.",
+        "ts": "1476811969.002227"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, okay, great, then yes, I don't really want (1).  To me, (2),(3),(4) implied building some additional consensus for ACL support, and that struck me as unnecessary.",
+        "ts": "1476812024.002228"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "correct me if I'm wrong, I don't know much about kafka but if you have information messages `m1, m2, m3` sent on that option 4 kafka topic in that order and you decide to delete `m2` (from the disk), you can't, right? you need to \"wait\" until its \"cleaned\", but you can't have kafka clean only `m2`, so in the long term won't there be a space problem if you need `m1` but you want to delete `m2, ... m10000`? you'll need to \"move\" `m1` to the head of the topic or something? isn't it a management overhead? That's why I think (3) is better, because you can also \"update\" a node and not only \"append\".",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476812708.000000"
+        },
+        "ts": "1476812689.002229"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: You send a message that says \"members are now X, Y, Z\", once the shims read this, they enforce this ACL. Even if the old message that said \"members are now X, Y\" is still available on the broker it doesn't matter because it has a smaller offset.",
+        "ts": "1476813117.002231"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "members of what are now X,Y,Z? I thought you have many channels, so you need for *each* channel to say: members of channel *C* are: X, Y, Z, and send that on that shared topic, or am I missing something?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476813214.000000"
+        },
+        "ts": "1476813204.002232"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so I'm asking- if I understand correctly and you have 1 kafka topic in which you send *everything*, then if there is a channel *C'* for which there is no update in its membership, it can't be deleted, otherwise it'll disappear. am I wrong?",
+        "ts": "1476813390.002234"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Members of a channel 'C' are now X, Y, Z.",
+        "ts": "1476813520.002235"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The first statement is correct.",
+        "ts": "1476813537.002236"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The second statement is also correct. We've discussed the option of closing a channel if there hasn't been any activity on it for a while, so I guess at this point you would also post on the same topic, but nothing concrete yet. At any rate, if the Kafka partition is to be pruned, you would have to re-persist the channel memberships periodically.",
+        "ts": "1476813681.002237"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and who does the re-persistence? don't you need consensus on that?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476813798.000000"
+        },
+        "ts": "1476813765.002238"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how does a shim know he's the re-persister?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476813804.000000"
+        },
+        "ts": "1476813773.002239"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The pruning of a Kafka topic is actually a config setting in Kafka, it happens w\/ no interaction from the shims.",
+        "ts": "1476813837.002242"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ah, you deleted the Q :simple_smile:",
+        "ts": "1476813851.002243"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah I sometimes type something and think of another thing",
+        "ts": "1476813862.002244"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No problem, I do that a lot as well.",
+        "ts": "1476813872.002245"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "As for the rest of the questions, this goes back to the \"how do we cut a block\" discussion. Introduce a random amount of delay to each shim, and have them all post to the topic. (So: if X, Y, see Z's message on the delivery stream first, and it matches what they were to send, they cancel their own transmission.) This not the cleanest of solutions, and a case where Option 3 would help (by setting a watch, etc.).",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476815976.000000"
+        },
+        "ts": "1476814300.002246"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, that's all I wanted to bring up (well, I *am* a fan of ZK so maybe its biased)",
+        "ts": "1476814359.002247"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes, I hear you. Thanks for the feedback. I haven't discounted Option 3 entirely yet, and depending on what my tests show I may bring it up again.",
+        "ts": "1476814456.002248"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0XQ35CDD> : good discussion! Your 3 would look silly given that there is already such a coordination tool, which is option 4. overall, i would not make it overly complex: start with a static configuration,  topics remain there forever (cannot be closed), just like their ledgers would remain, and so on.",
+        "ts": "1476818327.002250"
+    }
+]

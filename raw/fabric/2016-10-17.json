@@ -1,0 +1,159 @@
+[
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U1P1ZV6RF>: There is some documentation in protocol-spec.  Please go to <#C2GE7GXM1|fabric-crypto> and ask there.",
+        "ts": "1476692576.003004"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U23S3DPFY> Thanks for the response :slightly_smiling_face:",
+        "ts": "1476695378.003006"
+    },
+    {
+        "user": "U0PG8VA4Q",
+        "text": "<@U0PG8VA4Q|ahannigan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476695578.003007"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m getting this error when trying to test out chaincode deployment:\n```root@peer-1:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric#  CORE_CHAINCODE_DEPLOYTIMEOUT=2000000 peer chaincode deploy -p <https:\/\/github.com\/donovanhide\/chaincode>  -c '{\"Function\":\"init\", \"Args\": []}'\n09:58:30.350 [logging] LoggingInit -&gt; DEBU 001 Setting default logging level to DEBUG for command 'chaincode'\nError: Error building chaincode: rpc error: code = 2 desc = Error getting chaincode package bytes: Error getting code Getting chaincode took too long\n```\nTrying to debug, but shouldn\u2019t this logger be `chaincode` rather than `golang\/hash`:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/chaincode\/platforms\/golang\/hash.go#L41>\nMeans you don\u2019t get this line in the log:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/chaincode\/platforms\/golang\/hash.go#L167>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476698715.000000"
+        },
+        "ts": "1476698710.003009"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```vagrant@hyperledger-devenv:v0.0.11-7123f77:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer$ .\/peer chaincode deploy -p <https:\/\/github.com\/donovanhide\/chaincode>  -c '{\"Function\":\"init\", \"Args\": []}'\nDeploy chaincode: 3be00d13650d46b1caf84289bd8bb762b27227c01f70a3357b2144d267d426f40259179790b9dd9e074a8956598c2eb48aa2b397b68fcffde85f654a0cd5966b```",
+        "ts": "1476705034.003012"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BGFAHC7> your command worked for me against 0.6 release (I just had that handy but should work on master also) and I see the container started and running",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1476705304.000000"
+        },
+        "ts": "1476705068.003013"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```vagrant@hyperledger-devenv:v0.0.11-7123f77:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer$ docker ps\nCONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES\nc1d9f97baede        9d8fb89e5f84        \"\/bin\/sh -c 'go insta\"   9 seconds ago       Up 8 seconds                            ecstatic_saha\nvagrant@hyperledger-devenv:v0.0.11-7123f77:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer$ ```",
+        "ts": "1476705095.003014"
+    },
+    {
+        "user": "U2GEGKXJA",
+        "text": "<@U2GEGKXJA|stchrysa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476705169.003015"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0ULK2JPP> Thanks, I got it working by doing a manual `go get` and then omitting the `https:\/\/` from the path. I\u2019m running 5 peers on single machine until I get a corporate credit card on that Kubernetes account :slightly_smiling_face: It looks like the `deploytimeout` env variable might not be being picked up.",
+        "ts": "1476705588.003017",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BGFAHC7> more to your point though, not sure about the logging component\u2026 the package being completely outside of chaincode. But I can see why we\u2019d want that",
+        "ts": "1476705590.003018"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "The developer preview on Bluemix has had some issues (I think new fabrics have patches for these as of this week) and we got a number of divergent block chains. I have been obsessed with the need for a quick way to find the divergent block and decode the transactions, gathering all data from all peers into one message. I really got into in on the weekend and finished it up today. Here is the node-red flow (with 3 sub flows) for that: <https:\/\/github.com\/ibm-watson-iot\/blockchain-samples\/tree\/master\/testing\/node-red\/fabricDivergentBlockFinder> ... use this to quickly diagnose your divergence issues. If there are errors on one or more peers, you may be experiencing the issues we've been seeing. But if there are no transaction errors and your hash diverges anyway, then look to your chaincode as a possible (more likely probable) source for the divergence (as in non-deterministic behavior.)",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "ibm-watson-iot\/blockchain-samples",
+                "title_link": "https:\/\/github.com\/ibm-watson-iot\/blockchain-samples\/tree\/master\/testing\/node-red\/fabricDivergentBlockFinder",
+                "text": "blockchain-samples - Samples demonstrating the use of Blockchain with IBM Watson IoT",
+                "fallback": "GitHub: ibm-watson-iot\/blockchain-samples",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/16575965?v=3&s=400",
+                "from_url": "https:\/\/github.com\/ibm-watson-iot\/blockchain-samples\/tree\/master\/testing\/node-red\/fabricDivergentBlockFinder",
+                "thumb_width": 263,
+                "thumb_height": 263,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1476734124.003023"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Y55KNG2> so a tool that\u2019ll walk through the blockchain on different peers and point to points of divergence (and follow them recursively) ?",
+        "ts": "1476737538.003025"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0ULK2JPP> Not sure what you mean by recursively. It polls all configured peer urls for the \/chain and verifies first that the height is the same (might be in between catch ups) ... then is so, it proceeds to verify the hashes. If they are the same, then it does nothing else. If they differ, then it performs a binary search to find the first block with hash divergence.  I would call it iterative rather than recursive.",
+        "ts": "1476737689.003026",
+        "reactions": [
+            {
+                "name": "heart",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0ULK2JPP>  And it does not work on today's Bluemix fabrics because the urls shown in the dashboard send it to the web page, and that's what the tool gets back.",
+        "ts": "1476737734.003027"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0ULK2JPP> The response message sorts all output to be the same order as the config URLs ... so vp0 to vp3 for example ... it shows hash and prevhash separately for convenience (to prove that it is the dirvergent block) and then summarizes and decodes the chaincode ID and transactions to speed up diagnosis.",
+        "ts": "1476737841.003028"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks for sharing <@U0Y55KNG2> \u2026 this needs to be checked out for sure!",
+        "ts": "1476737966.003029"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0ULK2JPP> Glad you like it ... I enjoyed the node-red education and have been pining for such a tool. I want to run in parallel with our IoT contract long term tests so that we can prove deterministic behavior etc ...",
+        "ts": "1476738056.003030"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "just curious\u2026do you have a feel for for how fast\/slow it is ?",
+        "ts": "1476738156.003031"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "to run thru the blocks I mean",
+        "ts": "1476738178.003032"
+    }
+]

@@ -1,0 +1,229 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In fabric 0.5, the `core.yaml` file,  the `peer.tls.{cert, key} `are needed to be configured in order for p2p to work with SSL.\nWhat roles do these files have? Are they the peer's public and private key? If so- what happens is that when a peer starts up it sends the pub key to the membership service in order for the membership service to distribute them to the rest of the peers on demand? <@U0PB67X4K>  perhaps you know?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476782223.000000"
+        },
+        "ts": "1476777661.002109"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Hi <@U0ZJZBJLF>  - `peer.tls.{cert, key}`  would be what you would normally call the \"server\" key pair in the web server \/ app server world - aka used for the server-side TLS endpoint",
+        "ts": "1476785816.002111"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "The TLS communication today is strictly one-way",
+        "ts": "1476785835.002112"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the server-side p2p you mean",
+        "ts": "1476785837.002113"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's 1 way- I know, you have that \"initiated chat\" bool thing",
+        "ts": "1476785861.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "one-way TLS - meaning there is no exchange of client certificates at the TLS layer",
+        "ts": "1476785881.002115"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh ok",
+        "ts": "1476785888.002116"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But, is it a self signed cert then?",
+        "ts": "1476785937.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and basically when you \"enroll\" with membership services, each peer \/ client downloads the root CA for the TLSCA - so again trust is at a pure root CA level",
+        "ts": "1476785945.002118"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's a chicken \/ egg problem actually - so each peer can get its TLS cert from membership services (its part of enrollment) but then there is no way to really configure it to use it dynamically.  So you basically would need to start the peer with TLS disabled, enroll the peer, stop the peer, change the config to point to the key\/cert pair you just downloaded and then restart with TLS enabled",
+        "ts": "1476786047.002119"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but when you call cryptoPeer.Verify and you don't have the certificate of that peer, a gRPC goes to the membership service and downloads something which does into your crypto validator cache. \nWhat is that? is that the same `peer.tls.cert` file, only signed by the membership service?",
+        "ts": "1476786050.002120"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "NET-NET - its not usable today",
+        "ts": "1476786058.002121"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see, so the `peer.tls.{cert, key}` actually originate from the membership service",
+        "ts": "1476786125.002122"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do you mean by NET-NET ?",
+        "ts": "1476786149.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "\"in short\"",
+        "ts": "1476786165.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "or \"bottom line\"",
+        "ts": "1476786177.002125"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "for the BMX service - we don't use the TLS certs issued by membership services - we actually use our own",
+        "ts": "1476786214.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but we kinda trick the system since we use a wildcard",
+        "ts": "1476786269.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the whole thing is a mess because the TLSCA doesn't properly issue TLS certs with the right CNs, Subject or SANs - so hostname verification fails unless you use the override",
+        "ts": "1476786318.002128"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "which makes it all essentially worthless",
+        "ts": "1476786339.002129"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I remember invoking openssl and then trying to start the peer with that, didn't work",
+        "ts": "1476786382.002130"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so I used the chaincode folder's certificates :confused:",
+        "ts": "1476786397.002131"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So  - for v1.0 - my take is that we don't make TLS optional - it should always be used for p2p connections and we do it in a usable \/ useful fashion.  We have most of the core plumbing  \/ building blocks, it's just putting it together correctly",
+        "ts": "1476786455.002132"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok and 1 more question - the crypto peer has this Sign\/ verify methods. Are these different from the same files used for the SSL?",
+        "ts": "1476786460.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah",
+        "ts": "1476786471.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there are enrollment certs which are used for signing and TLS certs used for p2p communication",
+        "ts": "1476786499.002135"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see... well there goes that idea, <@U2BGFAHC7>  there is no point of playing with the TLS-unique anymore.",
+        "ts": "1476786539.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks Gari, I understand things better now!",
+        "ts": "1476786554.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well I would not necessarily rule that out - in v1.0 I am not sure why one could not use the same cert for signing and TLS",
+        "ts": "1476786576.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in the case of peers which have to be identified anyway",
+        "ts": "1476786588.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that idea was for 0.5",
+        "ts": "1476786589.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "0.5 and 0.6 have \"sailed\" as they say.  v1.0 is all we should care about  :wink:",
+        "ts": "1476786629.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i see",
+        "ts": "1476786650.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "meaning we can fix bugs on 0.6 but the whole community should be getting behind v1.0",
+        "ts": "1476786677.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "else we will never get it done",
+        "ts": "1476786691.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1476786733.002145"
+    },
+    {
+        "user": "U15GBPSEB",
+        "text": "<@U15GBPSEB|milansijan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476815510.002146"
+    }
+]

@@ -1,0 +1,845 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> - what is blockcutter doing when the batch is filled but is queuing as the previous batch is still being processed?",
+        "ts": "1481103991.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and related to that - <@U0XQ35CDD> - does Kafka ordering service pipelines batches\/blocks or not?",
+        "ts": "1481104034.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0Y14MWA2>: It doesn't. Ordering and then applying config and\/or writing to the ledger happens in the same thread sans buffers in between. <https:\/\/github.com\/kchristidis\/fabric\/blob\/fab-819-preview\/orderer\/kafka\/main.go#L214>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481114673.000000"
+        },
+        "ts": "1481114665.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If this turns out to be a bottleneck, pushing the batches to a queue and having a separate goroutine handle the `WriteBlock()` call would allow for some parallelization, but seems a bit premature to optimize at this point.",
+        "ts": "1481114737.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Ok - that said we'll need it eventually",
+        "ts": "1481114781.000377"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Understood. (And agreed.)",
+        "ts": "1481114798.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Now vack to blockcutter",
+        "ts": "1481114799.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If the queue due to absence of pipelining is growing",
+        "ts": "1481114815.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Does blockcutter cut the queue into say 25 queued blocks",
+        "ts": "1481114851.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Or it lets the block consisting of queued tx grow to be one big block?",
+        "ts": "1481114877.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It would be the latter but at any rate the block wouldn't exceed `batchSize` messages at a time.",
+        "ts": "1481114941.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The blockcutter in its current implementation is quite simple: <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=orderer\/common\/blockcutter\/blockcutter.go;h=de4354b7c80e1afd165fd65f328c400437a716b3;hb=refs\/heads\/master#l64>",
+        "ts": "1481115047.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It exposes an `Ordered()` and `Cut()` method. As a consensus plugin you invoke the first one sequentially to get the transactions ordered. You may additionally have to invoke the `Cut()` method if, say, your batchTimer has expired and you want to _force_ the cutting of a block.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481124606.000000"
+        },
+        "ts": "1481115050.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Hm so kafka orders tx and then",
+        "ts": "1481115111.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "After that",
+        "ts": "1481115117.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "The block is formed (cut)?",
+        "ts": "1481115129.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, in the two existing implementations (solo and kafka), when the batch is filled you don't currently have any queueing in the blockcutter going on. For instance in solo, it's the same thread that invokes the blockcutter and then does the processing, all sequentially sans buffers in between. (Same for Kafka). <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=orderer\/solo\/consensus.go;h=e7d79e8cc458448a08ba4258da6649584520a58d;hb=refs\/heads\/master#l96>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481115244.000000"
+        },
+        "ts": "1481115218.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes.",
+        "ts": "1481115223.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "o-k",
+        "ts": "1481115244.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so this would be different in pbft where batching happens before ordering",
+        "ts": "1481115260.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(at the leader)",
+        "ts": "1481115280.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "do you have some doc around impl of kafka orderer?",
+        "ts": "1481115337.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or should I browse the code :stuck_out_tongue:",
+        "ts": "1481115368.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "For the PBFT comment - correct: <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=orderer\/multichain\/chainsupport.go;h=5cd89370f5da108dc473c9d2fbdc30de46b7b407;hb=refs\/heads\/master#l39> (see line 44)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481115440.000000"
+        },
+        "ts": "1481115433.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok very good so you thought about this",
+        "ts": "1481115468.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now my question for cut-then-order",
+        "ts": "1481115481.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if we have fixed size batches\/blocks this will drown throughput",
+        "ts": "1481115500.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "how sbft works currently is that all pending tx form one big block",
+        "ts": "1481115520.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and if this is beyond MaxBlockSize",
+        "ts": "1481115531.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so be it",
+        "ts": "1481115532.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "RE: Kafka documentation. I have a high-level overview about why the Kafka orderer is designed the way it is <https:\/\/docs.google.com\/document\/d\/1vNMaM7XhOlu9tB_10dKnlrhy5d7b1u8lSY8a-kVjCO4\/edit> but not sure if it's the low-level detail that you want. (Code's quite straightforward as well though: <https:\/\/github.com\/kchristidis\/fabric\/commit\/f9006f4c997dbbc8ae5a8f6e1b45fbf1cb3afffa#diff-cfa1d868ef1cd7b2f466aca2b058e752R173>)",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Rebase Kafka orderer on common components \u00b7 kchristidis\/fabric@f9006f4 \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/kchristidis\/fabric\/commit\/f9006f4c997dbbc8ae5a8f6e1b45fbf1cb3afffa#diff-cfa1d868ef1cd7b2f466aca2b058e752R173",
+                "text": "Change-Id: Ifeefad3263be43a21bb550e266ac49be736c13f5",
+                "fallback": "GitHub: Rebase Kafka orderer on common components \u00b7 kchristidis\/fabric@f9006f4",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/14876848?v=3&s=200",
+                "from_url": "https:\/\/github.com\/kchristidis\/fabric\/commit\/f9006f4c997dbbc8ae5a8f6e1b45fbf1cb3afffa#diff-cfa1d868ef1cd7b2f466aca2b058e752R173",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481115590.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok - your order and cut explanation is for the moment sufficient",
+        "ts": "1481115620.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but for cut-then-order the current fixed size blockcutter won't really fly until we have pipelining in sbft",
+        "ts": "1481115660.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "otherwise the performance will suck big time",
+        "ts": "1481115670.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I see your point - makes sense.",
+        "ts": "1481115694.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XQ35CDD>  I saw that the JIRA issue regarding gRPC TLS pinning has been marked *Done*. Did you guys implement in the kafka shim something similar to what simon implemented in the connection.Manager?",
+        "ts": "1481118388.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: There's no option to delete an issue (more appropriately: there is, but isn't exposed to us). \"Done\" is me clearing out the issues under the \"consensus\" component that we are no longer working on. As far as I can guess, this will be captured by Gari's common gRPC server work.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481123864.000000"
+        },
+        "ts": "1481118676.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So he's also going to implement the pinning?",
+        "ts": "1481118762.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't see that in the JIRA issue",
+        "ts": "1481118777.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I do not know, and I could be wrong. I have a backlog of issues I need to double-check on, and this is one of them.",
+        "ts": "1481118831.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-1255>",
+        "ts": "1481118853.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see...",
+        "ts": "1481118867.000419"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U1KDHJT6H> is there a way to add to the JIRA workflow statuses like: \u201cInvalid\u201d, \u201cWon\u2019t fix\u201d?",
+        "ts": "1481119042.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Maybe ask the guys in <#C0YMWRX19|ci-pipeline>  to manually override the status of the issue? or give people permissions to do so?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481119058.000000"
+        },
+        "ts": "1481119044.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Also, from what I can tell by reading the issue, it was about _investigating_ pinning, so no concrete deliverable was tied to it.)",
+        "ts": "1481119087.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "`WONTFIX` would be lovely.",
+        "ts": "1481119099.000424",
+        "reactions": [
+            {
+                "name": "spock-hand",
+                "users": [
+                    "U1HFNJB50"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hey I was just curious, that's all :wink:",
+        "ts": "1481119111.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No problem, you did well and you reminded me to check with FAB-1255 as well.",
+        "ts": "1481119145.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I also don't think that it's correct to implement certificate pinning inside a consensus plugin (I mean- simon did that in the sbft because it has multiple nodes, but maybe in the future we'll have more types of these, and this sounds too cohesive with security to be in the sbft package anyway)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481119305.000000"
+        },
+        "ts": "1481119150.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Why do I have glimpses of a conversation here a couple of weeks ago that treated pinning as a done deal? I remember pointing out the issues that Keith had mentioned in <https:\/\/jira.hyperledger.org\/browse\/FAB-708?focusedCommentId=19397&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-19397>",
+        "ts": "1481119489.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nSo is the issue that go grpc doesn't provide a way to enable mutual TLS and to extract the client cert on the server?\nI see the following for doing mutual TLS <https:\/\/github.com\/grpc\/grpc-go\/issues\/403> but doesn't give you access to the client cert. I see this discussed (at length) in <https:\/\/github.com\/grpc\/grpc-go\/issues\/111>. It seems to indicate that we need to implement our own TransportAuthenticator but is not clear.\n```\n?",
+        "ts": "1481119557.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you mean this?",
+        "ts": "1481119561.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That's what I had pointed out when it was brought up a couple of weeks ago. (I am aware of the fix that you pushed later on, and I remember our conversation later that day.)",
+        "ts": "1481119600.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, if you replay the memory forward you'll remember that I said it can be done :thumbsup_all:",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481119688.000000"
+        },
+        "ts": "1481119639.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct.",
+        "ts": "1481119723.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I actually have a commit pending that extracts the certificate from both ends: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2841\/> for the gossip mutual TLS",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481119954.000000"
+        },
+        "ts": "1481119748.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Does this seem like something that should be included in the FAB-1255 work, or are we overstepping our boundaries here?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481119774.000000"
+        },
+        "ts": "1481119763.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "does what seem?",
+        "ts": "1481119795.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "TLS pinning.",
+        "ts": "1481119818.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh. well, I dunno. I'd ask Gari, if he's planning to do something like that in his gRPC server, I didn't see that in the sub-tasks though... But, isn't TLS pinning really related to identity though? (you need to know who are the servers you pin their cert)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481119917.000000"
+        },
+        "ts": "1481119870.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- shouldn't the crypto guys be involved with this somehow?",
+        "ts": "1481119891.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Outside my domain, so I'll defer to others for the right call.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481120816.000000"
+        },
+        "ts": "1481119939.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481079923000359>\n\n<@U0XQ35CDD> <@U0ULK2JPP> This comment is absolutely true, sorry about that.  I had your comment from that changeset in mind, thinking that we should really delay the ack until after `Enqueue` returns successfully, which would give us the desired 'in consensus' behavior.  So yes, today, an ACK only means that the shim has it, not that it is in consensus.  A failure to send to Kafka for instance could absolutely cause the transaction to be lost.",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481079923000359",
+                "fallback": "[December 6th, 2016 7:05 PM] kostas: I had raised the following point during the review of the changeset that introduced the common broadcaster: <https:\/\/gerrit.l.org\/r\/#\/c\/2763\/3\/orderer\/common\/broadcast\/broadcast.go@141> ",
+                "ts": "1481079923.000359",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "I had raised the following point during the review of the changeset that introduced the common broadcaster: <https:\/\/gerrit.l.org\/r\/#\/c\/2763\/3\/orderer\/common\/broadcast\/broadcast.go@141> ",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1481123715.000000"
+        },
+        "ts": "1481123670.000449",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD",
+                    "U0ULK2JPP"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "makes sense .. just wanted t know where the boundaries were.. thanks Jason, Kostas",
+        "ts": "1481124057.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481115660000410>\n\nYou may choose to cut a block at any time by invoking `CutBlock`.  In solo this is done via a simple timer, but in actually distributed consensus, the decision on where to invoke `CutBlock` must be consented upon.  In the Kafka case, the last I heard was to have the shims send a special 'cutblock' meta-message for a particular block when a timer expires, and the first message to arrive wins.  In the SBFT case I think this is actually easier, as the leader may do the simple timer logic, and the backups merely need to replicate his behavior by passing the transactions in order through the blockcutter and invoking `CutBlock` themselves.\n\nNote that in order to support configuration on the chain, some transactions now modify 'state', and this is going to complicate sbft noticeably, especially supporting pipelining.  It should not be insurmountable, and should generally not affect performance as the state modifying transactions should be extremely infrequent.  In short, 'normal transactions' may be ordered in a pipelined fashion, but a reconfiguration transaction must be executed before any additional transactions may be ordered.",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481115660000410",
+                "fallback": "[December 7th, 2016 5:01 AM] vukolic: but for cut-then-order the current fixed size blockcutter won't really fly until we have pipelining in sbft",
+                "ts": "1481115660.000410",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "but for cut-then-order the current fixed size blockcutter won't really fly until we have pipelining in sbft",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1481124550.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> ^",
+        "ts": "1481124570.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "What reconfiguration do we plan to support for v1?",
+        "ts": "1481124687.000458"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XPR4NP4> Can we expect that an event notification be raised for every transaction, ordered or not, including failures such as these lost messages (especially since we had already ack'd them)?",
+        "ts": "1481124853.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> The biggest piece of reconfiguration is chain membership, ie who is allowed to transact on the chain.",
+        "ts": "1481124999.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Client\/peer membership or orderer membership?",
+        "ts": "1481125048.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Client\/peer membership is the must have.  There's also the requirement to support chain creation which is a variation on that theme.",
+        "ts": "1481125094.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For Kafka, we will support orderer membership changes, but for SBFT I think we could say orderer membership changes are not allowed.",
+        "ts": "1481125123.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Chain creation seems irrelevant for pbft",
+        "ts": "1481125128.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why is that?",
+        "ts": "1481125148.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "It is used only for confidentiality and that does not make much sense in the Byz model",
+        "ts": "1481125164.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "As Byz orderer can leak over channels as it pleases",
+        "ts": "1481125191.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I agree the use case is a little fuzzy for multi-chain and byzantine.  But, it comes essentially 'for free', so I don't see any reason to explicitly disallow it.",
+        "ts": "1481125248.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "It is not really for free",
+        "ts": "1481125261.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "It requires a lot of acounting",
+        "ts": "1481125275.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Unless somebody else takes care of this",
+        "ts": "1481125286.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, this is a common component that sbft does not need to handle",
+        "ts": "1481125298.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "And pbft just forwards metadata around",
+        "ts": "1481125305.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Effectively multiplexing channels",
+        "ts": "1481125314.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's nothing which prevents the consensus algorithm from multiplexing channels if it so desires.  However, I do think that would be a lot of work.  The easiest way to handle it would simply be to run an instance of sbft per channel.",
+        "ts": "1481125381.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481124853000459>\n\nWhat event are you looking for? The only events I'm aware of are events encoded in transactions, which are processed when the transaction is committed to the chain.",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1481124853000459",
+                "fallback": "[December 7th, 2016 7:34 AM] scottz: <@U0XPR4NP4> Can we expect that an event notification be raised for every transaction, ordered or not, including failures such as these lost messages (especially since we had already ack'd them)?",
+                "ts": "1481124853.000459",
+                "author_subname": "scottz",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0XPR4NP4> Can we expect that an event notification be raised for every transaction, ordered or not, including failures such as these lost messages (especially since we had already ack'd them)?",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/scottz",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-30\/86107832054_1565fc143c1923c9f3bd_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1481125429.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(And to that question, I would also add: Where would you like to see that notification raised? Locally on the orderer, or relayed to the client somehow?)",
+        "ts": "1481125527.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If we have channels in bft for performance reasons (not to order everything on a single chain) then channels make more sense",
+        "ts": "1481125647.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "But i see prevalent mention of multi chain for confidentialty and there it does not make sense",
+        "ts": "1481125675.000480",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "In the bft case",
+        "ts": "1481125688.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Totally agree, BFT + Multichain Confidentiality does not make sense.",
+        "ts": "1481125753.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "+1",
+        "ts": "1481125761.000483"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "The client should be able to get success and failure notiications for every transaction. Success case is when the transaction is written to the ledger. Failure cases abound everywhere, in orderer system and in peers whereever they may get dropped or determinied invalid. Picture in my mind says when the transaction object is destroyed (after dropping from a queue, or more simply inside error-checking code after being determined to have the wrong signatures, or whenever) it could raise a failure event - and yes that must be forwarded to client.",
+        "ts": "1481126440.000484"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "The ACK you mentioned signifies simply being submitted for ordering. We need to know  whether it gets written to ledger, or not.",
+        "ts": "1481126523.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right, that goes back to our discussion earlier. This piece of code will need some reworking.",
+        "ts": "1481126542.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And to play devil's advocate here for a second, couldn't you argue that you know whether it gets written to the ledger by actually reading the ledger? (Via a Deliver call.)",
+        "ts": "1481126665.000487"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "ah, and how long should I wait before reading the ledger? sounds like v0.5 again.",
+        "ts": "1481126753.000490"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "how long is \"long enough that it should have been written by now\" ?",
+        "ts": "1481126826.000491"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "so, no, that logic is not a usable solution...",
+        "ts": "1481126876.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Wonderful. As you'll see from last night's conversation, I have argued for a proper ACK mechanism.",
+        "ts": "1481126910.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> I'm still not sure how\/where you would like to get events? The client may send a message and then disconnect.  Where do events go? How long are they persisted? Who is authorized to read them?",
+        "ts": "1481127016.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> I will try to implement that proper ack today",
+        "ts": "1481127118.000495"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "Hmm. So do we agree that it needs to be done? Your questions are about requirements and implementation. I admit I am not sure exactly what the behavior should be or what is feasible. I believe Jim Zhang and his sdk dev team is implementing event system. I expect that test\/applic code should be able to register for events either per-transaction or per-transaction-type or for all failurs or all successes or who knows what. (I do not know the details of the planned API or the implementation, and whether they are using the event-listener or something else.  Does the SDK attach to the Tx a list of interested parties to be notified? Or is there a defined port used? I guess I should get talking to them.)",
+        "ts": "1481129597.000496"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "Nevertheless, whatever is implemented in SDK will depend on the rest of fabric code being able to handle transactions reliably through to completion - whether successfully written to ledger, or graceful failures due to error checks or validation etc, or even ungraceful failure such as dropped msg.",
+        "ts": "1481129601.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, so this is about the SDK, I had assumed it was about the orderer.  That makes more sense.  I will fix the orderer so that it only ACKs after the message is truly 'in consensus'.  However, if the system is reconfigured between transaction ingress and transaction egresss (into a block), I'm not sure of any course of action to take other than log it and 'throw it away'.",
+        "ts": "1481129785.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This should be an exceedingly rare event though, as it's only an issue during chain reconfiguration.",
+        "ts": "1481129852.000499"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "can you clarify \"chain reconfiguration\" use-cases that hit this window? Is it specifically when a chain-config transaction to remove a user (or peer?) is closely preceded by a transaction removing that particular user or peer? Or other use cases?",
+        "ts": "1481130824.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> Maybe a good example would be a certificate which gets revoked. \n\n1. Admin revokes a certificate, and pushes a configuration transaction with this revocation\n2. Orderer pre-validates the config transactions and sends it to be ordered\n3. User submits a transaction signed with the revoked certificate\n4. Orderer pre-validates the transaction (returning a `SUCCESS` status) and sends it to be ordered, as the configuration has not been applied yet\n5. Orderer has ordered the config transaction, and applies the new configuration, revoking that cert\n6. Orderer has ordered the user transaction and does final validation before including it in a block, and realizes this transaction is no longer valid, so, the orderer logs the anomoly  (in general, pre-filtering and final validation should always return the same result, unless the config changes in between) and discards the transaction",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1481134542.000000"
+        },
+        "ts": "1481134505.000501"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XPR4NP4>  Right; that seems like a better description of the scenario I was trying to say. \"Revoking privileges of userX at same time that userX proposes a transaction\" is a direct-impact specific use-case that I can accept, because we are trying to stop that user's transactions anyways. I guess what I am asking is: is there something potentially more common or wide-impacting? something with indirect impact, as a result of changing something that is referenced from the transaction payload header? For example, could we lose all queued pre-validated transactions on a chain if that chain's  policy is modified? I don't think so, unless the chainID actually changes somehow when you reconfigure the chain ...",
+        "ts": "1481137002.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> It's certainly possible to construct a policy change which could cause all queued transactions to be discarded, for instance, set the authorized writers to the empty set.  Though I don't know why anyone would do that.  The only thing that comes to mind as a possibly more common case is if a transaction is detected as a replay attack because it is in the wrong epoch.  It's possible that a transaction enters the system during one epoch, and the epoch advances before the transaction is ordered, so it is no longer valid when it comes time to apply.  Assuming the SDK sets the epoch correctly, this hopefully won't be an issue, and as I said, we have not implemented this yet.",
+        "ts": "1481139010.000504"
+    },
+    {
+        "user": "U2VGK3JF5",
+        "text": "<@U2VGK3JF5|mmayorivera> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481146627.000505"
+    },
+    {
+        "type": "message",
+        "user": "U2VGK3JF5",
+        "text": "hi there",
+        "ts": "1481146785.000506"
+    },
+    {
+        "type": "message",
+        "user": "U2VGK3JF5",
+        "text": "anybody can give a nice simple way to implement consensus PBFT?",
+        "ts": "1481146831.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Simple and PBFT don't really go hand in hand. For an implementation in the previous architecture, checkout the v0.6 branch and look into `consensus\/pbft`. For an implementation in the new architecture that's still a WIP, checkout `orderer\/sbft` in the master branch.",
+        "ts": "1481152123.000508"
+    },
+    {
+        "type": "message",
+        "user": "U2VGK3JF5",
+        "text": "thanks, I will",
+        "ts": "1481159904.000509"
+    }
+]

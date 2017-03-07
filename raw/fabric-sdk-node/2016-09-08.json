@@ -1,0 +1,30 @@
+[
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Hi, do we need to configure iptables for accessing docker container service from vagrant host ? If yes, could you please help on steps and related commands ?",
+        "ts": "1473354136.000005"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U1F3CQ2HX> If you are running container using docker-compose. Here is a sample to setup port forwarding.\n```membersrvc0:\n  extends:\n    file: compose-defaults.yml\n    service: membersrvc\n  ports:\n    - 7054:7054\n  volumes:\n    - \/volume\/membersrvc:\/var\/hyperledger\n\nvp0:\n  extends:\n    file: docker-compose-4-consensus-base.yml\n    service: vpBatch\n  environment:\n    - CORE_PEER_ID=vp0\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n    - CORE_PEER_PROFILE_ENABLED=true\n  links:\n    - membersrvc0\n  ports:\n    - 7050:7050\n    - 7051:7051\n  volumes:\n    - \/volume\/vp0:\/var\/hyperledger```",
+        "edited": {
+            "user": "U11CP8FF1",
+            "ts": "1473383083.000000"
+        },
+        "ts": "1473382799.000006"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Note this also includes volumes so that data can be reused.",
+        "ts": "1473382821.000007"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "If the container is already running. Then use iptables as you suggested. \n```iptables -t nat -A DOCKER -p tcp --dport 7050 -j DNAT --to-destination 172.17.0.3:7050```",
+        "ts": "1473382988.000008"
+    }
+]

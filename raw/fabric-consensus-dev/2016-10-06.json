@@ -1,0 +1,262 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, regarding <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1487\/>, is it possible to have a policy that says: check the signature against all the identities. This might be useful in case one wants to use ring signature. Actually, I like a lot your approach. It looks like it can be generalized and used also in other contexts, i.e. endorsement",
+        "ts": "1475743117.001720"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> Thanks for the feedback, I'd love to add support for ring signatures if possible.  It sounds like in order to support this, instead of returning a `bool` for \"Signature is valid\" we could return a `[]int` inndicating \"Which valid signatures\", then validate that `N` of the signatures out of the identities have signed?",
+        "ts": "1475760178.001722"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, actually it is more like this. The verification algorithm takes in input the signature, the message and all the public key in the ring group, and returns yes or no",
+        "ts": "1475760244.001723"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> Oh, I see, I can think on how to support this, unless you have an idea off the top of your head?",
+        "ts": "1475760302.001724"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "actually, this was more a sanity check to verify that the framework is generic enough. I think it can be accommodated in multiple ways, actually",
+        "ts": "1475760369.001725"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for instance, one can pass to the crypto helper the concatenation of all the public keys",
+        "ts": "1475760407.001726"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so no interface needs to be changed",
+        "ts": "1475760419.001727"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "anyway, it is really cool that you can do this with protobuf :slightly_smiling_face:",
+        "ts": "1475760445.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, thanks! I thought it was a cute idea... let protobuf do the schema validation to make sure the thing is well formed, then 'execute'",
+        "ts": "1475760533.001729"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "indeed :slightly_smiling_face:",
+        "ts": "1475760545.001730"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I'm finding that multiple people are working on bootstrapping , whether peer or orderer, for example <https:\/\/jira.hyperledger.org\/browse\/FAB-423>, <https:\/\/jira.hyperledger.org\/browse\/FAB-430>, <https:\/\/jira.hyperledger.org\/browse\/FAB-423>, <https:\/\/jira.hyperledger.org\/browse\/FAB-29>, <https:\/\/jira.hyperledger.org\/browse\/FAB-359>",
+        "ts": "1475764360.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "can one of you guys describe where we are at ? and what other things we need to put on the table ?",
+        "ts": "1475764412.001732"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XPR4NP4>  ?  <@U0S5KF44D>  ?",
+        "ts": "1475764442.001733"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "or perhaps orderer service should go its own way and figure out just bootstrapping for orderers only ?",
+        "ts": "1475764485.001734"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> Totally agree, we have far too many people working in isolation on this",
+        "ts": "1475764526.001735"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm working with <@U0ULK2JPP> today trying to make some more concrete progress.  and was also just talking with <@U1AU8DRQR>, I'll paste what I told him here:\n\nIn brief, for bootstrapping, we should push a 'special transaction' into the genesis block which contains the configuration info\nThat way we can re-use the same mechanism for reconfiguration down the line\nWe'll need of course the PBFT identities and config, but also the client CA certs,\nThat's what started me down the path to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1487\/>\nSo, assuming we can get a transaction format which is easy for non-fabric stuff to produce and consume, then we need to define hopefully some sort of generic config proto, and then some pbft specific extensions to it\nOr at least that's the plan of attack in my head",
+        "ts": "1475764609.001736"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ok,  pull me when you talk to <@U0ULK2JPP>  ?  maybe I can work up a flow diagram ...",
+        "ts": "1475764750.001737"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "and I don't know where <@U0UKTPMG8> stands on this either ... I know he mentioned a few concerns on FAB-359",
+        "ts": "1475764804.001738"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I've talked with <@U0UKTPMG8> a bit about this, he was actually the first one to point me to FAB-359, I'm hoping that my comments are helping to address his concerns.",
+        "ts": "1475764858.001739"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0XPR4NP4> <@U0UGH3X7X> <@U0ULK2JPP> I think we should focus like a laser on bootstrap",
+        "edited": {
+            "user": "U0UKTPMG8",
+            "ts": "1475767557.000000"
+        },
+        "ts": "1475767547.001740"
+    },
+    {
+        "text": "<@U0XPR4NP4|jyellick> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/avqbsligmjgkbf3ckq35ldokbqe|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1475768493.001742"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ongoing discussion of bootstrapping and endorsement policies ^above",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1475768515.000000"
+        },
+        "ts": "1475768506.001743"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Regarding bootstrapping, I just updated the description of <https:\/\/jira.hyperledger.org\/browse\/FAB-359> so pls comment",
+        "ts": "1475776073.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Commented, we have been using the hangout above to discuss the bootstrapping flow but broke for lunch",
+        "ts": "1475777018.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We'll be resuming in a bit if you'd like to join",
+        "ts": "1475777026.001747"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To summarize the results thusfar, the flow was envisioned as follows:\n\n1. Entities create CA certs for peer network\n2. Entities create Self-signed certs for orderer network\n3. Certs are sent to the bootstrap administrator\n4. Bootstrap administrator uses bootstrapping tool to generate genesis block\n  * Bootstrap administrator sets ordering ingress validation policy\n  * Bootstrap administrator sets ordering egress validation policy\n  * Bootstrap administrator sets ordering opaque config (for instance specifics of PBFT f\/K\/L\/etc.)\n  * Bootstrap administrator sets peer opaque config (VSCC policies, etc.)\n9. Bootstrap administrator distributes the genesis block to other administrators\n10. After inspection and approval, administrator installs block at orderer node and starts (orderer network now functional)\n11. Admin supplies genesis hash and ordering service to peers, they connect and receive genesis block to bootstrap their configuration",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1475777550.000000"
+        },
+        "ts": "1475777412.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0S5KF44D>  ^",
+        "ts": "1475777513.001749"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "OK, given the above, I think the only differences to what I have in FAB-359 are:",
+        "ts": "1475777745.001751"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "1) The way in which the COP APIs are used at startup since you\u2019re gen\u2019ing the genesis block thru tooling rather than 1st start",
+        "ts": "1475777801.001752"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "2) You\u2019re saying that you use self-signed certs for orderers.  I don\u2019t think you have to require that, but certainly is the easiest to to start with from a test perspective",
+        "ts": "1475777876.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The other distinction I see is that COP contains membership services",
+        "ts": "1475777924.001754"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And I don't think we need that embedded in the orderer or most peers",
+        "ts": "1475777941.001755"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "COP is just a library in this case \u2026 and a CLI tool",
+        "ts": "1475777945.001756"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They need to be able to validate policies, which is fine",
+        "ts": "1475777959.001757"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I'm wary of bringing in function like issuing certificates to something like the orderer which simply doesn't need that",
+        "ts": "1475777986.001758"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It should be given a certificate at bootstrap",
+        "ts": "1475777993.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "You don\u2019t have to run a cop server in an orderer.  I think there is confusion.",
+        "ts": "1475778093.001760"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0XPR4NP4> - i hope that not all 11 steps require manual typing, instead there should be a way to give the minimal info and some tool does the steps and installs all files!",
+        "ts": "1475786899.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XV1HDL3> Absolutely there will be a tool which packages this nicely, but we need to know ultimately what the tool will be doing under the covers, I would say a simplified list is:\n\n1. All parties generated keys\/certs as needed\n2. Admin feeds public keys and some initial config info into a bootstrapping tool, which produces the genesis block\n3. Admin gives the genesis block back to the interested parties, who confirm they are happy with it\n4. Orderer network starts and peers connect to bootstrap\n\nI think (1) is unavoidable because you do not want someone else generating your private key.  (2) is more effectively 'the bootstrapping', (3) diseminates, and (4) executes.  Assuming some lack of trust between the admin and the components, I'm not sure it can get much simpler",
+        "ts": "1475789202.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And of course for POC or trusted networks with a single admin, this can be simplified still.  I see no reason we could not support deploying a network with a single point of trust in a single command.",
+        "ts": "1475789332.001763"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "There is a bug in the sbft implementation. Any help is welcome.",
+        "ts": "1475823130.001764"
+    }
+]

@@ -1,0 +1,125 @@
+[
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> (or anyone else who knows) I have a couple more questions if you wouldn't mind answering them:\n\n&gt;The endorsers execute the chaincode to produce a read\/write set. \n\nWhat do the read\/write sets produced by the endorsers consist of? Are they simply \u201cI read in these variables and then wrote out these ones as specified by the chaincode, the specific values I read\/wrote are x, y, z\u201d\n\nIf there are multiple client submitters on a network run by the same organisation, would they tell each other which chaincode has been deployed and share endorsement policies of said chaincode? If so, is this achieved through hyperledger itself or by some auxiliary service that shares the information?\n\n&gt;ordered batches\/blocks are retrieved by calling `Deliver'\u201d (with regards to the ordering service API)\n\nDoes this mean that the committers are polling the ordering service?\n\n&gt;The ordering network may be offered as a service and not involve any of the entities transacting on the chain, or it may be run by one or more of the transacting entities. \n\nDoes this mean that the ordering service is run as an auxiliary service and is not part of hyperledger?\n\nWhat is CFT\/BFT?\n\nGiven you said there is one ordering service for all chains, I take it the transactions for each chain are ordered separately?\n\n&gt;eventually the committer gets a batch (which is really just a block which potentially contains some invalid transactions\n\nIs the ordering service a single node or is it many nodes? \nIf there are many how do they co-ordinate themselves? \nHow many transactions are in each batch?\nCan batches change size?\nWhen batches of ordered transactions are sent off what is in a 'batch' exactly \u2013 is it just a list of transactions?\nWhich organisation on the network runs the ordering network?\n\n&gt;invalid transactions\n\nWhat does 'invalid' mean in this context?",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1483538868.000000"
+        },
+        "ts": "1483538805.001170"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "CFT\/BFT  crash\/byzantine fault tolerance",
+        "ts": "1483539021.001172"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the ordering service can be one or more nodes depending on the underlying ordering protocol e.g. solo versus Kafka\/sBFT",
+        "ts": "1483539094.001173"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "how the nodes co-ordinate also depends on the protocol , e.g. a kafka cluster using zookeeper or sBFT using the protocol described in the Castro&amp;Liskov paper",
+        "ts": "1483539196.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "read\/write sets are described in <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1483539337.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the chaincode deployment and endorsement policies can probably be answered better by the guys over in <#C27E2LGJY|fabric-peer-dev>",
+        "ts": "1483539420.001177"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "Deliver() is basically listening to a gPRC stream",
+        "ts": "1483539463.001178"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the ordering service runs as a separate process from the hyperledger fabric peers.  Fabric does require an ordering service that supports the Broadcast()\/Deliver API  but otherwise you can plugin your own ordering protocol",
+        "ts": "1483539723.001179"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> It looks like <@U0UGH3X7X> already gave some answers, but here is some additional (partially redundant) info\n\n&gt; What do the read\/write sets produced by the endorsers consist of? Are they simply \u201cI read in these variables and then wrote out these ones as specified by the chaincode, the specific values I read\/wrote are x, y, z\u201d\n\nClose.  It's \"I read these variables at these _versions_, and I wrote these variables at these versions, and this is what I wrote\"\n\n&gt; If there are multiple client submitters on a network run by the same organisation, would they tell each other which chaincode has been deployed and share endorsement policies of said chaincode? If so, is this achieved through hyperledger itself or by some auxiliary service that shares the information?\n\nIn general, when someone is informed that a chaincode exists and can be invoked, they should also be informed where it resides, and what endorsements are required.  This is not an in band hyperledger fabric procedure.\n\n&gt; Does this mean that the committers are polling the ordering service?\n\nNo, `Deliver` is a blocking gRPC call, which receives a stream of batches as they are created.\n\n&gt; Does this mean that the ordering service is run as an auxiliary service and is not part of hyperledger?\n\nThe ordering service is required, and multiple implementations are offered through the hyperledger fabric project, (solo [for testing], Kafka, and SBFT [a pbft based protocol]).  But, any consensus implementation which appropriately implements the `Broadcast`\/`Deliver` methods could be used.  Most developers are more interested in the chaincode and application however, so it also provides a nice plug point where an external entity can host the ordering so that the user can focus on the pieces they care about.\n\n&gt; Given you said there is one ordering service for all chains, I take it the transactions for each chain are ordered separately?\n\nCorrectly, order is guaranteed only within a chain.\n\n&gt; Is the ordering service a single node or is it many nodes? \n&gt; If there are many how do they co-ordinate themselves? \n\nThis is all variable based on the ordering implementation and backing consensus algorithm.  For Solo, the answer is \"One node, so no consensus algorithm needed\".  For Kafka: \"Arbitrarily many nodes and the ZK\/Kafka protocol\", For SBFT: \"3f+1 nodes and the sbft variant of the pbft protocol\".\n\n&gt; How many transactions are in each batch?\n&gt; Can batches change size?\n&gt; When batches of ordered transactions are sent off what is in a 'batch' exactly \u2013 is it just a list of transactions?\n\nThe batch size is configurable, and may be reconfigured by the chain admins.  A batch is a block structure, so they form a hash chain.  The batch may contain 'invalid transactions' in so far as there may be MVCC conflicts etc.  This is why we differentiate between the words batch and block though in implementation, they use the same backing data structure.\n\n&gt; Which organisation on the network runs the ordering network?\n\nDepends entirely on network configuration, and is more of a  social\/business question.  For some consensus implementations, multiple stake holders may participate, for others a single entity will be in control.\n\n&gt; What does 'invalid' mean in this context?\n\nTransactions which are not appropriately signed by an authorized user will never make it into a batch, this is the 'validation' which is done at the orderer.  However, if two transactions are submitted changing the same key at the same version for instance, one of these transactions will fail, but they would both make it into the batch.  The one which fails we call 'invalid'.  A transaction might also not be appropriately endorsed, which could cause it to be 'invalid'.  The signing guarantee from the ordering network however assures that no one simply submits garbage and that there is non-repudiation on the submission",
+        "ts": "1483542626.001180"
+    },
+    {
+        "user": "U1Y4P0HM4",
+        "text": "<@U1Y4P0HM4|yangtao76> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483545314.001181"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0UGH3X7X> <@U0XPR4NP4> Thanks as alway guys!\n\nCouple of follow ups:\n\n&gt;Close.  It's \"I read these variables at these _versions_, and I wrote these variables at these versions, and this is what I wrote\"\n\nWhat happens if an endorser node gets out of step with the others and doesn't have high enough version numbers to match what is in a read\/write set?\n\n&gt;The ordering service is required, and multiple implementations are offered through the hyperledger fabric project\n\nBut just to check it's not hyperledger code that is running per se, it's simply that we use other projects to do the work for us (once of course we've configured them to use these `Broadcast`\/`Deliver` endpoints)?\n\n&gt;A transaction might also not be appropriately endorsed, which could cause it to be 'invalid'. \n\nSurely if a transaction hasn't been appropriately endorsed it wouldn't be submitted to the ordering network?\n\n&gt;they would both make it into the batch\n\nWould this batch be rejected on the grounds of an invalid transaction before it's sent out?",
+        "ts": "1483549099.001182"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> \n\n&gt; What happens if an endorser node gets out of step with the others and doesn't have high enough version numbers to match what is in a read\/write set?\n\nThe client will see that the endorsement isn't for the same action, and ask a different endorser, or wait some time and ask again.  <@U0ULK2JPP> might have more details\n\n&gt; But just to check it's not hyperledger code that is running per se, it's simply that we use other projects to do the work for us (once of course we've configured them to use these \u2060\u2060\u2060\u2060Broadcast\u2060\u2060\u2060\u2060\/\u2060\u2060\u2060\u2060Deliver\u2060\u2060\u2060\u2060 endpoints)?\n\nYes and no.  Solo is entirely hyperledger code, as is sbft.  Kafka is some hyperledger code to act as a shim to Kafka, but does rely on the Kafka\/Zookeeper code for the backing consensus implementation.  So, depends on how you deploy your network as to whether the orderer is 'some hyperledger code' or 'all hyperledger code' (and there is nothing that prevents someone from implementing these methods on their own and having 'no hyperledger code').\n\n&gt; Surely if a transaction hasn't been appropriately endorsed it wouldn't be submitted to the ordering network?\n\nFor a properly written non-malicious client, yes.  There's no real incentive to submit improperly endorsed transactions though.\n\n&gt; Would this batch be rejected on the grounds of an invalid transaction before it's sent out?\n\nNo, the ordering service only really does the check of \"was the submitter authorized to submit a transaction\", it does not actually process any of the MVCC+postimage data, it does not know how, nor does it know about endorsement policies etc.  This is all handled after the batch has been delivered to the peer.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1483549623.000000"
+        },
+        "ts": "1483549547.001183",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1V6SJ1FF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "cool, thanks <@U0XPR4NP4> :slightly_smiling_face:\n\none last question:\n\n&gt;postimage\n\nWhat's a postimage - is this a snapshot of what the worldstate\/variables look like after the transaction executes?",
+        "ts": "1483550179.001185"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; What's a postimage - is this a snapshot of what the worldstate\/variables look like after the transaction executes?\n\nRight, whereas MVCC is concerned with the version of the keys, the postimage is the new value of (the written) keys.",
+        "ts": "1483553208.001186"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> ^",
+        "ts": "1483553674.001187"
+    }
+]

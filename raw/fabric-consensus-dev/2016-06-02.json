@@ -1,0 +1,482 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Trying to trace this view change code, seems like it can't be right, feel like I'm going crazy, do you have a minute?",
+        "ts": "1464876430.002775"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1464876471.002776"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you could take a look at `recvViewChange`",
+        "ts": "1464876503.002777"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Down to the `if len(replicas) &gt;= instance.f+1` piece, basically, if we've got a weak cert of view change messages, we need to send a view change, seems right so far to me",
+        "ts": "1464876546.002778"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So we call `instance.sendViewChange`",
+        "ts": "1464876568.002779"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which, without really any conditionals, builds a view change message, and then invokes `recvViewChange`",
+        "ts": "1464876612.002780"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which obviously will then satisfy the condition `len(replicas) &gt;= instance.f+1` because it was just matched and we added another",
+        "ts": "1464876649.002781"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which will then call `sendViewChange` again, which will then send it again, which will then call `recvViewChange` again, which will detect that we already have this view change message, and return nil.",
+        "ts": "1464876682.002782"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And nothing in this path will trigger processing the new view.",
+        "ts": "1464876743.002783"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's not what we see happening?",
+        "ts": "1464876747.002784"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It might be, I guess nothing in that should break anything, but we should always be double broadcasting view change messages, which I hadn't noticed.",
+        "ts": "1464876795.002785"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Or rather, not always, but often)",
+        "ts": "1464876812.002786"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Mostly just wanted a sanity check on my reasoning, make sure I'm not missing something obvious (have been staring at this particular code path too long)",
+        "ts": "1464876914.002787"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe we need a test to see whether this really happens",
+        "ts": "1464876955.002788"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i only see 2 scenarios where this would appear as a bug:",
+        "ts": "1464876965.002789"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "1. primary is slow with view change and receives f+1 messages, but then fails to send new-view",
+        "ts": "1464876989.002790"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If our view-change was the 2f+1th, it would delay sending\/processing a new view.  But, for f&gt;0 I don't think that's actually possible",
+        "ts": "1464877001.002791"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2. we already received new-view and we are slow with view-change, and now received the f+1 view-change.",
+        "ts": "1464877027.002792"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm, yes, I will write a test for this, should include one with the fix",
+        "ts": "1464877075.002793"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Actually, yes, I'm worried that once we have the f+1 view change messages, it will never trigger the new view processing via this path, because it will always d the `sendViewChange` loop which returns before hitting the new view path.",
+        "ts": "1464877171.002794"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Alright, thanks for the chat, will go write that test.",
+        "ts": "1464877179.002795"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so then we shouldn't return",
+        "ts": "1464877363.002796"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "HA!",
+        "ts": "1464877464.002797"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1464877464.002798"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: that loop only counts view-change messages that are *above* our own view",
+        "ts": "1464877485.002799"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so the second time we get in there, we do not enter the f+1 branch",
+        "ts": "1464877518.002800"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Aha! Thanks!",
+        "ts": "1464877539.002801"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hehe",
+        "ts": "1464877690.002802"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i remember thinking that before",
+        "ts": "1464877696.002803"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the comment is clear as well",
+        "ts": "1464877701.002804"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but maybe we should add another comment",
+        "ts": "1464877711.002805"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "our coverage doesn't look bad at all",
+        "ts": "1464880617.002806"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UGH3X7X|tuand> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F1DL2KWTY\/aa.out|aa.out> and commented: this is what i got for test coverage . do `go tool cover -html=aa.out` on this file",
+        "file": {
+            "id": "F1DL2KWTY",
+            "created": 1464880730,
+            "timestamp": 1464880730,
+            "name": "aa.out",
+            "title": "aa.out",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0UGH3X7X",
+            "editable": true,
+            "size": 100250,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1DL2KWTY\/aa.out?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1DL2KWTY\/download\/aa.out?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F1DL2KWTY\/aa.out",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1DL2KWTY-0cfda4c418",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F1DL2KWTY\/aa.out\/edit",
+            "preview": "mode: set\ngithub.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:40.27,41.9 1 1\ngithub.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:42.2,43.62 1 0\ngithub.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:44.2,45.16 1 1\ngithub.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:72.57,78.2 1 1",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>mode: set<\/pre><\/div>\n<div><pre>github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:40.27,41.9 1 1<\/pre><\/div>\n<div><pre>github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:42.2,43.62 1 0<\/pre><\/div>\n<div><pre>github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:44.2,45.16 1 1<\/pre><\/div>\n<div><pre>github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.go:72.57,78.2 1 1<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 1275,
+            "lines_more": 1270,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc1DL2LD62",
+                "created": 1464880730,
+                "timestamp": 1464880730,
+                "user": "U0UGH3X7X",
+                "is_intro": true,
+                "comment": "this is what i got for test coverage . do `go tool cover -html=aa.out` on this file",
+                "channel": ""
+            }
+        },
+        "user": "U0UGH3X7X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UGH3X7X|tuand>",
+        "bot_id": null,
+        "ts": "1464880733.002807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There are a few pieces that looks like they could improve, but generally, yeah, not too bad.",
+        "ts": "1464881304.002808"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961> <@U0XPR4NP4> seeing lots of failures in the consensus\/obcpbft unit tests in presumably unrelated branches of the code, are you aware of this?",
+        "ts": "1464883080.002809"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What failures?",
+        "ts": "1464883090.002810"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I just restarted one in travis, I suspect I lost the log as a result",
+        "ts": "1464883117.002811"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have a local run of something that looked identical (though different code change), ill see if I can capture it to a log",
+        "ts": "1464883136.002812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Unit tests have run reliably locally for me and in the CI I've pushed, so would appreciate a pointer to the failure",
+        "ts": "1464883172.002813"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its this one: <https:\/\/travis-ci.org\/hyperledger\/fabric\/builds\/134769876>",
+        "ts": "1464883218.002814"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but note I have seen it in at least three unrelated branches now",
+        "ts": "1464883228.002815"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but same basic failure (at least when looking from 50k feet up",
+        "ts": "1464883246.002816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, yeah, that's a new test for a feature that was merged a couple days ago",
+        "ts": "1464883280.002817"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "gut feeling, it might be flaky",
+        "ts": "1464883293.002818"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yeah, I'll take a look, thanks <@U0KPFAZNF>",
+        "ts": "1464883316.002819"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but more research needed",
+        "ts": "1464883319.002820"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thanks!",
+        "ts": "1464883325.002821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is the timeout too short?",
+        "ts": "1464884158.002822"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's my immediate guess",
+        "ts": "1464885198.002823"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i looked at the test coverage results for consensus and statetransfer ...  looks like the one that could use more unit tests is `obc-batch (67%)`  ?",
+        "ts": "1464892443.002824"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "others like `obc-classic` is really the broadcast() and unicast() calls  ... and `helper`, `controller`, etc ... are tested by the obcpbft and behave tests",
+        "ts": "1464892568.002825"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: <@U0XQ35CDD> <@U0XR6J961>  Review of <https:\/\/github.com\/hyperledger\/fabric\/pull\/1689> would be appreciated",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Remove hacky sendViewChangedEvent by jyellick \u00b7 Pull Request #1689 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1689",
+                "text": "Description This is a follow up to PR #1675. It removes the hacky mechanism for generating viewChangedEvent events introduced, and causes the view change code to pass back the events directly. I...",
+                "fallback": "GitHub: Remove hacky sendViewChangedEvent by jyellick \u00b7 Pull Request #1689 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1689",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464895497.002826"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: I've included a bump in the timeout for that failing test in the PR above, I can break it out separately if you'd prefer",
+        "ts": "1464895689.002828"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: yes, please\u2026id like that to go in ASAP, larger series might take longer to review",
+        "ts": "1464895722.002829"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Understood, will do",
+        "ts": "1464895740.002830"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty",
+        "ts": "1464895750.002831"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and thanks for quick fix)",
+        "ts": "1464895762.002832"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1690> it's a pretty trivial change, sorry I did not push it earlier, was trying to finish up that other PR",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Bump null request timeout to fix sporadic CI failures by jyellick \u00b7 Pull Request #1690 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1690",
+                "text": "Description This is a very simple change which increases the timeout for the TestNetworkNullRequestMissing test which has been periodically failing via CI. Motivation and Context There periodic ...",
+                "fallback": "GitHub: Bump null request timeout to fix sporadic CI failures by jyellick \u00b7 Pull Request #1690 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1690",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464896034.002833"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i totally understand, no apology necessary",
+        "ts": "1464896050.002835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: still seems to fail CI, can you have a look?",
+        "ts": "1464899920.002836"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Was just looking at that, different failure than the last",
+        "ts": "1464899939.002837"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In `TestSieveNoDecision` this time",
+        "ts": "1464899951.002838"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, ok, I didn\u2019t notice the subtlety there, sorry",
+        "ts": "1464899985.002839"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No problem, wonder if maybe Travis is generally under higher load lately or something, nothing in that code path should really be new",
+        "ts": "1464900123.002840"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: It's not entirely obvious what went wrong from the log, but, under the theory that it's just decreased Travis performance, I've tuned the timeouts in that test up by 50% as well, and enhanced the logging statement that looked suspicious to be a little more expressive. Pushed and will see how it goes.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1464902108.000000"
+        },
+        "ts": "1464901888.002841"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Cool, thanks ",
+        "ts": "1464903028.002843"
+    }
+]

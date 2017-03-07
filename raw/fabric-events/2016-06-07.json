@@ -1,0 +1,249 @@
+[
+    {
+        "user": "U1AU8DRQR",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1AU8DRQR|hgabor> has joined the channel",
+        "ts": "1465298013.000003"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "hey",
+        "ts": "1465298017.000004"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "are there any tests for the event sending mechanism?",
+        "ts": "1465298030.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1AU8DRQR>: look in fabric\/events\/events_test.go (basically, producer.Send(emsg))",
+        "ts": "1465299243.000006"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ULK2JPP>: that only tests the sending mechanism itself",
+        "ts": "1465299273.000007"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I want to test that if there is a new block is there any event sent or not",
+        "ts": "1465299308.000008"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "some kind of BDD test",
+        "ts": "1465299314.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah from the fabric side",
+        "ts": "1465299347.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no, no bdd test. There is an example under fabric\/examples\/events\/block_listener",
+        "ts": "1465299570.000011"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and how could I create such a test?",
+        "ts": "1465299628.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I created a new event type, should I copy block listener and create a new example and use that from bdd tests?",
+        "ts": "1465299662.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you add the test to events\/events_test.go  ?",
+        "ts": "1465299835.000014"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but there one has to invoke producer manually",
+        "ts": "1465299861.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and create an example under fabric\/examples\/events\/",
+        "ts": "1465299870.000016"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I want to check the overall working of the system",
+        "ts": "1465299883.000017"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I mean that whether my event is sent in case it should be",
+        "ts": "1465299910.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1465299915.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thinking\u2026.",
+        "ts": "1465299918.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "my idea was to add a bdd test. bdd tests already use examples (e.g. chancode) and they could also use block_listener. block_listener could be modified to have an option if it has to listen my events too (the default case would be listening only to block events)",
+        "ts": "1465300001.000021"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and from bdd I could checker whether block listener receiver such an event",
+        "ts": "1465300043.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right. I don\u2019t know if there\u2019s support for grpc in bddtests",
+        "ts": "1465300080.000023"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we dont need support because block_listener has that. we only need to use it from the tests, start it as a process and wait for its output",
+        "ts": "1465300203.000024"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "with other words, block_listener is our \"event client\"",
+        "ts": "1465300232.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1465300259.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and we check if the system sends out the appropriate events and we get them",
+        "ts": "1465300260.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so you\u2019ll just start the block_listner process",
+        "ts": "1465300269.000028"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep",
+        "ts": "1465300274.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and scrape the stdout",
+        "ts": "1465300275.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep that way",
+        "ts": "1465300281.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1465300283.000032"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what do you think?",
+        "ts": "1465300300.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you could do that. Or you can write another test and have it be a http listener. You might find it easier to integrate it with BDD tests",
+        "ts": "1465300387.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as its got url support already",
+        "ts": "1465300396.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in any case I would talk to <@U0UKTPMG8>",
+        "ts": "1465300407.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "he might have other ways you can do it too",
+        "ts": "1465300419.000037"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay thanks :slightly_smiling_face:",
+        "ts": "1465300426.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure thing",
+        "ts": "1465300435.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I know jeff added more support mechanics in BDD tests recently (althought not sure if there is direct gRPC support)",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1465300513.000000"
+        },
+        "ts": "1465300452.000040"
+    },
+    {
+        "user": "U0Z6VMEER",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z6VMEER|beauson45> has joined the channel",
+        "ts": "1465317208.000042"
+    },
+    {
+        "user": "U130QV7RB",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U130QV7RB|mpage> has joined the channel",
+        "ts": "1465330463.000043"
+    }
+]

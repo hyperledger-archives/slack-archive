@@ -1,0 +1,148 @@
+[
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0KQ9QKH6> Thanks for FAB-792.  I don\u2019t see the 3-tier use-case (mobile app tier - webapp\/sdk tier - peer network), so perhaps we should discuss here first. Currently transaction ID (txid) is hash(transaction), which allows the SDK and the peer to independently calculate the txid. However, Pat brought up the case where the first tier (mobile app) doesn\u2019t have the SDK but initiates the transaction (doesn\u2019t include all the data);  the second tier (webapp\/sdk) fills in the tx and sends to peer network.  If the response from appweb to mobileapp failed, the mobileapp would not have the txid to query the tx status",
+        "edited": {
+            "user": "U0KN2SSKE",
+            "ts": "1477408191.000000"
+        },
+        "ts": "1477408171.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "We could say that would be the responsibility of the webapp, but if we allowed the mobileapp to generate the txid (perhaps using uuid) and sent that as part of the transaction, then the 3-tier use-case would be easier to implement.",
+        "ts": "1477408391.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "Thoughts?",
+        "ts": "1477408395.000193"
+    },
+    {
+        "user": "U0UGH3X7X",
+        "text": "<@U0UGH3X7X|tuand> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477408984.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KN2SSKE> \u2026there is something to be said for the idea of TXID being specified and not generated",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1477409632.000000"
+        },
+        "ts": "1477409050.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0ULK2JPP> do you have other use-cases that would require txid be explicitly specified?",
+        "ts": "1477409545.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KN2SSKE> the only immediate need is a very implementation specific one - chaincodes rely upon a unique id to keep track of transactions through them. They use the TXID \u2026we could use the generated ID for this though so its not enough to justify the higher level requirement that <@U0KQ9QKH6> brought up.",
+        "ts": "1477409786.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the rule \u201cif user doesn\u2019t specify TXID, generate one using ProposalHeader\u201d seems to be a good one \u2026 it give power and flexibility IMO",
+        "ts": "1477409857.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but it does require us to carry TXIDs in the protos structures",
+        "ts": "1477409883.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "The power (again in my unvalidated opinion) comes from the fact that it allows for correlation (a frequent requirement in other middleware technologies) ..  . in addition to avoiding the `If the response from appweb to mobileapp failed, the mobileapp would not have the txid to query the tx status` pitfall you brought up",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1477410081.000000"
+        },
+        "ts": "1477410009.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "@binh <@U0ULK2JPP> : I think allowing the txid generation at the mobileapp tier pushes the state required for recovery to the edge otherwise the middle tier will have to carry state to translate a client request to a backend hash\/id and then replicate that state for fault tolerance. While doable, seems like an unnecessary complication. The simple approach may be the best given that this architecture will be the most common one.",
+        "edited": {
+            "user": "U0KQ9QKH6",
+            "ts": "1477411080.000000"
+        },
+        "ts": "1477411028.000203",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "agree with <@U0KQ9QKH6> (we discussed this last week) that we want to have the client (browser code, mobile app) maintain the state and build SDKs in a stateless fashion. regarding your question on client obtaining TXID without requiring them to run secure hash algorithms, this can be easily solved by exposing an SDK API to \u201ccalculateHash(payload)\u201d. the client app would call this on the server tier to obtain the TXID, then use that to send the transactions. this does require the payload to be sent to the server twice (first to calculate the TXID, then inside the transaction again), but the benefit of making the server stateless is significant",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1477416112.000000"
+        },
+        "ts": "1477416098.000205"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "also question <@U0ULK2JPP> when you said above that \"chaincodes rely upon a unique id to keep track of transactions through them\u201d, I didn\u2019t quite understand that. why would chaincode need to keep track of transactions? anything that needs to be tracked b\/w transactions should be saved in the world state right?",
+        "ts": "1477418048.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U13TWBRBL> right. that\u2019s why I aslo mentioned its an implementation detail\u2026 chaincode can field many transactions at a time and needs a way to track them, The TXID provided that mechanism.",
+        "ts": "1477418350.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in v0.5 it also was consistent with the way we kept track of a chancode deployment description - using its TXID",
+        "ts": "1477418394.000209"
+    },
+    {
+        "user": "U1KFBBWG1",
+        "text": "<@U1KFBBWG1|harrisob> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477420739.000210"
+    },
+    {
+        "user": "U2Q0HP4HY",
+        "text": "<@U2Q0HP4HY|rickr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477430865.000211"
+    },
+    {
+        "type": "message",
+        "user": "U1Y2R5C9L",
+        "text": "Why wouldn't the server return txId to the Mobile client in response to a deploy transaction? If the deploy request is coming to a webapp from mobile client, the client is expecting something in return, isnt?",
+        "ts": "1477439872.000212"
+    },
+    {
+        "type": "message",
+        "user": "U1Y2R5C9L",
+        "text": "Another use case similar to this:\nLet's say we are deploying chaincode c, sdk generates txid t1. Now we modify the chain code and redeploy it which gets a new chaincode ID resulting in all the previous states lost (because they are linked to the old chaincodeID). What if we want to just modify the chaincode and still refer to the same state\/data? Would keeping the same transaction ID solve this problem?",
+        "ts": "1477445457.000213"
+    }
+]

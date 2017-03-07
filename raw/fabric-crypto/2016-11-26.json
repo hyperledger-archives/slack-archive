@@ -1,0 +1,38 @@
+[
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "Hi, guys. How the Tcert is used in the fabric network?  I mean what field is necessary in the Tcert (x.509). From the whitepaper on <http:\/\/github.com|github.com>, I found the content of Tcert includes: [ TcertId,  AES_Encrypt(pre_k, EnrollmentID), AES_Encrypt(TcertOwner_EncryptKey, TcertIndex),  Sign_Verification_PublicKey, Key_Agreement_PublicKey, Validity_period) .etc.  Here I want to know how to put these things into the Tcert.",
+        "ts": "1480152894.002607"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "<@U0PB67X4K> <@U0ZJZBJLF> <@U0ULK2JPP>",
+        "ts": "1480153021.002608"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "The same meaning is that how do you guys use the Tcert. Just to verify the user's signature and check if the transaction is modified?  I know users are anonymous in the fabric network, but what's the purpose of attributes in tcertRequest.json.",
+        "ts": "1480153518.002609"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "And if it is a must, how can i put all the attributes stuff into the X509 certificates.",
+        "ts": "1480153583.002610"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1TA5FDU7>  - the idea of Tcerts is to provide a mechanism for transactions to be \"un-linkable\" from the ledger perspective unless an authority provides the \"key\" to \"re-link\" the identities.  The primary crypto is how TCert \"private keys\" are derived from the public enrollment key for an identity (the pre_k and tcert index stuff).   \n\nAs you gathered, the only \"identities\" in the system are provided via the public key which is used to sign transactions (and endorsements in v1.0).  The default mechanism is X509 \/ PKIX so one includes the X509 public key along with the signature.\n\nWhile \"un-linkable\" identities solve one problem, they also create a challenge:  if identity comes from the signing certificates and you never use the same signing certificate twice (as that would defeat un-linkability), how can you make any type of access control decision based on these identities?\n\nIn order to solve that problem, we came up with the idea of *optionally* including encrypted attributes as part of TCerts.   In the X509 case, we simply use standard X509 extension attributes as the \"carrier\" mechanism\n\nSo when a batch of TCerts is created, you can specify which attributes to include (assuming they have been associated with the enrollment ID).  In the end, these attributes are included to the certificate signing request for the TCert public key(s) included in the batch",
+        "ts": "1480172685.002611"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "Thank you so so much, <@U0PB67X4K>.",
+        "ts": "1480211324.002612"
+    }
+]

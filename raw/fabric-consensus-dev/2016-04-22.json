@@ -1,0 +1,401 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chetsky: absolutely more important.",
+        "ts": "1461308876.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chetsky: one non-deterministic transaction -&gt; whole network broken",
+        "ts": "1461308895.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chetsky: one node crashes -&gt; restart from 0 using state transfer",
+        "ts": "1461308924.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have an odd race condition in the mock network code",
+        "ts": "1461333976.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with isBusy",
+        "ts": "1461333980.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somehow the goroutine executing is not considered as busy",
+        "ts": "1461333994.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but why?",
+        "ts": "1461333998.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Isn't your check based on a timer's activity? I did not understand that",
+        "ts": "1461334069.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1461334134.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, timer active -&gt; still busy",
+        "ts": "1461334146.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "once everything is event driven, it would just be len(events) &gt; 0",
+        "ts": "1461334170.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/corecode\/fabric\/blob\/revert-executor\/consensus\/obcpbft\/pbft-core.go#L814>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/fabric",
+                "title_link": "https:\/\/github.com\/corecode\/fabric\/blob\/revert-executor\/consensus\/obcpbft\/pbft-core.go#L814",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: corecode\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/fabric\/blob\/revert-executor\/consensus\/obcpbft\/pbft-core.go#L814",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1461334194.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The timer is being stopped in the execute, but certainly before the core is necessarily idle",
+        "ts": "1461334222.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course execution being asynchronous, there is still some issues, because this essentially is an unfinished rpc - we expect an event to arrive later",
+        "ts": "1461334227.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, and I set currentExec",
+        "ts": "1461334249.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "isbusy checks for both",
+        "ts": "1461334268.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's why I don't get why it can race",
+        "ts": "1461334315.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But it's not set atomically? `currentExec` is not set until 3 lines after the timer stops",
+        "ts": "1461334338.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(unless it's already set for some reason, I don't entirely understand this flow)",
+        "ts": "1461334360.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh sorry",
+        "ts": "1461334401.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this all happens with the lock taken",
+        "ts": "1461334414.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i changed isBusy to take the lock",
+        "ts": "1461334420.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what don't you understand about it?",
+        "ts": "1461334463.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i should rewrite it so that it is more clear",
+        "ts": "1461334473.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't think it's necessarily fair to say it's unclear, I've only read through your changeset maybe twice, and it is fairly large, just have not had time to understand it yet",
+        "ts": "1461334543.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea :confused:",
+        "ts": "1461334556.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should add more comments then",
+        "ts": "1461334571.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "hi, wanted to chat about what is \"the blockchain\"",
+        "ts": "1461340744.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "so, regarding the discussion to split endorsement from consensus",
+        "ts": "1461340806.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "there are \"endorsers\" per chaincode and a consensus service (done by consenter nodes)",
+        "ts": "1461340824.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "now the output form the endorsers is a tx with its ops on state (read \/ write) and versions in which these take place, basically the writes &amp; reads should only be appended to ledger when ledger has still same versions as when endorser saw it",
+        "ts": "1461340957.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "then this is sent through the ordering service implemented by the consensus service",
+        "ts": "1461340972.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "what comes out there are ordered and \"valid\" (according to the endorsers) tx and their ensuing state changes",
+        "ts": "1461340997.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "any peer can now consume this and will follow the recipe that it appends them to the ledger and affects the state \n-when endorsing sigs are valid according to policy\n-and versions match the expected ones",
+        "ts": "1461341047.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "The peer can then update its hash chain, by computing  root = H(previous root,  tx descr, ops, versions)",
+        "ts": "1461341107.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "correct",
+        "ts": "1461341241.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "do we agree that this hash chaining cannot happen anywhere else?",
+        "ts": "1461341291.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "it is not possible to get it elsewhere because: if there is to be only one chain, then this must be the chain \"consented on\", that is,",
+        "ts": "1461341358.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the one that comes out of consensus",
+        "ts": "1461341364.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "in that sense, yes, i agree",
+        "ts": "1461341372.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "so going back to the emails I sent, would you say we're in agreement? or is there something that's missing",
+        "ts": "1461341410.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "one sec",
+        "ts": "1461341446.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "yes, we agree. to find out what is the \"correct\" blockchain, i go to a peer that I trust and ask for the hash",
+        "ts": "1461341498.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "then i can verify everything back from there, from this hash.",
+        "ts": "1461341517.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the feature that anyone else who goes to \"his\" peer should see the same ledger is then ensured from this, because his peer will also give the same hash or an extension of it",
+        "ts": "1461341547.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the other feature of blockchain should be that from the info on the blockchain (= hashed) one can recreate the current state. the above info allows this, assuming that also the deployed tx (their source) are included",
+        "ts": "1461341596.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "and this peer in turn can find out if their blockchain is right, by querying the endorsers for the blockchain hash on the topmost block (and hoping for a quorum) - correct?",
+        "ts": "1461341599.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "ah, no, the endorsers are now out",
+        "ts": "1461341616.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the endorsers would not know the topmost block better than any node that listens to the output of the (abstract) consensus service",
+        "ts": "1461341648.000555"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "if the consensus service is implemented by BFT, then the peer will go to 2f+1 and ask for their current block",
+        "ts": "1461341683.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "that is not correct, because when you ask the endorsers, you say give me the \"blockchain hash of block 12\" (assuming 12 is *your* top-most block)",
+        "ts": "1461341684.000557"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "and the endorsers maintain state and can of course return that info",
+        "ts": "1461341703.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "aha, i see ...",
+        "ts": "1461341736.000559"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "but an endorser would not play a special role here, for returning a block hash or storing it. any peer would do that, not only endorsers",
+        "ts": "1461341772.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "yeah, that is a valid point",
+        "ts": "1461341782.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "you don't have to focus just on the endorsers",
+        "ts": "1461341788.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "i said, the endorser does not know *better*",
+        "ts": "1461341790.000563"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "ok, thanks for the discussion. i can turn this over into the design docs",
+        "ts": "1461341831.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "sure thing. if you replace \"endorsers\" with \"peers\" in my last emails then everything should be exactly the same.",
+        "ts": "1461341861.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "ok, thanks",
+        "ts": "1461341873.000566"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "cca: i would prefer that consensus happens on complete blocks",
+        "ts": "1461342832.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and ideally that during consensus incorrect blocks are rejected",
+        "ts": "1461342861.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so whatever happens to come out of consensus is the blockchain, without having to apply some special logic to filter out transactions\/blocks",
+        "ts": "1461342898.000569"
+    },
+    {
+        "user": "U0KM0C3M3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KM0C3M3|jamie.steiner> has joined the channel",
+        "ts": "1461385245.000570"
+    }
+]

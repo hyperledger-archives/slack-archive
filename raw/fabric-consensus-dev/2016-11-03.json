@@ -1,0 +1,472 @@
+[
+    {
+        "user": "U2RMVHMK9",
+        "text": "<@U2RMVHMK9|hiepnm> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478158870.003157"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "could somebody help us in <https:\/\/jira.hyperledger.org\/browse\/FAB-477> ?",
+        "ts": "1478174291.003158"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hi",
+        "ts": "1478179954.003159"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what in the block is signed? the header, or just the body?",
+        "ts": "1478179971.003160"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and where is the multi-orderer signature located in?",
+        "ts": "1478179986.003161"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: Have a look at the revised proto file here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2153\/2\/orderer\/atomicbroadcast\/ab.proto>",
+        "ts": "1478180559.003162"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The signature you asked for yesterday would go in the BlockMetadata.",
+        "ts": "1478180592.003163"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "In the BlockData you'll find a series of marshaled Envelopes (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2153\/2\/orderer\/atomicbroadcast\/message.proto>) which are signed (by the submitter). ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478180751.000000"
+        },
+        "ts": "1478180714.003164"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the block data and meta data is just a list of byte arrays",
+        "ts": "1478180870.003166"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes. ",
+        "ts": "1478180880.003167"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so how do you interpret stuff?",
+        "ts": "1478180920.003168"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you go over the byte arrays and check each one what is it?",
+        "ts": "1478180930.003169"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> For the `Data` they will all be `Envelope`s marshaled",
+        "ts": "1478180968.003170"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm asking- where does the multi-sig reside",
+        "ts": "1478180969.003171"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you point me?",
+        "ts": "1478180971.003172"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Does not exist yet",
+        "ts": "1478180976.003173"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Have a look at an example here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2177\/>",
+        "ts": "1478180977.003174"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh....",
+        "ts": "1478180979.003175"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, I strongly suspect, this will simply be a series of `Envelope` messages, which contains a `Payload.data` of the hash of the block header",
+        "ts": "1478181017.003176"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And we will define a new `Header.Type` of `BlockSignature`",
+        "ts": "1478181035.003177"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I might be asking a foolish question, but- is the header going to be signed? yes or no? (please say yes) because- the seqNum of the block is only in the header",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478181058.000000"
+        },
+        "ts": "1478181045.003178"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I expect the signatures to be over the (hash of) the block header",
+        "ts": "1478181066.003180"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(So, yes)",
+        "ts": "1478181114.003181"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the entire header, right?",
+        "ts": "1478181122.003182"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct",
+        "ts": "1478181140.003183"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The hash of the header, so yes. ",
+        "ts": "1478181140.003184"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok, just making sure",
+        "ts": "1478181166.003185"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but I still don't understand how the metadata extraction works",
+        "ts": "1478181184.003186"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Assume for now, that all metadata is of type `Envelope`",
+        "ts": "1478181195.003187"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you go over the metadata byte array after byte array",
+        "ts": "1478181196.003188"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh ok",
+        "ts": "1478181199.003189"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so it's bytes in the proto file just for convenience",
+        "ts": "1478181211.003190"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct, in order to build the data hash, the Data really needs to be as bytes",
+        "ts": "1478181229.003191"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, for symmetry, the MetaData is as well",
+        "ts": "1478181239.003192"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to avoid marshalling it and demarshalling just for the hash?",
+        "ts": "1478181264.003193"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also to avoid custom marshaling schemes, because proto marshaling is not deterministic",
+        "ts": "1478181292.003194",
+        "reactions": [
+            {
+                "name": "face_with_rolling_eyes",
+                "users": [
+                    "U1HFNJB50"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "say what?",
+        "ts": "1478181306.003195"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We will have to do custom marshaling for the block header which is unfortunate, but it is small and simple",
+        "ts": "1478181318.003196"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if I have a .proto definition you're saying the marshalling isn't deterministic?",
+        "ts": "1478181341.003197"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am",
+        "ts": "1478181347.003198"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is, in implementation always determinstic",
+        "ts": "1478181362.003199"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Here we go again.)",
+        "ts": "1478181374.003200",
+        "reactions": [
+            {
+                "name": "simple_smile",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            },
+            {
+                "name": "joy",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But in documentation, it is explicitly stated that marshaling is not required to be deterministic",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478181389.000000"
+        },
+        "ts": "1478181376.003201"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "umm ok",
+        "ts": "1478181399.003203"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1478181556.003204"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/ch3ckch4p5bnznvt42qe7fwrdqe|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1478181573.003205"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XR6J961> <@U1AU8DRQR>",
+        "ts": "1478181661.003206"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "having another meeting in parallel, sorry",
+        "ts": "1478181689.003207"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "today, I reviewed <@U0XR6J961> 's SBFT patchsets (we need one more reviewer) and groomed my own ones (reviewers needed and a working Jenkins needed)",
+        "ts": "1478181739.003208"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we would need somebody to do <https:\/\/jira.hyperledger.org\/browse\/FAB-477> (I do not know those thresholds) Any volunteers \/ victims?",
+        "ts": "1478181879.003209"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "noone?",
+        "ts": "1478185800.003210"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> It's something I'd be willing to look at eventually, but sbft is lower priority than channels and chain ACLs etc. at the moment, so I don't have the cycles for it",
+        "ts": "1478187485.003211"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it is just 1-2 hours for an experienced reviewer like you :smile:",
+        "ts": "1478187535.003212"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Haha, if only that were true, oh the free time I would have",
+        "ts": "1478188226.003213"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw <@U0XR6J961> has dozens of commits here waiting for review (and reverify): <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2117\/>",
+        "ts": "1478189954.003214"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I have looked at all of them I have been tagged on",
+        "ts": "1478190031.003215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Waiting for verify on some",
+        "ts": "1478190036.003216"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you spot any that you think I should review, feel free to add me to the reviewer list",
+        "ts": "1478190058.003217"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I'll try to help bu not really this week (@OSDI)",
+        "ts": "1478198222.003218"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I believe each config update transaction will contain the entire config, right?  Can someone tell me how to read the latest config update in the peer?",
+        "ts": "1478200551.003219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0S5KF44D> Yes, every configuration transaction contains the full set of config.",
+        "ts": "1478201459.003220"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure what you mean by:\n\n&gt; Can someone tell me how to read the latest config update in the peer?",
+        "ts": "1478201481.003221"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0XPR4NP4> When in the peer, how to read the config data from the system ledger?",
+        "ts": "1478202002.003222"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Scan all the blocks in reverse order until you find one that matches something similar to what you see here? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2179\/4\/orderer\/common\/bootstrap\/static\/static_test.go>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478202159.000000"
+        },
+        "ts": "1478202107.003223"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0S5KF44D> Eventually, there will be a system chaincode at the peer which encodes this information into the normal ledger",
+        "ts": "1478202356.003225"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You can use standard query mechanisms at that point.",
+        "ts": "1478202364.003226"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you need to find config from the raw chain before this system chaincode translation, then you can do as <@U0XQ35CDD> suggests",
+        "ts": "1478202382.003227"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0XPR4NP4> Is there a jira item I can follow for the system chaincode to do this?",
+        "ts": "1478202654.003228"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "any ETA on that?",
+        "ts": "1478202665.003229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "None that I am aware of, this was just hashed out last Thursday I think.  It will happen some time after the transaction format is consolidated.  This should probably be created in JIRA, though I'm not entirely sure what category to assign it.",
+        "ts": "1478202746.003230"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Or, it exists and I'm unaware of it)",
+        "ts": "1478202755.003231"
+    }
+]

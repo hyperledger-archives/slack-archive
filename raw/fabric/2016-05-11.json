@@ -1,0 +1,663 @@
+[
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "Anyone who has set up the fabric dev  network, can you help me with this?",
+        "ts": "1462950959.001075"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "<@U11QC59MY>: how are you doing your deploy? The path \"<https:\/\/github.com\/myGit\/Chaincode>\" seems not correct.",
+        "ts": "1462954533.001076"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "modified chaincode is in my git repository",
+        "ts": "1462955219.001077"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "this was working earlier with OBC setup (without vagrant)",
+        "ts": "1462955293.001078"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "can you check in your chaincode if you are importing this: \t\"<http:\/\/github.com\/openblockchain\/obc-peer\/openchain\/chaincode\/shim|github.com\/openblockchain\/obc-peer\/openchain\/chaincode\/shim>\"?",
+        "ts": "1462955439.001079"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "yes",
+        "ts": "1462955533.001080"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "you should change that",
+        "ts": "1462955565.001081"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "Oh! yes. OK I would do that",
+        "ts": "1462955607.001082"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "\"<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim|github.com\/hyperledger\/fabric\/core\/chaincode\/shim>\"",
+        "ts": "1462955614.001083"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "you think that was causing the timeout",
+        "ts": "1462955630.001084"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "yeah I saw the same problem while deploying the Marbles app locally",
+        "ts": "1462955669.001085"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U11TAFPUP>: the chaincode does not manage rollback at all",
+        "ts": "1462957739.001086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "rollback and commit happen from the outside",
+        "ts": "1462957757.001087"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0XR6J961>:  In an invoke transaction, I did some actions like this 1) Put State, 2) Put State 3) Put State.",
+        "edited": {
+            "user": "U11TAFPUP",
+            "ts": "1462958373.000000"
+        },
+        "ts": "1462957969.001088"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "At step 3 I got an error.",
+        "ts": "1462957988.001089"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "When I verified states at step 1 and 2, I didn't see the values that I wanted to save at those steps.",
+        "ts": "1462958087.001090"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "What happened to steps 1 and 2 if step 3 failed?",
+        "ts": "1462958135.001091"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: what kind of error?",
+        "ts": "1462958616.001093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is something we have not really specified yet",
+        "ts": "1462958629.001094"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i hope <@U0PB67X4K> can give some guidance on this",
+        "ts": "1462958644.001095"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "I think transactions that fail (error return) should not be part of the block",
+        "ts": "1462958663.001096"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0TFEHX8E> should be able to provide more details, but basically when you call \"Put State\" from within chaincode, the actual persisted state (i.e. what is stored in rocksdb) is not actually being updated yet.  After a successful invocation of your chaincode function (meaning no unhandled exceptions or no exception created), what you end up with is basically an in-memory collection of the proposed state changes.  Depending on the consensus algorithm and config parameters, at some point Commit is called by the system and at that time we actually attempt to write the changes to the database.  If one of those Put calls results in an error, then things get rolled back (and as a matter of fact, if this was in a block of transactions, at this point I believe the entire block fails).  But <@U0TFEHX8E> can correct me where I am wrong",
+        "ts": "1462958710.001097"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0XR6J961> Actually, at step 3 I made it return an error based on a condition.",
+        "ts": "1462958726.001098"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "currently there is a single database transaction encompassing multiple chaincode transactions, but we may have to be able to roll back individual chaincode transactions",
+        "ts": "1462958726.001099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: ah, so after the last putstate you return an error?",
+        "ts": "1462958777.001100"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: or do you mean you invoke 3 times?",
+        "ts": "1462958786.001101"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11TAFPUP> - if your chaincode throws an exception, no state changes will occur, the tx is not processed and I don't believe the tx is in any block",
+        "ts": "1462958804.001102"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "return an error after step 3.",
+        "ts": "1462958817.001103"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "each invoke on chaincode results in an atomic set of state changes - it's all or none.  and if being processed as part of a batch, it is currently all or none for the batch",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1462958884.000000"
+        },
+        "ts": "1462958857.001104"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "garisingh: i don't think so?",
+        "ts": "1462958862.001105"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is that really the case?",
+        "ts": "1462958869.001106"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I could be totally wrong  :wink:",
+        "ts": "1462958890.001108"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think the errors are just collected",
+        "ts": "1462958899.001109"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0TFEHX8E> best to answer - but I am pretty sure that is how it mostly works",
+        "ts": "1462958907.001110"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it doesn't matter much how it currently works - we should figure out how we want it to work",
+        "ts": "1462958923.001111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what are the correct semantics?",
+        "ts": "1462958929.001112"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think chaincode being able to abort the whole block is dangerous",
+        "ts": "1462958946.001113"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so - the result of a chaincode invocation is going to be a set of one or more state changes.  I think we can agree that those should be all or nothing.  Within chaincode, you can handle any errors you want, but if you return success, I think all state changes made should be considered an atomic set of operations",
+        "ts": "1462959035.001114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1462959119.001115"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on the batch thing, I agree that one tx should not roll back an entire block, although this can be quite tricky depending on the transactions.  this is probably why we do need to think about some type of MVCC approach",
+        "ts": "1462959122.001116"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1462959134.001117"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that will address a lot of issues",
+        "ts": "1462959140.001118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we really need to think of this as a database, not of some undefined something system",
+        "ts": "1462959160.001119"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1462959182.001120"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "now we can probably be intelligent about things as well given that state is associated with chaincode - so if there was a batch of tx and they all invoked different chaincode \/ functions \/ state, perhaps we can optimize as well",
+        "ts": "1462959233.001121"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "But I am pretty sure that I am close to being correct in how things work in the code today as implemented",
+        "ts": "1462959275.001122"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "For confirmation, in case of returning an error within my chaincode, no states were saved at step 1, 2 and 3?",
+        "ts": "1462959285.001123"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "correct",
+        "ts": "1462959293.001124"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it should be so",
+        "ts": "1462959302.001125"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll have a look",
+        "ts": "1462959311.001126"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "Nice. Thanks you, guys.",
+        "ts": "1462959338.001127"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "garisingh: i think you're right.  the code rolls back the current tx state",
+        "ts": "1462959692.001128"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then, why do we record the transaction and the error in the block?",
+        "ts": "1462959710.001129"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - interesting - I recall at one point that not being the case although I could be wrong there as well.  I guess if we think about it, the transaction was technically invoked and perhaps it is valuable to know that your transaction resulted in an error.  And of course given that tx processing is async from the invoker's perspective, the only place to store the \"result\" (even if an error) is the ledger.",
+        "ts": "1462959929.001130"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but confusing all around",
+        "ts": "1462959954.001131"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it seems simple",
+        "ts": "1462959959.001132"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/983>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Invalid\/Erratic Transactions get committed to the BlockChain \u00b7 Issue #983 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/983",
+                "text": "Currently invalid or wrong invoke transactions get committed the blockchain. Invalid transactions: tx referencing not deployed chaincode, calling chaincode without the correct credentials, callin...",
+                "fallback": "GitHub: Invalid\/Erratic Transactions get committed to the BlockChain \u00b7 Issue #983 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/10033898?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/983",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1462960015.001133"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's some DoS potential - I could invoke one chaincode over and over.  say I don't have the authorization or the balance to perform that transaction; that would mean that I could spam the blockchain",
+        "ts": "1462960036.001135"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and this can't be cleared easily later",
+        "ts": "1462960046.001136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "garisingh: there are certainly situations where a transaction is considered invalid and never makes it in a block.  because we have to handle those as well, we could use the same mechanism to notify transaction errors",
+        "ts": "1462960187.001137"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1462960204.001138"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "perhaps it exists, but it would probably be helpful to have a flow diagram of the state machine replication",
+        "ts": "1462960329.001139"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "e.g. more details on ```submit \/ invoke transaction --&gt; consensus --&gt; ordered list of transactions --&gt; execute chaincode --&gt; collect state changes --&gt; process state changes ... ```",
+        "ts": "1462960450.001140"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "IMHO, we actually have 2 state machines - one to execute chaincode (outputting proposed state changes) and another to actually process the state changes",
+        "ts": "1462960538.001141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you mean a message flow diagram?",
+        "ts": "1462960609.001142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can try to create that",
+        "ts": "1462960624.001143"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "basically the flow of a message from submission until it reaches the ledger",
+        "ts": "1462960740.001144"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and everything that happens in between  :wink:",
+        "ts": "1462960755.001145"
+    },
+    {
+        "user": "U16FB85U6",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U16FB85U6|yiseul> has joined the channel",
+        "ts": "1462960937.001146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, i can try to create that",
+        "ts": "1462960970.001147"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - I spoke with <@U0XPR4NP4> and <@U0XQ35CDD> about doing something similar for consensus (including checkpointing).  Perhaps we can combine these together.   I think this would be very helpful for everyone in the community as it is not clear from the protocol spec alone how everything flows together.   Let me know how I can help as well",
+        "ts": "1462961142.001148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll prototype something with <https:\/\/sverweij.github.io\/mscgen_js\/>",
+        "attachments": [
+            {
+                "title": "mscgen_js - turns text into sequence charts",
+                "title_link": "https:\/\/sverweij.github.io\/mscgen_js\/",
+                "text": "mscgen_js - turns text into sequence charts. On line message sequence chart renderer for charts written in mscgen, msgenny or x\u00f9.",
+                "fallback": "mscgen_js - turns text into sequence charts",
+                "from_url": "https:\/\/sverweij.github.io\/mscgen_js\/",
+                "id": 1
+            }
+        ],
+        "ts": "1462961311.001149"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "good call",
+        "ts": "1462961502.001151"
+    },
+    {
+        "user": "U15B57S4R",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U15B57S4R|isidoro.ghezzi> has joined the channel",
+        "ts": "1462963588.001152"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh no.",
+        "ts": "1462963711.001155"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/goo.gl\/GKCPBk>",
+        "attachments": [
+            {
+                "title": "mscgen_js - turns text into sequence charts",
+                "title_link": "https:\/\/goo.gl\/GKCPBk",
+                "text": "mscgen_js - turns text into sequence charts. On line message sequence chart renderer for charts written in mscgen, msgenny or x\u00f9.",
+                "fallback": "mscgen_js - turns text into sequence charts",
+                "from_url": "https:\/\/goo.gl\/GKCPBk",
+                "id": 1
+            }
+        ],
+        "ts": "1462963757.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i don't know how to collaborate nicely on this",
+        "ts": "1462963845.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0PB67X4K>: ^^ not sure if this amount of detail is helpful",
+        "ts": "1462964264.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i skipped the message pattern of consensus",
+        "ts": "1462964278.001161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem with htmlized markdown on github is that you cannot include any js",
+        "ts": "1462964441.001162"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "thanks <@U0XR6J961> - I'll digest but initial review looks good and I think will be very helpful.  hopefully others are following along and can provide feedback as well",
+        "ts": "1462964688.001163",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U0N31PX42",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N31PX42|andrew.keys> has joined the channel",
+        "ts": "1462964940.001164"
+    },
+    {
+        "user": "U14AGLPK2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U14AGLPK2|elsesiy> has joined the channel",
+        "ts": "1462965096.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<!here|@here> added a sample yesterday that may be useful  for testing <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/passthru\/passthru.go>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/passthru\/passthru.go",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/passthru\/passthru.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1462975063.000000"
+        },
+        "ts": "1462974944.001169"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it just passes Invoke \/ Query arguements to another chaincode\u2026 the called chaincode ID is sent via the \u201cFunction\u201d parameter",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1462975033.000000"
+        },
+        "ts": "1462974993.001171"
+    },
+    {
+        "type": "message",
+        "user": "U0Z5BHCEM",
+        "text": "<@U0ULK2JPP>: this is very interesting. I have chaincodes calling chaincodes. Does this approach have performance advantages?",
+        "ts": "1462975144.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Z5BHCEM> likely not. Main goal was to write cc-to-cc tests quickly",
+        "ts": "1462975266.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0Z5BHCEM",
+        "text": "ok. got u. neat, thoguh. i\u2019ll try it. i think it will be useful for me nevertheless",
+        "ts": "1462975300.001176",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0PB67X4K>: haven\u2019t read the entire conversation, but you\u2019re correct about state changes being held in memory until the block is committed. At that point it\u2019s written to the DB. We do have the ability to roll back either individual transactions or the entire block. It\u2019s up to the consensus mechanism if they use this functionality",
+        "ts": "1462975888.001177"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^ just add to this from a chaincode point of view\u2026. transaction execution can (1) return with a fabric error (2) return with a chaincode error and (3) return success.",
+        "ts": "1462976775.001178"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(1) and (2) will cause the state of the transaction to be rolled back. The transaction itself will be entered in the block for non-sieve consensus (sieve may have other subtleties from a block creation point of view\u2026 <@U0XR6J961> ?)",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1462976952.000000"
+        },
+        "ts": "1462976831.001179"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "same thing",
+        "ts": "1462979628.001181"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just that the commit happens later",
+        "ts": "1462979636.001182"
+    },
+    {
+        "user": "U17F0A68Y",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U17F0A68Y|lhy555> has joined the channel",
+        "ts": "1463026050.001183"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "I am running the docker-based setup and my peer is running on ip 172.17.0.2:30303. I am not able to use the REST api from my windows (Host) machine on that peer. How should I do this?",
+        "ts": "1463031309.001184"
+    }
+]

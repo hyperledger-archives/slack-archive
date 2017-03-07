@@ -1,0 +1,107 @@
+[
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "I made a little progress on the synchronization problem. I tested with K=1,2,10 and logmultiplier=2,3.",
+        "ts": "1483460224.000050"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "In Experiment 1, send 2 TXs, stop vp0 (primary==leader), send 2 TXs, restart vp0, and send N TXs.",
+        "ts": "1483460384.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "It seemed that the first synchronization occurs at n0 + K*(logmultiplier + 2) - 1, and then repeats synchronization with a period K*(logmultiplier + 2), and vp0 never came back to the normal operation.",
+        "ts": "1483460555.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "So, in  the case of K=10 and logmultiplier=4, the period becomes 60, as reported on Dec.20th in this channel.",
+        "ts": "1483460625.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/consensus\/p1482209416000028>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/consensus\/p1482209416000028",
+                "fallback": "[December 19th, 2016 8:50 PM] ryokawawork: Hi. I have a question on the behavior of synchronization and the checkpoint. I am using Fabric v0.6.0, and 4 nodes,     - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft\n    - CORE_PBFT_GENERAL_K=10\n    - CORE_PBFT_GENERAL_BATCHSIZE=1\nWe were testing the synchronization behavior when one of the four node gets down for a while and restarted and back to the network again. In this case, the height of the restarted node is behind that of other nodes. User sent 60 transactions and the node started synchronization and completed synchronization. The user continued sending transactions, but the height of the restarted node did not grow. After sending 120 transactions, the node synchronized again. This sequence pattern was repeated at 60th, 120th, 180th, ... transaction after the restart.",
+                "ts": "1482209416.000028",
+                "author_subname": "ryokawawork",
+                "channel_id": "C0XR102AJ",
+                "channel_name": "consensus",
+                "is_msg_unfurl": true,
+                "text": "Hi. I have a question on the behavior of synchronization and the checkpoint. I am using Fabric v0.6.0, and 4 nodes,     - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft\n    - CORE_PBFT_GENERAL_K=10\n    - CORE_PBFT_GENERAL_BATCHSIZE=1\nWe were testing the synchronization behavior when one of the four node gets down for a while and restarted and back to the network again. In this case, the height of the restarted node is behind that of other nodes. User sent 60 transactions and the node started synchronization and completed synchronization. The user continued sending transactions, but the height of the restarted node did not grow. After sending 120 transactions, the node synchronized again. This sequence pattern was repeated at 60th, 120th, 180th, ... transaction after the restart.",
+                "author_name": "Ryo Kawahara",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/ryokawawork",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/79a69e4cd1792300d958febd0faaf929.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0024-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #consensus"
+            }
+        ],
+        "ts": "1483460669.000054"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "And I saw some WARN message in the log.",
+        "ts": "1483460772.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "vp0_1        | 01:27:42.250 [consensus\/pbft] recvCommit -&gt; WARN 0bc Replica 0 ignoring commit for view=1\/seqNo=8: not in-wv, in view 0, high water mark 2\nvp0_1        | 01:27:42.304 [consensus\/pbft] recvCheckpoint -&gt; WARN 0c5 Checkpoint sequence number outside watermarks: seqNo 8, low-mark 2\nvp0_1        | 01:27:42.317 [consensus\/pbft] weakCheckpointSetOutOfRange -&gt; WARN 0cd Replica 0 is out of date, f+1 nodes agree checkpoint with seqNo 8 exists but our high water mark is 6\nvp0_1        | 01:27:42.318 [consensus\/pbft] sendPrePrepare -&gt; WARN 0d5 Primary 0 not sending pre-prepare for batch aXZf\/Zfi7CDLU5n5dANOpYIX81Oy0LuTZ2mX\/Xly48d5yYaULtX+ndFIVKweQ\/xej17JXRwkTIV0RiT1j+xKeA== - out of sequence numbers\nvp0_1        | 01:27:47.356 [consensus\/pbft] sendPrePrepare -&gt; WARN 10d Primary 0 not sending pre-prepare for batch Tq+y1NuMKGw8eJjimsdRecr4RseJ\/\/xE00lkjK+qvg2yK9giQwqCmPnlgCdBBVn\/uzxwFsvYn\/sHeLcL60O6Dw== - out of sequence numbers\nvp0_1        | 01:27:47.357 [consensus\/pbft] recvPrePrepare -&gt; WARN 129 Pre-prepare from other than primary: got 1, should be 0\nvp0_1        | 01:27:51.361 [consensus\/pbft] recvViewChange -&gt; WARN 181 Replica 0 already has a view change message for view 1 from replica 0",
+        "ts": "1483460776.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "I read the PBFT paper by Castro and Liskov (2002) and found the similar description that the state transfer occurs at the first checkpoint which exceeds the high water mark H = log size + h, where log size = K*logmultiplier and h = low water mark, set to the last stable checkpoint. So, it is natural that the state transfer does not occur at the immediate checkpoint, but I still do not understand why the node vp0 does not come back to the normal operation.",
+        "ts": "1483461057.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "From the log message above, I guess that vp0 still believes that he is in view 0, although other nodes in the network is in view 1.",
+        "ts": "1483461107.000059"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "In Experiment 2, send 2 TXs, stop vp2 (backup==non-leader), send 2 TXs, restart vp2, and send N TXs. In this case, no view change required because the leader vp0 is alive throughout the experiment.",
+        "ts": "1483461230.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "Then, I observed that the first synchronization occurred at the same point with Experiment 1, but then vp2 came back to the normal operation and kept synchronized after it was restarted.",
+        "ts": "1483461304.000061"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "So I guess, that there is a some trouble in the view change when the primary node has a failure and come back to the network.",
+        "ts": "1483461387.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "FYI: <@U2CBG8V9U>",
+        "ts": "1483461676.000063"
+    },
+    {
+        "user": "U3HE2V38F",
+        "text": "<@U3HE2V38F|mohamoudegal> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483474886.000064"
+    }
+]

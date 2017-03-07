@@ -1,0 +1,415 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how did you get the logs from CI?",
+        "ts": "1462267964.001110"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is a place you click on expand, then a number of urls, like pastebin which you can reference ",
+        "ts": "1462279730.001111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah, maybe that's new",
+        "ts": "1462279776.001112"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i was trying to figure out a way to abstract this multitude of channels into a single event processor",
+        "ts": "1462279820.001113"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess the easiest way would be what you use for injectchan",
+        "ts": "1462279841.001114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. transform calls(events) with arguments into closures that get queued",
+        "ts": "1462279881.001115"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, hmmm, yes, the injection was a late addition, just to handle those little one off cases, but there's no reason you couldn't do it more generally",
+        "ts": "1462280113.001116"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd like to make sure that whatever mechanism we use for the eventing doesn't require this idle channel pattern I've been using.  I don't like it, but it's the most reliable and least invasive solution I've been able come up with.  Would be nice if the driving thread were owned by UT, would make determining when things are finished easier.  I sort of imagine the solution is to have the driving thread enter from outside PBFT, but doing that without a lot of code duplication has not been obvious.",
+        "ts": "1462280570.001117"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":simple_smile:",
+        "ts": "1462280600.001118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i agree",
+        "ts": "1462280611.001119"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wondered about blocking vs non-blocking enqueue",
+        "ts": "1462280651.001120"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so far it seems that you are using blocking enqueues?",
+        "ts": "1462280661.001121"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i think that's the right thing",
+        "ts": "1462280670.001122"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, using blocking queues simplified life considerably",
+        "ts": "1462280689.001123"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Otherwise if a calling thread makes multiple events, you aren't guaranteed the order of arrival",
+        "ts": "1462280717.001124"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(back in 15 minutes or so)",
+        "ts": "1462280801.001125"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The biggest problem I have trying to wrap my head around using a single channel for events vs doing a select over multiple channels, is how to handle the timer event.  The very nice thing that the new threading does is fix the view timer, such that if the pbft thread resets the view timer, when the elapsed time would have otherwise caused that timer to fire, then the pbft thread never gets that event.  If there is for instance a timer service out there, which attempts to queue a timer event when the timer expires, but the event thread is off doing work, there's no way to take that event back if the timer is reset.  There could obviously be some sort of callback scheme, the timer event has to call back to the timer service when an event arrives to verify that it is a legitimate event, but that seems really ugly.",
+        "ts": "1462282491.001126"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "My thought was to have an event dispatch processor that also provides timed events",
+        "ts": "1462283260.001127"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you cancel a timed event, it never gets delivered",
+        "ts": "1462283274.001128"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "usually this is implemented using a timer wheel",
+        "ts": "1462283305.001129"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you just wait for the next timer to expire (and wait for other events)",
+        "ts": "1462283334.001130"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So the event dispatch processor holds the thread which drives pbft execution?",
+        "ts": "1462283518.001131"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: that \"this indicates a bug\" is benign",
+        "ts": "1462292882.001132"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not sure if it will even be present with the new code",
+        "ts": "1462292890.001133"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Where\/what are you talking about?",
+        "ts": "1462292966.001134"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "are you looking at #1180 ?",
+        "ts": "1462293006.001135"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1180#issuecomment-216579990>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "VP0 gacks under sieve pbft with non deterministic results returned \u00b7 Issue #1180 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1180#issuecomment-216579990",
+                "text": "Description: VP0 stopped logging, started dumping numbers out till it was ctrl-c'd Steps to repro: Setup a CA and set of 4 VPs using pbft sieve using privacy and security Login your user Do a s...",
+                "fallback": "GitHub: VP0 gacks under sieve pbft with non deterministic results returned \u00b7 Issue #1180 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/17052305?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1180#issuecomment-216579990",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1462293042.001136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1462293043.001138"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i'm going to walk over and talk to rick  ... not sure i understand what these logs mean",
+        "ts": "1462293088.001139"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well",
+        "ts": "1462293097.001140"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "he's testing old code, i guess",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1462293109.000000"
+        },
+        "ts": "1462293098.001141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, old relative to our PRs",
+        "ts": "1462293122.001143"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there was a bug... which was eventually fixed, but, the bulk of that code disappeared in Simon's PR",
+        "ts": "1462293134.001144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sometimes that message was benign, othertimes it truly indicated a bug, at some point, I thought I switched that message.",
+        "ts": "1462293165.001145"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the latest logs says peer is dying on startup with connection errors ... i don't think the network is configured right",
+        "ts": "1462293204.001146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which peer?",
+        "ts": "1462293223.001147"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "vp0\/vp1",
+        "ts": "1462293240.001148"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ah wait ... vp0 is culprit",
+        "ts": "1462293317.001149"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "still think config is wrong ... i'll go talk to him",
+        "ts": "1462293420.001150"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also he really doesn't have to test any consensus stuff until the new PRs are in",
+        "ts": "1462293580.001151"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, jason's",
+        "ts": "1462293584.001152"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "all at lunch :simple_smile:  will check again later in aftermoon",
+        "ts": "1462293888.001153"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F15ULLKEV\/pasted_image_at_2016_05_03_09_36_pm.png|Pasted image at 2016-05-03, 9:36 PM> and commented: with latest code..",
+        "file": {
+            "id": "F15ULLKEV",
+            "created": 1462325829,
+            "timestamp": 1462325829,
+            "name": "Pasted image at 2016_05_03 09_36 PM.png",
+            "title": "Pasted image at 2016-05-03, 9:36 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 337642,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F15ULLKEV\/pasted_image_at_2016_05_03_09_36_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F15ULLKEV\/download\/pasted_image_at_2016_05_03_09_36_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 158,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 211,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 316,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 421,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F15ULLKEV-8242e62596\/pasted_image_at_2016_05_03_09_36_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 449,
+            "image_exif_rotation": 1,
+            "original_w": 1860,
+            "original_h": 816,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F15ULLKEV\/pasted_image_at_2016_05_03_09_36_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F15ULLKEV-57fa1ec010",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc15UDJGGG",
+                "created": 1462325829,
+                "timestamp": 1462325829,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "with latest code..",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1462325832.001154"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that was with \"CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true .\/peer peer --peer-chaincodedev\"",
+        "ts": "1462325849.001155"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I can try setting \u201cstatetransfer.blocksperrequest\u201d to be non zero but I\u2019d expect not to have to set anythig",
+        "ts": "1462325975.001156"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP>: There is a default defined in the `consensus\/obcpbft\/config.yaml`, I know there's been some effort to make the config not be accessed relative to the current working directory, but I don't believe that's in yet.  This is only the first symptom, you'll likely see many other pbft problems for lack of config if that is the problem.",
+        "ts": "1462327205.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4>: let me make sure I\u2019m not doing something wrong first",
+        "ts": "1462327257.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I thought  I had reverted my work",
+        "ts": "1462327265.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but let me make sure",
+        "ts": "1462327268.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I may have misquoted you the path... hold on",
+        "ts": "1462327279.001161"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Actually, looks like <@U0XR6J961> moved the state transfer config out of pbft and into `core.yaml`.  Looks like it is there in mine.",
+        "ts": "1462327465.001162"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "false alarm\u2026 sorry about that <@U0XPR4NP4>",
+        "ts": "1462327632.001163"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No problem, the best sort of problems are the ones that don't exist! Glad to hear it.",
+        "ts": "1462327720.001164"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":simple_smile:",
+        "ts": "1462327734.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I did have some of my changes",
+        "ts": "1462327753.001166"
+    }
+]

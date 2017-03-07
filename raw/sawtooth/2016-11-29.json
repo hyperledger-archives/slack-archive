@@ -1,0 +1,53 @@
+[
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "<@U0VKPD6A2> <@U1A7EF0S0> <@U0Y4ZF0QM> Is there anyone working on speeding up the test suite?  If not, I'd like to volunteer myself to work on that. :slightly_smiling_face:",
+        "attachments": [
+            {
+                "fallback": "[November 23rd, 2016 1:52 AM] middleton: <@U1A7EF0S0> added a Jira ticket to look into speeding up the test suite. Looking for volunteers to analyze the tests and look for unnecessary redundancy.\n<https:\/\/jira.hyperledger.org\/browse\/STL-13>",
+                "ts": "1479837146.000461",
+                "author_subname": "middleton",
+                "channel_id": "C16GB844D",
+                "channel_name": "sawtooth",
+                "is_msg_unfurl": true,
+                "text": "<@U1A7EF0S0> added a Jira ticket to look into speeding up the test suite. Looking for volunteers to analyze the tests and look for unnecessary redundancy.\n<https:\/\/jira.hyperledger.org\/browse\/STL-13>",
+                "author_name": "Dan Middleton",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/middleton",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-06-15\/51184378512_ca18b94886bd279b9488_48.gif",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/sawtooth\/p1479837146000461",
+                "is_share": true,
+                "footer": "Posted in #sawtooth"
+            }
+        ],
+        "ts": "1480410838.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "I think there are a couple people looking into it, but it is a broad task and there is room for many suggestions.  Some people will be looking at it holistically so the test suite is designed for coverage without redundancy.  But complementary to that is looking for the redundancy that exists today and removing it. I think small PRs could be helpful here.",
+        "ts": "1480430545.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "<@U1ZUSJHAA> - there are several things we would like to do with tests.  some of them are: 1) move to a test suite approach, where each test suite is made up of tests; the tests may exist in multiple test suites; 2) start supporting the new 'tng' code just merged into master (and still very much in-progress) which requires running multiple processes per validator; 3) for the new transaction processors, devise a testing approach so we can test them in isolation; for example, testing the python inkey or java intkey transaction processors without launching a validator.  4) increase the granularity of our tests, such that it's obvious what the test is intended to cover specifically; many of the existing tests do more than one thing; 5) implement a better library (part of txnintegration) which reduces test code and makes it clearer; for example, maybe having a futures-based approach, where when you send a transaction, you get back a futures object and can use it to check the status of the transaction, with all the polling code, etc. hidden from the test.  future = client.send_txn(...);  ... if (future.done()) {}",
+        "ts": "1480446210.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "<@U1ZUSJHAA>  - to get there, we are consolidating management code under sawtooth.manage package, which 'sawtooth cluster' CLI uses, so we can use the same management framework for both CLI and tests.  So a good entry point into this would be to play around with the 'sawtooth cluster' command and help make it more robust.  Several of us are looking at that, but the more eyes\/help on that the better.  Put a note here if you are working on a specific bug and we can try and not duplicate effort.  Very interested in squashing any bugs that throw unhelpful exceptions - for example, I was looking at one earlier where if the docker command doesn't exist it throws an exception - things like that.",
+        "ts": "1480446641.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "like <@U0VKPD6A2> suggested, smaller PRs probably best since there will be activity here from multiple people",
+        "ts": "1480446712.000473"
+    }
+]

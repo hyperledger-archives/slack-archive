@@ -1,0 +1,350 @@
+[
+    {
+        "type": "message",
+        "user": "U2PAN55V0",
+        "text": "Hi, I have a question about querying tables. I have a table with 3 keys. Example: Surname, Name, RegistryNumber.  If I perform a Lookup with all 3 keys, I'll receive one row. I perform a lookup with keys: Surname, Name, I receive 1 or more  rows. But when I do a lookup by the third key only. I don't receive any information. I perform the lookup as such:  nill,nill, RegistryNumber.   How do I perform a lookup with only the third Key and the other blank values?",
+        "ts": "1478766209.002214"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2PAN55V0> the simple answer is that the table support is limited and you cannot query (nil, nil, RegistryNumber). Any keybased query ending in a key has to have all the previous keys. (<@U1KFCPFQA> to correct.)",
+        "ts": "1478785237.002217"
+    },
+    {
+        "user": "U1KFCPFQA",
+        "inviter": "U0ULK2JPP",
+        "text": "<@U1KFCPFQA|dave.enyeart> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478785242.002218"
+    },
+    {
+        "user": "U31EJ5JK0",
+        "text": "<@U31EJ5JK0|k.sung> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478786156.002219"
+    },
+    {
+        "type": "message",
+        "user": "U2PAN55V0",
+        "text": "@musalisr, That was my understanding as well. Thanks for the confirmation. I'll try to find another way to circumvent the issue.",
+        "ts": "1478786717.002220"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0ULK2JPP> That is correct.  The table API is misleading in that you can\u2019t query arbitrary columns.  For v1 we are recommending to use JSON data in chaincode rather than table API, so when using a state database that supports JSON query (such as CouchDB), any field in the chaincode variable can be queried.",
+        "ts": "1478793731.002223"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1KFCPFQA> - did we decide to remove the table API in v1 (and just expose the range queries) or are we leaving it in?",
+        "ts": "1478794110.002224"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K> is there a discussion\/doc about the chaincode kv interface plans?",
+        "ts": "1478794180.002225"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I know that we use the table API, and even that is fairly weak for what we would like to see",
+        "ts": "1478794194.002226"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if its going away, id like to know what the plan is in general",
+        "ts": "1478794210.002227"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. I'd hate to see it get weaker by table simply going away...id rather see it grow stronger",
+        "ts": "1478794229.002228"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that is the goal\u2026 to make it stronger to support query on any field.  we can get there by using JSON data in chaincode and CouchDB as the state database.  Whether we completely remove the fairly limited Table API is still up for debate.",
+        "ts": "1478794346.002229"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U1KFCPFQA> has there been any thoughts on what the chaincode API (for chaincode developers) would look like when it is backed by CouchDB?",
+        "ts": "1478794635.002230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1KFCPFQA> having some kind of formal query engine would be a welcome addition",
+        "ts": "1478794723.002231",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1MSZ37NK"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1CH3GZ0Q",
+        "text": "Is there any SDK available for crypto-currency type use case? I mean it should be readily consumable by a front-end designed to make a simple peer-to-peer crypto currency transactions.",
+        "ts": "1478794761.002232"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my thought is, I would be careful about exposing any one particular engine (unless its super general, like SQL)",
+        "ts": "1478794762.002233"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but even that,  i dont have a strong opinion other than to say building apps on top of the v0.6 and earlier architecture is a bit weak",
+        "ts": "1478794788.002234"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, anything that improves that is welcome",
+        "ts": "1478794798.002235"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "for now we still use PutState() and pass the bytes.  If we detect those bytes represent JSON then we store in CouchDB as JSON, otherwise store in CouchDB as binary attachment.  We may make this more explicit and allow the chaincode developer to call PutStateJSON() or PutStateJSONwithBinaryAttachments().",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1478794922.000000"
+        },
+        "ts": "1478794896.002236"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "PutStateJSONwithBinaryAttachments() would allow you to save some queryable JSON \u2018header\u2019 information to the ledger, along with binary attachments such as PDF, JPG, etc",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1478795031.000000"
+        },
+        "ts": "1478795019.002238"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "All - what are the most typical use cases for query that we are seeing?  a) query to see what is in ledger   or b) query for purpose of determining which keys to update in a transaction?",
+        "ts": "1478795151.002240"
+    },
+    {
+        "type": "message",
+        "user": "U2PAN55V0",
+        "text": "<@U1KFCPFQA> For me, I query the most to see what's in the ledger",
+        "ts": "1478795950.002241"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U1KFCPFQA> Same for me. One of the things I would find lacking without the table support is how to deal with collections of things - using the car lease demo as an example, I want a collection of cars - I want to get all the cars, I want to get a car by its ID, and ideally I could use a query language to get a car using expressions that can access any of the car's properties.",
+        "ts": "1478796468.002242"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "I don't know much about CouchDB but maybe just storing JSON representations of the cars with some kind of \"class\" marker would be enough to achieve that with GetState()\/PutState() and I assume some kind of Query() method?",
+        "ts": "1478796512.002243"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, we could decide to write our own query language on top of key\/value database.  haven\u2019t ruled that out, but for short term it is easier to use a database such as CouchDB that already has that.",
+        "ts": "1478796726.002244"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, or use one that exists",
+        "ts": "1478796791.002245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "long story short: some abstraction between the chaincode's interface and the underlying ledger implementation is probably smart, but i agree for the short term its probably fine to surface something less general",
+        "ts": "1478796844.002246"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "out of curiosity: why couchdb?  what else was looked at?",
+        "ts": "1478796907.002247"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im just curious",
+        "ts": "1478796912.002248"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I remember looking at couchdb years ago, but i came away relatively unimpressed",
+        "ts": "1478796936.002249"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IIRC I found its MR facilities were a little too static to be what I deemed useful...i was more enthusiastic about dynamo derivatives like Riak",
+        "ts": "1478796977.002250"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not saying that is appropriate here, I am just curious what the rationale was",
+        "ts": "1478796991.002251"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "sql based data stores were looked at, but required maintenance of schema which is awkward given our development model",
+        "ts": "1478797007.002252"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "what is MR?",
+        "ts": "1478797023.002253"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "map-reduce",
+        "ts": "1478797027.002254"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "may not apply here",
+        "ts": "1478797031.002255"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that was what I was looking at at that time",
+        "ts": "1478797038.002256"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ah, CouchDB in 2.0 has added ad hoc query that does not require map reduce",
+        "ts": "1478797052.002257"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that makes it much nicer to work with\u2026 same idea as sql and mongo query, but different syntax",
+        "ts": "1478797076.002258"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I seem to recall that I found couchdb a little too static because you had to bake the code in, whereas in Riak you could provide ad hoc queries",
+        "ts": "1478797079.002259"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, gotcha",
+        "ts": "1478797082.002260"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its been a while since I looked at it, so I am sure its completely evolved at this point",
+        "ts": "1478797099.002261"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "yes, the ad hoc query makes it much nicer for our use",
+        "ts": "1478797173.002262"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "couchdb and mongodb are both good candidates, since the json document approach is similar enough to our core key\/value concepts, with good ad hoc query on any fields",
+        "ts": "1478797244.002263"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/chaincode\/p1478797007002252> . <@U1KFCPFQA>  your initial pluggable state DB presentation had DB2 also as a suggested. Will this still be tried?",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/chaincode\/p1478797007002252",
+                "fallback": "[November 10th, 2016 8:56 AM] dave.enyeart: sql based data stores were looked at, but required maintenance of schema which is awkward given our development model",
+                "ts": "1478797007.002252",
+                "author_subname": "dave.enyeart",
+                "channel_id": "C19ABCKPW",
+                "channel_name": "chaincode",
+                "is_msg_unfurl": true,
+                "text": "sql based data stores were looked at, but required maintenance of schema which is awkward given our development model",
+                "author_name": "Dave Enyeart",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/dave.enyeart",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/f4809ce34b925cbefc5f500cc4413338.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0003-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #chaincode"
+            }
+        ],
+        "ts": "1478797338.002264"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "I mean as a proof of concept..or something to show that schema management would be an issue",
+        "ts": "1478797504.002266"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "when we mapped out all the steps it became obvious that schema management and the extra transformation layer to tables was painful.  therefore the focus for v1 is on json document store and making the persistence layer pluggable, so that others could add the sql based support if needed",
+        "ts": "1478797701.002267"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "got it..",
+        "ts": "1478797754.002268"
+    },
+    {
+        "user": "U2RCN8W95",
+        "text": "<@U2RCN8W95|lanzen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478804437.002269"
+    },
+    {
+        "user": "U30GC9A48",
+        "text": "<@U30GC9A48|dennism330> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478824966.002274"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "Hi All, In production mode, if i want to refer to some static file from my chain code where do i need to keep it and how to refer it?",
+        "ts": "1478836742.002279"
+    }
+]

@@ -1,0 +1,217 @@
+[
+    {
+        "user": "U1GLPP8QN",
+        "text": "<@U1GLPP8QN|deeflorian> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1468914626.000007"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "Kostas - thanks, much appreciated, we are looking into it.",
+        "ts": "1468926018.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ikocsis: what kind of benchmark are you interested in?",
+        "ts": "1468927673.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "overall performance depends mostly on the complexity of the chaincode",
+        "ts": "1468927695.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XR6J961> I started looking into some results that were measured by iterating over the \u201cinvoke\u201d method in the unit tests in chaincode and system_chaincode\u2026. each invoke calls \u201cCommitTxBatch\u201d which creates a block per invoke",
+        "ts": "1468929347.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "should remove that when measuring chaincode times\u2026 ok to leave the state writes to ledger",
+        "ts": "1468929402.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: aha",
+        "ts": "1468929422.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "will give you some perf back",
+        "ts": "1468929436.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we have actual `go test` benchmarks?",
+        "ts": "1468929442.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that would be super useful",
+        "ts": "1468929448.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "agreed",
+        "ts": "1468929452.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I have my own for now\u2026 need to convert into go test",
+        "ts": "1468929464.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's very simple",
+        "ts": "1468929485.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`func BenchFoo(b *testing.B) { for i := 0; i &lt; b.N; i++ { ... } }`",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1468929515.000000"
+        },
+        "ts": "1468929512.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I wrote one for events",
+        "ts": "1468929517.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1468929518.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "will do it",
+        "ts": "1468929540.000024"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "Hi <@U0XR6J961> - we are actually working towards fabric performance modelling; ideally, that would need a test driver with parameterizable workloads (and well defined metrics) + test setup automation for distributed deployments + \"telemetry\"\/introspection (e.g. peer-internal call latencies, peer to peer messaging latencies, etc.). A bit of this we already have internally but I would really like to have an overview of the existing options.",
+        "ts": "1468930176.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "interesting",
+        "ts": "1468930228.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea check out my telemetry branch",
+        "ts": "1468930247.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it gives some queue sizes at least",
+        "ts": "1468930256.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it seems that people are not really interested in performance",
+        "ts": "1468930271.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or only occasionally, then they freak out about poor performance, then they forget about it again",
+        "ts": "1468930291.000030"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "<@U0XR6J961>, w.r.t. chaincode execution dominating performance: does that come from experience, or is there data (that maybe we could look at)?",
+        "ts": "1468930324.000031"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "Well, we are getting into a fabric performance research project here (Budapest University of Technology and Economics), so it does interest us more than cursorily :slightly_smiling_face: Kostas (Christidis) can give you more detail on that, if you are interested.",
+        "ts": "1468930479.000032"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "And for what it's worth, I do know that the guys at Digital Asset Holdings here in Budapest are concerned about performance, have some simple (last time I checked) measurement tooling in their fork and run experiments on EC2. But I don't know much more.",
+        "ts": "1468930632.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "both",
+        "ts": "1468930754.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the latency for RPC between chaincode and peer seems to be the limiting factor",
+        "ts": "1468930845.000035"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "thanks, that's good to know\none last thing for now: does that remain so with pbft &amp; scaling up the number of peers? (although we haven't tried n&gt;4, I don't know whether it works at all)",
+        "ts": "1468931334.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well if you have n=1000, f=333, probably not",
+        "ts": "1468931427.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but you can compensate for this by batching more transactions",
+        "ts": "1468931443.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "say you need 1s to do consensus with N=1000, if you batch more requests than you can execute in 1s, you still are limited by the execution speed",
+        "ts": "1468931519.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now of course this isn't quite right, because our pbft, the primary broadcasts all requests, which means that the primary's network bandwidth is the limiting factor",
+        "ts": "1468931562.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i guess you could somehow put the burden on the submitter, or use multicast (if you're in a data center)",
+        "ts": "1468931604.000041"
+    },
+    {
+        "type": "message",
+        "user": "U17HK4VQR",
+        "text": "ok, I understand and this is really helpful, thanks",
+        "ts": "1468931694.000042"
+    }
+]

@@ -1,0 +1,179 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Hi <@U0XQ35CDD>, is the kafka package supposed to generate any signature?",
+        "ts": "1480493171.004520"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I have also noticed that solo doesn't generate any signature too",
+        "ts": "1480493189.004521"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0ZR63HLK> solo\/kafka will both generate a signature as this is needed for gossip",
+        "ts": "1480495153.004522"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I do not think they do yet - but they will",
+        "ts": "1480495160.004523"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay, I was looking for that information to understand how to integrate the MSP",
+        "ts": "1480495192.004524"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so far, only sbft generates signatures",
+        "ts": "1480495203.004525"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but in this change-set <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2605\/>, related to orderer bootstrapping, sbft cannot be chosen",
+        "ts": "1480495233.004526"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> - I don't think we want to integrate MSP with the ordering nodes until we get it straightened out on the peer side.  But I agree the first place to start should be with signing blocks as this SHOULD be very similar to providing peer identity and signing endorsement responses.   As a matter of fact, other than the fact they sign something different, not sure why things would not be almost identical",
+        "ts": "1480500757.004527"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "+1",
+        "ts": "1480514390.004528"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZR63HLK> Marko is right. We should also be signing but don't do it yet.",
+        "ts": "1480514559.004529"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "perfect. So, when time will come let's coordinate on this :slightly_smiling_face:",
+        "ts": "1480514711.004530",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "attn maintainers",
+        "ts": "1480515858.004531"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2873\/>",
+        "ts": "1480515859.004532"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "grpc advice needed:",
+        "ts": "1480516350.004533"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if I have a GRPC Server Implementation with a function A() and A() is called from client side (from a grpc client, client.A() ) my server code for A() is called. is that done in the main goroutine?",
+        "ts": "1480516396.004534"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course not",
+        "ts": "1480516507.004535"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that would mean that you could only process 1 invocation of gRPC service serially, because your statement will hold for any invocation of A()",
+        "ts": "1480516591.004536"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You can easily, btw know the goroutine it is called from. \nGo to `gossip\/util\/misc.go` -&gt; PrintStackTrace and change *true* to *false*, and then in the gRPC server-side method invoke util.PrintStackTrace() and print it and you'll see from where it's invoked",
+        "ts": "1480516669.004537"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I checked for you, the goroutine that serves (at least a stream request) is created in the following way:\n```\n\t\tgo func() {\n\t\t\tdefer wg.Done()\n\t\t\ts.handleStream(st, stream, s.traceInfo(st, stream))\n\t\t}()\n```\nin `grpc\/server.go`",
+        "ts": "1480517031.004538"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ZJZBJLF> thanks, that is what I thought too but somehow sbft related code reached a dead lock related to this and I am thinking what caused that",
+        "ts": "1480517193.004539"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well for deadlock \"debugging\" you can print all goroutine(s) when you think there is a deadlock  using util.PrintStackTrace()",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1480517235.000000"
+        },
+        "ts": "1480517227.004540"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's in `gossip\/util\/misc.go`",
+        "ts": "1480517244.004542"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it can be helpful because it sometimes shows you if a goroutine is waiting on a lock, or not and you perhaps can deduce which goroutines are waiting on which locks",
+        "ts": "1480517279.004543"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I wish golang could have something like *jconsole* in java though... it's so comfortable",
+        "ts": "1480517549.004544"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4> <@U0UKTPMG8> <@U0ULK2JPP>  @binh this is how I see the genesis block create tool working after our discussion this morning <https:\/\/jira.hyperledger.org\/browse\/FAB-665?focusedCommentId=19911&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-19911>",
+        "ts": "1480533197.004545"
+    },
+    {
+        "user": "U26T99AQ4",
+        "inviter": "U0UGH3X7X",
+        "text": "<@U26T99AQ4|aso> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480533205.004546"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "Let's continue using FAB-665 for comments",
+        "ts": "1480533255.004547"
+    }
+]

@@ -1,0 +1,356 @@
+[
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0Z541B3P>: Thanks for the explanation.",
+        "ts": "1461336744.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0Z541B3P>: So building something like a bank account where I want to keep both the current balance and the history of transactions - I would need to put *both* of them into the world state. So keep two keys \"&lt;account_id&gt;:balance\" (numeric value) and \"&lt;account_id&gt;:transactions\" (value - array of records) for every account.",
+        "ts": "1461337098.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0MSG4RL7>: Ideally, the transactions should be fetched from blocks. Should not be need to maintaining explicitly.",
+        "ts": "1461338844.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0Z541B3P>: I see. And when a peer join it replicates all the blocks history? Also - is there a standard way to keep an index of the blocks (say I want all the transactions to\/from account X)?",
+        "ts": "1461339006.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0MSG4RL7>: there is also table functionality as well",
+        "ts": "1461345271.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0MSG4RL7>: Yes, when a peer joins - it replicates all the blocks and latest state. I guess <@U0XPR4NP4> can confirm this. \nOn indexes, In short - as of now tx are indexed only on uuid. \nBut as you mentioned txs should be indexed on address\/attributes as well (perhaps, only on NVP - because, NVP are supposed to be used for read queries). There is a related issue open for index by address (<https:\/\/github.com\/hyperledger\/fabric\/issues\/490>). \nIn addition, a related feature is \u2018events\u2019 mechanism. When a new block is constructed an even is emitted (with the block) which a client can listen to an create desired indexes.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Ledger API needs to support GetTransaction by TCert \u00b7 Issue #490 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/490",
+                "text": "The ledger API should provide the ability to retrieve transactions by TCert so that 1) transactions for a particular entity can be retrieved quickly 2) UTXO like functionality can be built into cha...",
+                "fallback": "GitHub: Ledger API needs to support GetTransaction by TCert \u00b7 Issue #490 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/4872087?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/490",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1461346081.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0Z541B3P>: Thank you, that's very helpful. I'll look into the Events mechanism.",
+        "ts": "1461346237.000032"
+    },
+    {
+        "user": "U11MANG9G",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U11MANG9G|jonathanlevi> has joined the channel",
+        "ts": "1461346240.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0MSG4RL7>: currently only validating peers perform the sync.  It is not yet in non validators",
+        "ts": "1461350055.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: But NVP *do* need the latest state to answer the queries (read-only).",
+        "ts": "1461350137.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "no, they can answer queries",
+        "ts": "1461350165.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "as long as they are chaincode queries",
+        "ts": "1461350179.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "but block level queries would fail",
+        "ts": "1461350187.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "as they attempt to access the non validating peers ledger",
+        "ts": "1461350201.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "does that make sense?",
+        "ts": "1461350205.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "chaincode queries are actually TXs, as are Deploy and onvoke",
+        "ts": "1461350221.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "they are forwarded from the non validating peer to the validating peer",
+        "ts": "1461350237.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "oooops, or they will be as soon as I PR the code I am working on :simple_smile:",
+        "ts": "1461350248.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "so , very soon chaincode queries will do this :simple_smile:",
+        "ts": "1461350269.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "so REST calls to \/chain would fail",
+        "ts": "1461350338.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "but REST calls to \/chaincode\/... will be forwarded as TXs",
+        "ts": "1461350356.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: Ha! OK, I was under the assumtion that \"Query\" chaincode questions don't modify the chain and therefore can be answered directly by NVP. I probably misread.",
+        "ts": "1461350359.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "it is an issue of privacy",
+        "ts": "1461350370.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "the state is only accessible from VPs",
+        "ts": "1461350385.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "you are correct, they do NOT modify, but require access to data that may be private",
+        "ts": "1461350407.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: OK I see. So what kind of traffic *is* handled by NVPs? (that is, what do they \"save\").",
+        "ts": "1461350418.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "Block data",
+        "ts": "1461350427.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "or it will when I finish sync :simple_smile:",
+        "ts": "1461350436.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "for now,  (when I push this PR), you will be able to do TXs through nvp (which will be forwarded)",
+        "ts": "1461350465.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "but can also validate by quering VPs",
+        "ts": "1461350475.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "this is the behave test I am adding..\n\n\n  Scenario Outline: chaincode example02 with 4 peers,1 membersrvc, and 1 non-validating peer.\n\n      Given we compose \"&lt;ComposeFile&gt;\"\n      And I wait \"5\" seconds\n      And I register with CA supplying username \"binhn\" and secret \"7avZQLwcUe9q\" on peers:\n         | nvp0  |\n      And I use the following credentials for querying peers:\n         | peer |   username  |    secret    |\n         | vp0  |  test_user0 | MS9qrN8hFjlE |\n         | vp1  |  test_user1 | jGlNl6ImkuDo |\n         | vp2  |  test_user2 | zMflqOKezFiA |\n         | vp3  |  test_user3 | vWdLCE00vJy0 |\n\n#      Current issue as blocks NOT synced yet.\n#      When requesting \"\/chain\" from \"nvp0\"\n#      Then I should get a JSON response with \"height\" = \"1\"\n\n\n      # Deploy\n      When I deploy chaincode \"<http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02>\" with ctor \"init\" to \"nvp0\"\n                    | arg1 |  arg2 | arg3 | arg4 |\n                    |  a   |  100  |  b   |  200 |\n      Then I should have received a chaincode name\n      Then I wait up to \"&lt;WaitTime&gt;\" seconds for transaction to be committed to peers:\n                 | vp0  | vp1 | vp2 |",
+        "ts": "1461350507.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "# are comments",
+        "ts": "1461350514.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "as you can see, you can deploy (TX) through the nvp, and then verify through the VPs",
+        "ts": "1461350533.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "eventually (When sync is done, you will be able to verify through NVP), as current verification is that the TXID is on the block(Which will have been synced)",
+        "edited": {
+            "user": "U0UKTPMG8",
+            "ts": "1461350639.000000"
+        },
+        "ts": "1461350565.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "make sense?",
+        "ts": "1461350568.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "sorry, corrected to NVP above",
+        "ts": "1461350648.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: Yes, I think so. Thank you.",
+        "ts": "1461350649.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "yw :simple_smile:",
+        "ts": "1461350652.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "here is the issue that will allow the TX level forwarding. <https:\/\/github.com\/hyperledger\/fabric\/issues\/1182>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Modify Peer to not use Peer.Chat stream for TX injection to remote Peer \u00b7 Issue #1182 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1182",
+                "text": "Need to modify the message flow to NOT use the chat stream for TX injection. Adding a new RPC to Peer interface to manage the ingestion of TXs from devops.",
+                "fallback": "GitHub: Modify Peer to not use Peer.Chat stream for TX injection to remote Peer \u00b7 Issue #1182 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/4991920?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1182",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1461350718.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "The nvp sync will come shortly after this",
+        "ts": "1461350734.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "along with behave tests to demonstrate",
+        "ts": "1461350749.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: Very nice.",
+        "ts": "1461350803.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "and I see your on security team, so I can add you to security (RBAC) related work I am focused on now",
+        "ts": "1461350838.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/wiki\/Access-Control-Specification>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Access-Control-Specification",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Access-Control-Specification",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "ts": "1461350856.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: Sure, if I can help.",
+        "ts": "1461350865.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "that is the wiki page detailing the current effort outline",
+        "ts": "1461350869.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": ":simple_smile:",
+        "ts": "1461350869.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "careful what you wish for",
+        "ts": "1461350877.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0UKTPMG8>: You haven't seen what kind of help I'm offerring :simple_smile:",
+        "ts": "1461350907.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "bazinga",
+        "ts": "1461350916.000078"
+    },
+    {
+        "user": "U134PCHDM",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U134PCHDM|cmartis> has joined the channel",
+        "ts": "1461373329.000079"
+    }
+]

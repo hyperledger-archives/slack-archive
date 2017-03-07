@@ -1,0 +1,804 @@
+[
+    {
+        "user": "U0P75RFT4",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0P75RFT4|tim.blankers> has joined the channel",
+        "ts": "1460358749.000033"
+    },
+    {
+        "user": "U0ZKU4YHX",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0ZKU4YHX|richernandez2> has joined the channel",
+        "ts": "1460383998.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so first I thought I'd persist all messages - but then garbage collecting them becomes difficult",
+        "ts": "1460385677.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now i'm back to persisting `pset, qset, reqStore, certStore, checkpointStore, lastExec`",
+        "ts": "1460385779.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wonder what i really need to persist there",
+        "ts": "1460385824.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe i don't need the certstore - that would make things easier",
+        "ts": "1460385881.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: what do you think?",
+        "ts": "1460385888.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I would need to do an audit, but that seems like the minimal set of what would be required.  I assume the crash-recovery scenario is essentially to conduct a view change, so that everyone has a consistent view of the execution, which would trigger state transfer (as the viewchange already does today)",
+        "ts": "1460386063.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is the strategy for persisting? Would this go into the system state per the pending system chaincode mechanism?",
+        "ts": "1460386098.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, if fewer than F out of N replicas are byzantine or crashed, then everything proceeds as normal",
+        "ts": "1460386122.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if more than F are crashed, then it should look like they just were disconnected from the network",
+        "ts": "1460386153.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure I understand that second sentence, could you elaborate?",
+        "ts": "1460386266.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know whether in all cases there would be a view change",
+        "ts": "1460386311.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why can't i find details on this in the pbft paper?",
+        "ts": "1460386358.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, it does seem like a significant oversight if it is not in there",
+        "ts": "1460386554.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Why did you say that garbage collection became difficult? I would have thought you could have simply put all messages into a log, then garbage collected all messages with sequence number &lt; X after a stable checkpoint of sequence number X?",
+        "ts": "1460386686.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not all messages contain sequence numbers",
+        "ts": "1460386717.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, for requests and potentially Sieve messages?",
+        "ts": "1460386778.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for example",
+        "ts": "1460386792.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also replaying the messages is a bit of a pain, I think",
+        "ts": "1460386822.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I would have thought replaying messages would be very simple.  Isn't this also the standard crash fault recovery mechanism for most systems?",
+        "ts": "1460386871.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Filesystem journals, db logs, etc.)",
+        "ts": "1460386888.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1460386900.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we'll have to change the code that applies messages",
+        "ts": "1460386908.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and remove the conditionals that reject messages",
+        "ts": "1460386926.000057"
+    },
+    {
+        "user": "U0XRC0KLH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XRC0KLH|chetsky> has joined the channel",
+        "ts": "1460393901.000058"
+    },
+    {
+        "user": "U0ZMB7ZEJ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0ZMB7ZEJ|jatinderbali> has joined the channel",
+        "ts": "1460394726.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: would you make restarting replicas require a view change to join completely?",
+        "ts": "1460395188.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: That's a good question, I would say in the case where more than f replicas have gone offline, that it would be a reasonable thing to require.",
+        "ts": "1460395584.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sorry, these questions are all over the place",
+        "ts": "1460395615.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Although replaying the journal\/log might get things into a consistent enough state to continue, if the primary has missed some of the network chatter, then a view change will need to happen anyway.",
+        "ts": "1460395626.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does the executor queueing execs influence persistence?  we need to atomically track \"lastExec\"",
+        "ts": "1460395659.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I think the executor definitely needs a journal, which should be pretty easy to implement, as it is literally a linear stream of monotonically increasing sequence numbered reqeusts.",
+        "ts": "1460395803.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure about the atomicity, where we're trying to treat the executor as a remote component (as it eventually will be)",
+        "ts": "1460395849.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it has to be atomic",
+        "ts": "1460395863.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because otherwise, how would pbft ever know which request to execute",
+        "ts": "1460395893.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "when we come back up, our notion of lastExec needs to match the system state",
+        "ts": "1460395906.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Aha, so this is the code that I've stubbed out but is presently unimplemented",
+        "ts": "1460395928.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The executor needs to inform the orderer of the execution state on connection",
+        "ts": "1460395945.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now you could say \"just roll back to the last checkpoint\", which can be a locally correct decision",
+        "ts": "1460395947.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but overall, that way the network could lose already executed requests",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1460395982.000000"
+        },
+        "ts": "1460395975.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now, if we treat execution of blocks as the equivalent of a checkpoint...",
+        "ts": "1460396011.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The executor can be expected to inform the orderer of the last sequence number it was told to execute.  This would be lastExec for classic and batch pbft.  For Sieve there would need to be some mapping done",
+        "ts": "1460396108.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1460396184.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that is the startupinfo",
+        "ts": "1460396204.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1460396209.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Today it always comes back as 0, because we had no way to persist the state, but after implementing the rest of the crash tolerance (ie a journal) that should be easy.",
+        "ts": "1460396252.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm wondering whether we should adapt pbft to blockchain, i.e. treat committed blocks as checkpoints",
+        "ts": "1460396269.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, i'll work on that part",
+        "ts": "1460396279.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it is sufficient to persist reqstore, pset*, qset*, lastExec",
+        "ts": "1460396329.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where pset* is pset updated with certstore",
+        "ts": "1460396346.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah, plus commits",
+        "ts": "1460396355.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "commit certificate",
+        "ts": "1460396360.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So are you suggesting setting K=1?",
+        "ts": "1460396377.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not quite",
+        "ts": "1460396396.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that would trigger checkpoint messages all the time",
+        "ts": "1460396411.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1460396417.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead, adapt the protocol to not use checkpoint messages at all",
+        "ts": "1460396424.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that ties into the question i posed in <#C0YPYBVJM>",
+        "ts": "1460396458.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because if the blockchain contains a signed quorum from validators, that would allow us to stop using checkpoints",
+        "ts": "1460396497.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's sort of for later",
+        "ts": "1460396502.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, checkpoints today buy us garbage collection, a basis for new views, and a cue for state transfer",
+        "ts": "1460396549.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also, in the case of non-determinism under non-Sieve pbft, it causes the network to stop progressing",
+        "ts": "1460396596.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As we move to the new model, non-determinism shouldn't be an issue, and state transfer could be accomplished with the signed blocks",
+        "ts": "1460396646.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1460396661.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But garbage collection and new view would still need to be addressed",
+        "ts": "1460396671.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "new view can use these K=1 style \"checkpoint\" blocks",
+        "ts": "1460396709.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think",
+        "ts": "1460396714.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "garbage collection as well",
+        "ts": "1460396720.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. we'd still have to communicate \"I received this, executed it, signed it\"",
+        "ts": "1460396750.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then we advance watermarks based on signed commits?",
+        "ts": "1460396769.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(which seems awfully similar to a checkpoint message)",
+        "ts": "1460396780.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea it does",
+        "ts": "1460396790.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, let's not spend too much time on it right now",
+        "ts": "1460396803.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just thinking aloud",
+        "ts": "1460396813.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Fair enough",
+        "ts": "1460396818.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you tend to push your intermediate commits to your github repo?",
+        "ts": "1460396829.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for the reactor pattern refactor",
+        "ts": "1460396868.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I like to push my intermediate commits, as it makes my life a little easier, though I know it can make bisecting less useful.  Had not heard an official stance on that.",
+        "ts": "1460396966.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(But I actually haven't committed anything for 919 yet)",
+        "ts": "1460397049.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah!",
+        "ts": "1460397180.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1460397181.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm all for frequent commits",
+        "ts": "1460397196.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i was just wondering, because your repo didn't update here - maybe you were on a different repo",
+        "ts": "1460397222.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, yeah, no, I've done some work locally, but wasn't really happy with the structure, so went to Jeff, which triggered that whole goose chase that I mentioned via scrum",
+        "ts": "1460397286.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":simple_smile:",
+        "ts": "1460397435.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bbl dinner",
+        "ts": "1460397462.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good, enjoy",
+        "ts": "1460397480.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm wondering how to phrase a test for this persistence thing",
+        "ts": "1460399188.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Scenario?",
+        "ts": "1460399645.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, what scenario.  i guess have most replicas disappear, and restart them",
+        "ts": "1460399787.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it is important that this happen while transactions are being processed.  An idle network should halt and and resume normally today.",
+        "ts": "1460399931.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, actually, I take that back, that is only true if all replicas go down",
+        "ts": "1460399972.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Process K+1 transactions, shut f+1 peers down, then start them up again.  Execute 1 additional transaction, verify everyone has executed K+2?",
+        "ts": "1460400042.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess that works for a start",
+        "ts": "1460400385.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i was thinking of \"what if you send a commit and never execute\", etc.",
+        "ts": "1460400403.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since you mentioned 'restarting' them, I figured this was behave.  I would think those more interesting failure scenarios will probably need to be simulated in unit tests?",
+        "ts": "1460400501.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, unit test",
+        "ts": "1460400536.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "stop a pbft instance, replace it with a new one, sharing the same ledger",
+        "ts": "1460400570.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I see, yes.  I find the unit tests to be much more useful generally anyhow, behave adds so much time in an iterative code\/test cycle",
+        "ts": "1460400726.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "jason?  if unbusy&amp;workin'?",
+        "ts": "1460406339.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XRC0KLH>: What can I do for you?",
+        "ts": "1460406894.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "wanted to check on something.  Today, there's support for state-xfer, right?",
+        "ts": "1460406915.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there is",
+        "ts": "1460406921.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "[this is in support of quorum-whitelist change]",
+        "ts": "1460406941.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "can there be non-validating peers participating in PBFT (somehow .... not sure what that would mean, hence why I ask) that would thus have a full replica of the blockchain?",
+        "ts": "1460406979.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "if it's useful, I can explain furthre",
+        "ts": "1460407073.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, 'participating in PBFT', I'd say no, unless you're a validating peer, you shouldn't be in the white list, so we shouldn't process PBFT messages from you.  There's no technical reason why state transfer could not also poll non-validating peers for blocks, in the event of state transfer though.",
+        "ts": "1460407073.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "ok.  that's what I figured -- there's two kinds of nodes: \"validating peers\" and \"clients\", right?",
+        "ts": "1460407097.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "if you're not a validating peer, you're not going to get the blockchain, period",
+        "ts": "1460407108.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, non-validating peers do get a copy of the blockchain, but not the state",
+        "ts": "1460407129.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think I would consider a \"client' to be someone interacting with the REST interface",
+        "ts": "1460407151.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "and the types of peers to be \"validating\" and \"non-validating\"",
+        "ts": "1460407161.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Where \"validating\" peers execute transactions and participate in consensus, and \"non-validating\" peers can be connected to by \"clients\", and keep a copy of the blockchain, but not state",
+        "ts": "1460407189.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(This is of course all 'as it stands today', not necessarily a reflection of how things should be)",
+        "ts": "1460407213.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "I'm not sure I understand what a non-validating peer is, then",
+        "ts": "1460407273.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[I'll also point out, I'm not sure that \"non-validating peers\" actually _work_ with PBFT, I think the integration is only in noops]",
+        "ts": "1460407292.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "-ah-",
+        "ts": "1460407304.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "ok.",
+        "ts": "1460407305.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "um, can you talk voice?",
+        "ts": "1460407310.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure",
+        "ts": "1460407313.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "maybe better than IM",
+        "ts": "1460407314.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "6178695700 ?",
+        "ts": "1460407321.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "or ph#",
+        "ts": "1460407323.000157"
+    },
+    {
+        "user": "U0S5KF44D",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0S5KF44D|keithsmith> has joined the channel",
+        "ts": "1460407523.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "sorry, lost you",
+        "ts": "1460407783.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "can you call?  or if you give me a ph# I can call",
+        "ts": "1460407788.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Think I lost you again",
+        "ts": "1460408124.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "dialing",
+        "ts": "1460408141.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Signed-off-by: You Name &lt;youremail@domain&gt;",
+        "ts": "1460408436.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "geennady laventman",
+        "ts": "1460408439.000164"
+    },
+    {
+        "user": "U0ZHVB1UP",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0ZHVB1UP|akakoudakis> has joined the channel",
+        "ts": "1460412052.000165"
+    }
+]

@@ -1,0 +1,576 @@
+[
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "Hi all i am facing a problem with the consensus algorithm",
+        "ts": "1465283521.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "i have a docker network with four validator nodes",
+        "ts": "1465283540.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "here is my dockerfile",
+        "ts": "1465283834.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "docker-compose file",
+        "ts": "1465283838.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "version: '2'\nservices:\n\n  vp0:\n    image: hyperledger-peer\n    command: peer node start\"\n    environment:\n          CORE_PEER_ID: 'vp0'\n          CORE_PEER_VALIDATOR_REPLICAS_IPS: 'vp0:30303 vp1:30303 vp2:30303 vp3:30303'\n          CORE_SECURITY_ENROLLID: 'vp0'\n          CORE_SECURITY_ENROLLSECRET: 'vp0'\n          CORE_LOGGING_LEVEL: 'debug'\n          CORE_PEER_ADDRESSAUTODETECT: 'true'\n          CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN: 'pbft'\n          CORE_PBFT_GENERAL_N: '4'\n          CORE_PBFT_GENERAL_MODE: 'classic'\n          CORE_PBFT_GENERAL_TIMEOUT_REQUEST: '10s'\n          CORE_SECURITY_ENABLED: 'true'\n          CORE_VM_ENDPOINT: '<http:\/\/172.17.0.1:2375>'\n\n  vp1:\n      image: hyperledger-peer\n      command: \"peer node start\"\n      environment:\n            CORE_PEER_ID: 'vp1'\n            CORE_PEER_VALIDATOR_REPLICAS_IPS: 'vp0:30303 vp1:30303 vp2:30303 vp3:30303'\n            CORE_PEER_DISCOVERY_ROOTNODE: 'vp0:30303'\n            CORE_SECURITY_ENROLLID: 'vp1'\n            CORE_SECURITY_ENROLLSECRET: 'vp1'\n            CORE_LOGGING_LEVEL: 'debug'\n            CORE_PEER_ADDRESSAUTODETECT: 'true'\n            CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN: 'pbft'\n            CORE_PBFT_GENERAL_N: '4'\n            CORE_PBFT_GENERAL_MODE: 'classic'\n            CORE_PBFT_GENERAL_TIMEOUT_REQUEST: '15s'\n            CORE_SECURITY_ENABLED: 'true'\n            CORE_VM_ENDPOINT: '<http:\/\/172.17.0.1:2375>'\n\n  vp2:\n      image: hyperledger-peer\n      command: \"peer node start\"\n      environment:\n            CORE_PEER_ID: 'vp2'\n            CORE_PEER_VALIDATOR_REPLICAS_IPS: 'vp0:30303 vp1:30303 vp2:30303 vp3:30303'\n            CORE_PEER_DISCOVERY_ROOTNODE: 'vp0:30303'\n            CORE_SECURITY_ENROLLID: 'vp2'\n            CORE_SECURITY_ENROLLSECRET: 'vp2'\n            CORE_LOGGING_LEVEL: 'debug'\n            CORE_PEER_ADDRESSAUTODETECT: 'true'\n            CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN: 'pbft'\n            CORE_PBFT_GENERAL_N: '4'\n            CORE_PBFT_GENERAL_MODE: 'classic'\n            CORE_PBFT_GENERAL_TIMEOUT_REQUEST: '15s'\n            CORE_SECURITY_ENABLED: 'true'\n            CORE_VM_ENDPOINT: '<http:\/\/172.17.0.1:2375>'\n\n  vp3:\n      image: hyperledger-peer\n      command: \"peer node start\"\n      environment:\n            CORE_PEER_ID: 'vp3'\n            CORE_PEER_VALIDATOR_REPLICAS_IPS: 'vp0:30303 vp1:30303 vp2:30303 vp3:30303'\n            CORE_PEER_DISCOVERY_ROOTNODE: 'vp0:30303'\n            CORE_SECURITY_ENROLLID: 'vp3'\n            CORE_SECURITY_ENROLLSECRET: 'vp3'\n            CORE_LOGGING_LEVEL: 'debug'\n            CORE_PEER_ADDRESSAUTODETECT: 'true'\n            CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN: 'pbft'\n            CORE_PBFT_GENERAL_N: '4'\n            CORE_PBFT_GENERAL_MODE: 'classic'\n            CORE_PBFT_GENERAL_TIMEOUT_REQUEST: '15s'\n            CORE_SECURITY_ENABLED: 'true'\n            CORE_VM_ENDPOINT: '<http:\/\/172.1>",
+        "ts": "1465283896.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "and i get following error",
+        "ts": "1465283906.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "| 07:12:42.051 [crypto] Deploy -&gt; INFO 06a Initializing client [client]...done!\n       | 07:12:42.051 [devops] Deploy -&gt; INFO 06b Creating secure transaction 1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66\n       | 07:12:42.162 [devops] Deploy -&gt; DEBU 06c Sending deploy transaction (1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66) to validator\n       | 07:12:42.165 [peer] SendTransactionsToPeer -&gt; DEBU 06d Sending TX to Peer: vp0:30303\n                      | 07:12:42.279 [peer] ProcessTransaction -&gt; DEBU 09e ProcessTransaction processing transaction uuid = 1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66\n                      | 07:12:42.279 [peer] ProcessTransaction -&gt; DEBU 09f Verifying transaction signature 1edd7021ab71b766f4928a9ef91182c018dffb86fef7a4b5a5516ac590a87957e21a62d939df817f5105f524abddcddfc7b1a60d780f02d8235bd7af9db81b66\n                      | 07:12:42.385 [peer] sendTransactionsToLocalEngine -&gt; DEBU 0a0 Marshalling transaction CHAINCODE_DEPLOY to send to local engine\n                      | 07:12:42.391 [peer] sendTransactionsToLocalEngine -&gt; DEBU 0a1 Sending message CHAIN_TRANSACTION with timestamp seconds:1465283562 nanos:391877511  to local engine\n                      | 07:12:42.392 [consensus\/obcpbft] RecvMsg -&gt; INFO 0a2 New consensus request received\n                      | 07:12:42.398 [peer] SendMessage -&gt; DEBU 0a3 Sending message to stream of type: CONSENSUS\n                      | 07:12:42.399 [peer] SendMessage -&gt; DEBU 0a5 Sending message to stream of type: CONSENSUS\n                      | 07:12:42.398 [peer] SendMessage -&gt; DEBU 0a4 Sending message to stream of type: CONSENSUS\n                      | 07:12:42.400 [peer] SendMessage -&gt; DEBU 0a6 Sending message to stream of type: CONSENSUS\n                      | 07:12:43.068 [peer] func1 -&gt; DEBU 0a7 Sending 20627244 bytes to 172.18.0.21:30303 took 668.563215ms\n                        | panic: Cannot map sender's PeerID to a valid replica ID\n                        |\n                        | goroutine 66 [running]:\n                        | panic(0xbe1700, 0xc820229800)\n                        |       \/opt\/go\/src\/runtime\/panic.go:464 +0x3e6\n                        | <http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcClassic).RecvMsg(0xc820250f00|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcClassic).RecvMsg(0xc820250f00>, 0xc8204d4180, 0xc820228bc0, 0x0, 0x0)\n                        |       \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/obc-classic.go:79 +0x518\n                        | <http:\/\/github.com\/hyperledger\/fabric\/consensus\/helper.GetEngine.func1.1()|github.com\/hyperledger\/fabric\/consensus\/helper.GetEngine.func1.1()>\n                        |       \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/helper\/engine.go:124 +0xd8\n                        | created by <http:\/\/github.com\/hyperledger\/fabric\/consensus\/helper.GetEngine.func1|github.com\/hyperledger\/fabric\/consensus\/helper.GetEngine.func1>\n                        |       \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/helper\/engine.go:126 +0x2bc\n                      | 2016\/06\/07 07:12:43 transport: http2Client.notifyError got notified that the client transport was broken EOF.",
+        "ts": "1465284002.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "i found the error",
+        "ts": "1465284437.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0KPFAZNF> @binh <@U0P2GSA8Z> if there is no objection to noop chaincode then please merge as i should not merge my own PR.",
+        "ts": "1465286329.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0KN2SSKE> ^",
+        "ts": "1465286339.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "its <https:\/\/github.com\/hyperledger\/fabric\/pull\/1722>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Add noop system chain code.  by tamasblummer \u00b7 Pull Request #1722 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1722",
+                "text": "Add noop system chain code Description Noop system chain code simply stores invoke transactions without validation. This chaincode is useful for testing. The noop system chaincode is prepared to ...",
+                "fallback": "GitHub: Add noop system chain code.  by tamasblummer \u00b7 Pull Request #1722 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/4289351?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1722",
+                "thumb_width": 234,
+                "thumb_height": 234,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465286368.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0MT4CBHB>: I reviewed it yesterday and IIRC it LGTM.  I'll merge it shortly when back at my desk",
+        "ts": "1465298074.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0MT4CBHB>: the CI run had failed due to a timeout, so I just restarted it to make sure everything is fine",
+        "ts": "1465298811.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I dont think it was related to your patch)",
+        "ts": "1465298828.000079"
+    },
+    {
+        "user": "U1ENUR2BW",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1ENUR2BW|kai.weller> has joined the channel",
+        "ts": "1465303450.000080"
+    },
+    {
+        "user": "U1ENXTQRL",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1ENXTQRL|cbruguera> has joined the channel",
+        "ts": "1465305126.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Hello guys!",
+        "ts": "1465305132.000082"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I have a question... I'm quite a blockchain newbie, but I'm researching into different technologies since I am building a platform for management of identities and KYC.\n\nI was told that IBM OBC was a good choice for us, and I'm barely at the beginning of my research... Is IBM OBC somehow \"deprecated\" now? Is HyperLedger fabric the thing I should be looking for?",
+        "ts": "1465305140.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "obc was donated as hyperledger fabric",
+        "ts": "1465305268.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that's the thing to look at",
+        "ts": "1465305274.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Thank you very much",
+        "ts": "1465305293.000086"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I'll probably be asking some more questions later, since I'll be getting started with fabric soon.",
+        "ts": "1465305342.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1CPB11D0>: here",
+        "ts": "1465306699.000088"
+    },
+    {
+        "user": "U1CPB11D0",
+        "inviter": "U0KPFAZNF",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1CPB11D0|dianfu> has joined the channel",
+        "ts": "1465306703.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1CPB11D0>: regarding status, I don\u2019t know.  I am just the feature requester :wink:",
+        "ts": "1465306727.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "ok. thanks a lot.:grinning: Is there any other way to identity a user's identity in chaincode?",
+        "ts": "1465307033.000091"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "with tcert, seems that it's difficult to do so.",
+        "ts": "1465307126.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear, that is the point :wink:",
+        "ts": "1465307620.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if the user identity isn\u2019t important to mask, you can always opt to have the ECERT id included",
+        "ts": "1465307639.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think support in general for any of this is still emerging however",
+        "ts": "1465307662.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I was asking for was something in the middle\u2026stable id for the purposes of chaincode function, but obfuscated true-identity from the perspective of unprivileged entities",
+        "ts": "1465307740.000096"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I\u2019m using fabric via JSON api and trying to experiment with permissioned blockchain",
+        "ts": "1465308106.000097"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "the first option is to pass a \u201csecurecontext\u201d username",
+        "ts": "1465308122.000098"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "and it has to be configured in membersrvc.yaml if I\u2019m not mistaken",
+        "ts": "1465308153.000099"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "with the registrar API I can login and get tcert and ecert, but how can I use those certificates when invoking\/querying chaincode?",
+        "ts": "1465308190.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "nickmelis: the only way I know how to right now is via the SDK",
+        "ts": "1465308330.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": ".\/sdk\/node",
+        "ts": "1465308334.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though im sure the protocol could be emulated if you really wanted to",
+        "ts": "1465308353.000103"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "but there\u2019s no option to use it via JSON API right now, correct?",
+        "ts": "1465308397.000104"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "The rest api in peer node currently use TCert to construct the transaction. If I want to use ECert, I have to construct the transaction by myself. Is my understanding correct?",
+        "ts": "1465308531.000105"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "seems that there is no switch to let user choose whether to use ECert or TCert in the rest API.",
+        "ts": "1465308698.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U195M30MD>: not sure, you could look at how the SDK does it I suppose",
+        "ts": "1465308706.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1CPB11D0>: my understanding is that ecerts can not be used directly in a txn",
+        "ts": "1465308719.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IOW, you always use a tcert, with varying level of detail exposed between the ecert\/tcert",
+        "ts": "1465308757.000109"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "<@U1CPB11D0>: is there a way to pass the TCert in the JSON request through the API rather than the \u201csecurecontext\u201d ?",
+        "ts": "1465308957.000110"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "looking at the API definition here -&gt; <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md#6213-chaincode-api>",
+        "edited": {
+            "user": "U195M30MD",
+            "ts": "1465309024.000000"
+        },
+        "ts": "1465309020.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U195M30MD>: JSON RPC API doesn\u2019t allow passing TCert, but it automatically selects a TCert for the transaction.  You should look at the client SDK, which has more flexibility",
+        "ts": "1465309069.000114"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ok so all the users are in the yaml file, right?",
+        "ts": "1465309100.000115"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "based on that, the sdk creates and sends ECert\/TCerts",
+        "ts": "1465309128.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "there\u2019re Membership Services API to add users, but the easiest way to test is to stick the users into the yaml file",
+        "ts": "1465309146.000117"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "<@U0KN2SSKE>: when you say Membership API are you talking about the \/registrar API?",
+        "ts": "1465309180.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "no, it\u2019s gRPC api; let me find the doc",
+        "ts": "1465309230.000119"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ah right",
+        "ts": "1465309245.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/MemberServicesAPI.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/MemberServicesAPI.md",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/MemberServicesAPI.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465309251.000121"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so I would need a gRPC client right?",
+        "ts": "1465309267.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "the client SDK (javascript) provides that",
+        "ts": "1465309290.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "or you can use other languages that support gRPC",
+        "ts": "1465309317.000125"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "is there any Java gRPC client out there?",
+        "ts": "1465309331.000126"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "or should I build my own one?",
+        "ts": "1465309338.000127"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I think fabric-api was an attempt towards that direction, but I\u2019ve never managed to get it up and running",
+        "ts": "1465309380.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "you can build your own or look at the Java Fabric project to contribute",
+        "ts": "1465309382.000129"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "who\u2019s developing the fabric-api project atm?",
+        "ts": "1465309405.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "mainly <@U0MT4CBHB>",
+        "ts": "1465309493.000131"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ok thanks. It would be interesting to know if there is a roadmap and what developments are planned for fabric-api",
+        "ts": "1465309654.000132"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "and also how the other guys here use fabric-api. I would like to just import it as an external library into my Java project",
+        "ts": "1465309687.000133"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "<@U0KPFAZNF>: Thanks very much. So your feature request about a certificate between ECert and TCert is very useful. Without it, it's very difficult to identity a user's identity and so it would be unable to do access control in chaincode.",
+        "ts": "1465309864.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U1CPB11D0>: you might want to take a look at this doc <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Attribute-Certificate-Authority>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Attribute-Certificate-Authority",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Attribute-Certificate-Authority",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465311074.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1CPB11D0",
+        "text": "<@U0KN2SSKE>: Thanks a lot for your sharing. An interesting feature. While it seems that it's still in discussion or in development? I cannot find any code related.",
+        "ts": "1465312621.000137"
+    },
+    {
+        "user": "U130QV7RB",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U130QV7RB|mpage> has joined the channel",
+        "ts": "1465320696.000138"
+    },
+    {
+        "user": "U113EGLBE",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U113EGLBE|nkunkel> has joined the channel",
+        "ts": "1465322084.000139"
+    },
+    {
+        "user": "U1D5P2DHD",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1D5P2DHD|randy> has joined the channel",
+        "ts": "1465326595.000140"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1CK6522F|zuowang> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/zuowang\/F1EVA0Q7N\/stderr|stderr-busywork-make-stress2s> and commented: mem:8g",
+        "file": {
+            "id": "F1EVA0Q7N",
+            "created": 1465348625,
+            "timestamp": 1465348625,
+            "name": "stderr",
+            "title": "stderr-busywork-make-stress2s",
+            "mimetype": "application\/octet-stream",
+            "filetype": "binary",
+            "pretty_type": "Binary",
+            "user": "U1CK6522F",
+            "editable": false,
+            "size": 35106,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1EVA0Q7N\/stderr?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1EVA0Q7N\/download\/stderr?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/zuowang\/F1EVA0Q7N\/stderr",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1EVA0Q7N-5f2934e9c6",
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc1F02G4G0",
+                "created": 1465348625,
+                "timestamp": 1465348625,
+                "user": "U1CK6522F",
+                "is_intro": true,
+                "comment": "mem:8g",
+                "channel": ""
+            }
+        },
+        "user": "U1CK6522F",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1CK6522F|zuowang>",
+        "bot_id": null,
+        "ts": "1465348625.000141"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "I got out of memory error when ran performance test with busywork. I got the same error even when I increased my vagrant memory to 8G. Can anyone help to take a look? Thanks very much!",
+        "edited": {
+            "user": "U1CK6522F",
+            "ts": "1465375069.000000"
+        },
+        "ts": "1465348787.000142"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0KN2SSKE>: <@U195M30MD> i feel current document not enough detail for creating a grpc client with other language, if someone could describe all the specific interfaces, we can implement it easier",
+        "ts": "1465352655.000143"
+    },
+    {
+        "user": "U147GA9A4",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U147GA9A4|jay_guo> has joined the channel",
+        "ts": "1465358363.000144"
+    },
+    {
+        "user": "U1F16MNH0",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1F16MNH0|norbs> has joined the channel",
+        "ts": "1465362403.000145"
+    },
+    {
+        "type": "message",
+        "user": "U1751P7U4",
+        "text": "What is the upper limit for how much data can be stored in a chaincode\u2019s state and is it all managed in peer's memory  ?",
+        "ts": "1465364987.000146"
+    },
+    {
+        "type": "message",
+        "user": "U113EGLBE",
+        "text": "During chaincode deployment I keep running into the error:\n[chaincode] chaincodeSupport -&gt; DEBU -2d handler not found for chaincode \/home\/ibm\/loyaltyBank.go:0.0.1\n\nDoes this mean fabric can't find my chaincode source file? Does the path supplied for the -p argument during chaincode deployment not use absolute paths?",
+        "ts": "1465366432.000147"
+    }
+]

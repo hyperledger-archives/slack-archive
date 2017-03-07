@@ -1,0 +1,92 @@
+[
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "It gives me: no sockets found via socket activation: make sure the service was started by systemd",
+        "ts": "1486195237.000033"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "If I set up a basic (one-machine-run-everything) cello system, how can I determine the Worker_Node_IP? Is it 127.0.0.1 or some other tricky IP (e.g. 172.18.0.3)? Shall I use docker network ls?",
+        "ts": "1486201882.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "basically, u need two separate nodes: master and worker, they will communicate with a connectable ip address, e.g., 192.168.x.x.",
+        "ts": "1486203853.000035"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "Thank you. Is there a documentation which shows starting a simple working example, step-by-step? In _deployment.md_ I can not find suggestions refering to the fact that \"you should start master node this way\" and \"you should start worker node that way\"; I believed that they are parts of the same host computer, run in different docker images.",
+        "ts": "1486210390.000036"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "I could solve this problem by removing \/etc\/systemd\/system\/docker.service.d\/override.conf, and (!) creating a symlink in the same dir: ln -s \/lib\/systemd\/system\/docker.service docker.service",
+        "ts": "1486217210.000037"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "In docker.service I replaced \"ExecStart=\/usr\/bin\/dockerd -H fd:\/\/ \" with \"ExecStart=\/usr\/bin\/dockerd -H fd:\/\/ -H <tcp:\/\/0.0.0.0:2375> -H unix:\/\/\/var\/run\/docker.sock --api-cors-header='*' --default-ulimit=nofile=8192:16384 --default-ulimit=nproc=8192:16384\". This way \"docker -H 127.0.0.1:2375 version\" runs fine, gives nice Client and Server data.",
+        "ts": "1486217297.000038"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "Though this error still remains when tryind to connect to the dashboard: _nginx         | 2017\/02\/04 22:15:05 [error] 8#8: *9 connect() failed (113: No route to host) while connecting to upstream, client: xxx,yyy,vvv.zzz, server: , request: \"GET \/ HTTP\/1.1\", upstream: \"<http:\/\/172.18.0.4:8080\/>\", host: \"34.248.144.96:8080\"_",
+        "ts": "1486217771.000039"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "I have running these docker images: <http:\/\/pastebin.com\/raw\/uem5nSPf> (_cello-dashbard, cello-restserver, yeasy\/nginx, cello-watchdog, mongo:3.2_)",
+        "ts": "1486218228.000040"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "Why is this in log? _dashbard | ImportError: cannot import name 'Client'_",
+        "ts": "1486236524.000041"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "...as I see this is a known bug: <https:\/\/jira.hyperledger.org\/browse\/CE-11>",
+        "ts": "1486236665.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U3XTWA892> Actually, the master node and the worker node are separate nodes, and should be put inside different host\/server. I suggest u can try to first setup one master node, there you should be able to access the web ui. From your given msg, i suppose you start the containers successfully, but not the network routes. can u access the addr (you web ui addr) \u201c<ttp:\/\/172.18.0.4:8080\/>\u201d from the master node directly?",
+        "ts": "1486254058.000043"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "Thank you. And where is the point where I give the Master node the address of the Worker node(s)? Now I installed Master node to ip-172-30-0-170 and Worker node ip-172-30-0-131.",
+        "ts": "1486279092.000044"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "How to do this? \"And check the os iptables config, to make sure host ports are open (e.g., 2375, 7050~10000)\"",
+        "ts": "1486279157.000045"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "\"can u access the addr (you web ui addr) \u201c<ttp:\/\/172.18.0.4:8080\/>\u201d from the master node directly?\" &gt; Yes, I can (even from command line via links).",
+        "ts": "1486279752.000046"
+    },
+    {
+        "type": "message",
+        "user": "U3XTWA892",
+        "text": "My installation process can be seen here: <http:\/\/porgeto.hu\/0\/Installing_Master_and_Worker_node.mp4> as a screencast.",
+        "ts": "1486279846.000047"
+    }
+]

@@ -1,0 +1,162 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what kind of FSM error do you get?",
+        "ts": "1473145898.000019"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "<@U1AU8DRQR> :  Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: transition canceled with error: Error registering Handler: Duplicate Handler error: {name:\"vp2\"  172.17.0.4:30303 VALIDATOR \ufffd\ufffd.^V#^_\ufffd9\ufffdpV^U\ufffd^K\ufffd\ufffdq\ufffdxh^D\ufffdA\ufffdP\ufffd-\ufffd\ufffd           o(}",
+        "ts": "1473148585.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "Received duplicate connection from &lt;nil&gt;, switching to new connection \n\nAnd this goes on and on....",
+        "ts": "1473148613.000021"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "i got 4 vps (vp0 - vp3) on one machine and 2 nvps (nvp0, nvp1) on the other one...",
+        "ts": "1473148683.000022"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it seems that you have started two vp2 (at first glance)",
+        "ts": "1473149571.000023"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "hmm weird...",
+        "ts": "1473149912.000024"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "now i turned  around the setup  (nvps on the machine where the vps were and vica versa)  and now i get lots of grpc errors in between chatting messages:\n\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.4:30303: getsockopt: no r$\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.4:30303: getsockopt: no r$\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.5:30303: getsockopt: no r$\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.5:30303: getsockopt: no r$\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.4:30303: getsockopt: no r$\n2016\/09\/06 08:04:56 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 172.17.0.5:30303: getsockopt: no r$\n^[[36m08:04:56.430 [peer] chatWithPeer -&gt; DEBU 2f9^[[0m Initiating Chat with peer address: 172.17.0.5:30303\n^[[31m08:04:56.430 [peer] chatWithPeer -&gt; ERRO 2fa^[[0m Error creating connection to peer address=172.17.0.5:30303:  grpc: timed out trying to connect\n^[[36m08:04:56.430 [peer] chatWithPeer -&gt; DEBU 2fb^[[0m Initiating Chat with peer address: 172.17.0.5:30303\n^[[36m08:04:56.430 [peer] chatWithPeer -&gt; DEBU 2fc^[[0m Initiating Chat with peer address: 172.17.0.4:30303\n^[[36m08:04:56.430 [peer] chatWithPeer -&gt; DEBU 2fd^[[0m Initiating Chat with peer address: 172.17.0.4:30303\n^[[31",
+        "ts": "1473150195.000025"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "it seems to me they only get to the HELLO and after that they cannot communicate....",
+        "ts": "1473150284.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "do they need any other port apart from 30303?",
+        "ts": "1473150297.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think for inter-peer communication, no",
+        "ts": "1473150338.000028"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "-&gt; DEBU 395^[[0m Initiating Chat with peer address: 172.17.0.4:30303\n^[[36m08:05:04.433 [peer] beforeHello -&gt; DEBU 396^[[0m Verified signature for DISC_HELLO\n^[[31m08:05:04.433 [peer] handleChat -&gt; ERRO 397^[[0m Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: trans$\n^[[36m08:05:04.448 [peer] HandleMessage -&gt; DEBU 398^[[0m Handling Message of type: DISC_GET_PEERS\n^[[36m08:05:04.448 [peer] beforeGetPeers -&gt; DEBU 399^[[0m Sending back DISC_PEERS\n^[[36m08:05:04.448 [peer] SendMessage -&gt; DEBU 39a^[[0m Sending message to stream of type: DISC_PEERS\n^[[36m08:05:04.475 [peer] SendMessage -&gt; DEBU 39b^[[0m Sending message to stream of type: DISC_GET_PEERS\n^[[36m08:05:04.476 [peer] HandleMessage -&gt; DEBU 39c^[[0m Handling Message of type: DISC_PEERS\n^[[36m08:05:04.476 [peer] beforePeers -&gt; DEBU 39d^[[0m Received DISC_PEERS, grabbing peers message",
+        "ts": "1473150361.000029"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "now it seems to be some other error, right?",
+        "ts": "1473151081.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "in the nvps yes but in the vps logs its the same.... or similar :",
+        "ts": "1473151240.000031"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "[[0m Received duplicate connection from &lt;nil&gt;, switching to new connection\n^[[31m08:05:31.105 [peer] handleChat -&gt; ERRO 07b^[[0m Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: trans$\n^[[33m08:05:33.441 [consensus\/util] RegisterChannel -&gt; WARN 07c^[[0m Received duplicate connection from &lt;nil&gt;, switching to new connection\n^[[31m08:05:33.455 [peer] handleChat -&gt; ERRO 07d^[[0m Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: trans$\n^[[33m08:05:36.096 [consensus\/util] RegisterChannel -&gt; WARN 07e^[[0m Received duplicate connection from &lt;nil&gt;, switching to new connection",
+        "ts": "1473151286.000032"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it is something else",
+        "ts": "1473151333.000033"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "but i guess its not a good thing :slightly_smiling_face:",
+        "ts": "1473151674.000034"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe a foolish question but... it doesn't work now, right?",
+        "ts": "1473151749.000035"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "not really",
+        "ts": "1473151915.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "despite the errors i tried to",
+        "ts": "1473151930.000037"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "enroll an audittor and few users and deploy a chaincode",
+        "ts": "1473151950.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "but vp0 gave up :slightly_smiling_face:",
+        "ts": "1473151957.000039"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "Error: grpc server exited with error: accept tcp [::]:30303: accept4: too many open files\n08:24:43.940 [main] main -&gt; INFO 4f58^[[0m Exiting.....",
+        "ts": "1473152067.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "would it be possible that it would still work with minor errors\/warns ?",
+        "edited": {
+            "user": "U1D9R3WAX",
+            "ts": "1473152162.000000"
+        },
+        "ts": "1473152126.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "as I see yes. for us, there were always error when we tried it, with <@U0R7Q5C30>",
+        "ts": "1473152461.000043"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "<@U1AU8DRQR>  : good news :wink:",
+        "ts": "1473153150.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "Anybody know where the logs go when we log something in our code using op\/logging ?  In earlier versions we used to see that on register chain code console...",
+        "ts": "1473153852.000045"
+    }
+]

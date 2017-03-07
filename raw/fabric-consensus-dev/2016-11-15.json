@@ -1,0 +1,120 @@
+[
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0ZJZBJLF> <@U0XPR4NP4> If you are looking for another opinion: more specific info using 403 and 404 seems better than using one error code for two usecases. Yacov, the debugging phase never ends; we must expect that additions and changes to SDKs (and new SDKs) will always be done. Is there a reason why we should hide that information from ongoing development and testing?",
+        "ts": "1479222990.004072"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's a trade-off, if you hide information you reduce the attack surface. let's say that you're an org that was evicted of a channel, and you want to know if the channel still exists or not, 403 + 404 will tell you.",
+        "ts": "1479223125.004073"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "it does not matter. a booted client already has the hash for the chaincode, and will know the problem reason. Nevertheless, if this is an internal API, then is there any risk at all?",
+        "ts": "1479224208.004074"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this is not an internal API network-wise",
+        "ts": "1479224310.004075"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "ok, then can discard my 2nd sentence. first sentence still stands. and since that will be a problem regardless, then maybe standard practice will be to destroy entire channel when a member leaves\/expelled, and create a new channel with remaining members after a short time.",
+        "ts": "1479224513.004076"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd argue that once a channel is created, it can never be truly destroyed.  You could cut off access to it, but you should never re-use a chainID, so I would think deleting a chain blacklists it as a chainID in perpetuity and so everyone would simply get back a 403",
+        "ts": "1479224548.004077",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "destroying a channel once a member leaves is not a smart thing to do",
+        "ts": "1479224561.004078"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you lose all the chain",
+        "ts": "1479224566.004079"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "my first sentence still holds true. an expelled member will already have the hash, right? so if they are malicious, they will know the correct hash, whether or not they get a 404 or 403. The benefits of using both 404 and 403 hold true for the rest of the world. Rejecting their userid\/password must be enforced; let COP enforce that.",
+        "ts": "1479224972.004080"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "actually what's rejected is their organization, just to be precise.",
+        "ts": "1479225021.004081"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when you boot a peer you boot the entire org",
+        "ts": "1479225040.004082"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "<@U1RLZ5729>: when running with security, you should uncomment the membersrvc stanza and references",
+        "ts": "1479225220.004083"
+    },
+    {
+        "user": "U18P24857",
+        "text": "<@U18P24857|dongmingh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479225604.004084"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "thanks for the clarification. I think you are saying that each channel has a list of orgs\/members , and we may be providing a way for the rest of the orgs to boot a member, and blacklist them so the channel can reject additional requests by that member to join again. (For my own learning: is this logic in the sdk, or fabric itself?)  Wouldn't they just get a new name\/address and attempt to join as a new org (rendering all that code useless)? What malicious-usecases could we really prevent by not providing 403\/404 differentiation?",
+        "ts": "1479225975.004085"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "a channel is defined by a list of its peers and the orgs of the peers",
+        "ts": "1479226214.004086"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but the ACL is enforced in 2 different places:\n- in the ordering service it's enforced per org, meaning- any peer from an org can call `Deliver` from the channel\n- in the gossip laye I enforce a mix of 2 rules: - \n          - a block is never sent to a peer of an org not in the channel\n          - a block is never sent to a peer not in the channel, unless it is the peer that originally pulled it from the ordering service, and there is only 1 as such, per org.\n            That is in theory of course because I'm implementing this as we speak",
+        "ts": "1479226446.004087"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "by the way, there is a posting on <#C27E2LGJY|fabric-peer-dev>  by <@U184J2R7S> , you (who are on this channel and didn't see) may want to read it, and I also posted some comments there, <@U0XPR4NP4>  and <@U0XQ35CDD>  your input is most welcome",
+        "ts": "1479246740.004088"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U1B5DPRLG> , I know that i should uncomment the membersrvc stanza and all.\nBut now since I am running with two physical machines setup, member services are running on another machine only. I am just trying to refer that membersrvc using the ip and port of that machine using:\n - CORE_PEER_PKI_ECA_PADDR=9.109.251.105:7054\n - CORE_PEER_PKI_TCA_PADDR=9.109.251.105:7054\n - CORE_PEER_PKI_TLSCA_PADDR=9.109.251.105:7054\n\nDo I need to do something more to get the communication between these two systems?",
+        "ts": "1479281455.004089"
+    }
+]

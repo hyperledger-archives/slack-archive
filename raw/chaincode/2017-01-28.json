@@ -1,0 +1,169 @@
+[
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "If a chaincode issues a `stub.DelState()` to delete an item (using the Go syntax) is the disk space storing that item eventually \"freed\" so that it may be reused later, either within the same chaincode or by other chaincode (e.g. by `stub.PutState()` for a different key)? In other terms, are deletes in chaincode logical deletions that mask a more permanent storage or does a delete actually end up freeing up storage in rocksdb?",
+        "ts": "1485608770.001440"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "I have been writing chaincode assuming that deletions are real and that by creating and deleting many keys I would not inadvertently use up my whole disk in a real world deployment scenario",
+        "ts": "1485609023.001441"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2UNR91RB>  - yes - the statedb stores the latest values for each key.  So if you delete a key, you are effectively deleting it from the database.  Of course every transaction is persisted within blocks and blocks are not deleted",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1485609374.000000"
+        },
+        "ts": "1485609172.001442"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "<@U0PB67X4K>: Thanks. I am aware that the transaction payload will be persisted, and that may cause some redundancy of what is stored on disk (block data vs app data).",
+        "ts": "1485609400.001444"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "But I might have a transaction that causes me to delete a set of keys, or move their payload under different keys or something, and from what you are saying I understand these types of operations would not affect my storage capabilities in a way I didn't expect. So thanks again :slightly_smiling_face:",
+        "edited": {
+            "user": "U2UNR91RB",
+            "ts": "1485609579.000000"
+        },
+        "ts": "1485609541.001445"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "of course we are at the mercy of how rocksdb optimizes storage, etc, but your assumptions are correct about deleting keys",
+        "ts": "1485609706.001447",
+        "reactions": [
+            {
+                "name": "wink",
+                "users": [
+                    "U2UNR91RB"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "Heh. Of course.",
+        "ts": "1485609782.001448"
+    },
+    {
+        "type": "message",
+        "user": "U2GG5LADV",
+        "text": "Happy New Year, Guys~",
+        "ts": "1485610825.001449",
+        "reactions": [
+            {
+                "name": "+1::skin-tone-4",
+                "users": [
+                    "U2UNR91RB",
+                    "U0PB67X4K"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U2UNR91RB> Rocksdb is hard-coded as the state database in Fabric v0.6, but it is out of the picture in Fabric 1.0 where the state data will use goLevelDB by default, with an optional CouchDB implemenation as well, and other databases can get involved as the state database is pluggable.",
+        "ts": "1485620214.001450"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "<@U0YJUECE8> Wow. Interesting. Pluggable things are great :smile: What was the issue with Rocksdb? I thought it was supposed to be a better LevelDB?",
+        "ts": "1485620553.001451"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "I happen to maintain <http:\/\/github.com\/bmatsuo\/lmdb-go|github.com\/bmatsuo\/lmdb-go>, so I am always interested in things with pluggable backend storage interfaces :slightly_smiling_face:",
+        "ts": "1485620599.001452"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U2UNR91RB> I don't know the details, and this is just conjecture, but I suspect the reasons may have been more political or license issue oriented, than technical.   But I'll happily stand corrected if I'm wrong about this",
+        "ts": "1485620669.001453"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "Gotcha. I would love some clarification if anyone knows. But it's just a curiosity and not that important.",
+        "ts": "1485620737.001454"
+    },
+    {
+        "user": "U0YK3KKCY",
+        "text": "<@U0YK3KKCY|harrijk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485621431.001455"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U2UNR91RB> I just received confirmation from an anonymous source, who may or may not bear any resemblance to the gentleman who just joined <#C19ABCKPW|chaincode> at 11:37 AM,  that my theory has merit-  the switch was done primarily for legal or licensing issues.",
+        "ts": "1485621629.001456",
+        "reactions": [
+            {
+                "name": "slightly_smiling_face",
+                "users": [
+                    "U0YK3KKCY"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U3BU07SN7",
+        "text": "<@U3BU07SN7|karkal72> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485622841.001457"
+    },
+    {
+        "type": "message",
+        "user": "U2UNR91RB",
+        "text": "Thanks again <@U0YJUECE8>, and mystery source :wink:",
+        "ts": "1485622949.001458",
+        "reactions": [
+            {
+                "name": "slightly_smiling_face",
+                "users": [
+                    "U0YJUECE8"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U2UNR91RB> I won't divulge my source, but if you spot him in person, he's the one wearing the tee-shirt that says \"Federal Witness Protection Program member\".",
+        "ts": "1485623145.001459"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U2UNR91RB> check out the powerpoint in FAB-758, it is a thing of beauty, it discusses some of the database stuff we were chatting about, and much more.   <https:\/\/jira.hyperledger.org\/browse\/FAB-758>",
+        "ts": "1485629440.001460"
+    },
+    {
+        "type": "message",
+        "user": "U3SCKQB4P",
+        "text": "Has any body implemented pbft successfully on 4 different vm each on different cloud ?",
+        "ts": "1485672908.001461"
+    }
+]

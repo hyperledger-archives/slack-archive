@@ -1,0 +1,271 @@
+[
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "Hi. Is anybody here?",
+        "ts": "1472989589.000002"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "Any news about build?",
+        "ts": "1472989781.000003"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am here",
+        "ts": "1472989868.000004"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no one seems to be responding to me about how to best solve the problem.  I know the issue but given I have no control \/ access to make changes in any repo makes it tough to fix.   I am going to fix it using my own repo and then we can put that structure in place in the main repo later",
+        "ts": "1472989950.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "are you pushing to the master branch?",
+        "ts": "1472989964.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "Right now yes.",
+        "ts": "1472991372.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am currently running the entire build process on my local machine with my proposed fix",
+        "ts": "1472992360.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is going to continue to be problematic with multiple branches and all these changes being made to the chaincode interface because Go versioning sucks.  There are things we can do, but we need to start putting that stuff in place",
+        "ts": "1472992431.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "Agreed.",
+        "ts": "1472993087.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and people really need to start making sure they enter things in JIRA and use JIRA to discuss breaking changes, etc.   Else no one will have any idea what is actually going on",
+        "ts": "1472993540.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it is actually quite frustrating",
+        "ts": "1472993548.000012",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1MNES6NR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Hi <@U0PB67X4K> ; could you please explain why \"go versioning sucks\" in this case? I'm quite interested :wink:",
+        "ts": "1472994002.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1MNES6NR>  - sure -   <https:\/\/jira.hyperledger.org\/browse\/FAB-305>",
+        "ts": "1472998295.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the problem really stems from trying to do \"go get\" for something that is not currently in your GOPATH.   \"go get\" supports github URLs, but it will only pull from the HEAD of the master branch",
+        "ts": "1472998430.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so let's see you have something which requires packageA which you import as \"<http:\/\/github.com\/packageA|github.com\/packageA>\"  and you don't keep it in your local GOPATH src tree.   So today you do a go build \/ go install on your package which used packageA.  Now let's say that night somebody decides to change the public interface methods for packageA.  The next day you clean your project and\/or share it with someone else.  They clone your project and now when they try to build it it won't compile because the version of packageA they get have the new interface methods",
+        "ts": "1472998621.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KM61BCP> <@U0KPFAZNF>  -   <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/901\/>    - my attempt to temporarily fix the broken build for master",
+        "ts": "1472999101.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "continuing from above - the problem for us right now is that we multiple branches which use different versions of chaincode interfaces and we were trying to use a common remote resource",
+        "ts": "1472999256.000018"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Ok, thanks for the explanation :slightly_smiling_face:\nIMHO, Vendoring is addressing this issue, but in this case the main problem is that this test is downloading remote artifacts...\nIf the purpose is to test the downloading thing, would it be doable to Mock something instead of downloading blindly from Github?",
+        "ts": "1472999313.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the fabric currently supports deploying chaincode from a remote repo (this is what the REST interface does).  We can probably eventually get rid of this once we remove the REST API, but the problem will continue in other places as well",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1472999376.000000"
+        },
+        "ts": "1472999361.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but we can vendor, but we would need to actually start enforcing \/ explaining that as a mandatory practice for developing chaincode.  On the other hand, we really should start versioning certain things anyway",
+        "ts": "1472999430.000024"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> I would suggest the project instills versioning in the code and not rely on build tools to sort out what is a bullet train of continuous code modifications from out-of-sync parties. Look at Bitcoin core for an example of creating robust code that is smart enough about allowing multiple versions of code to co-locate and operate independently.",
+        "ts": "1473008121.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U268EB76W> - you won't get any arguments out of me.  I have actually mentioned this in other posts - specifically when it comes to the interface(s) which chaincode authors are required to implement",
+        "ts": "1473008623.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Given I have actually been running the fabric as a service for most of the year and running multiple versions of the fabric code (which BTW needs to start cutting actual releases), I have been suffering though this issue for a long time",
+        "ts": "1473008688.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT - Go is definitely not as \"version\" friendly when it comes to packaging as are other languages",
+        "ts": "1473008728.000028"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0KM61BCP> can you point me to a resource that documents the official Hyperledger Fabric development workflow and procedure, so I can understand how code is created, reviewed, committed, and assigned developers working on specific components, etc.? Is there a repo that contains code that has passed all builds and tests and does not break (stable)? Also, is there any resources that target non-hyperledger members (public) developers, like where to pull \/ clone code from, how to deploy the nodes without the devenv VM. For example say someone wants to deploy and run the behave tests on AWS or Azure. Is there a roadmap document that developers can read so they do not get boxed in to code and design that is going to be swapped out, removed, or refactored. This will prevent a lot of frustration for those investing in work only to see their dependencies removed.",
+        "ts": "1473008828.000029"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> I feel your pain :slightly_smiling_face:",
+        "ts": "1473009044.000030"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> personally I think and I will subject the code (source and bin) to the blockchain and integrate a chaincode repo that prevents this issue. This could manifest down the road and present a fragile and risky runtime environment by opening a vector for abuse :disappointed: Best to address now why the design and code are still in the infant stage.",
+        "ts": "1473009284.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U268EB76W> <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/#fabric-developer-guide> - but there\u2019s more to it than just that",
+        "attachments": [
+            {
+                "title": "Hyperledger Fabric",
+                "title_link": "http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/#fabric-developer-guide",
+                "text": "Welcome to the Hyperledger fabric documentation",
+                "fallback": "Hyperledger Fabric",
+                "from_url": "http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/#fabric-developer-guide",
+                "service_icon": "http:\/\/hyperledger-fabric.readthedocs.io\/favicon.ico",
+                "service_name": "hyperledger-fabric.readthedocs.io",
+                "id": 1
+            }
+        ],
+        "ts": "1473015175.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "basically, we use JIra for issue and story tracking. If you see something you\u2019d like to work on, LMK and either <@U0PB67X4K> or I can get you integrated",
+        "ts": "1473015290.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "in particular, have a look at <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/CONTRIBUTING\/>",
+        "edited": {
+            "user": "U0KM61BCP",
+            "ts": "1473015367.000000"
+        },
+        "ts": "1473015346.000035"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "Awesome! Thx <@U0KM61BCP>. But I'm not a member, so I can't work on (contribute) code :disappointed:",
+        "ts": "1473018593.000037"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0KM61BCP> Hey I got my LF ID so I guess I'm good to GO :slightly_smiling_face: pun untended.",
+        "ts": "1473021376.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": ";-_",
+        "ts": "1473021384.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "sweet",
+        "ts": "1473021386.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ping me with any questions\u2026 <@U0KPFAZNF> and <@U0PB67X4K> are also good resources",
+        "ts": "1473021408.000041"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "thx 4 prompting me into hyperlight <@U0KM61BCP>!",
+        "ts": "1473021434.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> commented on <https:\/\/jira.hyperledger.org\/browse\/FAB-305>",
+        "ts": "1473022636.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP> - thanks",
+        "ts": "1473026910.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I also pushed a patch for review - temporary most likely - but will allow CI to work for master",
+        "ts": "1473026940.000045"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Does anyone know how often the Github mirrors are updated?",
+        "ts": "1473047410.000046"
+    }
+]

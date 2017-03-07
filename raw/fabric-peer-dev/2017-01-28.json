@@ -1,0 +1,173 @@
+[
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U10LM0FFZ> <@U11HTMW0H>  Can you help kletkeman on information for version 1?  We do need to clarify what we can\/can't do with rest now.  <@U0Y55KNG2> Kim- they are definitely updating things as we slack on how to program against chaincode,.. just don't know how much has gotten checked in yet as not all the CRs were reviewed yet",
+        "ts": "1485599750.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP>  <@U26T99AQ4>  do we need <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3285\/>  anymore?",
+        "ts": "1485606931.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0Y55KNG2>  - the peer no longer has REST APIs in V1.0.   We are slowly adding GRPC APIs to expose the appropriate functions",
+        "ts": "1485606980.000391"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0PB67X4K> \n&gt; do we need <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3285\/>\nI think so, at least we need to rename msp.Common into something else",
+        "ts": "1485607565.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U184J2R7S> <@U0PB67X4K> Thanks. I knew that the SDK \/ gRPC replaced the chaincode APIs entirely, but I had assumed that the fabric's own REST API for the chain itself would be left in place until gRPC APIs were ready. \n\nOur applications must now be ported to APIS that are either much more complex or non-existent. (And that on top of the new response type from every chaincode API that recently appeared, forcing me into refactoring our iot chaincode platform once again.) Things are a bit tough out here too :slightly_smiling_face:\n\nOne last question then. Is there no way to introspect the chain while the peers are running? I am on the hook to make a video for a customer showing the addition of a new peer to a v1 fabric, and showing the chain is by far the best way to demo the successful addition.",
+        "ts": "1485631898.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Y55KNG2> Query System Chaincode (QSCC) as discussed on slide 15 of the powerpoint in FAB-758  <https:\/\/jira.hyperledger.org\/browse\/FAB-758>  may be helpful.   I haven't used it, in fact just today I looked at this deck for the first time in a while (if ever, my memory gets purged more frequently than Slack's chat history), so whether or not the QSCC has been implemented yet I don't know.",
+        "ts": "1485635619.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0YJUECE8> Thanks for the tip. I found the relevant query in \"fabric\/core\/scc\/qscc\/querier.go\" ... I am obviously falling behind in changes to the environment. Looking at the chain requires gRPC commands to the system chaincode qscc. Presumably, qscc is its name, but I need to confirm that. Would be nice if there were a POSTMAN equivalent for gRPC for simple testing. Have you found anything like that?",
+        "ts": "1485638615.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Y55KNG2> \n&gt;Would be nice if there were a POSTMAN equivalent for gRPC for simple testing. Have you found anything like that?\n\nI haven't found anything like that myself, but that by no means means there isn't something like that lurking around.",
+        "edited": {
+            "user": "U0YJUECE8",
+            "ts": "1485640624.000000"
+        },
+        "ts": "1485640583.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "have not had time to try it - but <https:\/\/github.com\/gogo\/letmegrpc>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "gogo\/letmegrpc",
+                "title_link": "https:\/\/github.com\/gogo\/letmegrpc",
+                "text": "letmegrpc - generates a web form gui from a grpc specification",
+                "fallback": "GitHub: gogo\/letmegrpc",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/9958490?v=3&s=400",
+                "from_url": "https:\/\/github.com\/gogo\/letmegrpc",
+                "thumb_width": 398,
+                "thumb_height": 398,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1485640678.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Y55KNG2> \n&gt;Presumably, qscc is its name, but I need to confirm that. \n\nAnd hopefully I'm not making a hash of this statement or leaving something out, but I think in Go, that if you do a build in a directory and there is only one go file in there, if you don't specify otherwise, the executable name will be the name of the directory.   In other words, that system chaincode's name stands as much of a chance of being called *qscc* as it does of being called *querier*, which is darn near impossible to spell!",
+        "ts": "1485641014.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0YJUECE8> Yes, the Go convention is to use the name of the folder by default. Main programs and packages all get the same treatment. But that's not the name I am talking about. In v0.6, the deploy transaction synchronously returns you the \"name\" of the chaincode, which is a hash of the code, the location from which the code was loaded, the parameters for the Init, and a nonce I believe. The resulting hash is the name you use to target that chaincode in the fabric.\n\nThere was a major issue in that the name was used to prefix all keys so that the chaincode in effect had its own database partition. This works great for iteration etc, but was a bomb when you tried upgrading the chaincode by deploying a new version. All your data was lost effectively.\n\nFor v1, the fabric no longer reads the chaincode to my knowledge, and the name can be assigned by the developer so that future versions will simply take over the database, and so that multiple smart contracts can share the database. At least, this is my impression of where things are, or are going. It is that moniker that you assign to the chaincode that was called its name in v0.6.",
+        "ts": "1485642944.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "So even with the system chain code, you presumably need its name before you can talk to it.",
+        "ts": "1485643028.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Y55KNG2> sure, I didn't know if these same rules apply to system chaincode...the only time I invoked system chaincode directly was that one where it just wrote whatever you sent it to state, I saw it in one of the docs, but it was so long ago I forget the details",
+        "ts": "1485643180.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0PB67X4K> Thanks, that looks promising. We will still be using JSON Schema 4 for contract payloads so that we can continue to perform dynamic mapping and configuration against any compliant contract, but it will help to have an easily generated  web UI for talking in the first place.",
+        "ts": "1485643193.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Y55KNG2> this is what I was thinking of:  <http:\/\/hyperledger-fabric.readthedocs.io\/en\/v0.6\/SystemChaincode-noop\/>",
+        "ts": "1485643278.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0YJUECE8> chaincode will all follow similar naming rules. Or at least, I sure hope so. I presume that the system chaincodes developed by hyperledger people will have monikers preassigned.",
+        "ts": "1485643291.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0YJUECE8> The protocol spec was fairly out of date over 6 months ago, so it is difficult to rely on it for information for v1. At line 110 in \"<https:\/\/sourcegraph.com\/github.com\/hyperledger\/fabric@d9d51709d04f6aaa39f8862b830db9d43138c5bf\/-\/blob\/examples\/sdk\/node\/app.js#L110:7>\" you will see that the chaincodeID is retrieved from the deploy response if successful. This is also called the name. So for system chaincodes that are already there when the fabric boots (presumably), the name will have to be predefined.",
+        "attachments": [
+            {
+                "service_name": "Sourcegraph",
+                "title": "app.js",
+                "title_link": "https:\/\/sourcegraph.com\/github.com\/hyperledger\/fabric@d9d51709d04f6aaa39f8862b830db9d43138c5bf\/-\/blob\/examples\/sdk\/node\/app.js#L110:7",
+                "text": "hyperledger\/fabric \u2014 Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "Sourcegraph: app.js",
+                "thumb_url": "https:\/\/sourcegraph.com\/.assets\/img\/sourcegraph-mark.png",
+                "from_url": "https:\/\/sourcegraph.com\/github.com\/hyperledger\/fabric@d9d51709d04f6aaa39f8862b830db9d43138c5bf\/-\/blob\/examples\/sdk\/node\/app.js#L110:7",
+                "thumb_width": 240,
+                "thumb_height": 244,
+                "id": 1
+            }
+        ],
+        "ts": "1485643792.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/scc\/importsysccs.go#L65>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/scc\/importsysccs.go#L65",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/scc\/importsysccs.go#L65",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1485644409.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "TL;DR - \"qscc\"",
+        "ts": "1485644418.000411",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U0YJUECE8"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

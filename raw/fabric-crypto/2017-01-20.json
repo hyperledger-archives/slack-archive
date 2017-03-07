@@ -1,0 +1,1032 @@
+[
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Hi, we traced the source code in v0.6. It seems that there is no checking to prevent malicious node to join the peer network(to trigger INVOKE and QUERY) as long as the malicious node get the shared chain key from other nodes. Is it true? Thank you.",
+        "ts": "1484915782.001040"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2Y2V95D2>  - if they have not obtained their enrollment material (ECert) from membership services they will not be able to invoke or query the network.  this of course assumes that you enable security",
+        "ts": "1484915972.001041"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "all invoke and query requests must be signed by a valid certificate issued by membership services",
+        "ts": "1484916004.001042"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but if you are saying that they \"steal\" someone else's enrollment private\/public key pair then yes - they can join",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1484916098.000000"
+        },
+        "ts": "1484916086.001043"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "But another node does not Check the Ecert, right?",
+        "ts": "1484916127.001045"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "I mean Node B won't check the Ecert from Node A..... They only check the ECert's CA validity..?",
+        "ts": "1484916179.001046"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Thus, if Node A (malicious) generated its own Ecert.....Node B will not know ?....",
+        "ts": "1484916227.001047"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well in v0.6, when Node A tries to communicate with Node B (with security enabled), Node B will actually check with membership services to see if membership services issued the certificate and actually downloads the public X509 cert for Node A   (at least as I recall)",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1484916372.000000"
+        },
+        "ts": "1484916358.001048"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so Node A would need to compromise membership services for what you mention to work",
+        "ts": "1484916393.001050"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> <@U11MANG9G>  ^^^^",
+        "ts": "1484916714.001051"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Thanks <@U0PB67X4K> . I am actually with below 2 situations in v0.6. (Moment 1) For Peer-to-Peer Connection, we have enabled TLS (with a bit code changed). When Peer A connect to Peer B (Root Validator), Peer A will check Peer B(Root Node) TLS cert. (Not sure if Peer B(Root) has checked the Peer A TLS).     (Moment 2) When node A is \"INVOKE\" and send to node B(Root), T-cert(from membershipservice) at Node A will be used to sign the transaction.       ...... can you remind me which step will we use ECert ?(Thank you). ....and ..... it seems Node A can be malicious if this is true.... Thank you.",
+        "ts": "1484917095.001052"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "If you are using REST to perform an INVOKE against Peer A, in this case Peer A is actually acting as more of a \"virtual client \/ wallet\" as well as a validating node (assuming it's a validator and not an NVP).  Recall that with security enabled, before you can INVOKE chaincode via REST you must login.  When you login via REST what happens is that Peer A enrolls with membership services on your behalf.  When you later pass the enrollID in the SecureContext field of the REST request, Peer A uses the enrollment certificate to call membership services and receive TCerts on behalf of the client",
+        "ts": "1484917574.001053"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "In this case, suppose Peer A is compromised, and Peer A generates fake TCert and send to Peer B(Root Node). Peer B will verify TCert come from real membership service, right ?  (Let me try to trace then ....) Thank you.",
+        "ts": "1484919834.001054"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Good morning. I don\u2019t understand this part *Peer A generates fake TCert*",
+        "ts": "1484919917.001055"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(not to be picky, just making sure that we are on the same page\/scenario):",
+        "ts": "1484919955.001056"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So PeerA requests (say a batch of) TCerts\u2026 when we \u201cknow\u201d that he\/she might have been compromised or a bad actor?",
+        "ts": "1484920000.001057"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[because it\u2019s the MS that actually issues them TCerts, right?]",
+        "ts": "1484920038.001058"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Good morning Johnathan.  For example, I set up two clusters: first clusters are truely used by banks (with memebership service A). second cluster with membership service).  ...... If I copied the TCert generated in the second cluster node rocksdb to  NODE A in first cluster ....    (it means NODE A is compromised) .... will other node in the first cluster notice this ?.....",
+        "ts": "1484920092.001059"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Actually, I want to see if NODE A is compromised... and use \"some ways\" to generate T-certs, can it trick other nodes ...",
+        "ts": "1484920136.001060"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "(Note: second cluster use another membership service B)",
+        "ts": "1484920169.001061"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, we should split this to two cases. Sorry :wink:",
+        "ts": "1484920169.001062"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, got you.",
+        "ts": "1484920175.001063"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "1. A \u201ccompromised\/rogue\u201d Membership Service server, say MS_B",
+        "ts": "1484920200.001064"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "2. A \u201ccompromised\/rogue\u201d player working with an \u201chonest\u201d Membership Service server",
+        "ts": "1484920235.001065"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The main thing here is about the trust-model, right? That is, on basis did \u201ccluster A\u201d nodes, that work with MS_A, based their trust on (T)Certs signed\/issued by the MS of \u201ccluster B\u201d, our lovely MS_B.",
+        "ts": "1484920363.001066"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yes.",
+        "ts": "1484920433.001067"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, thanks for confirming.",
+        "ts": "1484920449.001068"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So now, when you are asking *will other node in the first cluster notice this ?*",
+        "ts": "1484920462.001069"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yes. (to identify malicious node in the cluster)",
+        "ts": "1484920484.001070"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "In the first place, we do verify signatures and their validity.",
+        "ts": "1484920488.001071"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Wait, here\u2019s the catch.",
+        "ts": "1484920495.001072"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The dry-cold-boring-has-no-feelings kinda of MS_A, does not really know what is \u201ccompromised\u201d...",
+        "ts": "1484920533.001073"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It either \u201caccepts\u201d (or say, verifies successfully) a given signature, or not (that is \u201crejects\u201d, or fails to verify it)",
+        "ts": "1484920574.001074"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "In a way, Fabric and MS in particular, provide you with the \u201cframework\u201d for issuing certs\/validating signatures, etc.",
+        "ts": "1484920621.001075"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Now, it is possible to set up a \u201cpolicy\u201d as to what a server should (and of course *should not*) trust.",
+        "ts": "1484920659.001076"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If you agree with me so far\u2026.",
+        "ts": "1484920675.001077"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Then we get back to this point:",
+        "attachments": [
+            {
+                "fallback": "[January 20th, 2017 5:52 AM] jonathanlevi: The main thing here is about the trust-model, right? That is, on basis did \u201ccluster A\u201d nodes, that work with MS_A, based their trust on (T)Certs signed\/issued by the MS of \u201ccluster B\u201d, our lovely MS_B.",
+                "ts": "1484920363.001066",
+                "author_subname": "jonathanlevi",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "The main thing here is about the trust-model, right? That is, on basis did \u201ccluster A\u201d nodes, that work with MS_A, based their trust on (T)Certs signed\/issued by the MS of \u201ccluster B\u201d, our lovely MS_B.",
+                "author_name": "Jonathan Levi",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jonathanlevi",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-06\/76710770455_2316fc867e622c8f0008_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1484920363001066",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1484920692.001078"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yes.... sorry, i don' understand \"set up a \u201cpolicy\u201d as to what a server should (and of course *should not*) trust.\"",
+        "ts": "1484920713.001079"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "and agree all the rest...",
+        "ts": "1484920731.001080"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Oh, good you stopped me. Thanks.",
+        "ts": "1484920740.001081"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "When you have only one MS, and everybody just trusts that one\u2026 it is simple but there is less flexibility.",
+        "ts": "1484920770.001082"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yep",
+        "ts": "1484920789.001083"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That is, if we \u201cinvalidate\u201d \/ not trust any certs from that MS, we won\u2019t be able to trust anything\u2026 issued by that MS from a certain point in time, or otherwise.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1484920815.000000"
+        },
+        "ts": "1484920796.001084"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "When you work with more than one, there is some from of a PKI \u201chierarchy\u201d, so that anyone validating a cert, kinda \u201ctrusts\u201d signatures that are\/were issued by \u2018both\u2019 MS_A and MS_B.",
+        "ts": "1484920882.001086"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Otherwise, you can\u2019t inter-operate. You would trust only MS_A from the get-go. Yes?",
+        "ts": "1484920906.001087"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Now, if you never trusted MS_B\u2026..",
+        "ts": "1484920923.001088"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yes..... so MS_A and MS_B have to co-operate somehow to make it happen ...",
+        "ts": "1484920987.001089"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Right",
+        "ts": "1484920991.001090"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Thank you. So now when you \u201csee\u201d a certificate, you validate it against the Public key of the MS_*.",
+        "ts": "1484921024.001091"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "yes",
+        "ts": "1484921039.001092"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So MS_A and MS_B will issue diffferent certificates and you can check\/validate\/verify it.",
+        "ts": "1484921047.001093"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The question in your case I believe is what to \u201crevoke\"",
+        "ts": "1484921137.001094"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Do we \u201crevoke\u201d all of MS_B or is it just one node.",
+        "ts": "1484921161.001095"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "When it\u2019s one node, I simply revoke its ECert\u2026 and BOOM, he\/she is out.",
+        "ts": "1484921210.001096"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(You need the ECert to obtain subsequent TCerts)",
+        "ts": "1484921231.001097"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "But if it\u2019s the entire MS_B\u2026 then we need to inform MS_A about it.",
+        "ts": "1484921262.001098"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "but Node will get a batch of 200 Tcert from membership service at once  ...",
+        "ts": "1484921264.001099"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(It\u2019s customizable, but yes). I have 1..200 TCerts.",
+        "ts": "1484921289.001100"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "so, we need to invalidate those Tcerts in Node A",
+        "ts": "1484921290.001101"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "when ECert is out",
+        "ts": "1484921306.001102"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, I invalidate everything.",
+        "ts": "1484921315.001103"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "... and NODE B (in cluster 1) can verify it by checking the TCert ?",
+        "ts": "1484921340.001104"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "in the transaction ( INVOKE at node A)",
+        "ts": "1484921380.001105"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, that\u2019s the \u201cpolicy\u201d bit from above. The way I implemented something similar on top of Fabric\/MS\u2026 we always check that no certificate has been revoked.",
+        "ts": "1484921418.001106"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It comes with a price (longer set-up, can be slow for more high-frequency usages)\u2026 but sometimes (probably like in your case), you need it.",
+        "ts": "1484921467.001107"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We revoke everything right away, keep the log of \u201cwhy\u201d and actually provide it to the \u201cmanager\u201d as something to consider with \u201cnew enrollment requests\"",
+        "ts": "1484921540.001108"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "so the \"policy\" means \"NODE B will verify\" is optional\/configurable ?",
+        "ts": "1484921563.001109"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I know that there are many that use Fabric\/MS v0.6 without these checks, and it\u2019s indeed quicker.",
+        "ts": "1484921577.001110"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, it\u2019s like in your web-browser, in a way.",
+        "ts": "1484921603.001111"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "i see...  And in our case, we need it... because we worry that nodes got compromised ....",
+        "ts": "1484921639.001112"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Obviously I don\u2019t have all the info, but for financial applications - I would go slow and steady.",
+        "ts": "1484921672.001113"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Don\u2019t trust TCerts \u201cblindly\u201d. I agree.",
+        "ts": "1484921695.001114"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "...but how to make it work if we really need it ? .... to check the TCert at Node B?",
+        "ts": "1484921698.001115"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So to summarize:",
+        "ts": "1484921701.001116"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "1. Each issued certificate has that \u201csignature\u201d that \u201ctells you\u201d who is the issuer",
+        "ts": "1484921734.001117"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "2. You can have your own logic on a receipt of such a cert at the \u201cmembership services layer\", and make decisions whether you\u2019d trust that.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1484925618.000000"
+        },
+        "ts": "1484921782.001118"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "3. You can invalidate certs and keys of a node and even a full MS \u201ccluster\"",
+        "ts": "1484921804.001119"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "4. There is \u201clogic\u201d that many add to the \u201capplication layer\u201d when it comes to \u201ctrust\u201d (what to trust, how much, for how long, etc.)",
+        "ts": "1484921863.001120"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Thanks <@U11MANG9G> . I intend to make it work. What is the good way to verify TCert at Node B? Real-time connecting to MS and checking revoke status ? ...  (Sorry for bother you and garisingh for so long...you both are smart and knowledgeable...)",
+        "ts": "1484922059.001121"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Nah, Gari is smart. I\u2019m knowledgeable. I can point you to some code sections.",
+        "ts": "1484922178.001122"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": ":slightly_smiling_face:",
+        "ts": "1484922239.001123"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Smart and knowledgeable. Good match. we can fight crime ...:grinning:",
+        "ts": "1484922245.001124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Jonathan even has his own bat signal",
+        "ts": "1484922262.001125",
+        "reactions": [
+            {
+                "name": "eyes",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Its well known",
+        "ts": "1484922273.001126"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> <@U1BC5A0F9> <@U26T99AQ4> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4599\/> wanted your input on this, thanks to <@U0ZR63HLK> for the existing comment, though maybe slack would be faster than gerrit to reach consensus though",
+        "ts": "1484924805.001127"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U11MANG9G> if you are not smart then I hope to be as dumb as you when I grow up  :slightly_smiling_face:",
+        "ts": "1484924896.001128",
+        "reactions": [
+            {
+                "name": "innocent",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So the dataHash is shake256 on protobuf marshalled bytes correct?",
+        "ts": "1484925380.001129"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "DataHash in BlockHeader?",
+        "ts": "1484925467.001130"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, thanks. I read your comment, I'm fine with ti. Then I would ensure that there is a version somewhere that can be used to bind the way   the blockheader is converted to bytes",
+        "ts": "1484925543.001131"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because the way you marshal, you are implicitly assuming that the hash function has always 256 bits of about",
+        "ts": "1484925576.001132"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but this might change in the future",
+        "ts": "1484925585.001133"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> So, the hashing algorithm gets defined in the genesis block, for now, the only supported one is shake256",
+        "ts": "1484925588.001134"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right, right",
+        "ts": "1484925598.001135"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "actually, I found out that yesterday",
+        "ts": "1484925606.001136"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and I found it pretty neat",
+        "ts": "1484925611.001137"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the only thing to change is that the hash should be computed by the BCCSP",
+        "ts": "1484925624.001139"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `DataHash` will actually be computed via Merkle tree of configured width, and for flat hashing, we can just make the width `MAX_UINT32`",
+        "ts": "1484925628.001140"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but that I can change easly",
+        "ts": "1484925631.001141"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Perfect.",
+        "ts": "1484925642.001142"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, If one customize the hash function to be SHA2-384",
+        "ts": "1484925660.001143"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U11MANG9G> I refer to this description: This changeset chooses the following simple scheme:\n   Concatenate the following:\n      8 bytes BigEndian encoded Number\n      PreviousHash\n      DataHash",
+        "ts": "1484925674.001144"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I am guessing that DataHash is the Merkle root of the transaction tree",
+        "ts": "1484925699.001145"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is",
+        "ts": "1484925704.001146"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "in that block",
+        "ts": "1484925705.001147"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but transactions are protobuf marshalled no?",
+        "ts": "1484925719.001148"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Will have another CR to address DataHash",
+        "ts": "1484925724.001149"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, but the transctions are _stored_ marshaled",
+        "ts": "1484925730.001150"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So they are already bytes, no need to worry about re-marshaling them.",
+        "ts": "1484925744.001151"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right right",
+        "ts": "1484925786.001152"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1BC5A0F9> thanks for the context.",
+        "ts": "1484925791.001153"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, <@U0ZR63HLK> I'm quite happy _not_ to use the concatenation scheme, if ASN.1 is normal, we should do normal",
+        "ts": "1484925814.001154"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We were simply using protbuf before, which is certainly wrong",
+        "ts": "1484925828.001155",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Right so no window for non-determinism there, you are saying cause it is the same tx bytes that everyone receive",
+        "ts": "1484925842.001156"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, please. By default, ASN.1 guarantees the minimum representation",
+        "ts": "1484925843.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And my crypto-naive mind thought concatenation was easy",
+        "ts": "1484925844.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and we will be generic enough",
+        "ts": "1484925857.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, I will fix that up then",
+        "ts": "1484925864.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "perfect :slightly_smiling_face:",
+        "ts": "1484925870.001161"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and you can nicely serialize Go structs to ASN1 encoding",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1484925947.000000"
+        },
+        "ts": "1484925935.001162"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah :slightly_smiling_face:",
+        "ts": "1484925945.001163"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But we should use ASN.1 for all the fields no? meaning also for the DataHash bytes.",
+        "ts": "1484925965.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, the `DataHash` we said is going to be computed via a configurable width Merkle tree",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484925995.000000"
+        },
+        "ts": "1484925987.001166"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And since `BlockData` is nothing but repeated byte arrays, it seems like there's no need for any ASN.1 representation?",
+        "ts": "1484926023.001168"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "ASN1 seems the right way to go.",
+        "ts": "1484926128.001169"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "go ASN lib is pretty cool.",
+        "ts": "1484926145.001170"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XPR4NP4>, right right. My bad :slightly_smiling_face:",
+        "ts": "1484926178.001171"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Perfect, thanks, you had me doubting myself",
+        "ts": "1484926203.001172"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, my naive attempt to use `encoding\/asn1` over the block header gives me: `asn1: structure error: unknown Go type: uint64` is there a standard way of handling uint64's in asn1?",
+        "ts": "1484927513.001173"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(<@U1BC5A0F9> <@U26T99AQ4> <@U0ZR63HLK> <@U0PB67X4K> <@U221LL03Z> ^)",
+        "ts": "1484927772.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<https:\/\/jannewmarch.gitbooks.io\/network-programming-with-go-golang-\/content\/dataserialisation\/asn1.html>",
+        "ts": "1484927886.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Go places real restrictions on ASN.1. For example, ASN.1 allows integers of any size, while the Go implementation will only allow upto signed 64-bit integers. On the other hand, Go distinguishes between signed and unsigned types, while ASN.1 doesn't. So for example, transmitting a value of uint64 may fail if it is too large for int64.",
+        "ts": "1484927895.001176"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is a mess :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1484927961.000000"
+        },
+        "ts": "1484927950.001177"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not a great pitch for asn1 but, I suppose we will have to leave a chain running for quite a while before we exhaust the 63 bits",
+        "ts": "1484929438.001179"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So the suggested solution would be to declare some shadow structure, where block number is an int64, and marshal that?",
+        "ts": "1484929533.001180"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> ^",
+        "ts": "1484929552.001181"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right, but then we have to check that the int64 is non-negative",
+        "ts": "1484929624.001182"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "just to be sure that nothing strange happens",
+        "ts": "1484929683.001183"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, will test for that and panic",
+        "ts": "1484929737.001184"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "don't panic <@U0XPR4NP4> - all will be ok  :wink:",
+        "ts": "1484929758.001185",
+        "reactions": [
+            {
+                "name": "pray",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "haha",
+        "ts": "1484929759.001186"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Got it!\n\n```\n        asn1Header := asn1Header{\n                PreviousHash: b.PreviousHash,\n                DataHash:     b.DataHash,\n        }\n        if b.Number &gt; uint64(math.MaxInt64) {\n                return []byte(\"@garisingh says don't panic!\")\n        } else {\n                asn1Header.Number = int64(b.Number)\n        }\n        result, err := asn1.Marshal(asn1Header)\n        if err != nil {\n               return []byte(\"Just ask <@U0PB67X4K>!\")\n        }\n        return result\n```",
+        "ts": "1484930110.001187"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(<@U26T99AQ4> <@U0ZR63HLK> <@U1BC5A0F9> <@U0PB67X4K> pushed an update to the CR if you care to review)",
+        "ts": "1484930518.001188"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hehe",
+        "ts": "1484930950.001189"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "(\"@garisingh says don't panic!\") :smile:",
+        "ts": "1484931197.001190"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "hi gang,  just to confirm ... _SerializedIdentity.IdBytes_ contains the PEM encoded X509 certificate ?   that's what it says in <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=msp\/identities.go;h=cf8ecf317311947a571a918976028bf2010e7153;hb=HEAD#l117>  but I'm paranoid",
+        "ts": "1484941718.001191"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "hi <@U0UGH3X7X>! this is correct, that is for the x.509  msp.",
+        "ts": "1484944267.001192",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "in the same vein, what is the signature algorithm ? I saw a list in the golang `crypto` package but the names don't match what's in <http:\/\/docs.oracle.com\/javase\/8\/docs\/technotes\/guides\/security\/StandardNames.html#Signature>   and I need to use that list on the java SDK side",
+        "ts": "1484946443.001193"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Signature algorithm can be RSA or ECDSA",
+        "ts": "1484948938.001194"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "depending on the CA's key type",
+        "ts": "1484949045.001195"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U1BC5A0F9>, aren't you on a plane :wink: ?   are we using a default currently , maybe SHA256withECDSA ?",
+        "ts": "1484949125.001196"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "on the java sdk side, for verification, I need to create a Signature object with method getInstance(sig algorithm) ... trying to figure out where I can get the algorithm name",
+        "ts": "1484949257.001197"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "SHA256withECDSA should work",
+        "ts": "1484949579.001198"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0UGH3X7X> - I guess you are on the SDK team now?",
+        "ts": "1484949602.001199"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0PB67X4K>  yes,  sharon asked me to help out",
+        "ts": "1484949698.001200"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I knew that - but was not sure that others did  :wink:",
+        "ts": "1484949752.001201"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the fewer people know,  the less work I get :grin:    anyways i'll plug in sha256withedsa and see what happens",
+        "ts": "1484949851.001202"
+    }
+]

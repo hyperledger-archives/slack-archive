@@ -1,0 +1,612 @@
+[
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ghaskins, so lets say I got a good chunk of time to spend porting to centos \/ generally improving the build docs and process. Where would you want to start, obviously I can just use bash if statements, but that's not anyone's happy place.",
+        "ts": "1481291628.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2NDE1ZCK> ok, that doesnt sound like it would be the problem I had seen previously",
+        "ts": "1481292795.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this would only impact files being added\/removed to git, not in the fs in general",
+        "ts": "1481292811.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh!",
+        "ts": "1481292835.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think I know what the problem is; check your GOPATH",
+        "ts": "1481292842.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, nm, you are in vagrant",
+        "ts": "1481292877.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, not sure whats going on",
+        "ts": "1481292881.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2TD4Q7NW> I assume this is w.r.t. the previous conversation we had about making the e2e build be more distro agnostic",
+        "ts": "1481292930.000051"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "yup, sorry I'm in and out, don't get much time to dedicate to this",
+        "ts": "1481292950.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if so, I think I would lean towards expressing the current bash scripts in something like local puppet manifests",
+        "ts": "1481292965.000053"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "but I have some tasks I'm wrapping up and it looks like I'm going to get more time on this in the near future.",
+        "ts": "1481292971.000054"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "also sorry for the bogus pull request, stupid github, just going to do it locally.",
+        "ts": "1481293007.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "like I said before, I am open to any devops platform that improves the $distro neutrality, with a proclivity to puppet being that I know it best",
+        "ts": "1481293017.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or are you talking about something else?",
+        "ts": "1481293059.000057"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I'll pick up puppet ansible *can* do the same things, but it's really focused on multi-server provisioning.",
+        "ts": "1481293063.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok...if you are new to puppet, note that there are two ways to use it",
+        "ts": "1481293090.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the more obvious way is the distributed client\/server model, where the server dishes out manifests",
+        "ts": "1481293113.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but there is also the ability to run completely standalone",
+        "ts": "1481293120.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "where you can just process a manifest file locally",
+        "ts": "1481293129.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am thinking that is the model we would want (the local option, no server)",
+        "ts": "1481293140.000063"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "agreed. I guess we could do some fancy setup where we have one control flow across all the docker container steps",
+        "ts": "1481293164.000064"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "aka ssh into each docker container and perform the steps",
+        "ts": "1481293175.000065"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "while that would make things easier to follow, I don't think it would be worth it.",
+        "ts": "1481293192.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "give it some thought, I am open minded",
+        "ts": "1481293208.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "clear\/simple\/reliable is the goal, though",
+        "ts": "1481293238.000068"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I'd want to use ansible at that point. Quick look says puppet is a bit harder to learn and debug, of course ansible just loves to make little functionality changes between versions, which is annoying",
+        "ts": "1481293262.000069"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "like with_fileglob dropped support for multiple wild cards this minor revison, but might get it back the next.",
+        "ts": "1481293296.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fortunately, the vast majority of \"distro install\" stuff happens in the baseimage",
+        "ts": "1481293298.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and that is just one image",
+        "ts": "1481293302.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, I am OTP so I should get back to it",
+        "ts": "1481293324.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we can chat more later",
+        "ts": "1481293329.000074"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ack",
+        "ts": "1481293335.000075"
+    },
+    {
+        "user": "U2JCD7N7R",
+        "text": "<@U2JCD7N7R|georgeo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481299920.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U2TD4Q7NW> <@U0KPFAZNF> puppet? exactly what are we talking about? porting the build to centos or getting devops\/orchestration running on centos? I think that there's someone who had ansible running... I can try to track that down. I believe that they did this in a personal repo.",
+        "ts": "1481308127.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "My preference would be Ansible;-)",
+        "ts": "1481308153.000078"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "<@U0KM61BCP> well I want to get it running on centos, but really the dev env setup right now is pretty bad, its all bash, no documented list of steps or requiremnts",
+        "ts": "1481308170.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "but the work was done for v0.6 and v1.0 has some different componts",
+        "ts": "1481308177.000080"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "so the real goal is getting a better doced build process that's cleaner",
+        "ts": "1481308181.000081"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "after that getting it to run on centos is trivial and I've improved upstream",
+        "ts": "1481308195.000082"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "if you look at <http:\/\/github.com\/jkilpatr\/fabric|github.com\/jkilpatr\/fabric> and <http:\/\/github.com\/jkilpatr\/fabric-baseimage|github.com\/jkilpatr\/fabric-baseimage> you see I've got a working modification to the existing build software to run on centos",
+        "ts": "1481308234.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> is da man... we have largely abandoned the devenv and the heavy lifting is as Greg said in fabric-baseimage",
+        "ts": "1481308235.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "oh cool",
+        "ts": "1481308248.000085"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "yup that's why I was working with him",
+        "ts": "1481308248.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I'll take a look",
+        "ts": "1481308260.000087"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "he's open to the idea, he knows puppet but I've been leaning to ansible",
+        "ts": "1481308264.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I have a bunch of calls this afternoon, but will poke around on the weekend",
+        "ts": "1481308281.000089"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "yeah I've been in and out, RHT has me looking into this on a privisional basis, but it looks like I'll get the time to really dive in and get some work done.",
+        "ts": "1481308344.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: the goal, as I understand it, is to try to normalize out the $distro",
+        "ts": "1481308358.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, to take something like this: <https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric-baseimage",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric-baseimage>",
+                "fallback": "GitHub: hyperledger\/fabric-baseimage",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481308367.000092"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "and clean up \/ doc the process in general.",
+        "ts": "1481308371.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and rather than it being bash directives specific to ubuntu\/debian, it could be higher order directives like \"install protobuf\"",
+        "ts": "1481308390.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but leveraging the devops frameworks so we are not reinventing the wheel",
+        "ts": "1481308411.000096"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I only made really small mods to get it working on centos, mostly find replace apt with yum, so you've done a good job with this bash and we might keep some of it but use ansilbe to clean up the messy parts.",
+        "ts": "1481308412.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. something like puppet or ansible already understand the packaging differences between RPM and DEB, Ubuntu, vs Suse, etc",
+        "ts": "1481308456.000098"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I thought I would be fine with puppet this morning, but did some research, looks a little painful compared to ansible. I'll go with whatever if you feel strongly though.",
+        "ts": "1481308472.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, please make suggestions, i am open",
+        "ts": "1481308491.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rather have it be \"good\" than \"easy\"",
+        "ts": "1481308499.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I can learn new tricks :wink:",
+        "ts": "1481308513.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "by easy I am referring to my learning curve, of course",
+        "ts": "1481308531.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i hope whatever we come up with is easy for everyone to consume :wink:",
+        "ts": "1481308547.000104"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ansible is a lot easier to read and maintain, but it's also faster moving right now, so minor versions break some things, usually not major, think double wild cards on a fileglob going away one minor version and being back the next",
+        "ts": "1481308552.000105"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "puppet is more stable it looks like but also much harder to just pick up.",
+        "ts": "1481308562.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok...i suggest a POC",
+        "ts": "1481308578.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "re-write that script above in ansible and present it so we can review",
+        "ts": "1481308591.000108"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "that's pretty much the plan rightn ow",
+        "ts": "1481308600.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(or even just one aspect of it",
+        "ts": "1481308601.000110"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "now*",
+        "ts": "1481308602.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats perfect",
+        "ts": "1481308608.000112"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I was going to do docker components only if that's ok?",
+        "ts": "1481308613.000113"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "part of the goal of this is that vagrant won't be needed because $distro agnostic",
+        "ts": "1481308630.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, vagrant is already largely unnecessary now anyway",
+        "ts": "1481308654.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i still need to port behave over to the new build stuff and then we can largely remove vagrant",
+        "ts": "1481308687.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I digress",
+        "ts": "1481308694.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the baseimage stuff remains for docker, so that can be the focus for $distro neutral efforts",
+        "ts": "1481308710.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "things that would be interesting to highlight in a POC:",
+        "ts": "1481308739.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "install distro packages (of course)",
+        "ts": "1481308746.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "install from tarball",
+        "ts": "1481308749.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "install from non-standard repo",
+        "ts": "1481308753.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If the story for devops framework X were solid on those three points, I would be very much in favor of dropping the bash-based setup",
+        "ts": "1481308786.000123"
+    },
+    {
+        "text": "nods",
+        "edited": {
+            "user": "U2TD4Q7NW",
+            "ts": "1481308836.000000"
+        },
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U2TD4Q7NW",
+        "ts": "1481308832.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "also good to highlight what it looks like to support conditionals",
+        "ts": "1481308984.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. if $arch, if $distro, etc",
+        "ts": "1481308995.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because im sure exceptions will come up",
+        "ts": "1481309000.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for example, the P\/Z teams currently insist on overriding the platform JVM with ibmjava",
+        "ts": "1481309042.000129"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "that's fine, there will probably end up being a few text files with lists of dependencies for $distro where adding distro is the same as adding the dependency list and then passing that distro as an argument.",
+        "ts": "1481309115.000130"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "the problem with platform agnostic package managers is that they tend to get confused with obscure packages",
+        "ts": "1481309133.000131"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "apache, fine, libobscure2-devel",
+        "ts": "1481309147.000132"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "nope",
+        "ts": "1481309147.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have no problem with finer grained structure",
+        "ts": "1481309163.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. ubuntu.ansible, redhat.ansible, etc",
+        "ts": "1481309191.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I loath DRY violations, so ideally can be expressed in terms of the delta :wink:",
+        "ts": "1481309221.000136"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I expect the most we change is a task that is \"go isntall x distro dependencies\"",
+        "ts": "1481309329.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so if it were something like packages\/protoc\/common.ansible, packages\/jre\/ubuntu.ansible, packages\/jre\/centos.ansible etc that is fine",
+        "ts": "1481309341.000138"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "then a few things like sudo -i in some spots and adding to path in others that aren't *required* on any distro but one but are just there for all of them.",
+        "ts": "1481309355.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, ok",
+        "ts": "1481309364.000140"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "hmm distro + arch conditionals, that will be interesting to see if I can avoid the ubuntu + power pc situation by seperating platform issues and distro issues.",
+        "ts": "1481309563.000141"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "otherwise the number of combinations is in no one's favor.",
+        "ts": "1481309576.000142"
+    },
+    {
+        "user": "U35FGUMN0",
+        "text": "<@U35FGUMN0|walker> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481313189.000143"
+    }
+]

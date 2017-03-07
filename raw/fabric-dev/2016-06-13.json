@@ -1,0 +1,1230 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "hi all",
+        "ts": "1465805305.000034"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I have a PR with a failing build. More precisely failing behave tests: <https:\/\/travis-ci.org\/hyperledger\/fabric\/builds\/136169933> How can I get more output or any hints what the error was? That behave test works on my machine.",
+        "ts": "1465805408.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hi. Regarding this issue: <https:\/\/github.com\/hyperledger\/fabric\/issues\/1751>\nWhy would we want to isolate executions? shouldn't the one that implements the chaincode take care of concurrent invocations?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "chaincode execution should prevent accidental sharing of global state in chaincode \u00b7 Issue #1751 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1751",
+                "text": "Description Currently, the chaincode pattern requires passing of a singleton object to the chaincode shim: err := shim.Start(new(SimpleChaincode)) This suggests that it is a reasonable pr...",
+                "fallback": "GitHub: chaincode execution should prevent accidental sharing of global state in chaincode \u00b7 Issue #1751 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1751",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465822463.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>: not in my opinion",
+        "ts": "1465823057.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only persistence that a chaincode should have should be its putstate object\u2026and we should develop frameworks that make that easy\/apparent",
+        "ts": "1465823100.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what <@U0XR6J961> is pointing out in 1751 is that the current framework is structured in a way that implies\/encourages additional persistence",
+        "ts": "1465823156.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "indeed i am",
+        "ts": "1465823195.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and, I agree with <@U0XR6J961>",
+        "ts": "1465823204.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "related to this, we should also strive to make the launch method abstracted from the chaincode app",
+        "ts": "1465823418.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. it shouldnt matter if the chaincode is a standard linux application that has a main() and reaches out to the peer via GRPC or is launched as part of some other executor",
+        "ts": "1465823487.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the way it is now will not only be difficult to encourage\/enforce determinism, it will also be difficult to enforce isolation constraints",
+        "ts": "1465823567.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what if we have a stronger primitive on the stub, like a CAS?",
+        "ts": "1465823580.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "CAS?",
+        "ts": "1465823588.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "compare and swap",
+        "ts": "1465823592.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not clear on where you are going with this",
+        "ts": "1465823607.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you elaborate?",
+        "ts": "1465823616.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't the problem that chaincode that runs in parallel may step on each others toes?",
+        "ts": "1465823703.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm asking- what if it's \"OK\" for the invocations to run in parallel because the use case allows it?",
+        "ts": "1465823729.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why not transfer the responsibility to the chaincode implementer ?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1465823953.000000"
+        },
+        "ts": "1465823759.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to?",
+        "ts": "1465823929.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "*to, yes",
+        "ts": "1465823941.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why?",
+        "ts": "1465823959.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because the implementer knows whether running something in parallel is OK or not",
+        "ts": "1465823996.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand the proposal",
+        "ts": "1465824019.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the issue is about that chaincode execution should prevent accidental sharing of global state, right? \nLet's say we take measures and solve it somehow. It adds some penalty\/overhead to users who don't care about their chaincode sharing state because they implemented it in such a way that it handles it, or they just don't care because their chaincode might even not be dependent on the state. \nSo isn't it more \"flexible\" to have the user(implementor of chaincode) worry about sharing of global state among invocations?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1465824244.000000"
+        },
+        "ts": "1465824213.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, more flexible, but also dangerous",
+        "ts": "1465824372.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZJZBJLF>: there are many things to consider here IMO\u2026. the assumption that implementer knows if invoke to chaincodes ( or different invoke to the same chaincode) can be run in parallel is a big one in a shared ledger env.",
+        "ts": "1465824502.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the system already runs invokes serially",
+        "ts": "1465824534.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it just can also run queries in parallel",
+        "ts": "1465824542.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chaincode *must not* share state between concurrent query\/invocation, nor across invocations",
+        "ts": "1465824597.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "therefore providing an API that suggests such a pattern is bad",
+        "ts": "1465824620.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and instead we should make it hard or impossible to make such a mistake",
+        "ts": "1465824633.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see now. It's like, to prevent abuse?",
+        "ts": "1465824713.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why not delete the fields with reflection or something, instead of forking?",
+        "ts": "1465824735.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "however, going back to the original problem - things like global var detection, invalid package use detection (time, rand\u2026 for example) shouldn\u2019t be hard to do",
+        "ts": "1465824743.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "either statically or dynamically",
+        "ts": "1465824753.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "of course, there are probably smart ways of doing those that\u2019s worth investigation",
+        "ts": "1465824770.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "good thing go is static typing and there is no \"eval\" ( I think)",
+        "ts": "1465824791.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok thanks for the clarification!",
+        "ts": "1465824823.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what fields?",
+        "ts": "1465824847.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you elaborate on the no \u201ceval\u201d points please ?",
+        "ts": "1465824856.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: it's impossible to do",
+        "ts": "1465824863.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "halting problem",
+        "ts": "1465824876.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "global fields of the file",
+        "ts": "1465824876.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what is impossible <@U0XR6J961> ?",
+        "ts": "1465824888.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019m not claiming we\u2019ll have 100% detection\u2026 just best effort",
+        "ts": "1465824915.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to make sure a program doesn't do X",
+        "ts": "1465824922.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we should just use a DSL that prevent anything non-deterministic",
+        "ts": "1465824942.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we don't even have to come up with it",
+        "ts": "1465824949.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they exist",
+        "ts": "1465824953.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "again, all I\u2019m saying is its worth doing simple things to prevent common issues. If we can do that statically only, we should do at least that",
+        "ts": "1465825053.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we need to patch go for certain things",
+        "ts": "1465825082.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes",
+        "ts": "1465825088.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "It\u2019ll be interesting to look at what go playground does for starters",
+        "ts": "1465825122.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm good idea",
+        "ts": "1465825133.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do you mean patch go?",
+        "ts": "1465825138.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "playground doesn't need to be deterministic :slightly_smiling_face:",
+        "ts": "1465825242.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I was thinking it has lessons we can use\u2026 i think it constrains uses",
+        "ts": "1465825355.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XR6J961>:  but if you use a DSL then how can you still use the plain go code?",
+        "ts": "1465825365.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you don't",
+        "ts": "1465825381.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, but then it deprecates existing code",
+        "ts": "1465825393.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465825396.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, with consensus v2 it doesn't have to be deterministic",
+        "ts": "1465825428.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it just needs to appear deterministic",
+        "ts": "1465825434.000100",
+        "reactions": [
+            {
+                "name": "innocent",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U1B5DPRLG",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1B5DPRLG|lhaskins> has joined the channel",
+        "ts": "1465836958.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "hey, we have this: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1721> please review it, it would be good to merge",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Optionally generate invoke transaction ID from transaction content by tamasblummer \u00b7 Pull Request #1721 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1721",
+                "text": "Optionally generate invoke transaction ID from transaction content Description Adds a -tid options to CLI that determines the transaction id derivation algorithm. Adds uuidGenerationAlg to Chai...",
+                "fallback": "GitHub: Optionally generate invoke transaction ID from transaction content by tamasblummer \u00b7 Pull Request #1721 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/4289351?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1721",
+                "thumb_width": 234,
+                "thumb_height": 234,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465846244.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<!here|@here> does anybody know who developed logging.go?",
+        "ts": "1465856388.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "there seems to be an inconsistency between what's referred to as \"default\"",
+        "ts": "1465856442.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "It was me",
+        "ts": "1465856462.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "hi!",
+        "ts": "1465856478.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "maybe you can help me understand how it's supposed to be used",
+        "ts": "1465856499.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0P2GSA8Z>: <https:\/\/github.com\/hyperledger\/fabric\/pull\/587>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Normalize the processing of logging options for obc-peer by bcbrock \u00b7 Pull Request #587 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/587",
+                "text": "This is a proposed change that addresses #569 and #310, and also partially addresses #578. The handling of logging levels, and ways of managing logging levels are currently inconsistent and incompl...",
+                "fallback": "GitHub: Normalize the processing of logging options for obc-peer by bcbrock \u00b7 Pull Request #587 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/11968347?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/587",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465856504.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "It allows different defaults to be applied to different subcomamds of teh peer",
+        "ts": "1465856556.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0XQ35CDD>: oh, I know, that's what I'm looking into actually",
+        "ts": "1465856559.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yes, I understand that",
+        "ts": "1465856570.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I think one difficulty comes from the \"default\" logging_level",
+        "ts": "1465856601.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "everything else that is made of several words relates to nesting in yaml",
+        "ts": "1465856630.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but not that one",
+        "ts": "1465856654.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I\u2019m note sure what you mean by \u201cseveral words\"",
+        "ts": "1465856676.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "then it is unclear to me whether setting it is really just a default - as in: used if there isn't a more specific setting - or as an override",
+        "ts": "1465856700.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "sorry, multiwords like peer.tls.cert.file",
+        "ts": "1465856747.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "What are you tryiong top do?",
+        "ts": "1465856751.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "debug :slightly_smiling_face:",
+        "ts": "1465856758.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "And what do you want to happen&gt;",
+        "ts": "1465856772.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but to be fair maybe I'm just not understanding how it's supposed to work!",
+        "ts": "1465856778.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Then I haven\u2019t documented it well enough :slightly_smiling_face:",
+        "ts": "1465856803.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Are you trying to set a particular module to DEBUG and anther one to another level?",
+        "ts": "1465856825.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "so tell me this: what has precedence if both logging_level and logging.peer are set?",
+        "ts": "1465856860.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "The environment variables are always supposed to take precedence",
+        "ts": "1465856895.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "command line flag takes precendence over YAML file",
+        "ts": "1465856950.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; make: Warning: File `Makefile' has modification time 4.4e+02 s in the future\nis this a normal message to get when invoking `make all`? I'm on `bab9e4` (<@U0KPFAZNF> is probably my best bet for this)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1465858802.000000"
+        },
+        "ts": "1465856956.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "well, that doesn't seem to happen",
+        "ts": "1465857024.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "and there seem to be several reasons for that",
+        "ts": "1465857039.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I believe the order of precedence is meant to be command line options, env var, yaml file",
+        "ts": "1465857083.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but then you have another axis with the logging-level vs command levels",
+        "ts": "1465857117.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "and not all modules seem to check the latter",
+        "ts": "1465857146.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "crypto for one doesn't",
+        "ts": "1465857154.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Crypto was not implemented correctly:",
+        "ts": "1465857180.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "setting CORE_LOGGING_LEVEL has no effect on crypto logging level",
+        "ts": "1465857181.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/769>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Confusion about or new specification of module-level logging setup [re: crypto]? \u00b7 Issue #769 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/769",
+                "text": "Recently a logging.crypto key was added to openchain.yaml, which is interpreted in the file obc-peer\/openchain\/crypto\/crypto_settings.go \"crypto\" here is what the logging package refers to as lo...",
+                "fallback": "GitHub: Confusion about or new specification of module-level logging setup [re: crypto]? \u00b7 Issue #769 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/11968347?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/769",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465857217.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Or shoudl I say, was not implemented in keeping with the other parts of this system",
+        "ts": "1465857260.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "This issue was opened after redoing logging.go",
+        "ts": "1465857273.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks for the pointer",
+        "ts": "1465857287.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the combination of the various related bugs makes it a bit hard to figure out 1) what's going on, 2) what should be going on! :slightly_smiling_face:",
+        "ts": "1465857322.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "so, let's talk a bit about logging-level if you don't mind",
+        "ts": "1465857385.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Sure",
+        "ts": "1465857407.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "did you get what I meant about the nesting?",
+        "ts": "1465857411.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Not really",
+        "ts": "1465857438.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "in all other cases when there is a variable CORE_FOO_BAR it maps to foo.bar in the yaml file",
+        "ts": "1465857452.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "these are nested properties",
+        "ts": "1465857466.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I get what you mean",
+        "ts": "1465857471.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but logging-level doesn't, right?",
+        "ts": "1465857482.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Right",
+        "ts": "1465857498.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "or logging_level rather - which is another point of confusion",
+        "ts": "1465857506.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "there is a bug in peer\/main.go which maps the wrong keys and when I tried to fix it I broke that one because I didn't realize it wasn't a nested property",
+        "ts": "1465857554.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I now understand but it makes me wonder whether this should be rename to avoid any such confusion",
+        "ts": "1465857596.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I was reacting to the fact that the \u201cpeer\u201d has many subcommands, yet each should have a different default logging level. But it seemed redundant to have to say -peer-logging-level=foo when you were executing the peer command.",
+        "ts": "1465857728.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Why do we make a server application also functino as a client?",
+        "ts": "1465857757.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "well, let's not derail :wink:",
+        "ts": "1465857774.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "BUt that derailment is tied up in the issue you are raiosing",
+        "ts": "1465857792.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I see what you mean but from a logging setting point of view I don't think that's relevant",
+        "ts": "1465857823.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "A server should log at the INFO level by default",
+        "ts": "1465857834.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the commands could be completely different and we'd have the problem",
+        "ts": "1465857842.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "A client at WARNING probably",
+        "ts": "1465857843.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah, I see what you mean",
+        "ts": "1465857856.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "tell me something else, in logging.go, what you call \"defaultLevel\" isn't actually the default, is it?",
+        "ts": "1465857914.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "on the first line it is, but not after that",
+        "ts": "1465857940.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "sorry, I mean LoggingInit",
+        "ts": "1465857953.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Why do you think it is not the default?",
+        "ts": "1465858009.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "whats going to override that?",
+        "ts": "1465858040.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Any env. var, flag or Yaml entry that specifies a default",
+        "ts": "1465858080.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "a different default",
+        "ts": "1465858084.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "you mean a different *level* :slightly_smiling_face:",
+        "ts": "1465858099.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes a different default level",
+        "ts": "1465858118.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but, wait, why \"default\"??",
+        "ts": "1465858128.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "at some point it's no longer a default, right?",
+        "ts": "1465858138.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "default, is only a backup type of setting",
+        "ts": "1465858150.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "if you have nothing else you take that",
+        "ts": "1465858156.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Why is that word not appropriate? (Default)",
+        "ts": "1465858190.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "If you delete all of the YAML entries you get the default",
+        "ts": "1465858212.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "because it's as if you never have an actual setting you only have defaults",
+        "ts": "1465858217.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "no, the yaml has lower precedence you said",
+        "ts": "1465858236.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "If you delete yaml, and dont give a command-line flag and dont have an env. var this is what you get",
+        "ts": "1465858269.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "somebody has to specify the default",
+        "ts": "1465858279.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah! I understand",
+        "ts": "1465858284.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "that's the default in the code, right?",
+        "ts": "1465858296.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I think op\/go-logging defaults to ERROR",
+        "ts": "1465858301.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes, this default is only used if no other soec. is given",
+        "ts": "1465858317.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "spec",
+        "ts": "1465858323.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I get it, thanks",
+        "ts": "1465858325.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "so, I looked into <https:\/\/github.com\/hyperledger\/fabric\/issues\/578> and I agree with what <@U0XQ35CDD> said there",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "obc-peer command-line flags do not (can not) work \u00b7 Issue #578 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/578",
+                "text": "The Viper\/Cobra option-processing system used by openblockchain apparently does not support the idea that command-line flags are equivalent to nested keys from config files. See for example recent ...",
+                "fallback": "GitHub: obc-peer command-line flags do not (can not) work \u00b7 Issue #578 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/11968347?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/578",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465858633.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the mapping is wrong and the fix is simple in peer\/main.go",
+        "edited": {
+            "user": "U0P2GSA8Z",
+            "ts": "1465858761.000000"
+        },
+        "ts": "1465858672.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0P2GSA8Z>: cool, I'll put in a PR soon (although I'll want to see how files other `main.go` are affected by this)",
+        "ts": "1465858781.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yeah. that's what I was doing which is how I got into this discussion :wink:",
+        "ts": "1465858808.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "did you try your fix on peer\/main.go?",
+        "ts": "1465858830.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "because the one mapping\/bind you must not change is logging_level\/logging-level",
+        "ts": "1465858850.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "or you'd have to change the value fetched from logging.go",
+        "ts": "1465858873.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "LoggingInit has: spec := viper.GetString(\"logging_level\")",
+        "ts": "1465858908.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "that's where I find the name a bit tricky",
+        "ts": "1465858972.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the characters _ - . have a meaning except in this case",
+        "ts": "1465859006.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0P2GSA8Z>: do you want us to go on with this conversation on the #578 issue page? I don't want this feedback to be lost",
+        "ts": "1465859015.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "sure I can add something there",
+        "ts": "1465859034.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "thank you!",
+        "ts": "1465859038.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I primarily came here to try and get some info to better understand",
+        "ts": "1465859054.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks",
+        "ts": "1465859055.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks <@U0N1D1UAE> for your patience with me :slightly_smiling_face:",
+        "ts": "1465859076.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Ok, let me know if I can help further",
+        "ts": "1465859182.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah, here is another tricky part: so logging-level is the default, but it also is used to override everything with the env variable CORE_LOGGING_LEVEL?",
+        "ts": "1465859375.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the peer command has this: \tmainFlags.String(\"logging-level\", \"\", \"Default logging level and overrides, see core.yaml for full syntax\")",
+        "ts": "1465859391.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "how can it be both the default and the override?",
+        "ts": "1465859407.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "The specification string includes both a default spec. and overrides",
+        "ts": "1465859420.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "info:chaincode=debug",
+        "ts": "1465859453.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I see",
+        "ts": "1465859456.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "only debugs chaincode",
+        "ts": "1465859458.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "so, it's a setting that defines the default for all commands plus overrides for specific commands",
+        "edited": {
+            "user": "U0P2GSA8Z",
+            "ts": "1465859506.000000"
+        },
+        "ts": "1465859498.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes",
+        "ts": "1465859513.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "No not commands, logging \u201cmodules\"",
+        "ts": "1465859527.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah, right!",
+        "ts": "1465859535.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "problem is the yaml file talks about commands and subcommands",
+        "ts": "1465859586.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "and some settings do map to commands",
+        "ts": "1465859630.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but I understand there isn't a 1-1 mapping between commands and modules",
+        "ts": "1465859652.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Maybe it needs more explanation of what a module is",
+        "ts": "1465859680.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes, I think it does, a normal user won\u2019t know what these are",
+        "ts": "1465859724.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "referring to",
+        "ts": "1465859728.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "This is really an expert setting",
+        "ts": "1465859760.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "for developers",
+        "ts": "1465859765.000229"
+    },
+    {
+        "user": "U12452RAP",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U12452RAP|grapebaba> has joined the channel",
+        "ts": "1465879541.000230"
+    }
+]

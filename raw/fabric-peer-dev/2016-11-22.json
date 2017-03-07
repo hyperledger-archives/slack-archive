@@ -1,0 +1,358 @@
+[
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0S5KF44D> \n&gt; <@U26T99AQ4> Shouldn't that be getRootCACertsFromCSCC() ([]string, error) since we can trust multiple root CA certs?\nYes, absolutely",
+        "ts": "1479801981.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U26T99AQ4> Ale, any ideas why verification is failing for Jim?",
+        "ts": "1479821418.000860"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "@jzzhang It should recreate the DB.  We also support dynamic registration.  Drop by when you get in and we can work on it",
+        "ts": "1479821489.000861"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0S5KF44D> <@U26T99AQ4> <@U0PB67X4K> <@U0ULK2JPP> we need to figure out the verification problem soon today, so that the SDK will finally work properly. with changeset <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2655\/> it\u2019s now able to send properly encoded the ecert to the endorser but verification fails",
+        "ts": "1479822284.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U26T99AQ4> likely knows this comes from `creator.Verify(signedProp.ProposalBytes, signedProp.Signature)` in endorser.go",
+        "ts": "1479822394.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the question would be why does CLI succeed ?",
+        "ts": "1479822415.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "a side by side comparison of CLI and SDK proposals should home in on the problem hopefully",
+        "ts": "1479822439.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(I;m assuming CLI succeeds with latest\u2026 <@U13TWBRBL> are you using any patches on top of the latest master ?",
+        "ts": "1479822479.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "can we get the CLI and SDK to use the same ecert?  I thought the SDK was dynamically getting ecert and not reading from file.  If so, I don't know how we can do a side-by-side of bytes really",
+        "ts": "1479822683.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0S5KF44D>  - hopefully we are now dynamically getting the ecert in the SDK via the enroll endpoint",
+        "ts": "1479822878.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0PB67X4K> Yes, I think we are using your code to do that now, so we can't compare signatures between SDK and CLI",
+        "ts": "1479822944.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "unless the CLI uses the same ecert somehow",
+        "ts": "1479822959.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh - sorry - you meant the fabric CLI",
+        "ts": "1479823086.000871"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U13TWBRBL> it seems that the certificate that you are signing with is not the one you marshal in the creator field in the header",
+        "ts": "1479823240.000872"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "because there are 2 checks on the endorser's side",
+        "ts": "1479823247.000873"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "1)\n```\n\t\/\/ ensure that creator is a valid certificate\n\tvalid, err := creator.Validate()\n\tif err != nil {\n\t\treturn nil, nil, nil, fmt.Errorf(\"Could not determine whether the identity is valid, err %s\", err)\n\t} else if !valid {\n\t\treturn nil, nil, nil, fmt.Errorf(\"The creator certificate is not valid, aborting\")\n\t}\n```\nand 2) \n```\n\t\/\/ 2) validate the signature of creator on header and payload\n\tverified, err := creator.Verify(signedProp.ProposalBytes, signedProp.Signature)\n\tif err != nil {\n\t\treturn nil, nil, nil, fmt.Errorf(\"Could not determine whether the signature is valid, err %s\", err)\n\t} else if !verified {\n\t\treturn nil, nil, nil, fmt.Errorf(\"The creator's signature over the proposal is not valid, aborting\")\n\t}\n```",
+        "ts": "1479823277.000874"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "the first passes, so basically youi are marshalling a cert which is both well-formed and trusted",
+        "ts": "1479823293.000875"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "the second fails, which I can only explain by saying that you mess-up the marshalling of either the creator or the signature",
+        "ts": "1479823317.000876"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "if you point me to the code generating the proposal message, I can take a look and compare it to that of the golang peer",
+        "ts": "1479823343.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U26T99AQ4> <@U13TWBRBL>  - are we sure that the root CAs are the same?",
+        "ts": "1479823419.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oops - sorry",
+        "ts": "1479823451.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "validate does that",
+        "ts": "1479823456.000880"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "yup",
+        "ts": "1479823474.000881"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "hi <@U26T99AQ4> you can take a look at the _buildHeader() and _signProposal() methods in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2655\/8\/lib\/Member.js>",
+        "ts": "1479824955.000882"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "we use the private key to sign and the signed cert from enrollment to marshall into the \u201ccreator\u201d field. the cert was the public key wrapped in a CSR and sent to COP to sign",
+        "ts": "1479825022.000883"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "which hash function does \n```\n    let sig = this._chain.cryptoPrimitives.sign(this._enrollment.privateKey, proposal_bytes);\n```\nuse?",
+        "ts": "1479825516.000884"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "the peer uses SHA2",
+        "ts": "1479825712.000885"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ah,",
+        "ts": "1479825727.000886"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "it uses SHA3 256",
+        "ts": "1479825739.000887"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "but we can easily change it",
+        "ts": "1479825752.000888"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "try switching to SHA2 (or we can switch to sha3) - up 2u",
+        "ts": "1479825760.000889"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "SHA256 to be precise",
+        "ts": "1479825795.000890"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "will try from my end, believe we should leave it as SHA2 since it\u2019s more prevalent in the world",
+        "ts": "1479825856.000891"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "it should be configurable, currently the peer hardcodes it because all crypto-related stuff was wiped out of the yaml files",
+        "ts": "1479825884.000892"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "the SDK has it configurable so it\u2019s just a one line change to test",
+        "ts": "1479825959.000893"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "trying that...",
+        "ts": "1479825964.000894"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "OMG it passed!",
+        "ts": "1479826108.000895",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "WOO HOO!",
+        "ts": "1479826147.000896"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "just made sure the end-to-end test sets the algo to \u201cSHA2\u201d first",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1479826170.000000"
+        },
+        "ts": "1479826153.000897"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "indeed WOO HOO!",
+        "ts": "1479826157.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "great!",
+        "ts": "1479826174.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "thanks <@U13TWBRBL>  for putting in all the effort to get all these pieces working together (and of course thx to all providing the pieces)  :wink:",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479826210.000000"
+        },
+        "ts": "1479826198.000901"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\"of course thx to all providing the pieces\u201d +1",
+        "ts": "1479826219.000904",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U26T99AQ4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "yay! great stuff!",
+        "ts": "1479826412.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "to echo <@U0PB67X4K> \u2026. WOOHOO :slightly_smiling_face:",
+        "ts": "1479826723.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "congrats :slightly_smiling_face:",
+        "ts": "1479827464.000907"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "now fabric-sdk-node\/test\/unit\/end-to-end.js passes, deploying\/invoking\/querying the example_cc. i\u2019ll upload a small patch that fills up the last gap in lib\/Member.js",
+        "ts": "1479828742.000908"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "although the setup of the target network for this test gets much trickier with the COP server and the enrollments etc. :wink: i\u2019ll update the test\/fixtures\/docker-compose.yaml and README later for this",
+        "ts": "1479828894.000909"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> <@U0KM61BCP> <@U26T99AQ4> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2713\/> for the SHA2 override in end-to-end test",
+        "ts": "1479830705.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "done",
+        "ts": "1479830837.000911"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "thanks!",
+        "ts": "1479831226.000912"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1KFCPFQA> forgot to mention that the test\/unit\/marbles.js that deploys and invokes test\/fixtures\/src\/github.com\/marbles_cc (based on your work) also works. I\u2019ll update the instructions to set up the target network later",
+        "ts": "1479833677.000913"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "&gt; <@U0PB67X4K> <@U0KM61BCP> <@U26T99AQ4> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2713\/> for the SHA2 override in end-to-end test\nsorry <@U13TWBRBL> I don't seem to be able to +1 it, but Gari already +2'd it so you should be good to go",
+        "ts": "1479833833.000914"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U26T99AQ4> yeah no worries once it\u2019s merged you can\u2019t +1 anymore, thanks for the review all the same",
+        "ts": "1479834193.000915"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "np!",
+        "ts": "1479835670.000916"
+    }
+]

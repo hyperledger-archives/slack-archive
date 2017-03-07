@@ -1,0 +1,69 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "I submitted a commit that includes implementation of `rawLedger` - <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1401\/>",
+        "ts": "1475586247.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0PU2N50V",
+        "text": "What is the process to update chaincode when you have a bug ? If you were to modify it and redeploy it, it is deployed  with a new chaincode id so it equivalent to a new ledger because world state is generating key with combination of chaincode id and key. Can you specify both path and name with deploy JSON request so that it does not generate new chaincode id. Is that supported ? Has anyone tried this ?",
+        "ts": "1475602918.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "this is not possible currently.  there is intent to support chaincode versioning in v1, for example by having a static chaincode id and a version identifier that increments.  then the world state would be based on chaincode id and not the version.  this of course assumes the data is compatible across versions.",
+        "ts": "1475603092.000039"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<@U1KFCPFQA> . Newbie question here. I am trying to understand the need for a state database in addition to a FS based ledger. Why do we need to have two different stores of the same information. I am asking this because, I see the following <https:\/\/jira.hyperledger.org\/browse\/FAB-441> which talks about not storing any large keys in   the state database and instead use the FS based ledger. How do we define large here?",
+        "ts": "1475603166.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "chaincode needs access to the keys\/values.  this could be accomplished by having a key index that points to the latest transaction in the FS based ledger that updated the key.  the value could be retrieved from the transaction\u2019s write set.  this is a multiple-step process however, so having a state database with the value included in the key index is simply an optimization",
+        "ts": "1475603345.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "for large values, the duplicate values becomes a problem , therefore the intent is to be able to configure at what point the value gets copied to the state index vs referenced in the ledger tran",
+        "ts": "1475603431.000042"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "the other benefit of the state database, is that more advanced queries could be performed than simple key lookups",
+        "ts": "1475603474.000043"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "this explains it.. thanks <@U1KFCPFQA>!  So we will have a check for if the key\/ value size is less that the Max key value size (config\/tuning parameter) which would be used to determine if the value gets copied to the state index.",
+        "ts": "1475604202.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, that\u2019s the intent, the specifics have not yet been designed",
+        "ts": "1475604236.000045"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "awesome! got it..",
+        "ts": "1475604328.000046"
+    },
+    {
+        "user": "U2B3A70TX",
+        "text": "<@U2B3A70TX|soldat> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475608467.000047"
+    }
+]

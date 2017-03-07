@@ -1,0 +1,272 @@
+[
+    {
+        "user": "U1P1ZV6RF",
+        "text": "<@U1P1ZV6RF|matanyahu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472500306.000005"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "Hi - I was curious what recommended deployment topology would you implement for a scenario of a federated blockchain where two parties are in equal terms with each other. Would you deploy 2 * 4 validating peers and two certificate authorities on two physical sites?",
+        "ts": "1472500384.000006"
+    },
+    {
+        "type": "message",
+        "user": "U1SLE9PJN",
+        "text": "Hi,\n   I am currently trying to understand how consensus works underneath. I created 4 node peer and a memersrvc and set the consensus to pbft in batch mode.  I deployed the chaincodeexample002, ran few queries, verified that after every transaction a new block being created. I also stopped two peers and found that even the when transaction is done, new blocks are not being added. Once there are 3 peers those pending transaction will be written to the ledger.\n\n\n I want to understand more on the low level details of consensus on how these transaction blocks are appended\/created. How the message exchange between the peer node happens? How the group of transactions(blocks) are exchanged and arrive at consensus? Is there a way for me to know about it or enable logs or to pause in between to view the transaction or blocks or messages?",
+        "ts": "1472500479.000009"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "Otherwise, I still do not get how to avoid a SPOF in case of certificate authorities signing eCerts and tCerts into the blockchain, like in a scenario where a CA infrastructure is in one physical site which is suddenly disconnected from another site. That would implicitly cease that second site from being capable of creating new transactions or adding new users into the network",
+        "ts": "1472500480.000010"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U1SLE9PJN> : isn't it the premise of PBFT, that f=(N-1)\/3 always has to equal &lt;1 ?",
+        "ts": "1472500529.000011"
+    },
+    {
+        "type": "message",
+        "user": "U1SLE9PJN",
+        "text": "<@U1P1ZV6RF>  Yes, you are right. In case of 4 node peer there should be atleast  3 online peers.  I am trying to understand low level working. Do you have any idea on how the message exchange happens and consensus are reached?",
+        "ts": "1472500667.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U1SLE9PJN> : nothing more than what you can read on Bluemix documentation :slightly_smiling_face: <https:\/\/console.ng.bluemix.net\/docs\/services\/blockchain\/etn_pbft.html>",
+        "ts": "1472500807.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "PBFT protocol is described in the paper by Castro and Liskov: Practical Byzantine fault tolerance and proactive recovery",
+        "ts": "1472500878.000014"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0UGH3X7X> : I have it on my reading list :slightly_smiling_face:",
+        "ts": "1472500932.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "in a nutshell,  a network of N nodes can function even if there are f  failing ( or byzantine) nodes  , where f = (N-1)\/3",
+        "ts": "1472500951.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so in this case N=4, f =1 ,  network still works when 1 node is out. but if 2 nodes are out, we cannot get to  consensus",
+        "ts": "1472501000.000017"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I was curious what would happen if we have a federation\/consortium network deployed in two sites, each having 4 approval peers, and suddenly a connection between the two would be cut. How does PBFT behave in split brain scenario and afterwards, when a reconciliation has to happen?",
+        "ts": "1472501038.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the fabric pbft implementation pretty much follows the protocol described in Castro and Liskov",
+        "ts": "1472501054.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I don't think you can have a split like you describe  ...  you have to think of it as a 8 peer network  ... and yes membersrvc is a single point of failure.  There's work on doing in that in an HA way",
+        "ts": "1472501220.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "maybe <@U11MANG9G> can chime in on membersrvc",
+        "ts": "1472501279.000021"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0UGH3X7X> : if i think of it as an 8 peer network then I basically get a temporary fork into two world states",
+        "ts": "1472501298.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "you don't have consensus unless you have 2f+1 commit messages",
+        "ts": "1472501407.000023"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "you mean, if there were initially 8 peers then it is assumed that in case of a lost connectivity the whole network is going to cease to function because all 8 validating peers know that there is 8 of then in the network?",
+        "ts": "1472501478.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "pbft is a sequence of 3 messages  1 pre-prepare followed by 2f prepares followed by 2f+1 commits",
+        "ts": "1472501481.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1P1ZV6RF> An 8 node network can tolerate at most f=2, so, in your case, in an 8 node network, split in two, each half would be experiencing f=4, so the network would halt until connectivity returned",
+        "ts": "1472501527.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "ok, got it",
+        "ts": "1472501540.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "that is why it is not possible to dynamically add new nodes",
+        "ts": "1472501549.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yes,  N is fixed.   we're looking at dynamic addition of nodes but we can use all the help we can get :slightly_smiling_face:",
+        "ts": "1472501551.000029"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "got it",
+        "ts": "1472501558.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "hopefully this option will be available in GA version of fabric because this is what IBM promises to the clients :wink:",
+        "ts": "1472501648.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1P1ZV6RF> If you look carefully at the next architecture, you'll see that we already allow dynamic addition of endorsing peers, and of validating peers.  We have plans to allow dynamic addition of PBFT ordering replicas eventually, but you might find your use case is already handled by the other options.",
+        "ts": "1472501752.000032"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I will be making a presentation abour hyperledger fabric architecture tomorrow, I would like to know of known limitation to the current release and what <@U0UGH3X7X> mentioned is really important.",
+        "ts": "1472501790.000033"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0XPR4NP4> : will read it again. I looked at it couple of days ago but I think I had to concentrate too much on peer differentiation topic",
+        "ts": "1472501839.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1P1ZV6RF> In the 0.5 release, you can think that the concepts of endorsement (execution of chaincode), ordering (pbft), and validation (removal of invalid transactions and updating of DB) were all stuck together in one package.  These three have been broken out into separate concepts. The validation and endorsement pieces scale horizontally with relative ease, as they leverage the log replication facility of the ordering.  To dynamically add ordering nodes in a BFT way is challenging.  Although we intend to handle this, we don't want to do this in a haphazard way, as there is considerable academic rigor surrounding the PBFT protocol and we want to make sure we don't lose any of its proven guarantees (such as liveliness).",
+        "ts": "1472502109.000035"
+    },
+    {
+        "type": "message",
+        "user": "U1SLE9PJN",
+        "text": "<@U0XPR4NP4> So when the network has more (N-1)\/3 failing nodes, the network would halt.  What would happen to transactions that are being carried on the peers which are online. Will those be added back once the network is online?",
+        "attachments": [
+            {
+                "fallback": "[August 29th, 2016 1:12 PM] jyellick: <@U1P1ZV6RF> An 8 node network can tolerate at most f=2, so, in your case, in an 8 node network, split in two, each half would be experiencing f=4, so the network would halt until connectivity returned",
+                "ts": "1472501527.000026",
+                "author_subname": "jyellick",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U1P1ZV6RF> An 8 node network can tolerate at most f=2, so, in your case, in an 8 node network, split in two, each half would be experiencing f=4, so the network would halt until connectivity returned",
+                "author_name": "Jason Yellick",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jyellick",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/80fccad690b283483c3b5418b8b82b5b.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F272a%2Fimg%2Favatars%2Fava_0026-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1472501527000026",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1472502165.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, in cases of extreme failure, it cannot be guaranteed that a transaction is not lost",
+        "ts": "1472502343.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, assuming those nodes are online and healthy, then yes, once the network is re-established, pending transactions should process normally",
+        "ts": "1472502365.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(As an example of extreme failure, a transaction comes into a PBFT node, who tries to broadcast it to the network, but is experiencing a network failure, and then crashes)",
+        "ts": "1472502488.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, as a nitpick, usually f=floor((N-1)\/3), but nothing prevents someone from running a network of N=10 nodes, with f=1, although this would be an unusual configuration.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1472502635.000000"
+        },
+        "ts": "1472502622.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[And note, I would not recommend running a network of N=10, f=1, as this would allow for the network to bifurcate in the situation you described.  Since each half of the bifurcated network has 2f+1 participating nodes, they can proceed.  When f=floor((n-1)\/3) we have that 2f+1 = 2*floor((n-1)\/3) +1 &gt; 2*((n-1)\/3-1\/2)+1 = 2\/3*n - 2\/3 - 1 + 1 =  2\/3*n - 2\/3 = 1\/2*n + 1\/6*n - 2\/3 &gt;= 1\/2 * n for n &gt;= 4.  So, by setting f=floor((n-1)\/3) your network is protected from network partitions causing forks, because a partition must have more than half the network present.]",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1472503777.000000"
+        },
+        "ts": "1472503771.000042",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1SLE9PJN",
+                    "U0UGH3X7X",
+                    "U1P1ZV6RF"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Alternatively, if you _must_ insist on picking a total number N that's &gt; 3f, you need (N+f)\/2 messages rounded up before preparing or committing a request (versus 2f+1, as described in the Castro paper). This is described by <@U0XV1HDL3> in his Yet Another Visit to Paxos paper: <https:\/\/www.zurich.ibm.com\/%7Ecca\/papers\/pax.pdf>",
+        "ts": "1472513137.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And Chapter 5 of his book: <http:\/\/www.springer.com\/us\/book\/9783642152597>",
+        "ts": "1472513153.000045"
+    },
+    {
+        "user": "U1T95QCUE",
+        "text": "<@U1T95QCUE|stylix> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472514920.000046"
+    }
+]

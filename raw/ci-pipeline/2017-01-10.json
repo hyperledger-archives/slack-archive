@@ -1,0 +1,672 @@
+[
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "our hosting provider is having some slowdown - unclear if it is storage or network related - more information as I have it. so far it isn't hitting our silo very hard but if previous experience is a guide, it will spread to us before it's resolved",
+        "ts": "1484072316.001422"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "they're migrating from troublesome Samsung SSDs to better performing Intel SSDs to address this",
+        "ts": "1484073597.001423"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "as evidence: my third and fourth packer runs have gone faster and without errors. the first two were very slow and full of errors",
+        "ts": "1484073659.001424"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins: do I need to bake librocks into our CI servers any more, or is that obviated by your docker work?",
+        "ts": "1484074330.001425"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UHG4VP1> I am seeing:\n\n```\nFAIL\t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t1200.082s\n```\n\nCome out of almost all of my CI runs.  Do we think this is related to the slowdowns you mentioned? Or are we tracking this otherwise?",
+        "ts": "1484076272.001426"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "possibly related? could you give me a link to a specific failed job so I can look into it in a couple hours?",
+        "ts": "1484076328.001427"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if it looks i\/o related, yes. if it's network timeouts, no, we aren't tracking it",
+        "ts": "1484076349.001428"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I can escalate it if it is a network issue",
+        "ts": "1484076357.001429"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jyellick: which job is this that's failing?",
+        "ts": "1484076506.001430"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/4940\/console>",
+        "ts": "1484076564.001431"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That is one of them, but there are several others I can link you to",
+        "ts": "1484076573.001432"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/4946\/console> is another that just failed (though differently)",
+        "ts": "1484076678.001433"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "OK. I'm looking at it, it looks like a deadlock to me. Is it doing any networking off-host?",
+        "ts": "1484076678.001434"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UHG4VP1|ry> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ry\/F3QCNL24X\/everything_looks_good_up_to_here_and_then_it_hangs.txt|everything looks good up to here and then it hangs>",
+        "file": {
+            "id": "F3QCNL24X",
+            "created": 1484076752,
+            "timestamp": 1484076752,
+            "name": "everything_looks_good_up_to_here_and_then_it_hangs.txt",
+            "title": "everything looks good up to here and then it hangs",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0UHG4VP1",
+            "editable": true,
+            "size": 110,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3QCNL24X\/everything_looks_good_up_to_here_and_then_it_hangs.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3QCNL24X\/download\/everything_looks_good_up_to_here_and_then_it_hangs.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ry\/F3QCNL24X\/everything_looks_good_up_to_here_and_then_it_hangs.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3QCNL24X-fe378b49a0",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ry\/F3QCNL24X\/everything_looks_good_up_to_here_and_then_it_hangs.txt\/edit",
+            "preview": "19:00:44 [33munit-tests_1  |[0m ok  \tgithub.com\/hyperledger\/fabric\/core\t0.024s\tcoverage: 18.8% of statements",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>19:00:44 [33munit-tests_1  |[0m ok      github.com\/hyperledger\/fabric\/core  0.024s  coverage: 18.8% of statements<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 1,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0UHG4VP1",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UHG4VP1|ry>",
+        "bot_id": null,
+        "ts": "1484076752.001435"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's nothing new in these changesets like that, though I can't speak to the entirety of the hyperledger\/fabric test suite (though I can say nothing in `chaincode` was changed.)",
+        "ts": "1484076753.001436"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "4940 fails at the same statement",
+        "ts": "1484076831.001437"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It was 4946 that failed differently\n\n```\n\n19:20:46 Removing intermediate container 54b3773076c7\n19:20:46 Successfully built d2795e7fd7b7\n19:20:46 docker tag hyperledger\/fabric-peer hyperledger\/fabric-peer:x86_64-0.7.0-snapshot-39bd8e2\n19:20:46 cd unit-test &amp;&amp; docker-compose up --abort-on-container-exit --force-recreate &amp;&amp; docker-compose down\n19:20:47 The TEST_PKGS variable is not set. Defaulting to a blank string.\n19:20:47 Creating unittest_vp_1\n19:21:56 Creating unittest_unit-tests_1\n19:22:56 \n19:22:56 ERROR: for unit-tests  UnixHTTPConnectionPool(host='localhost', port=None): Read timed out. (read timeout=60)\n19:22:56 An HTTP request took too long to complete. Retry with --verbose to obtain debug information.\n19:22:56 If you encounter this issue regularly because of slow network conditions, consider setting COMPOSE_HTTP_TIMEOUT to a higher value (current value: 60).\n19:22:56 Makefile:102: recipe for target 'unit-test' failed\n19:22:56 make: *** [unit-test] Error 1\n19:22:56 Build step 'Execute shell' marked build as failure\n19:22:56 [ssh-agent] Stopped.\n19:22:56 Skipping Cobertura coverage report as build was not UNSTABLE or better ...\n19:22:56 Finished: FAILURE\n```\n\n<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/4945\/console> this is one that just failed that way",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484076937.000000"
+        },
+        "ts": "1484076855.001438"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is from a very small changeset <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3827\/> off master if that helps",
+        "ts": "1484076872.001439"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(By very small, I mean there was one line of non-generated code changed [though the diff is somewhat large because of all the regenerated code])",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484076908.000000"
+        },
+        "ts": "1484076892.001440"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "looking here: <https:\/\/jenkins.hyperledger.org\/job\/fabric-merge-x86_64\/> I see builds 705 and greater failed",
+        "ts": "1484076999.001443"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I wonder if this rename is breaking? <https:\/\/jenkins.hyperledger.org\/job\/fabric-merge-x86_64\/704\/>",
+        "ts": "1484077031.001444"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3797\/> is the last change that merged and worked. the next change was my fix of maintainers.md, which seems unlikely",
+        "ts": "1484077073.001445"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "but my change is broken on merge",
+        "ts": "1484077084.001446"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm",
+        "ts": "1484077110.001447"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I've retriggered the merge for my change to see if the failure is transient. it failed in the same way 4945 failed for example",
+        "ts": "1484077167.001448"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "once it comes around <https:\/\/jenkins.hyperledger.org\/job\/fabric-merge-x86_64\/> build 708 will be of interest",
+        "ts": "1484077188.001449"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "3797 really looks pretty innocuous as well:\n\n```\ncore\/committer\/committer.go\n19-import \"<http:\/\/github.com\/hyperledger\/fabric\/protos\/common|github.com\/hyperledger\/fabric\/protos\/common>\"\n20-\n21-\/\/ Committer is the interface supported by committers\n22:\/\/ The only committer is noopssinglechain committer.\n23-\/\/ The interface is intentionally sparse with the sole\n24-\/\/ aim of \"leave-everything-to-the-committer-for-now\".\n25-\/\/ As we solidify the bootstrap process and as we add\n\ncore\/deliverservice\/client.go\n39-var logger *logging.Logger \/\/ package-level logger\n40-\n41-func init() {\n42:\tlogger = logging.MustGetLogger(\"noopssinglechain.client\")\n43-}\n44-\n45-\/\/ DeliverService used to communicate with orderers to obtain\n```\n\nThose seem to be the only remaining references to the `noopssinglechain`",
+        "ts": "1484077624.001450"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I see that the merge builds that failed took about 2x the time to get that far. let's see if 708 makes it through in a reasonable amount of time",
+        "ts": "1484077742.001451"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/jenkins.hyperledger.org\/view\/fabric\/job\/fabric-verify-x86_64\/buildTimeTrend> looks like a similar shape",
+        "ts": "1484077799.001452",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0UHG4VP1> fwiw see `panic: test timed out after 20m0s` with 707",
+        "ts": "1484077853.001453"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And for what it's worth, `make unit-test` (on master) seems to work just fine on my laptop:\n\n```\nunit-tests_1  | ok  \t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t293.558s\tcoverage: 60.5% of statements\n```",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484079190.000000"
+        },
+        "ts": "1484079081.001454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> Do you think there is potential for parallelizing the chaincode tests? 5 minutes is a long time for a unit test (and longer in CI)",
+        "ts": "1484079115.001455"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4>",
+        "ts": "1484079135.001456"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes there is",
+        "ts": "1484079143.001457"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and also want to do 2 more things (1) break up the chaincode tests into packages and (2) skip some tests that are really dups",
+        "ts": "1484079184.001458"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "parallizing is possible but will take a bit more work",
+        "ts": "1484079239.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is it possible to mock the file system in these tests?",
+        "ts": "1484079241.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes",
+        "ts": "1484079250.001462"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wouldn't that speed them?",
+        "ts": "1484079250.001463"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that\u2019s the final frontier",
+        "ts": "1484079257.001464"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or the ledger, anything that isn't the point of the test and depends on disks",
+        "ts": "1484079270.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the only thing is that\u2019s considerable work \u2026 reverse engineering",
+        "ts": "1484079291.001466"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how is it reverse engineering if you have the code?",
+        "ts": "1484079316.001467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe <@U1KFCPFQA> has some standard way to spin up a ledger without actually writing to disk?",
+        "ts": "1484079355.001468"
+    },
+    {
+        "user": "U1KFCPFQA",
+        "inviter": "U0XPR4NP4",
+        "text": "<@U1KFCPFQA|dave.enyeart> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484079361.001469"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its not the ledger",
+        "ts": "1484079384.001470"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its just the docker stuff",
+        "ts": "1484079389.001471"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and by reverse engineering I meant that we have to redo the tests from a mock stand point",
+        "ts": "1484079421.001472",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but, Ry said that they have disk problems, and suddenly the tests fail, isn't that some clue on the problem?",
+        "ts": "1484079431.001473"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it might be the disks used by docker",
+        "ts": "1484079448.001474"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and not our ledger",
+        "ts": "1484079451.001475"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh damn. it's not  that easy then :disappointed:",
+        "ts": "1484079464.001476"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "right now our provider has a mix of Samsung and Intel SSDs.",
+        "ts": "1484079468.001477"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "they are working to get us all the way on to Intel SSDs, but right now we might be on a mix.",
+        "ts": "1484079493.001478"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "basically they're replacing Samsung drives as they show latency",
+        "ts": "1484079504.001479",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if I understand the situation we're draining the Canadian supply of Intel SSDs.",
+        "ts": "1484079539.001480",
+        "reactions": [
+            {
+                "name": "grinning",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UHG4VP1> Something that's never made sense to me, why does CI run slower than the same tests on my laptop?  It sounds like we are throwing some serious hardware at it... is it just resource contention?",
+        "ts": "1484079604.001481"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "are you running it from a completely new instance? when I compared our slices to cbf's laptop in Amsterdam they were approximately equal. the major difference is there is no caching in CI (by design)",
+        "ts": "1484079689.001482"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so - I don't know. From a CPU and RAM standpoint we should be approximately equal. I can look up the exact specs if you would like",
+        "ts": "1484079735.001483"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am just looking at the timestamps on the output of the unit tests.  I would think by the time the unit test code is actually spun up, caching of things like docker images should not be a problem.",
+        "ts": "1484079746.001484"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it is a puzzle and, tbh, a bit of a religious issue for me. it's hard to beat the \"run the unit tests\" drum if it's slower and more flaky in CI",
+        "ts": "1484079782.001485"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not like knowing the exact specs is going to change anything, I just would normally expect a server class machine to shred my laptop in terms of compile times etc.",
+        "ts": "1484079787.001486"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "when we tested this, I set up a VM with much more CPU and RAM and it didn't go faster.",
+        "ts": "1484079847.001487"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so, I don't know. Are you coming to SF in a few weeks? I'm willing to sit down and work on this to understand it",
+        "ts": "1484079901.001488"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can say anecdotally that the CI VMs seem to be substantially slower that certain tasks than local builds: for instance, vagrant builds of the baseimage",
+        "ts": "1484079946.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No SF for me, but would be happy to work with you if there's some way I can be helpful",
+        "ts": "1484079949.001490"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "however, to be fair, that might be a nested VM specific limitation rather than an indictment of the overall power available",
+        "ts": "1484079972.001491"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IIRC it was about 4x slower though",
+        "ts": "1484080000.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UHG4VP1> Looking at <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/4952\/console> it's made it past chaincode",
+        "ts": "1484080089.001493"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looks like maybe it was a transient performance problem after all, but will have to see how the other builds turn out",
+        "ts": "1484080108.001494"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As an example performance comparison, after running a `make clean` locally, running `make unit-test` I see:\n```\nunit-tests_1  | ok  \t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t276.892s\tcoverage: 60.5% of statements\n```\nCompared to the CI run\n```\n20:21:22 \u001b[33munit-tests_1  |\u001b[0m ok  \t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t1142.413s\tcoverage: 60.5% of statements\n```",
+        "ts": "1484080509.001495"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, `make clean &amp;&amp; time make unit-test` takes 17 minutes of real time on my laptop, comparing to the same steps in the CI logs which in 4952 took 57 minutes",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484081031.000000"
+        },
+        "ts": "1484081024.001496"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yeah, I have been saying this for weeks... combination of things contribute to slownesd",
+        "ts": "1484081136.001498"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Personally, even 17 minutes locally is far too long for unit tests.  Would love to see this drop down by an order of magnitude (Which would undoubtedly help CI as well).  For starters I think we could run the individual package tests in parallel.  Even on a relatively weak machine, I imagine at least 2 or 3 could run in parallel, with many more for a stronger one.",
+        "ts": "1484081461.001499"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I think the next step is to see how this compares to p and z, and see if they're also slower than your laptops",
+        "ts": "1484083372.001500"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am of the opinion that we would be well served to tier the testing with the first tier under 5 minutes as a goal",
+        "ts": "1484083771.001501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "quick\/dirty UTs",
+        "ts": "1484083788.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "encourage frequent exercise, etc",
+        "ts": "1484083797.001503"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then move more heavy weight stuff to subsequent tiers",
+        "ts": "1484083814.001504"
+    },
+    {
+        "text": "looks at chaincode UT",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1484083826.001505"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0UHG4VP1> any update for CI environment, python SDK build came across odd issue",
+        "ts": "1484109442.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "grapebaba did you get my email?",
+        "ts": "1484109684.001507"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "Yes ",
+        "ts": "1484109702.001508"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "but i am curious as we don't change anything ",
+        "ts": "1484109734.001509"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "I saw <@U0Z41KY5V> replied",
+        "ts": "1484109983.001510"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "missing python-dev",
+        "ts": "1484109988.001511"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes I am fixing that right now",
+        "ts": "1484110151.001512"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it will be about 20-30 minutes",
+        "ts": "1484110160.001513"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "you didn't change anything, I did",
+        "ts": "1484110171.001514"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": ":ok_hand:",
+        "ts": "1484110247.001515"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "thanks",
+        "ts": "1484110249.001516"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I rolled you back. <https:\/\/jenkins.hyperledger.org\/view\/fabric-sdk-py\/job\/fabric-verify-sdk-py-x86_64\/> is working",
+        "ts": "1484114676.001517",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U12452RAP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "thanks ry!",
+        "ts": "1484120063.001518"
+    },
+    {
+        "user": "U0Z41KY5V",
+        "text": "<@U0Z41KY5V|baohua> has left the channel",
+        "type": "message",
+        "subtype": "channel_leave",
+        "ts": "1484120081.001519"
+    }
+]

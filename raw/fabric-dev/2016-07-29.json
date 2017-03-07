@@ -1,0 +1,201 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0ULK2JPP>: what is the chaincode init function used for?  i always thought it was used to set initial values for deploy",
+        "ts": "1469785491.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it seems it gets invoked every time the container is launched again?",
+        "ts": "1469785512.000678"
+    },
+    {
+        "user": "U1K869J4W",
+        "text": "<@U1K869J4W|mihaig> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1469789630.000679"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "now how to reverify Jenkins?",
+        "ts": "1469795101.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XR6J961> init should not be used when startign the container later (such as for an invoke or query)",
+        "ts": "1469795773.000681"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which part of the code sends init?",
+        "ts": "1469795791.000682"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "chaincode_support.go \u2026 I think under Launch(..)",
+        "ts": "1469795821.000683"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`sendInitOrReady`?",
+        "ts": "1469796027.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1469797127.000685"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Ready is for restarting container for invoke or query",
+        "ts": "1469797161.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah so the logic is hidden somewhere in there",
+        "ts": "1469797217.000687"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bit of a spaghetti",
+        "ts": "1469797222.000688"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its basically a state machine thing",
+        "ts": "1469797551.000689"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "move to ready state when starting up \u2026 go through init first if deploying",
+        "ts": "1469797806.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what are you running into ?",
+        "ts": "1469797815.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: we still need to merge the developer-preview branch to gerrit",
+        "ts": "1469798013.000692"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: i'm rewriting it to store deployment transactions in the ledger instead of pulling them out of the chain",
+        "ts": "1469798487.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "did you check with <@U0Z541B3P> ?",
+        "ts": "1469798539.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think he may done that at one point when were exploring upgrade",
+        "ts": "1469798569.000695"
+    },
+    {
+        "user": "U1KDAMDJ7",
+        "text": "<@U1KDAMDJ7|sanchezl> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1469802318.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U0KM61BCP>: is there a requirement to have more than one reviewer in the new gerrit process? Or has that not been decided yet?",
+        "ts": "1469806698.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "that is the intended practice",
+        "ts": "1469807765.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I need to check with LF to see if it has been implemented as a rule yet",
+        "ts": "1469807781.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1LES78TT>: you don\u2019t use the same password. go to <https:\/\/gerrit.hyperledger.org\/r\/#\/settings\/http-password> to set or get your http password",
+        "ts": "1469809070.000700"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U12452RAP>: log in to jenkins, go to the build you want to re-run. there should be a \u201cretrigger\u201d button on the far left menu. your credentials are the same for gerrit as they are for jenkins.",
+        "ts": "1469809155.000701"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "everyone\nWe have this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317>\nPlease have a look at the comments in this file and help us decide how to continue with this commit:\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/1\/core\/chaincode\/shim\/java\/src\/main\/java\/org\/hyperledger\/java\/shim\/ChaincodeStub.java>\nThe question is that we should use []byte or [][]byte as chaincode arguments?",
+        "ts": "1469810684.000702"
+    },
+    {
+        "user": "U0KPTLRGU",
+        "text": "<@U0KPTLRGU|tsariounov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1469815352.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "FWIW, Protocol Buffers v3.0.0 is out: <https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "google\/protobuf",
+                "title_link": "https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0",
+                "text": "protobuf - Protocol Buffers - Google's data interchange format",
+                "fallback": "GitHub: google\/protobuf",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/1342004?v=3&s=400",
+                "from_url": "https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469820660.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "you can add <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/groups\/9,members> to reviews to add the fabric maintainers to a change cr-fabric",
+        "ts": "1469843508.000706"
+    },
+    {
+        "user": "U1VG8LNP3",
+        "text": "<@U1VG8LNP3|yaoguo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1469857736.000707"
+    }
+]

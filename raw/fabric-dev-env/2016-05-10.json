@@ -1,0 +1,839 @@
+[
+    {
+        "user": "U14REU524",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U14REU524|privoal> has joined the channel",
+        "ts": "1462889213.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0N1D1UAE> <@U12V3D2P2> <@U10Q62R8X> FYI: <https:\/\/github.com\/hyperledger\/fabric\/compare\/master...ghaskins:multi-arch-support-preview>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462905361.000000"
+        },
+        "ts": "1462905161.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in this branch, any of the makefile targets that depend on baseimage will now dynamically build the base image if its not found on dockerhub, as I mentioned in the other thread",
+        "ts": "1462905210.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this means dockerhub is merely an optimization now, instead of gating the critical path",
+        "ts": "1462905227.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, there is still some work to do for supporting non-x86",
+        "ts": "1462905251.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one thing, <https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/multi-arch-support-preview\/baseimage\/Makefile#L8>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462905288.000000"
+        },
+        "ts": "1462905284.000853"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and <https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/multi-arch-support-preview\/baseimage\/scripts\/common\/setup.sh#L56>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462905327.000000"
+        },
+        "ts": "1462905323.000856"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "comments welcome",
+        "ts": "1462905331.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0KPFAZNF> I\u2019m using your Makefile now. There is a redundancy in Go testing I think. You require the peer image to run the unit tests, but the unit tests also recreate the peer image.",
+        "ts": "1462908106.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i am torn on what to do about that",
+        "ts": "1462908122.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have the dep b\/c I spin up a peer to satisfy the peer test",
+        "ts": "1462908131.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Why do you need to run teh peer in Docker?",
+        "ts": "1462908142.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to clarify, i spin up a peer via docker",
+        "ts": "1462908143.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "technically, I dont specifically require it but it seemed like a neat way  a) ensure that the peer ran in a clean-room and b) that it left no garbage laying around (such as in \/var), and to a lesser extent c) interfere with other activity on the system",
+        "ts": "1462908213.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the (c) is not entirely true since I had to map 30303",
+        "ts": "1462908226.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I figure that is something that could be cleaned up eventually",
+        "ts": "1462908237.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the seeming double-dep is annoying, I agree, but I looked at the cost and it was like 28s of overhead",
+        "ts": "1462908258.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I figured, its not a big deal",
+        "ts": "1462908265.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I havent tested to see if that accelerates the later test that happens as part of the unit-test\u2026if it does, that 28s is amortized later)",
+        "ts": "1462908304.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but even if it doesnt, it didnt seem like a huge deal for the isolation gained",
+        "ts": "1462908321.000872"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "It\u2019s in the eye of the beholder :simple_smile:",
+        "ts": "1462908387.000873"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Hence my gripe",
+        "ts": "1462908397.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I suppose thats true",
+        "ts": "1462908406.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am fine with a patch that launches the peer directly as long as it cleans up after",
+        "ts": "1462908421.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the problem isnt docker per se as much as how we specifically build the docker image",
+        "ts": "1462908462.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I know how you feel about docker in general :wink:",
+        "ts": "1462908473.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I hope to be Docker free by Friday",
+        "ts": "1462908563.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Should I expect source dependencies to work inthis Makefile? If I modify a .go file and say make unit-test will everything get rebuilt",
+        "ts": "1462908638.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "?",
+        "ts": "1462908639.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I _think_ so, based on two things",
+        "ts": "1462908930.000882"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#1) unit tests do not rely on go-build afaik",
+        "ts": "1462908944.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#2) building the binaries was switched to using PHONY+go-build per our conversation, essentially delegating prerequisite freshness to go-tool",
+        "ts": "1462908998.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the thing that generally wont work magically is if you switch your git HEAD",
+        "ts": "1462909015.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for that, I still recommend a clean+rebuild cycle",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462909032.000000"
+        },
+        "ts": "1462909022.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I see, OK",
+        "ts": "1462909035.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the detection for when images need to be rebuilt is very coarse, so its best to just explicitly clean it",
+        "ts": "1462909069.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "of course, images generally dont need to be rebuilt often\u2026but problem is you\u2019d have to keep track of when they do unless you just use the more draconian policy of \u201cmove HEAD?, clean\"",
+        "ts": "1462909118.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0N1D1UAE>: one thing I wanted to mention about the docker-based peer: note that I think the majority of the 28s is coming from the go-build of the peer itself",
+        "ts": "1462918591.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and note that as it stands right now, switching the deps for unit-test from peer-image to peer is still going to take ~28s",
+        "ts": "1462918613.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we might be able to improve this with go-install (since I think it caches object files), but also note that we might be able to make similar improvements on the docker side",
+        "ts": "1462918667.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "long story short, i don\u2019t think its docker per se, but rather the methods we are using to build things",
+        "ts": "1462918696.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "You mean rebuilding the peer from scratch from within Docker?",
+        "ts": "1462918742.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "(The 28s)",
+        "ts": "1462918746.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, i think that is what happens (I havent looked actually, i am speculating)",
+        "ts": "1462918762.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i do know the go-build takes in that same range of time",
+        "ts": "1462918776.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "every time we invoke it, regardless of prerequisite updates, as I dont think go-build does object caching",
+        "ts": "1462918806.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I think it does try to do something smart; It has a -a flag to force recmopilation of unchanged packages",
+        "ts": "1462918858.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i guess the question is, why is it always ~28s?",
+        "ts": "1462918879.000901"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps that is the quickest it can ascertain state",
+        "ts": "1462918900.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i assumed it was rebuilding everyting",
+        "ts": "1462918906.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "everything",
+        "ts": "1462918910.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I never timed it before; Trying now...",
+        "ts": "1462918947.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "22s, 17s for \u201cgo build\"",
+        "ts": "1462919013.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "47 s for \u201cgo build -a\"",
+        "ts": "1462919021.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, interesting",
+        "ts": "1462919026.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if anything, thats bad news for your issue with the unit-test deps :wink:",
+        "ts": "1462919051.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "17s might be the minimum penalty",
+        "ts": "1462919074.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what are you seeing for the peer-image target time?",
+        "ts": "1462919084.000911"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "We need to do our own dependncy checking in the Makefile",
+        "ts": "1462919088.000912"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we _can_ but its not trivial nor cheap",
+        "ts": "1462919106.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that would solve the problem, yes",
+        "ts": "1462919116.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Hard to belieg it woudl take 17 seconds",
+        "ts": "1462919125.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i cant argue with that",
+        "ts": "1462919134.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you are probably right, i will look into it",
+        "ts": "1462919143.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think my concern was that I would likely have to incur the penalties of something like $(shell find . -name \u201c*.go\u201d) for all targets",
+        "ts": "1462919186.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if that runs sufficently fast, who cares",
+        "ts": "1462919193.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "0.5 seconds",
+        "ts": "1462919227.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Once it has the directoruy cached",
+        "ts": "1462919240.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Not fair - writing to \/dev\/null. Maybe 2 or 3 seconds",
+        "ts": "1462919299.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, it seems like its plausible",
+        "ts": "1462919351.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I just said make clean; make peer-image. I\u2019m surprised that it is doing so much work",
+        "ts": "1462919590.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Reinstalling all packages ()into a container I assume)",
+        "ts": "1462919612.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, it shouldnt need to install packages",
+        "ts": "1462919625.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF>: I was looking at what it would take to do a build only if some source file changed",
+        "ts": "1462919626.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the meat of it is that its building the peer",
+        "ts": "1462919633.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "right now, it doesn\u2019t do that",
+        "ts": "1462919634.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> yeah, it doesnt directly\u2026its possibly using go-tool object caching, TBD",
+        "ts": "1462919660.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we decided on the first pass it was best to let the go-tool figure it out, but I think we could certainly experiment with being more intelligent about it",
+        "ts": "1462919685.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yep understood",
+        "ts": "1462919695.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "but we should definitely look to continuously improve",
+        "ts": "1462919710.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its certainly fairly easy to use things like $(shell find ..) to build a list of pre-requisites and then we can drop the PHONY: peer",
+        "ts": "1462919743.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the risk is whether we can get it \u201cright\u201d\u2026normally pretty easy for things like C++ but go is a little different being partially managed",
+        "ts": "1462919784.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but certainly a good idea in general to try",
+        "ts": "1462919799.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes, I was researching that earlier",
+        "ts": "1462919804.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "looking for some precendent",
+        "ts": "1462919812.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "precedent",
+        "ts": "1462919815.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not that I exhaustively looked, but go seems to be in this weird limbo in that regard",
+        "ts": "1462920204.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the go-tooling was clearly not designed to replace something like make, yet it seems almost all projects rely solely on it",
+        "ts": "1462920227.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think if you had a pure go codebase, perhaps its not too bad to treat it that way",
+        "ts": "1462920263.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but once you have things like docker, protobufs, etc, it gets awkward fast",
+        "ts": "1462920283.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, its the long way of saying, we are likely in relatively uncharted waters",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462920317.000000"
+        },
+        "ts": "1462920306.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I suspect this will be rapidly changing even among pure go environments\u2026things like go-generate are pseudo build hooks, but its not very well thought out",
+        "ts": "1462920509.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and there are some niche libraries that try to improve on go-generate, but they had their own limitations",
+        "ts": "1462920549.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but long story short, I do not think we are alone in this pain",
+        "ts": "1462920569.000948"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "+1",
+        "ts": "1462920962.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0KPFAZNF> I think the \u2018clean\u2019 target is too agressive; It should not remove .baseimage_dummy",
+        "ts": "1462921461.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "That\u2019s what\u2019s causing everything to be rebuilt I think",
+        "ts": "1462921492.000951"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my concern is that any changes to the definition of the baseimage (such as in .\/scripts\/provision\/common.sh) would not be picked up",
+        "ts": "1462921534.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe that should be dist-clean level?",
+        "ts": "1462921548.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suppose we could add its prerequisites and let make do its thing",
+        "ts": "1462921596.000954"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "To me it is a rare event to rebuild the base docker, but I wipe out the blockchain database before every test. So I would prefer a different type of clean for the docker image",
+        "ts": "1462921619.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. baseimage: .\/devenv\/baseimage\/* .\/scripts\/provision\/*",
+        "ts": "1462921623.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "OK,",
+        "ts": "1462921635.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have no problem with hooking baseimage to the dist-clean level, though I still think cleaning the base image is advised when moving HEAD",
+        "ts": "1462921682.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least until we can find a bullet proof way to detect when it really does need to be rebuilt",
+        "ts": "1462921700.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps the above is it",
+        "ts": "1462921705.000960"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Maybe there are too many moving parts to satisfy everyone.",
+        "ts": "1462921916.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ya think?",
+        "ts": "1462921943.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0KPFAZNF>, why not add all the relevant dependencies to the Makefile so that the image actually gets rebuilt when needed?",
+        "ts": "1462923405.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I know it can be a bit of pain to figure out the exact list but fundamentally that's what's needed",
+        "ts": "1462923426.000964"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "in my old days of X development we had makedepend to help with that",
+        "ts": "1462923460.000965"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my rational was, I was afraid of getting it subtly wrong and causing hard to find problems",
+        "ts": "1462923480.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "vs Thors Hammer, aka make clean",
+        "ts": "1462923489.000967"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1462923490.000968"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but yes, point taken",
+        "ts": "1462923496.000969"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yeah, I understand",
+        "ts": "1462923496.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill see if I can come up with something clever",
+        "ts": "1462923523.000971"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bottom line, I _hope_ it was a step forward, and that people start using it",
+        "ts": "1462923548.000972"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and we can improve it going forward",
+        "ts": "1462923553.000973"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I still like it anyway :simple_smile:",
+        "ts": "1462923578.000974"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty",
+        "ts": "1462923583.000975"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill take a look at makedepend\u2026i dont know anything about it\u2026i would guess its not go\/docker aware but who knows",
+        "ts": "1462923622.000976"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "oh no, that was for c",
+        "ts": "1462923868.000977"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it scanned all the files for #includes and added all the dependencies to the makefile automatically",
+        "ts": "1462923922.000978"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "we'd have to think of some way to identify the files that matter, not sure it's possible",
+        "ts": "1462924158.000979"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, fortunately go is much more straight forward where everything is a .go file",
+        "ts": "1462924226.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so we can probably just dep on $(shell find . -name \u201c*.go\u201d) and that would be sufficient",
+        "ts": "1462924246.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yes, the go part I think is easy",
+        "ts": "1462924252.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it's the docker part I'm not sure about",
+        "ts": "1462924263.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, <@U10Q62R8X> and I were just brainstorming on that",
+        "ts": "1462924309.000984"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it will take some clever engineering i think",
+        "ts": "1462924332.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for now, thors hammer FTW",
+        "ts": "1462924340.000986"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have to put the kiddos to bed\u2026.ill be back on later",
+        "ts": "1462924362.000987"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yep...",
+        "ts": "1462924365.000988"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I updated my second machine and make unit-test succeeded without any make clean",
+        "ts": "1462925973.000989"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, cool\u2026i have a feeling this isnt the last we\u2019ll hear of it, but glad its working again",
+        "ts": "1462928892.000990"
+    }
+]

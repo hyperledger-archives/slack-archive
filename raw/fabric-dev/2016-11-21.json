@@ -1,0 +1,470 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1X0KAHL1> - you can't deploy directly from a private git repo but you can deploy directly from a local machine using the SDK(s) and\/or the peer CLI.  Of course this means you must first clone the git repo locally (well at least onto a machine you have access to)",
+        "ts": "1479726751.003382"
+    },
+    {
+        "type": "message",
+        "user": "U1X0KAHL1",
+        "text": "<@U0PB67X4K> Yes thanks I was able to deploy from a local path by attaching volumes in docker to contain the chaincode and deploying it from a local path.",
+        "ts": "1479727014.003383"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Hi, when I try to run `asset_managment02_test.go` locally I got the following error:\n```\n# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb|github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb>\n\n..\/..\/..\/..\/vendor\/github.com\/tecbot\/gorocksdb\/backup.go:4:24: fatal error: rocksdb\/c.h: No such file or directory\n\n \/\/ #include \"rocksdb\/c.h\"\n\n                        ^\n\ncompilation terminated.\n```\nI'm running on Ubuntu 16.04 and have not installed RocksDB - do I have to? What else could be missed? Is there any description exists how to run such tests...? Other tests work fine for me...",
+        "ts": "1479729828.003384"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "I run test from ide and it is executed with the following command: `\/opt\/go\/go\/bin\/go test -v <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02> -bench . -run ^$`",
+        "ts": "1479729896.003385"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0N4P17ND>  - yes - for `asset_management02` and `asset_management_with_roles` if you are going to run the tests you need to have RocksDB installed.  The tests for both of these start up an \"embedded\" instance of the peer in order for the test(s) to run. \n\nAre you running these in master or another branch?",
+        "ts": "1479730814.003386"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "v06",
+        "ts": "1479730828.003387"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "sorry for non specifying this",
+        "ts": "1479730841.003388"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "should I add any env variables to the test execution? - if I downloaded and unpacked RocksDB under opt, then successfully run `make static_lib`... following <https:\/\/github.com\/facebook\/rocksdb\/blob\/master\/INSTALL.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "facebook\/rocksdb",
+                "title_link": "https:\/\/github.com\/facebook\/rocksdb\/blob\/master\/INSTALL.md",
+                "text": "rocksdb - A library that provides an embeddable, persistent key-value store for fast storage.",
+                "fallback": "GitHub: facebook\/rocksdb",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/69631?v=3&s=400",
+                "from_url": "https:\/\/github.com\/facebook\/rocksdb\/blob\/master\/INSTALL.md",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1479733341.003389"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "just make sure that you actually checkout the 4.1 tag and don't build the latest version",
+        "ts": "1479733640.003391"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "ok, now have to uninstall.. but it have:\n`RUN cd \/opt  &amp;&amp; git clone --branch v4.1 --single-branch --depth 1 <https:\/\/github.com\/facebook\/rocksdb.git> &amp;&amp; cd rocksdb`",
+        "ts": "1479733795.003392"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "is it a requirement to install it under \/opt? or can I install it under `\/opt\/hyperledger\/rocksdb` for example?",
+        "ts": "1479733838.003393"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no requirement where to install as long as it can be found",
+        "ts": "1479734094.003394"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so you might have to add it your LD_LIBRARY_PATH",
+        "ts": "1479734117.003395"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Now I got:\n```\nWait for some secs for OBCCA\n16:18:54.763 [ca] NewCA -&gt; INFO 001 Fresh start; creating databases, key pairs, and certificates.\nWait for some secs for VP\n16:18:56.764 [crypto] RegisterValidator -&gt; INFO 002 Registering validator [vp] with name [vp]...\n16:18:56.768 [crypto] Errorf -&gt; ERRO 003 [validator.vp] Failed requesting read certificate [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\n16:18:56.768 [crypto] Errorf -&gt; ERRO 004 [validator.vp] Failed requesting ECA certificate [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\n16:18:56.768 [crypto] Errorf -&gt; ERRO 005 [validator.vp] Failed getting ECA certificate [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\n16:18:56.768 [crypto] Errorf -&gt; ERRO 006 [validator.vp] Failed retrieving ECA certs chain [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\n2016\/11\/21 16:18:56 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 127.0.0.1:7054: getsockopt: connection refused\"; Reconnecting to {\"localhost:7054\" &lt;nil&gt;}\n2016\/11\/21 16:18:56 Failed to dial localhost:7054: grpc: the connection is closing; please retry.\n16:18:56.768 [crypto] Errorf -&gt; ERRO 007 [validator.vp] Failed registering node crypto engine [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\n16:18:56.768 [crypto] Errorf -&gt; ERRO 008 [validator.vp] Failed registering peer [vp]: [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure]\n16:18:56.768 [crypto] Errorf -&gt; ERRO 009 [validator.vp] Failed registering [vp]: [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure]\n16:18:56.768 [crypto] RegisterValidator -&gt; ERRO 00a Failed registering validator [vp] with name [vp] [rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure].\npanic: rpc error: code = 14 desc = grpc: RPC failed fast due to transport failure\n\ngoroutine 25 [running]:\npanic(0xb02100, 0xc42037c700)\n        \/opt\/go\/go\/src\/runtime\/panic.go:500 +0x1a1\n<http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02.initVP()|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02.initVP()>\n        \/home\/oleg\/Development\/Go\/src\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02\/asset_management02_test.go:608 +0x541\ncreated by <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02.TestMain|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02.TestMain>\n        \/home\/oleg\/Development\/Go\/src\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02\/asset_management02_test.go:75 +0xfd\nexit status 2\nFAIL    <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/asset_management02>  2.034s\n```\nI'm exporting:\n`export LD_LIBRARY_PATH=\/opt\/rocksdb:$LD_LIBRARY_PATH`\nand running as:\n`CGO_CFLAGS=\"-I\/opt\/rocksdb\/include\" CGO_LDFLAGS=\"-L\/opt\/rocksdb -lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy\" go test `",
+        "ts": "1479738135.003396"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "so just what I try to achieve is to test the code, which uses `ok, err := stub.InsertRow(...)` and when I use mock `stub := shim.NewMockStub` insertRow fails - I guess it is not mocked. Any option to test it without running peers and so on?",
+        "ts": "1479738582.003397"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "ah yes...:\n```\n\/\/ Not implemented\nfunc (stub *MockStub) InsertRow(tableName string, row Row) (bool, error) {\n\treturn false, nil\n}\n```",
+        "ts": "1479739105.003398"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> `the core.yaml config treats PEER_CFG_PATH as relative to fabric.git\/peer whereas the peer-config.json treats it as relative to fabric.git\/` \u2026. right. Seemed more natural for PEER_CFG_PATH to point to a \u201ccore\u201d root than `peer` as there are other dirs whose config may belong outside of `peer`",
+        "ts": "1479740994.003399"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(a bit late with the ^^^ observation :slightly_smiling_face: \u2026apologize)",
+        "ts": "1479741023.003400"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP> after thinking about it some more, things might be optimal as they are",
+        "ts": "1479741490.003401"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its a little awkward that the topology is different if you are using PEER_CFG_PATH vs GOPATH, but in some ways this makes sense",
+        "ts": "1479741523.003402"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. what makes sense from a config topology (PEER_CFG_PATH) might not make sense from a code topology (GOPATH)",
+        "ts": "1479741547.003403"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the asymmetry initially bothered my sensibilities, but after more thought, perhaps we just leave it",
+        "ts": "1479741596.003404"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, we dont want to propose peer\/core.yaml should be moved to ..\/ because then its confusing between peer and orderer",
+        "ts": "1479741648.003405"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and likewise, we probably dont want to propose to move .\/msp to .\/peer\/msp, because that might not be appropriate",
+        "ts": "1479741668.003406"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thoughts?",
+        "ts": "1479741679.003407"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> right, that\u2019s exactly my thoughts too. Makes sense to have PEER_CFG_PATH be a \u201croot\u201d path of which any other config params such as for `peer` or `msp` .. and others in in future... to hang off ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1479741966.000000"
+        },
+        "ts": "1479741941.003408"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, but note its not _quite_ like that today",
+        "ts": "1479742084.003410"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we could fix this",
+        "ts": "1479742086.003411"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the code currently assumes the core.yaml will be found at $PEER_CFG_PATH\/core.yaml",
+        "ts": "1479742110.003412"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do we want to change this so its $PEER_CFG_PATH\/peer\/core.yaml ?",
+        "ts": "1479742125.003413"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would provide asymmetry",
+        "ts": "1479742144.003414"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1479742372.003415"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think that\u2019s better. I assume the workaround you used was to create msp under peer ?",
+        "ts": "1479742418.003416"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but yes I think `$PEER_CFG_PATH\/peer\/core.yaml` sounds right to me",
+        "ts": "1479742457.003417"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yey CI failures",
+        "ts": "1479742755.003418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something in chaincode",
+        "ts": "1479742770.003419"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "observed same in vagrant too.. <https:\/\/jenkins.hyperledger.org\/view\/fabric\/job\/fabric-merge-x86_64\/428\/console>",
+        "ts": "1479743809.003420"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I think it's related to the fact that they take too long\n```\ntest timed out after 20m0s\n```",
+        "ts": "1479745595.003421"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U11HH3P7Y> can you try it on your vagrant now ? wonder if its a network thing",
+        "ts": "1479745703.003422"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "seems it's working now in CI (Jenkins).. <@U0ULK2JPP> will re-run tests in vagrant",
+        "ts": "1479745965.003423"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "what changed with the build of hyperledger\/fabric-orderer ?  orderer.yaml is in `etc\/hyperledger\/fabric`  which is not one of the paths that orderer searches for its config file   ...",
+        "ts": "1479747852.003424"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I can fix this easily enough in the orderer code but is there some other work going on that fixes this ?",
+        "ts": "1479747898.003425"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UGH3X7X> sounds like the work I am doing",
+        "ts": "1479752225.003426"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I did notice that both orderer and membersrvc (when it existed) were weak w.r.t. config path...so in the case of those components, I worked around it with a WORKDIR specification",
+        "ts": "1479752271.003427"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "You can see that reflected here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/images\/orderer\/Dockerfile.in>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/images\/orderer\/Dockerfile.in",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/images\/orderer\/Dockerfile.in",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1479752320.003428"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "see line 5",
+        "ts": "1479752332.003430"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I would welcome a \"PEER_CFG_PATH\" type mod to orderer so I dont need to hack the WORKDIR anymore",
+        "ts": "1479752355.003431"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "interesting ... if i go into the orderer container via `docker exec -it \/bin\/bash` and start the orderer then the code finds the yaml file just fine",
+        "ts": "1479752793.003432"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "but if I start via the bddtests `docker-compose -f docker-compose-orderer-solo.yml up` then orderer does not find the yaml file",
+        "ts": "1479752871.003433"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I can look at peer_cfg_path  ... can you point me to the changeset ?",
+        "ts": "1479752925.003434"
+    },
+    {
+        "user": "U2SN3M334",
+        "text": "<@U2SN3M334|jamesjong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479756333.003435"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Check for any WORKDIR statements in the compose files bdd is using",
+        "ts": "1479756609.003436"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0KPFAZNF>   ... <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2693\/>",
+        "ts": "1479757114.003437"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Looks good from the phone. I'll review fully when back at my desk",
+        "ts": "1479757458.003438"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ghaskins got peer working on a centos based fabric base image",
+        "ts": "1479761729.003439"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1479761741.003440"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "easier than I expected once I got a day to work on it and had any idea what I was doing",
+        "ts": "1479761745.003441"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, its not too bad on modern distro",
+        "ts": "1479761760.003442"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "biggest PITA is usually rocksdb",
+        "ts": "1479761769.003443"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ghaskins the bash used for rocksdb setup in the baseimage automaton worked fine no tweaking at all",
+        "ts": "1479761796.003444"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1479761804.003445"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "all I did there was convert apt to yum and a few other bits",
+        "ts": "1479761805.003446"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep, makes sense",
+        "ts": "1479761815.003447"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "<https:\/\/github.com\/jkilpatr\/fabric-baseimage\/commit\/d46d3c962c7d90664ac5f06ca5e51f028b09042f>",
+        "ts": "1479761844.003448"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "that's really it for the base image, then peer is just a library path added to its docker file env. Other components are in progress but probably going to be slow,  don't get much time for hyperledger.",
+        "ts": "1479761889.003449"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "how would you like me to structure multi os support in this tooling if I contributed it upstream?",
+        "ts": "1479761930.003450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure, id have to think about whether it makes sense to do it this way",
+        "ts": "1479761988.003451"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "btw: it looks like you had an overzealous s\/-j\/-j24 conversion :wink:",
+        "ts": "1479762005.003452"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me give it some thought",
+        "ts": "1479762018.003453"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "building rocksdb is annoying, moved it to a machine with more POWA",
+        "ts": "1479762131.003454"
+    },
+    {
+        "user": "U2XARBG3Y",
+        "text": "<@U2XARBG3Y|as93717913> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479786772.003455"
+    },
+    {
+        "type": "message",
+        "user": "U35A8J495",
+        "text": "Hey again, I asked about implementing fabric onto a Raspberry Pi a couple of days ago, and ghaskins suggested I build support for the ARM architechture. Would anyone know where I could start in the development of this? Thank you",
+        "ts": "1479793186.003456"
+    }
+]

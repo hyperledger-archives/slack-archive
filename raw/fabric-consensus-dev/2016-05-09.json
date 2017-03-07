@@ -1,0 +1,564 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tuand: i don't understand your \"resolve rebase\" commits",
+        "ts": "1462787685.001350"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to add \"bound number of requests\"",
+        "ts": "1462792124.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to figure out what the conditions are to reject a request because too many are outstanding from that replica",
+        "ts": "1462792188.001352"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is that i may not have processed the oldest request, while the primary already did",
+        "ts": "1462792241.001353"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2>: any suggestions?",
+        "ts": "1462792263.001354"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "async networks are difficult",
+        "ts": "1462792273.001355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe we don't have to bound that, because the watermarks bound it",
+        "ts": "1462792483.001356"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "bound number of requests should in principle be per client",
+        "ts": "1462795807.001357"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not sure what exactly what the count of reqs from a replica means - can you pls elaborate?",
+        "ts": "1462795836.001358"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961>:",
+        "ts": "1462796710.001359"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2>: sorry, was afk for a while",
+        "ts": "1462797146.001360"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2>: i wanted to bound the number of requests a replica can inject at any time",
+        "ts": "1462797206.001361"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2>: not per client",
+        "ts": "1462797210.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "clients are potentially millions?",
+        "ts": "1462797236.001363"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok so the problem is consistency of the counters at primary vs other replicas?",
+        "ts": "1462797353.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1462797377.001365"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the primary may already have executed a request and now allow a new request from a replica",
+        "ts": "1462797405.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why some other replica didn't - and then would consider that primary malicious",
+        "ts": "1462797427.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so obviously we need something like watermarks",
+        "ts": "1462797440.001368"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what's the goal of this - preventing a DoS?",
+        "ts": "1462797521.001369"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1462798068.001370"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1171>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "pbft: bound number of requests \u00b7 Issue #1171 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1171",
+                "text": "This is for the PBFT implementation for #1098. Bound the number of new requests we accept from the local peer. Bound the number of requests any other replica proposes. Reject primary if it propos...",
+                "fallback": "GitHub: pbft: bound number of requests \u00b7 Issue #1171 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1171",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1462798075.001371"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the issue happens only because of PBFT watermarks",
+        "ts": "1462798228.001373"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if the high watermark would be low watermark + 1",
+        "ts": "1462798243.001374"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i.e., ordering and execution in sync - it would not happen right?",
+        "ts": "1462798257.001375"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "to circumvent this - one could bound the number of requests from last stable checkpoint",
+        "ts": "1462798374.001376"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and have a signle number for this",
+        "ts": "1462798384.001377"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as in each replica can have at most that many request in between checkpoints",
+        "ts": "1462798424.001378"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this can be as well specified as reqlimit = reqfactor*checkpointsize",
+        "ts": "1462798476.001379"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "would that address the concern?",
+        "ts": "1462798487.001380"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha",
+        "ts": "1462798625.001381"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll have to think about this",
+        "ts": "1462798631.001382"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe watermarks are enough anyways",
+        "ts": "1462798639.001383"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tuand: do you want some review for 756?",
+        "ts": "1462801797.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tuand: i guess best would be to squash all these fixup commits into the main change",
+        "ts": "1462801816.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i do but want to do this after i fix up the unit tests",
+        "ts": "1462801841.001386"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand how these resolve rebase commits even appear in the first place",
+        "ts": "1462801843.001387"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i can show you in 30 min or so ... about to go in a call now",
+        "ts": "1462801889.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1462801917.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so many calls",
+        "ts": "1462801948.001390"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "or do git logs against <https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "tuand27613\/fabric",
+                "title_link": "https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: tuand27613\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/11295979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1462801981.001391"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't like these loops waiting for an ID",
+        "ts": "1462802598.001393"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's got to work better than that",
+        "ts": "1462802605.001394"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> - watermarks may introduce another point of instability - and not clear exactly how this would be done",
+        "ts": "1462802794.001395"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i mean the watermarks that pbft already uses",
+        "ts": "1462802809.001396"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they already pace the number of pbft requests that can be in flight at any given time",
+        "ts": "1462802831.001397"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as we count from checkpoint to chekpoint in a static way - with the above we would have what I see as a simpler solution",
+        "ts": "1462802837.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "indeed they do - but I see this as a root of an issue and you see it as a solution :simple_smile:",
+        "ts": "1462802864.001399"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know if counting between checkpoints helps either",
+        "ts": "1462802933.001400"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "example:",
+        "ts": "1462802934.001401"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't execute to a point yet that will produce a checkpoint",
+        "ts": "1462802958.001402"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i get a request from the primary",
+        "ts": "1462802968.001403"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the idea goes like this",
+        "ts": "1462802982.001404"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, pre-prepare, beyond the checkpoint",
+        "ts": "1462802984.001405"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you execute batches from 1 to CHK and then from CHK+1 to 2*CHK",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1462803096.000000"
+        },
+        "ts": "1462803003.001406"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it does not matter when you execute",
+        "ts": "1462803015.001407"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you just allow a param*CHK requests from a given replica in between any two checkpoints",
+        "ts": "1462803038.001408"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "param could be as well &lt;1",
+        "ts": "1462803049.001409"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is certainly &lt;= batchsize :simple_smile:",
+        "ts": "1462803061.001410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1462803136.001412"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well we have to allow at least CHK requests",
+        "ts": "1462803145.001413"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "why?",
+        "ts": "1462803153.001414"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that if only one replica is injecting requests, and none of the other replicas want to inject requests",
+        "ts": "1462803164.001415"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that the network can progress",
+        "ts": "1462803168.001416"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "aha",
+        "ts": "1462803181.001417"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "good catch",
+        "ts": "1462803183.001418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also:",
+        "ts": "1462803199.001419"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does this interact with batching",
+        "ts": "1462803208.001420"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but with that then the approach does not work at all, since you need param = batchsize",
+        "ts": "1462803211.001421"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe we shouldn't care about this at all?",
+        "ts": "1462803219.001422"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean the byzantine part",
+        "ts": "1462803228.001423"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and only care about our own performance",
+        "ts": "1462803238.001424"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "after all, the goal is to locally supply information so that the frontend can reject new requests",
+        "ts": "1462803257.001425"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what we need is a way to pace ourselves, without overloading the primary",
+        "ts": "1462803298.001426"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because if the primary (assembling batches) is overloaded, then we start complaining",
+        "ts": "1462803317.001427"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we do a view change, but nothing will change",
+        "ts": "1462803324.001428"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tuand: i don't like that writing whitelist to random file at all",
+        "ts": "1462803467.001429"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not the right way of doing things",
+        "ts": "1462803475.001430"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yes, that writing to file was something while we wait for system chaincode",
+        "ts": "1462805724.001431"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i think #830 but i need to check",
+        "ts": "1462805737.001432"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so <@U0XR6J961>, the whitelist is primarily what we need the sys CC for ?",
+        "ts": "1462805803.001433"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: and other changes in the consensus configuration",
+        "ts": "1462809187.001434"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. if you figure out that performance is unsatisfactory, and you want to increase the batch size, etc.",
+        "ts": "1462809220.001435"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I see",
+        "ts": "1462810352.001436"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so some of it _can_ be dynamically adjusted",
+        "ts": "1462810385.001437"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all of it, basically",
+        "ts": "1462811233.001438"
+    },
+    {
+        "user": "U17BRDHPG",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U17BRDHPG|jeroiraz> has joined the channel",
+        "ts": "1462822668.001439"
+    },
+    {
+        "user": "U0N0GDVJ5",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N0GDVJ5|nick> has joined the channel",
+        "ts": "1462847536.001440"
+    }
+]

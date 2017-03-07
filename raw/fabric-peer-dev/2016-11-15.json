@@ -1,0 +1,317 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2Y3JHRP1>   - not sure I totally understand the question, but <https:\/\/jira.hyperledger.org\/browse\/FAB-2> - read my comment and it will explain exactly what happens when you use the REST API to \"login\" to a peer",
+        "ts": "1479215380.000712"
+    },
+    {
+        "user": "U1ES70KQS",
+        "text": "<@U1ES70KQS|pschnap> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479218405.000713"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "A few of us met to talk about genesis and other topics- so copying notes from the meeting to share more broadly",
+        "ts": "1479236941.000714"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "1. Genesis tx of channels should contain at least one entry point \/ anchor address\n        - Anchor peer: the peer responsible for getting updates from the ordering\n          service on a certain channel transactions and routing them to that channel's gossip\n         network; anchor peer is either defined by a domain name, so that it is easily substitutable.\n         Domain names are included in the certs.\n        - Approach 1: \n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel\n                c) Peers with a JoinChannel request contact the ordering service to\n                get the genesis block\n                d) Because genesis block contains anchor peers, the peer knows which \n                anchor peer to contact for that channel.\n        - Approach 2: \n                anchor peers are defined with the rest of participant peers that \n                participate in a channel at genesis time.",
+        "ts": "1479236956.000715"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "- Approach 3:\n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel with the anchor peers\n                c) Peers with a JoinChannel request contact the anchor peer to get updates\n                on that chainnel\n                d) Because genesis block contains anchor peers, the peer verifies the anchor\n                id in the genesis block, while the anchor peer knows what are the peers it\n                will gossip channel updates.\n                e) Trust is put to the few anchor peers.\n\n        Note: authentication of server side of anchor peers; how is this done?\n        Overall leaning to approach 3.\n\n\n2. Bootstrap\n        - Orderer: MSPs, orderers, Policies =&gt; config block\n        - Peer: ID, {IP: port, msp keystore} =&gt; yaml; the rest can be added after the peer has rebooted.\n\nCurrently an endorser processes all proposals it receives even if they refer to chaincodes they are not \nin their endorsement policy in. \nEndorsement policies should be possible to be based on participant identities.\n\n\n\n3. Genesis tx of channels participant information \n        Each channel has its own MSPs and their names have as namespace the name of the\n        channel they belong to. Genesis of each channel would need to contain the full definition of an MSP.\n\n4. Q: Do we have the orderers process all configuration tx-s and filter out invalid ones \n   before sending this to each channel? There was a remark from Jason that orderers filter out \n   invalid config transacitons before handing these to the endorser network. This is to be further discuss to my understanding.\n\n5. Endorser epoch re-definition:\n        - epoch numbers are defined in a sliding window manner \n        - epoch starting point (in terms of block number) is added by the (submitting) peer to what is endorsed\n        - epoch size is a config parameter\n        - clients send to rest of peers a proposal that includes the epoch starting point as received by submitting peer\n        - endorsers need to check if the starting point of epoch (included in the proposal) + epoch window &lt; current block number and then respond\n        - change on the protocol required from the client to peer to include an optional epoch number in the proposal\n         ( same spirit as with the simulation results) \n        \n\n6. Revocation: OCSP based verification ; could have asynchrony problems but maybe turn \n   out to be a solution in certain cases.\n         - we start with CRLs advertised in the Blockchain and we see where we go from \n          there\n\n7. DeliverRequest authentication \n      Replay attack for deliver requests is important, as anyone who can replay the deliver request to a peer would\n      essentially be able to bypass the ACLs associated to that channel.\n\n    To avoid this TLS (that already implements replay attack protection) should be enabled, and at the application layer we use TLS binding in the deliver request signature. \n\n      The same notion can be used everywhere in the gossip network.\n\n--------------------------\n\nOther Questions related to these items:\n - Do we want to hide history of chain to new participants?\n - Why do we need per key-value per sig on config tx-s?",
+        "ts": "1479236974.000716"
+    },
+    {
+        "user": "U0XQ35CDD",
+        "text": "<@U0XQ35CDD|kostas> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479237602.000717"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Can I comment on the approaches?",
+        "ts": "1479239418.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't understand something- the fact that an anchor peer is the only thing that connects the channel to the ordering service means that if that peer dies, until an anchor peer comes to the channel's rescue to replace that anchor peer (as it is said: \"anchor peer is either defined by a domain name\") - the channel is essentially starved from blocks. \nIn order to replace the anchor peer you need the channel's operation guys \/ systems to detect that the anchor peer is dead, and is going to stay dead, and then either resurrect it, or raise another anchor peer with the same ip, or raise a different one with a different ip and change the DNS. These high-availability issues can be solved *for free* if you let the gossip layer handle that.\nOffloading the problem to the local operation teams and systems\/scripts is not a good idea IMO, it will only cause customers to claim that fabric is fragile.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1479239977.000000"
+        },
+        "ts": "1479239431.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and there is another thing that isn't clarified- an anchor peer is defined in the configuration per organization, right? for example- if a channel has 3 orgs, then there will be 3 anchor peers, right?",
+        "ts": "1479239483.000720"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I think from what I remember <@U0KN2SSKE>  told yesterday, if chain has 3 orgs, it doesn\u2019t have to have 3 anchors peers",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1479239712.000000"
+        },
+        "ts": "1479239692.000721"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so isn't that another problem? you trust a different organization to feed you with data blocks. \nBut besides that, there is yet another problem I see: channels are a logical thing. Applications could create in total a very large number of channels, for example, if an org has 100 peers, you could have maybe 100 channels as well, and that means 100 different anchor peers. Where is the concern of scalability in that?",
+        "ts": "1479239879.000723"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "but you trust it anyway",
+        "ts": "1479240111.000725"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "eventually with gossip you will have block coming from other orgs anyway",
+        "ts": "1479240137.000726"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "the truth is that they can take control over your peers",
+        "ts": "1479240158.000727"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "also I think the notion on anchors peers is to participate in many chains",
+        "ts": "1479240201.000728"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But how if the application configures them and applications don't \"see\" each other?",
+        "ts": "1479240233.000729"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "not sure I\u2019m following your question",
+        "ts": "1479240396.000730"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0KN2SSKE>, <@U0ULK2JPP>, <@U0PB67X4K> I think that <@U0ZJZBJLF> brings good points and questions, can you please help clarifying things for him?",
+        "ts": "1479240501.000731"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "What I mean- you can't expect applications that share peers of fabric to cooperate with one another on selecting and agreeing with the same anchor peers.",
+        "ts": "1479240560.000732"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "but application by the end of the day creates channel to make orgs to communicate",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1479240743.000000"
+        },
+        "ts": "1479240732.000733"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "so do would expect application to make sure orgs will be connected",
+        "ts": "1479240776.000735"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but the people who make applications can not know one another, therefore- have no way of agreeing on the same anchor peers.",
+        "ts": "1479240824.000736"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in order to for app `A` to select the same anchor peer as app `B` you need some sort of registry",
+        "ts": "1479240846.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think this approach is really an overkill and the best thing is to simply let us (gossip) to handle all that selection",
+        "ts": "1479240868.000738",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1HFNJB50"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and this gives you the benefit of free HA",
+        "ts": "1479240891.000739"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "but even w\/ gossip, you still need to maintain the bootstrap set of peers, right?",
+        "ts": "1479240967.000740"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "it sounds to me like same sort of problem",
+        "ts": "1479240991.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) That depends on the way the peer are set up. If for example you know the hostnames and ports of all peers beforehand you could make the bootstrap set of all peers be all the peers, and that's it.\n2) If you have 10 bootstrap peers, you greatly minimize the risk in comparison to having 1 anchor peer. 10 peers are more resilient than 1",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1479241114.000000"
+        },
+        "ts": "1479241104.000742"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "you\u2019re going to have one anchor peer per org",
+        "ts": "1479241161.000744"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "so it won\u2019t be only one",
+        "ts": "1479241169.000745"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it is. one. per. org",
+        "ts": "1479241190.000746"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "and yes it kind of assumes the anchor peers never dies",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1479241217.000000"
+        },
+        "ts": "1479241201.000747",
+        "reactions": [
+            {
+                "name": "grin",
+                "users": [
+                    "U0YP7KFGQ"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U1HFNJB50",
+        "item_type": "C",
+        "attachments": [
+            {
+                "fallback": "[November 15th, 2016 11:09 AM] weeds: 1. Genesis tx of channels should contain at least one entry point \/ anchor address\n        - Anchor peer: the peer responsible for getting updates from the ordering\n          service on a certain channel transactions and routing them to that channel's gossip\n         network; anchor peer is either defined by a domain name, so that it is easily substitutable.\n         Domain names are included in the certs.\n        - Approach 1: \n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel\n                c) Peers with a JoinChannel request contact the ordering service to\n                get the genesis block\n                d) Because genesis block contains anchor peers, the peer knows which \n                anchor peer to contact for that channel.\n        - Approach 2: \n                anchor peers are defined with the rest of participant peers that \n                participate in a channel at genesis time.",
+                "ts": "1479236956.000715",
+                "author_subname": "weeds",
+                "channel_id": "C27E2LGJY",
+                "channel_name": "fabric-peer-dev",
+                "is_msg_unfurl": true,
+                "text": "1. Genesis tx of channels should contain at least one entry point \/ anchor address\n        - Anchor peer: the peer responsible for getting updates from the ordering\n          service on a certain channel transactions and routing them to that channel's gossip\n         network; anchor peer is either defined by a domain name, so that it is easily substitutable.\n         Domain names are included in the certs.\n        - Approach 1: \n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel\n                c) Peers with a JoinChannel request contact the ordering service to\n                get the genesis block\n                d) Because genesis block contains anchor peers, the peer knows which \n                anchor peer to contact for that channel.\n        - Approach 2: \n                anchor peers are defined with the rest of participant peers that \n                participate in a channel at genesis time.",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/weeds",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a235e152d57aff17c7adae8c427e59b9.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ]
+            }
+        ],
+        "text": "<@U1HFNJB50|c0rwin> pinned a message to this channel.",
+        "ts": "1479241549.000749"
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U1HFNJB50",
+        "item_type": "C",
+        "attachments": [
+            {
+                "fallback": "[November 15th, 2016 11:09 AM] weeds: - Approach 3:\n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel with the anchor peers\n                c) Peers with a JoinChannel request contact the anchor peer to get updates\n                on that chainnel\n                d) Because genesis block contains anchor peers, the peer verifies the anchor\n                id in the genesis block, while the anchor peer knows what are the peers it\n                will gossip channel updates.\n                e) Trust is put to the few anchor peers.\n\n        Note: authentication of server side of anchor peers; how is this done?\n        Overall leaning to approach 3.\n\n\n2. Bootstrap\n        - Orderer: MSPs, orderers, Policies =&gt; config block\n        - Peer: ID, {IP: port, msp keystore} =&gt; yaml; the rest can be added after the peer has rebooted.\n\nCurrently an endorser processes all proposals it receives even if they refer to chaincodes they are not \nin their endorsement policy in. \nEndorsement policies should be possible to be based on participant identities.\n\n\n\n3. Genesis tx of channels participant information \n        Each channel has its own MSPs and their names have as namespace the name of the\n        channel they belong to. Genesis of each channel would need to contain the full definition of an MSP.\n\n4. Q: Do we have the orderers process all configuration tx-s and filter out invalid ones \n   before sending this to each channel? There was a remark from Jason that orderers filter out \n   invalid config transacitons before handing these to the endorser network. This is to be further discuss to my understanding.\n\n5. Endorser epoch re-definition:\n        - epoch numbers are defined in a sliding window manner \n        - epoch starting point (in terms of block number) is added by the (submitting) peer to what is endorsed\n        - epoch size is a config parameter\n        - clients send to rest of peers a proposal that includes the epoch starting point as received by submitting peer\n        - endorsers need to check if the starting point of epoch (included in the proposal) + epoch window &lt; current block number and then respond\n        - change on the protocol required from the client to peer to include an optional epoch number in the proposal\n         ( same spirit as with the simulation results) \n        \n\n6. Revocation: OCSP based verification ; could have asynchrony problems but maybe turn \n   out to be a solution in certain cases.\n         - we start with CRLs advertised in the Blockchain and we see where we go from \n          there\n\n7. DeliverRequest authentication \n      Replay attack for deliver requests is important, as anyone who can replay the deliver request to a peer would\n      essentially be able to bypass the ACLs associated to that channel.\n\n    To avoid this TLS (that already implements replay attack protection) should be enabled, and at the application layer we use TLS binding in the deliver request signature. \n\n      The same notion can be used everywhere in the gossip network.\n\n--------------------------\n\nOther Questions related to these items:\n - Do we want to hide history of chain to new participants?\n - Why do we need per key-value per sig on config tx-s?",
+                "ts": "1479236974.000716",
+                "author_subname": "weeds",
+                "channel_id": "C27E2LGJY",
+                "channel_name": "fabric-peer-dev",
+                "is_msg_unfurl": true,
+                "text": "- Approach 3:\n                a) anchor peers defined by the configuration application and included \n                in the genesis block of a channel\n                b) Configuration application sends join channel request to all the \n                peers they want to obtain updates on that channel with the anchor peers\n                c) Peers with a JoinChannel request contact the anchor peer to get updates\n                on that chainnel\n                d) Because genesis block contains anchor peers, the peer verifies the anchor\n                id in the genesis block, while the anchor peer knows what are the peers it\n                will gossip channel updates.\n                e) Trust is put to the few anchor peers.\n\n        Note: authentication of server side of anchor peers; how is this done?\n        Overall leaning to approach 3.\n\n\n2. Bootstrap\n        - Orderer: MSPs, orderers, Policies =&gt; config block\n        - Peer: ID, {IP: port, msp keystore} =&gt; yaml; the rest can be added after the peer has rebooted.\n\nCurrently an endorser processes all proposals it receives even if they refer to chaincodes they are not \nin their endorsement policy in. \nEndorsement policies should be possible to be based on participant identities.\n\n\n\n3. Genesis tx of channels participant information \n        Each channel has its own MSPs and their names have as namespace the name of the\n        channel they belong to. Genesis of each channel would need to contain the full definition of an MSP.\n\n4. Q: Do we have the orderers process all configuration tx-s and filter out invalid ones \n   before sending this to each channel? There was a remark from Jason that orderers filter out \n   invalid config transacitons before handing these to the endorser network. This is to be further discuss to my understanding.\n\n5. Endorser epoch re-definition:\n        - epoch numbers are defined in a sliding window manner \n        - epoch starting point (in terms of block number) is added by the (submitting) peer to what is endorsed\n        - epoch size is a config parameter\n        - clients send to rest of peers a proposal that includes the epoch starting point as received by submitting peer\n        - endorsers need to check if the starting point of epoch (included in the proposal) + epoch window &lt; current block number and then respond\n        - change on the protocol required from the client to peer to include an optional epoch number in the proposal\n         ( same spirit as with the simulation results) \n        \n\n6. Revocation: OCSP based verification ; could have asynchrony problems but maybe turn \n   out to be a solution in certain cases.\n         - we start with CRLs advertised in the Blockchain and we see where we go from \n          there\n\n7. DeliverRequest authentication \n      Replay attack for deliver requests is important, as anyone who can replay the deliver request to a peer would\n      essentially be able to bypass the ACLs associated to that channel.\n\n    To avoid this TLS (that already implements replay attack protection) should be enabled, and at the application layer we use TLS binding in the deliver request signature. \n\n      The same notion can be used everywhere in the gossip network.\n\n--------------------------\n\nOther Questions related to these items:\n - Do we want to hide history of chain to new participants?\n - Why do we need per key-value per sig on config tx-s?",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/weeds",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a235e152d57aff17c7adae8c427e59b9.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ]
+            }
+        ],
+        "text": "<@U1HFNJB50|c0rwin> pinned a message to this channel.",
+        "ts": "1479241557.000750"
+    },
+    {
+        "user": "U0N4P17ND",
+        "text": "<@U0N4P17ND|oiakovlev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479247100.000751"
+    },
+    {
+        "user": "U0MRY2LKY",
+        "text": "<@U0MRY2LKY|troyronda> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479258843.000752"
+    },
+    {
+        "user": "U11MANG9G",
+        "text": "<@U11MANG9G|jonathanlevi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479261635.000753"
+    },
+    {
+        "user": "U2L125QGL",
+        "text": "<@U2L125QGL|madhavi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479280154.000754"
+    },
+    {
+        "user": "U0YM41HA5",
+        "text": "<@U0YM41HA5|mandler> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479281907.000755"
+    }
+]

@@ -1,0 +1,445 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "Hi, allow me to ask some questions:  \n\n1.-If my network had all the necessary VP and users from the beggining and the CA wasn't needed to enroll any other user after the initial set up, could the CA be shut down after the set up without affecting the correct behavior of the network?\n2.-How can new VP be added to the network if in the set up phase of the other VP the N and f parameters are already determined?\n3.-Variables stored by some CC A can only be accessed by the same CC A? So if a CC B wants to access variables from CC A it has to query\/invoke CC A functions?\n4.-Is there any restriction on query tx sending invoke tx referencing other chaincodes?",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460543408.000000"
+        },
+        "ts": "1460534230.000692"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "Thanks in advance!",
+        "ts": "1460534236.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(2) dynamic reconfiguration - is in the works; doesn't work right now",
+        "ts": "1460539635.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(3) correct, state is separate per chaincode",
+        "ts": "1460539671.000695"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(4) i don't think that a query can send an invoke - what would that even mean?",
+        "ts": "1460539698.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "well, in the chaincode api it says that any chaincode can call any other chaincode with InvokeChaincode and QueryChaincode",
+        "ts": "1460539952.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "it doesn't explain any restriction on how this two functions should be called",
+        "ts": "1460540012.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "so what if I call InvokeChaincode from a query transaction?",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460540047.000000"
+        },
+        "ts": "1460540036.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "Let me also explain why I want this: I want to register whenever a user reads a variable (which will be a document).",
+        "ts": "1460540127.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "And as invoke transactions cannot return WS variables (can they?) this is how I thought I might implement it, query calling invoke (which wouldn't do anything).",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460540334.000000"
+        },
+        "ts": "1460540251.000702"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i see",
+        "ts": "1460540616.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, not possible",
+        "ts": "1460540619.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because queries only go to one replica, but invokes have to go to all",
+        "ts": "1460540632.000706"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is there a reason why you want to register this?",
+        "ts": "1460540661.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean, publicly, forever recorded information?",
+        "ts": "1460540693.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "well the use case involves legal contracts and although not essential, knowing when each network user reads the document can be relevant",
+        "ts": "1460540809.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "so invoke transactions can't return variables",
+        "ts": "1460540859.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you could make it a two step process",
+        "ts": "1460540879.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "but why can't a query tx call another CC invoke?",
+        "ts": "1460540885.000712"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because a query only goes to one replica, and an invoke goes to all",
+        "ts": "1460540906.000713"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "I could solve the problem from the application level",
+        "ts": "1460540921.000714"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you could have the application first \"register\" the read",
+        "ts": "1460540922.000715"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and only when the read has been registered, it can query the document",
+        "ts": "1460540936.000716"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "I think that could work",
+        "ts": "1460541024.000717"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "just for the sake of the argument",
+        "ts": "1460541031.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "when a user makes a invoke transaction, does the user (or wallet service) send the transaction to all VPs?",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460541083.000000"
+        },
+        "ts": "1460541074.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1460541088.000721"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, it goes to one VP",
+        "ts": "1460541097.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and that one broadcasts it",
+        "ts": "1460541106.000723"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "the broadcast is internal",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460541114.000000"
+        },
+        "ts": "1460541108.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1460541112.000725"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "so now, why not invoke from a query tx?",
+        "ts": "1460541127.000727"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because a query is a readonly operation",
+        "ts": "1460541200.000728"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you actually want an invoke that can return a value",
+        "ts": "1460541228.000729"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "not really, if an invoke could return a value that would be awesome, but you said it is not possible",
+        "ts": "1460541258.000730"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "from the query tx I just want to invoke some function that will do nothing and return nothing but will get registered",
+        "ts": "1460541293.000731"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that is not reliable - an incorrect replica could just return the value, but never perform the invoke",
+        "ts": "1460541455.000732"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "yes, the application waiting for the invoke to be registered ensures that this can't happen (returning value but not registering tx).",
+        "ts": "1460541693.000733"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "if a invoke tx A calls and invoke tx B wouldn't this last invoke tx B be sent by all VP that execute invoke tx A, thus having the invoke tx B replicated many times (as all transactions that arrive to a VP are broadcasted)?",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1460541968.000000"
+        },
+        "ts": "1460541951.000734"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1460545920.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the calls happen locally",
+        "ts": "1460545927.000738"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they happen in the same transaction",
+        "ts": "1460545934.000739"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "don't they happen when the invoke tx is executed (and they are executed by all VPs)?",
+        "ts": "1460546183.000740"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, the invoke executes in each VP, and when there is a call to another chaincode, that VP will execute the other chaincode",
+        "ts": "1460549066.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "oh, then this second invoke transaction won't go through the consensus protocol and will be committed right after the 1st invoke?",
+        "ts": "1460552724.000742"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it will be committed as part of the same transaction",
+        "ts": "1460555074.000743",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z3BE0F5"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "thanks! then if it behaves like this, it doesn't seem that a query transaction doing an invoke will work as it can't register with the same transaction",
+        "ts": "1460555968.000744"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "Does anyone know the answer to this question:\n\nIf my network had all the necessary VP and users from the beggining and the CA wasn't needed to enroll any other user after the initial set up, could the CA be shut down after the set up without affecting the correct behavior of the network?\n\nIt is kind of very important as I can't give the control of the CA to any of the distrusting network actors and actually probably for many use cases with permissioned networks the CA is not needed as no VP will be added for sure.",
+        "ts": "1460558234.000745"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "There is a Requirements WG meeting scheduled for 11am EDT, but no invite was sent out, and we can't reuse last week's webex code.",
+        "edited": {
+            "user": "U0UFDAS91",
+            "ts": "1460560026.000000"
+        },
+        "ts": "1460559980.000746"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "We really need some Linux Foundation support around a calendar for WG meetings.",
+        "ts": "1460560341.000748"
+    },
+    {
+        "user": "U10BNCNNM",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10BNCNNM|mfnolan> has joined the channel",
+        "ts": "1460560944.000749"
+    },
+    {
+        "user": "U10E1PFEH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10E1PFEH|mgk> has joined the channel",
+        "ts": "1460574782.000750"
+    },
+    {
+        "type": "message",
+        "user": "U0PTU8XN3",
+        "text": "<@U0UFDAS91> there was no requirements meeting scheduled for 11 EDT, <@U0RSTB2DB> just announced the meeting on Monday. an invite will go out.",
+        "ts": "1460576074.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "There had been a confusing msg earlier that had said Wednesday. There were several of us who showed up this morning. ",
+        "ts": "1460576171.000752"
+    },
+    {
+        "user": "U10E739UN",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10E739UN|alalmasy> has joined the channel",
+        "ts": "1460577154.000753"
+    },
+    {
+        "user": "U10EJPR6U",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10EJPR6U|slackin> has joined the channel",
+        "ts": "1460578241.000754"
+    },
+    {
+        "user": "U10GD9DNC",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10GD9DNC|oatsandsugar> has joined the channel",
+        "ts": "1460593355.000755"
+    },
+    {
+        "user": "U10HAT15G",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10HAT15G|christof> has joined the channel",
+        "ts": "1460600384.000756"
+    },
+    {
+        "user": "U10FY8GD9",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10FY8GD9|ryancox> has joined the channel",
+        "ts": "1460606946.000757"
+    },
+    {
+        "type": "message",
+        "user": "U10GD9DNC",
+        "text": "Anyone here working on the legal-technical aspects of the project? best to look to <#C0UJTTB5J> ?",
+        "ts": "1460609785.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0VKKEGKB",
+        "text": "<@U10GD9DNC>: you are welcomed to contribute to the <#C0UJTTB5J> re the legal-tech side :simple_smile:",
+        "ts": "1460610228.000759"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "<@U10GD9DNC>: I would really like to see more legal and policy conformance aspects added to the requirements documents.",
+        "ts": "1460613999.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "I've added some crypto-related requirements to the use cases template <https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Use-Case-Template#requirements> but it needs to cover more issues than crypto.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/hyperledger",
+                "title_link": "https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Use-Case-Template#requirements",
+                "text": "Hyperledger Project is a new Collaborative Project at The Linux Foundation. The technical community is just getting started and will be adding code to the repository in the coming weeks. Check hype...",
+                "fallback": "GitHub: hyperledger\/hyperledger",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Use-Case-Template#requirements",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "ts": "1460614148.000761"
+    },
+    {
+        "user": "U10HVCA1K",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10HVCA1K|vd> has joined the channel",
+        "ts": "1460614708.000763"
+    }
+]

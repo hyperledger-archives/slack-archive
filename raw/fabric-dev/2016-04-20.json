@@ -1,0 +1,228 @@
+[
+    {
+        "type": "message",
+        "user": "U11Q02ZKL",
+        "text": "Can anyone here help me with a walk-through on setting up the hyperledger-fabric project on Ubuntu without vagrant? Currently struggling with a starting point for installation, would really appreciate your help.",
+        "ts": "1461136673.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Suggest looking at devenv\/setup.sh",
+        "ts": "1461150684.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That's what vagrant runs.  There is also some pointers in the doc for the baseimage components like rocksdb",
+        "ts": "1461150723.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'll find a link",
+        "ts": "1461150756.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric#building-outside-of-vagrant->",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1461153182.000000"
+        },
+        "ts": "1461153177.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you might also find it useful to peruse the scripts in devenv\/baseimage",
+        "ts": "1461153198.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i need to hack a tool that visualizes message flow events, so that i can debug the pbft code better",
+        "ts": "1461159975.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<!here|@here>  with the Latest commit 488d266  issue #1131 \u2014 moving main.go to fabric\/peer.  You may encounter the problem in vagrant:\n```vagrant@hyperledger-devenv:v0.0.9-2457c97:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ cd peer\/\n-bash: cd: peer\/: Not a directory```\nIt seems vagrant caches the `peer` exe file. The solution is to run:\n```vagrant halt\nvagrant up\n```",
+        "edited": {
+            "user": "U0KN2SSKE",
+            "ts": "1461161129.000000"
+        },
+        "ts": "1461161007.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "thanks for the heads up",
+        "ts": "1461161022.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XR6J961> what will this tool do ?",
+        "ts": "1461162074.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no idea - i just know that reading these text logs is very inefficient",
+        "ts": "1461162094.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there are tools that can show message sequence charts, but not with defined send\/receive times",
+        "ts": "1461162135.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "absolutely agree about reading the logs ... would be nice though if i could restrict debug logging to just consensus. have you figured out the magic incantation for core.yaml ?",
+        "ts": "1461162356.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0XRCMCR2",
+        "text": "cat main.log | grep consensus?",
+        "ts": "1461162640.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0XRCMCR2",
+        "text": "or cat main.log | grep consensus &gt; consensus.log",
+        "ts": "1461162681.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, that's not the problem",
+        "ts": "1461162804.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the hundreds of prepare and commit messages interleaving each other is the difficulty",
+        "ts": "1461162822.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yes,  but we have bishop's logging mechanism defined in core.yaml  which gives me tons of flexibility  ... how do i set that up ?",
+        "ts": "1461162835.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe something that visualizes the state of all replicas wrt to current in-flight requests",
+        "ts": "1461162847.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so simon, you want to be able to group all the activities by request",
+        "ts": "1461162882.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know exactly what i want",
+        "ts": "1461162917.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":simple_smile:",
+        "ts": "1461162919.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": ":innocent:   i've heard of work going on with log analyzers, maybe that or some way we can use things like elasticsearch",
+        "ts": "1461162994.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I wrote a data visualization tool a few years ago that might help, I should ask my employer if I can open source it",
+        "ts": "1461163008.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that said, I wonder if some of those logging tools like splunk might help",
+        "ts": "1461163024.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe",
+        "ts": "1461163134.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is not to find http servers being slow",
+        "ts": "1461163149.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":simple_smile:",
+        "ts": "1461163150.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i understand what you are interested in",
+        "ts": "1461163652.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is exactly what I built, just not for this purpose",
+        "ts": "1461163665.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it did nanosecond level visualization of multiple contexts across a common time axis",
+        "ts": "1461163697.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect you are looking for something similar (albeit probably dont need ns resolution)",
+        "ts": "1461163714.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just saying, there might be existing log visualization tools that get pretty close",
+        "ts": "1461163757.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "maybe overkill but take a look <https:\/\/www.linuxfestnorthwest.org\/2015\/sessions\/log-analysis-elk-stack-elasticsearch-logstash-kibana>",
+        "ts": "1461164927.000078"
+    },
+    {
+        "user": "U12E0JBLZ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U12E0JBLZ|csweir> has joined the channel",
+        "ts": "1461195986.000079"
+    },
+    {
+        "user": "U0J5URUJU",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0J5URUJU|nycnewman> has joined the channel",
+        "ts": "1461202469.000080"
+    }
+]

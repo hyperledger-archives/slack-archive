@@ -1,0 +1,79 @@
+[
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "I looked into the _preparetransactionlist() function in journal_core.py,  found a question about the transaction A depending on B. The case is that B is invalid, and it is deleted in TransactionStore when validator prepares the last pending block. Then validator prepares the current pending block, invokes  _preparetransaction() to handle A, because A depends on B, and B couldn't be found in TransactionStore, then invokes request_missing_txn to request B,  we know B is deleted, couldn't get it. So A becomes a dead transaction, couldn't be deleted, just wait until forever. How we could handle this case?",
+        "ts": "1472810456.000156"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "One solution, we don't delete invalid transactions immediately, just change the status of transaction to invalid. So B is invalid, could be found in TransactionStore. and A depends on B, A is invalid too. We deleted invalid transactions after an  elapse of sometime.",
+        "ts": "1472811186.000157"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "My sawtooth members, what do you think about this case?",
+        "ts": "1472811404.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "<@U1ZUSJHAA> - I have a local branch which a fix for that, the approach I took is to keep track of the 'age' of a transaction - defined as the number of blocks it has been in the pending queue - and delete it if it's over some threshold",
+        "ts": "1472823074.000159"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U26PBUZRT|kiko3333> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kiko3333\/F27P2RTU0\/Untitled.txt|Untitled>",
+        "file": {
+            "id": "F27P2RTU0",
+            "created": 1472828989,
+            "timestamp": 1472828989,
+            "name": "Untitled.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U26PBUZRT",
+            "editable": true,
+            "size": 708,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F27P2RTU0\/Untitled.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F27P2RTU0\/download\/Untitled.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kiko3333\/F27P2RTU0\/Untitled.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F27P2RTU0-1bbd1dd668",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/kiko3333\/F27P2RTU0\/Untitled.txt\/edit",
+            "preview": "Some of you, have found this error in this command, installing sawtooth:  \r\n.\/bin\/txnvalidator -v --config \/project\/sawtooth-core\/docs\/source\/tutorial\/txnvalidator.js                                                                                                                                                                                                                                                                                                                          \r\nImportError: \/usr\/lib\/x86_64-linux-gnu\/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by \/project\/sawtooth-core\/core\/build\/lib.linux-x86_64-2.7\/_ECDSARecoverModule.so)\r\nvagrant@vagrant-ubuntu-trusty-64:\/project\/sawtooth-core",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Some of you, have found this error in this command, installing sawtooth:  <\/pre><\/div>\n<div><pre>.\/bin\/txnvalidator -v --config \/project\/sawtooth-core\/docs\/source\/tutorial\/txnvalidator.js                                                                                                                                                                                                                                                                                                                          <\/pre><\/div>\n<div><pre>ImportError: \/usr\/lib\/x86_64-linux-gnu\/libstdc++.so.6: version `GLIBCXX_3.4.21' not found (required by \/project\/sawtooth-core\/core\/build\/lib.linux-x86_64-2.7\/_ECDSARecoverModule.so)<\/pre><\/div>\n<div><pre>vagrant@vagrant-ubuntu-trusty-64:\/project\/sawtooth-core<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 4,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C16GB844D"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U26PBUZRT",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U26PBUZRT|kiko3333>",
+        "bot_id": null,
+        "ts": "1472828990.000160"
+    },
+    {
+        "type": "message",
+        "user": "U1F97K1UJ",
+        "text": "<@U26PBUZRT> is it possible you build sawtooth-core\/core from outside this vagrant environment earlier?   I have seen this type of symbol matching issue when I share the same source code hierarchy between multiple systems.   Maybe try to clean and re-build core from within the vagrant container:  (cd \/project\/sawtooth-core\/core ; python setup.py clean ; python setup.py build)",
+        "ts": "1472842577.000162"
+    }
+]

@@ -1,0 +1,1536 @@
+[
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0ULK2JPP>: regarding <https:\/\/github.com\/hyperledger\/fabric\/pull\/1826>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Remove syscc from genesis#issue1741 by muralisrini \u00b7 Pull Request #1826 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1826",
+                "text": "Remove system chaincodes from genesis block and make them completely non-declarative. Description System chaincodes should be treated as part of the fabric with all policies and rules applicable ...",
+                "fallback": "GitHub: Remove syscc from genesis#issue1741 by muralisrini \u00b7 Pull Request #1826 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/14361488?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1826",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465906464.000004"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019m trying to wrap my head around what we do should the system chaincode that created the genesis block be changed",
+        "ts": "1465906586.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "with chaincode, we would have to copy the ledger\u2019s contents to a new blockchain associated with the new chaincode, correct?",
+        "ts": "1465906665.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0PB67X4K>: ^^",
+        "ts": "1465906687.000008"
+    },
+    {
+        "user": "U1GN670VD",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GN670VD|thiruworkspace> has joined the channel",
+        "ts": "1465907248.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: It probably needs to be handled in a way similar to how we will support normal chaincode upgrade (with perhaps a few extra considerations)\u2026that is, something along the lines of an Upgrade() verb that is system level like Init() where the code would have a chance to translate (if necessary) between an old schema and the new schema.  In this sense, its like an \u201cinstance copy\u201d, but I don\u2019t think we need to go so far as to say we need to migrate the entire ledger\/chain.",
+        "ts": "1465907745.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the difference between system\/normal code in this regard is that I think normal chaincode has to go through consensus (and possibly contract\/human approval) whereas syscc is baked into the peer\u2026.the \u201cconsensus\u201d is by virtue of installing the new peer code.",
+        "ts": "1465907828.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "then we need all peers in the network on the same level of code, yes?",
+        "ts": "1465907860.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, we probably need to be careful about how a forked upgrade of the peer behaves",
+        "ts": "1465907862.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, i think the key is we need a (consensus-type) majority to recognize it, at least",
+        "ts": "1465907896.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, 2f+1 nodes with upgraded code with PBFT, for instance",
+        "ts": "1465907917.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I need to wrap my head around is whether this should be implicit or explicitly tested",
+        "ts": "1465907955.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "explicit please",
+        "ts": "1465908009.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": ":wink:",
+        "ts": "1465908011.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe a peer joining the network emits something similar to a txn",
+        "ts": "1465908012.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "with revlevels, etc",
+        "ts": "1465908039.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "but I guess my point is that #1826 doesn\u2019t completely address the scenario",
+        "ts": "1465908043.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP> <@U0KPFAZNF> I think both your comments above summarizes the situation correctly. Let me highlight a bit here ?",
+        "ts": "1465908073.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "removing the system chaincode from genesis block only part of the solution",
+        "ts": "1465908089.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, that is certainly true\u2026but to be fair, we dont support Upgrade() for any chaincode (yet))",
+        "ts": "1465908152.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "syscc or otherwise",
+        "ts": "1465908161.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "\"syscc is baked into the peer\u201d - the same rules to \u201cUpgrading\u201d the peer should apply to system chaincode",
+        "ts": "1465908195.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, perhaps to your point, right now any kind of \u201cupgrade\u201d probably is ledger migration",
+        "ts": "1465908211.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "seems to me that is correct",
+        "ts": "1465908231.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but longer term, I expect that to be improved upon",
+        "ts": "1465908231.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I would think we could\/should only require if syscc changed",
+        "ts": "1465908251.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "eventually",
+        "ts": "1465908258.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "only require ledger migration?",
+        "ts": "1465908275.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "y",
+        "ts": "1465908283.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we need to be careful because what constitutes \u201csyscc changed\"",
+        "ts": "1465908306.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "but, I suppose we also have to consider when we change the protocol",
+        "ts": "1465908309.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there could be small code changes that do not impact protocol\/persistence ABI incongruence and then do we need to be that strict?",
+        "ts": "1465908341.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "right",
+        "ts": "1465908359.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one problem with syscc is it will be harder to quantify \u201ca change has occured\"",
+        "ts": "1465908384.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "normal chaincode we can have a comprehensive hash that observes even a single character in a comment as a new hash",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465908762.000000"
+        },
+        "ts": "1465908409.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that wont be true with syscc (unless someone can get clever)",
+        "ts": "1465908419.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "is there a way to hash a golang package?",
+        "ts": "1465908425.000041"
+    },
+    {
+        "text": "looks at <@U0ULK2JPP|muralisr>",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1465908426.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the golang attitude towards dynamic code loading is annoying\/limiting",
+        "ts": "1465908492.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I digress",
+        "ts": "1465908494.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we would have a more robust architecture if we could have just put syscc modules in something like an .so",
+        "ts": "1465908537.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh well",
+        "ts": "1465908539.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "have to step away, kids to school\u2026bbiab",
+        "ts": "1465908566.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "last point first - when we implement security for sys cc, the plan is to include the hash of the system cc as well ( @adecaro )",
+        "ts": "1465908606.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think we generally agree that sys cc\u2019s upgrades should be considered to be closer to (maybe even identical to) the the policies for upgrading the peer itself ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1465908689.000000"
+        },
+        "ts": "1465908680.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "One thing to add to that...",
+        "ts": "1465908697.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "well, it isn\u2019t clear to me that we have a policy for upgrading the peer",
+        "ts": "1465908708.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "true",
+        "ts": "1465908712.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "agreed on that\u2026 not to digress, but we should devote some serious attention that",
+        "ts": "1465908736.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019ve been talking to <@U0PB67X4K> about that",
+        "ts": "1465908738.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1465908740.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "he says he has some thoughts",
+        "ts": "1465908749.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "back",
+        "ts": "1465908778.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "personally, I would like to see us decompose things a bit so that we can contain change better and limit the need to do ledger migration, for instance",
+        "ts": "1465908791.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but if for some reason some peers fail to be on the same level as the sys cc, I\u2019d think consensus failures will show it up on invoke interactions",
+        "ts": "1465908803.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one thought\u2026that stuff I mentioned the other day about go-list walking all deps, that could possibly be used to tease out some kind of meaningful hash",
+        "ts": "1465908807.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so there\u2019s some safety net there",
+        "ts": "1465908820.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "can we add a test(s) for this, please?",
+        "ts": "1465908846.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but im not convinced we want that granularity per se",
+        "ts": "1465908860.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP>, did I goof up on tests (again ?) \u2026 I did add one. I can add more",
+        "ts": "1465908885.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im thinking its about some peer-level thing that happens when a peer joins a network",
+        "ts": "1465908888.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which would encompass all the syscc it includes)",
+        "ts": "1465908909.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do changes in the chaincode shim lead to different chaincode hash as well?",
+        "ts": "1465908927.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "no, I am just observing that given that we want to have consensus failures show up if syscc is not at same level in all peers, we need a test for that",
+        "ts": "1465908939.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: we need to decide that",
+        "ts": "1465908939.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1465908944.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961>: yes exactly, this needs some thought",
+        "ts": "1465908965.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "system chaincode is dangerous, because a change elsewhere can change its behavior",
+        "ts": "1465908971.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: agree, where I am thinking about is where\/when does it matter",
+        "ts": "1465908998.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. either a syscc emits deterministic outputs in agreement with the network, or it doesnt",
+        "ts": "1465909019.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF>: agree",
+        "ts": "1465909039.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we can ask the peer to tell us what rev-level it has, but without attestation hw, that is difficult to trust",
+        "ts": "1465909043.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so then the question is, does revlevel reporting matter? or can we purely rely on consensus of the output",
+        "ts": "1465909061.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. if it generates compliant outputs, does it matter what code did it?",
+        "ts": "1465909073.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats what i struggle with",
+        "ts": "1465909084.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF>: exactly",
+        "ts": "1465909091.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "normal chaincode is different ,because the peer itself acts like an attestation framework",
+        "ts": "1465909121.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the peer attesting to itself is a little sketchy",
+        "ts": "1465909129.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the real question to me is how closely a syscc is baked into peer deploy\/upgrade process",
+        "ts": "1465909132.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, 100%",
+        "ts": "1465909157.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it gets compiled in",
+        "ts": "1465909162.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: code wise, yes\u2026but I think <@U0ULK2JPP> is referring to additional coordination",
+        "ts": "1465909186.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes",
+        "ts": "1465909193.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so this falls into the broader question of fabric lifcycle management",
+        "ts": "1465909234.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "IMO",
+        "ts": "1465909236.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the bigger concern, to me, is how we handle the schema upgrade coordination",
+        "ts": "1465909244.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the syscc should have an opportunity to do its Upgrade() like thing, which results in a new world state",
+        "ts": "1465909272.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "question is, when\/how does that happen",
+        "ts": "1465909277.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "obviously one criteria would be when at least 2f+1 nodes vote that the Upgrade() should happen..but who\/what triggers is",
+        "ts": "1465909316.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heres on (half baked) idea",
+        "ts": "1465909340.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "peer starts, allows registered syscc to tell it whether it needs an update to its schema",
+        "ts": "1465909360.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if no, continue on",
+        "ts": "1465909366.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if yes, peer can submit some kind of transaction (with a longer than usual TTL) to the network",
+        "ts": "1465909393.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if enough peers do this, then the Upgrade() runs, updating the world-state (through consensus)",
+        "ts": "1465909423.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Upgrade of a sys chaincode would go through consenses when deploy did not ?",
+        "ts": "1465909426.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "dunno, maybe",
+        "ts": "1465909437.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont like the asymmetry of that, which is probably your point",
+        "ts": "1465909452.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just thinking off the cuff",
+        "ts": "1465909460.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no, I was just wondering how that would work",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1465909491.000000"
+        },
+        "ts": "1465909480.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe deploy isnt implicit either, its just not as we have it today",
+        "ts": "1465909489.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe deploy is similar, its some auto-generated\/peer-voted type thing",
+        "ts": "1465909506.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(rather than yaml driven)",
+        "ts": "1465909516.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its completely out of the yaml now",
+        "ts": "1465909531.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh right, sorry",
+        "ts": "1465909536.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not good",
+        "ts": "1465909537.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its fully baked in...",
+        "ts": "1465909538.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cant keep track :wink:",
+        "ts": "1465909540.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1465909543.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it should be completely out of the genesis block",
+        "ts": "1465909551.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961> agreed, and it is",
+        "ts": "1465909563.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean",
+        "ts": "1465909568.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the system chaincode config should come from the genesis block",
+        "ts": "1465909578.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it still has ledger state, it just might not happen until after genesis",
+        "ts": "1465909579.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and not from the yaml",
+        "ts": "1465909582.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: actually, neither",
+        "ts": "1465909594.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is there a third possibility?",
+        "ts": "1465909609.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes",
+        "ts": "1465909611.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is?",
+        "ts": "1465909614.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "need to get ready for work\u2026. later",
+        "ts": "1465909627.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it should be allowed to come and go over time, which means it might not be there at genesis",
+        "ts": "1465909633.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1465909641.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, superset of genesis block, but def not yaml",
+        "ts": "1465909653.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let's call it ledger then",
+        "ts": "1465909657.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, agreed",
+        "ts": "1465909662.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, the current way we Init is its implicit\u2026..active consensus only happens after the first invoke hits the instance",
+        "ts": "1465909710.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, even though the Init() may have initialized world-state, that doesnt go through consensus\u2026but this should presumably be reconciled during subsequent Invoke() operations",
+        "ts": "1465909751.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because we're creating the genesis block if there is none",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1465909776.000000"
+        },
+        "ts": "1465909762.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Assuming that isnt broken, I suppose you could extend this notion to Upgrade as well",
+        "ts": "1465909782.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which we shouldn't do",
+        "ts": "1465909784.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: yes, agreed on that too but that is a different issue in my mind",
+        "ts": "1465909803.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is really about when we start up a peer and it has syscc baked in with RegisterSyscc() (or whatever that call is named)",
+        "ts": "1465909838.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this could happen at any time long after we have block height",
+        "ts": "1465909853.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, now the question is: how to handle that",
+        "ts": "1465909878.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, we shouldn't",
+        "ts": "1465909887.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the syscc that are allowed are in the ledger",
+        "ts": "1465909902.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, lets outline what we do today",
+        "ts": "1465909902.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well step back for a second",
+        "ts": "1465909928.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you want to add another one, you either need to have a meta-syscc, which allows you to change the set of syscc",
+        "ts": "1465909929.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "lets talk about how they get on the ledger in the first place",
+        "ts": "1465909937.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or you have an external procedure to apply this change",
+        "ts": "1465909940.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "genesis block",
+        "ts": "1465909944.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or manually applying a \"patch\" block",
+        "ts": "1465909965.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure if that is still true, but if it is it will have to change",
+        "ts": "1465909968.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why?",
+        "ts": "1465909974.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, have you ever worked on a software project where the software was done with 1.0? :wink:",
+        "ts": "1465909997.000153",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I havent",
+        "ts": "1465910003.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "things will change",
+        "ts": "1465910010.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have no idea what you are saying",
+        "ts": "1465910011.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all behavior *must* be driven *exclusively* from the ledger",
+        "ts": "1465910042.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you develop a software package and release it as a long running service, do you think you will never need to introduce changes?",
+        "ts": "1465910053.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure you will",
+        "ts": "1465910062.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, so upgrades happen, we agree",
+        "ts": "1465910084.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you had a long running service that dictated that all services, now and in the future, must be accounted for at the initial deployment, do you see that as problematic?",
+        "ts": "1465910131.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's not what i am saying",
+        "ts": "1465910142.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, if all syscc had to be in genesis, thats effectively the same thing",
+        "ts": "1465910164.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not what i am saying",
+        "ts": "1465910172.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, go on",
+        "ts": "1465910175.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "1. all behavior must be driven exclusively by the ledger",
+        "ts": "1465910204.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "agreed, but there is nuance here",
+        "ts": "1465910215.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2. therefore for syscc to be used, the syscc must be enabled by some data on the ledger",
+        "ts": "1465910233.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, lets change \u201cs\/ledger\/consensus\"",
+        "ts": "1465910249.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "before I get distracted and move on to something else, can one of the three of you please write up whatever the thinking is and send to the mailing list so we don\u2019t lose this? thanks",
+        "ts": "1465910252.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "3a. therefore genesis block needs to enable the syscc, OR",
+        "ts": "1465910256.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and consensus is formed by many things, ledger state being one of them",
+        "ts": "1465910260.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "3b. there is a manual way to introduce a new ledger block",
+        "ts": "1465910272.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>, yes",
+        "ts": "1465910275.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks",
+        "ts": "1465910280.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, as I was saying, it all has to be driven by consensus, but there are many ways that this happens",
+        "ts": "1465910313.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "consensus without commit to ledger is ephemeral and is lost after crash\/restart",
+        "ts": "1465910322.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, the configuration of the network, the choice of the peer software to run, etc, are all part of this",
+        "ts": "1465910333.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: understood, but here me out",
+        "ts": "1465910349.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you subscribe to the notion of consensus that I mentioned, then the ledger isnt your only persistence\u2026for instance, the software you are running is too",
+        "ts": "1465910405.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. I syscc, therefore I am",
+        "ts": "1465910419.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the code is either there, or it isnt",
+        "ts": "1465910430.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, merely having a peer that happens to have the syscc endpoint is one form of consensus",
+        "ts": "1465910453.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I am not a crypto guy by any stretch, but could we place a nonce in the genesis block that when hashed with some value (say the hash of the syscc) could be used to drive consensus of a new peer joining?",
+        "ts": "1465910471.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> we def want a nonce of some sort, but I am not sure for that reason",
+        "ts": "1465910512.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "maybe that is the uber syscc",
+        "ts": "1465910516.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, so the current proposal by <@U0ULK2JPP> is that adding new syscc happens implicitly and locally",
+        "ts": "1465910567.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. if I start a peer instance, and it a) finds syscc registered, and b) doesnt find an instance for it in the ledger, it will run the Init() locally and _not_ coordinate this with the network",
+        "ts": "1465910602.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so its kind of a local world state mutation",
+        "ts": "1465910612.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at first, I was bothered by this, but he made an interesting point",
+        "ts": "1465910623.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is, the observation that this would presumably be reconciled by subsequent transactions",
+        "ts": "1465910658.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "consider a scenario where I have an existing network, say blockheight 100k",
+        "ts": "1465910701.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "someone develops a new syscc for \u201cfoo\u201d and gets it accepted into whatever code stream you are consuming",
+        "ts": "1465910738.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the next time the peer is upgraded, \u201cfoo\u201d is registered and the system detects that it has no instance for it",
+        "ts": "1465910766.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, it runs foo.Init() and allows its initial instance to be formulated",
+        "ts": "1465910782.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this does not happen in the consensus network, just locally on the peer",
+        "ts": "1465910802.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if someone subsequently targets an Invoke operation at \u201cfoo\u201d, its going to need to have a deterministic result across 2f+1 peers",
+        "ts": "1465910851.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(hopefully we have EV by then ;)",
+        "ts": "1465910867.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "sorry for being naive, EV?",
+        "ts": "1465910887.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the point is, the transaction would only work if at least 2f+1 nodes also upgraded their peer code and the combination of Init()+Invoke() resulted in a deterministic output",
+        "ts": "1465910909.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "EV = Execute-Verify, ala SIEVE",
+        "ts": "1465910921.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thank u",
+        "ts": "1465910929.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, in Murali\u2019s model, the introduction of the syscc could happen at any time and without explicit coordination just by being in the code\u2026and the system would only legitimize its existence by other nodes agreeing in how subsequent operations behave",
+        "ts": "1465911016.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Assuming we can\u2019t poke holes in that, I think Upgrade() could be handled in a similar way",
+        "ts": "1465911043.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so let\u2019s assume that we do a rolling upgrade on a network of peers that might take hours to complete because of the size of the network\u2026 how does this work?",
+        "ts": "1465911054.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "First off, I hope that doesnt happen, heh",
+        "ts": "1465911072.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "does a new peer keep trying to drive a transaction until it achieves consensus?",
+        "ts": "1465911086.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as soon as their is any kind of break in 2f+1, we are going to stall (best case)",
+        "ts": "1465911089.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we should hope we only stall, I should say",
+        "ts": "1465911106.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "my head hurts",
+        "ts": "1465911155.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: I think we need the notion of TTL for transactions",
+        "ts": "1465911160.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "certain peer level transactions might need a longer TTL, though I dont envision they would be on the scale of hours",
+        "ts": "1465911181.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "well, let me play this out in small",
+        "ts": "1465911183.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but yes, mine hurts too :wink:",
+        "ts": "1465911187.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "4 peers running along just fine",
+        "ts": "1465911204.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "A B C D",
+        "ts": "1465911215.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we stop A and start Aprime",
+        "ts": "1465911230.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and A\u2019 has new syscc",
+        "ts": "1465911245.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Aprime does this init thing and B C and D all tell him he is wrong",
+        "ts": "1465911251.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes",
+        "ts": "1465911256.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, to be clear, in the current model Init() is a local thing",
+        "ts": "1465911267.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, A\u2019 now has an endpoint \u201cfoo\u201d, and BCD do not",
+        "ts": "1465911288.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if someone sends a transaction to chaincodeID=\u201cfoo\u201d, A\u2019 can run it, BCD can not",
+        "ts": "1465911312.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, that transaction would fail",
+        "ts": "1465911319.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ah, so there needs to be an external agent then?",
+        "ts": "1465911352.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "now say BC update, so we have A\u2019B\u2019C'D",
+        "ts": "1465911354.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "not bootstrap?",
+        "ts": "1465911366.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "someone sends another transaction to foo, and this time it passes",
+        "ts": "1465911370.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for coordination?",
+        "ts": "1465911388.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: not sure what you were getting at with the external agent \/ bootstrap comment",
+        "ts": "1465911431.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you elaborate?",
+        "ts": "1465911435.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "somehow I had in my head that a peer coming on line would try to join the network but with a new syscc fail because it was different than 2f+1",
+        "ts": "1465911503.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I need to be better edumacated",
+        "ts": "1465911535.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see, i dont think that is the case per se",
+        "ts": "1465911611.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "backing up, and apologies for me being somewhat underinformed - but how did we arrive at foo for A'",
+        "ts": "1465911615.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "syscc as far as I understand it, is just an amalgam of a) normal compiled peer code, that happens to have b) a chaincode interface",
+        "ts": "1465911646.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "does introduction of a new syscc require a new endpoint? and if so, how are these assigned?",
+        "ts": "1465911647.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear: by \u201cendpoint\u201d I just mean chaincodeID",
+        "ts": "1465911666.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and they work very much like devmode",
+        "ts": "1465911671.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes but that is my point",
+        "ts": "1465911673.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "how is this established?",
+        "ts": "1465911682.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "someone needs to remember to update the id?",
+        "ts": "1465911690.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the syscc can ask for a name, just like devmode\u2026first come, first served",
+        "ts": "1465911691.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, for instance, I could write a name-services syscc and call it \u201cname-service\"",
+        "ts": "1465911711.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as long as I am on the only one (enforced by compiler\/runtime checks on registration), this is easy to disambiguate\/police",
+        "ts": "1465911744.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "then, users can direct transactions using chaincodeID:\u201dname-service\"",
+        "ts": "1465911779.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "turtles all the way down",
+        "ts": "1465911779.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bingo",
+        "ts": "1465911783.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the thing is, chaincodeID:\u201dname-service\u201d is only a valid endpoint for a transaction if at least 2f+1 of your peers also have the endpoint, and (with EV at least) it can generate a deterministic mutation of world state",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465911848.000000"
+        },
+        "ts": "1465911829.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we don't have EV",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1465912474.000000"
+        },
+        "ts": "1465912469.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with EV, you can do whatever",
+        "ts": "1465912479.000253"
+    },
+    {
+        "user": "U1GNUNKRV",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GNUNKRV|ezhil> has joined the channel",
+        "ts": "1465912513.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, this design would be predicated on EV since we are now validating the peer itself",
+        "ts": "1465913498.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but really, non EV consensus is not very useful for a whole bunch of other reasons so we need to get there eventually",
+        "ts": "1465913547.000256"
+    },
+    {
+        "user": "U12AHQ3NK",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U12AHQ3NK|nits7sid> has joined the channel",
+        "ts": "1465958378.000257"
+    }
+]

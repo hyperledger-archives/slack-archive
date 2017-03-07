@@ -1,0 +1,575 @@
+[
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Thanks Greg [@ghaskins], Chris <@U0KM61BCP> for your response. I am using v1.0 images built from master branch and trying to use different option like running Peer CLI options, modifying Peer yml for which I require bash prompt. Do we have substitute to run this activities?",
+        "ts": "1483708301.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that image wasnt really intended to be used that way",
+        "ts": "1483708327.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its only meant to deploy a validating peer",
+        "ts": "1483708340.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, it _should_ work if you use \/bin\/sh instead",
+        "ts": "1483708359.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I think)",
+        "ts": "1483708363.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. \"docker run -it hyperledger\/fabric-peer \/bin\/sh\" should get you a prompt in which \"peer XXX\" cli commands work",
+        "ts": "1483708399.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but as I indicated above, it was not built with this mindset",
+        "ts": "1483708415.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my suggestion would be to use the fabric-peer image as a deployment vehicle for the peer binary, and use something else like a native build for CLI",
+        "ts": "1483708508.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that way, you would have the expected environment for the CLI, dev, etc",
+        "ts": "1483708528.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as far as modifying the core.yml, I would suggest either using environment overrides, volume mounting a new \/etc\/hyperledger\/fabric, or deriving a new image (in that order)",
+        "ts": "1483708589.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, say you have a customized core.yml, you could do something like \"docker run -it -v path\/to\/custom\/core.yml:\/etc\/hyperledger\/fabric\/core.yml hyperledger\/fabric-peer\"",
+        "ts": "1483708701.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(im actually not sure if you can volume mount a file or only dirs, you would have to experiment",
+        "ts": "1483708728.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but you get the idea",
+        "ts": "1483708731.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i digress: the short of it is: I intended the \/etc\/hyperledger\/fabric dir to be volume-mount replacable",
+        "ts": "1483708765.000083"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "yes - on the docker volume and shell.",
+        "ts": "1483708817.000084"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "can u clarify on ' and use something else like a native build for CLI '?",
+        "ts": "1483708893.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, what i do for instance is \"make native\" and use the \"peer chaincode\" commands natively on mac",
+        "ts": "1483708920.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as an example",
+        "ts": "1483708924.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I only use the fabric-peer docker container to run the actual network, not drive the CLI",
+        "ts": "1483708942.000088"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Ok w\/o the dockerizing it.",
+        "ts": "1483708943.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1483708949.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you certainly can use the docker, its just more awkward in a CLI capacity",
+        "ts": "1483708962.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, \"docker run -it hyperledger\/fabric-peer peer chaincode deploy ..\" would work",
+        "ts": "1483708988.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that is a handful",
+        "ts": "1483708994.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "plus, you might need to add volume mounts to access local chaincode, etc",
+        "ts": "1483709011.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think for CLI, it makes more sense to operate natively",
+        "ts": "1483709022.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note to self: implement \"make install\" so people can easily build\/install the native binaries",
+        "ts": "1483709077.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a related side note: this was not as important within vagrant because by default \"make native\" results in binaries in .\/build\/bin, which is added to the $PATH in vagrant",
+        "ts": "1483709121.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but this wouldnt be the case outside of vagrant without specific user action",
+        "ts": "1483709130.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the right\/standard way to do this would be to provide an install target",
+        "ts": "1483709150.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I will do that",
+        "ts": "1483709152.000100"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "the other thing - the OS run for native peer test will be important. I use RHEL and the default built docker-peer image uses Ubuntu.",
+        "ts": "1483709204.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "someone is working on that",
+        "ts": "1483709233.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that reminds me, I owe him a review",
+        "ts": "1483709239.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me find the CR",
+        "ts": "1483709242.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3DKG7M54> can I ask why this is important to you?",
+        "ts": "1483709267.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one explanation I have heard that makes sense was surrounding certification\/compliance\/support, but I can't think of any other reasons",
+        "ts": "1483709320.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Im just curious what is driving this requirement",
+        "ts": "1483709334.000107"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "before - did u meant from the above lines, the shell terminal will also be unavailable in default-peer image?",
+        "ts": "1483709437.000108"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "L2\/3 support was 1 reason - but mounting can be less secure exposing the file.",
+        "ts": "1483709490.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure what you are referring to, but I do not anticipate we will remove \/bin\/sh",
+        "ts": "1483709503.000110",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3DKG7M54"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I went through all that work to put custom busybox in because I think we minimally want that level of environment in any image",
+        "ts": "1483709573.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you elaborate on what you mean by \"mounting can be less secure exposing the file\" and also the places where the OS choice matters",
+        "ts": "1483709604.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for example, the final result for -peer and -orderer images is devoid of distro",
+        "ts": "1483709627.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I dont see that it matters in that case",
+        "ts": "1483709636.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "however, we do use ubuntu for building",
+        "ts": "1483709656.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you saying volume mounting the config is less secure as a production option?",
+        "ts": "1483709698.000116"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "I will be back 30-60mins. Sorry.",
+        "ts": "1483709780.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "np",
+        "ts": "1483709840.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, for when you return: do note that you have full power to enact whatever change you want",
+        "ts": "1483709902.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, you could create a new Dockerfile that does \"FROM hyperledger\/fabric-peer\" and then change things the way you want",
+        "ts": "1483709925.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or, just change fabric.git, etc",
+        "ts": "1483709934.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its purely a question of whether the change should be pushed back upstream in terms of coordinating here",
+        "ts": "1483709997.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3DKG7M54> I found the work I was referring to above: <https:\/\/github.com\/jkilpatr\/fabric-baseimage-2.0>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "jkilpatr\/fabric-baseimage-2.0",
+                "title_link": "https:\/\/github.com\/jkilpatr\/fabric-baseimage-2.0",
+                "text": "fabric-baseimage-2.0 - An Ansible based build process for Fabric base image with platform agnostic design",
+                "fallback": "GitHub: jkilpatr\/fabric-baseimage-2.0",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/19688153?v=3&s=400",
+                "from_url": "https:\/\/github.com\/jkilpatr\/fabric-baseimage-2.0",
+                "thumb_width": 327,
+                "thumb_height": 327,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1483710357.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "driven by <@U2TD4Q7NW>",
+        "ts": "1483710365.000125"
+    },
+    {
+        "user": "U2TD4Q7NW",
+        "inviter": "U0KPFAZNF",
+        "text": "<@U2TD4Q7NW|jkilpatr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483710369.000126"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0KPFAZNF>,  had to drop my kid. \n\nThe discussion started as I did not find the bash terminal to enter in the container. Having shell makes me proceed for running peer, changing configuration. \n\nOther points that came up:\nVerifying chaincode on peer via native approach will always be on top of mind saying tested on RHEL distro however my chaincode will be finaly running in QA cycle on cc-env having ubunu-x.x release. \n\nOn the docker volume, this is good for DEV environment but going in to higher environment release like JAS\/Production this will expose files like configuration. Having advantage from docker container of not exposing the volume by default is an additional security layer, would prefer to be used.",
+        "ts": "1483713721.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "regarding cc-env, don't read too much into the current setup",
+        "ts": "1483713885.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I plan on giving the final chaincode deployment the same minimalist treatment",
+        "ts": "1483713903.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, hopefully soon, if not by 1.0, chaincode will not \"run\" on ubuntu",
+        "ts": "1483713924.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but rather, it will be a stripped down busybox",
+        "ts": "1483713933.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, until something like <@U2TD4Q7NW> 's work is integrated, we will be building peer and chaincode on ubuntu",
+        "ts": "1483713961.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure if this is still a problem",
+        "ts": "1483713973.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "regarding docker volumes, I am still not clear on the issue you are raising",
+        "ts": "1483714004.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you saying that relying on volume mounts to reconfigure \/etc\/hyperledger\/fabric is a problem?",
+        "ts": "1483714023.000135"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0KPFAZNF>  I was a bringing up case a l2 support requiring to change any peer configuration like batch size, the prefered would be not exposing yml on to the host using docker volume rather let them login into the container via -exec and then running the required system repair steps.",
+        "ts": "1483715509.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, but I would still argue a few counter points",
+        "ts": "1483715554.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1) volume mounts seem to be an acceptable secrets\/configuration vehicle established in other orchestration layers (see Kubernetes)",
+        "ts": "1483715589.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "2) you have multiple options to express config as it is",
+        "ts": "1483715601.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "3) you can always derive from and\/or modify the containers to suit your requirements",
+        "ts": "1483715633.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I am not sure any action is needed in an upstream sense",
+        "ts": "1483715645.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "am i missing anything?",
+        "ts": "1483715651.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear: if there is some change that would make the upstream more conducive to that model in a way that is generally applicable, I have no problem considering it",
+        "ts": "1483715717.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am just not seeing a need (yet)",
+        "ts": "1483715727.000144",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3DKG7M54"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "and separate Q: when we say we added only busybox layer to the fabric-runtime image, doesn't it need minimalistic OS files for running?",
+        "ts": "1483715904.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "nope :slightly_smiling_face:",
+        "ts": "1483715919.000146",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all that is technically needed is the peer\/orderer binary",
+        "ts": "1483715942.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its statically linked, and in fact, will run perfectly fine in a \"FROM scratch\" docker container",
+        "ts": "1483715961.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I only added busybox because, that is _too_ stripped down and you cant get in an poke around",
+        "ts": "1483715986.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i explain the rationale more completely here: <https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "[BUILD] Minimize docker container sizes \u00b7 hyperledger\/fabric@b61723f \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32",
+                "text": "We use two techniques: 1) the use of a minimal docker base (FROM scratch + busybox) 2) the use of a static binary ... to create a minimally sized image for 'peer' and 'orderer' Before this patc...",
+                "fallback": "GitHub: [BUILD] Minimize docker container sizes \u00b7 hyperledger\/fabric@b61723f",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/367132?v=3&s=200",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1483716020.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps this is already understood but a docker image is really just the FS component....all the runtime stuff like \/proc and the kernel-interface are surfaced by the docker runtime",
+        "ts": "1483716165.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, the image only needs to have whatever files (ignoring synthetic files like \/proc, \/sys, \/dev) your application needs",
+        "ts": "1483716207.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "since these are -static binaries, they need nothng",
+        "ts": "1483716219.000154",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3DKG7M54"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U195M30MD",
+        "text": "<@U195M30MD|nickmelis> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483724136.000155"
+    }
+]

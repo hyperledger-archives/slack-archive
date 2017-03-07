@@ -1,0 +1,83 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": " Heh",
+        "ts": "1464862945.002354"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-technical-discuss\/2016-June\/000297.html>",
+        "ts": "1464867599.002355"
+    },
+    {
+        "user": "U0KQ9QKH6",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KQ9QKH6|pmullaney> has joined the channel",
+        "ts": "1464897512.002358"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Those who are executing fabric long running test under debug mode with Docker networking devnet setup, logs are piled up quickly. I'd like to share small code snippet to truncate logs.\n<https:\/\/gist.githubusercontent.com\/ibmamnt\/c76d2ea4258aafa79c8ee7bf0411cc1b\/raw\/30589a62906297f2ddb116144c08fc608d442327\/truncate-peer-logs.sh>",
+        "ts": "1464916595.002359"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "```while true\ndo\n  echo \"truncate container logs...\"\n  truncate -s 0 \/var\/lib\/docker\/containers\/*\/*-json.log\n  echo \"sleeping for 2 hours (60*60*2) seconds\"\n  sleep 7200\ndone```",
+        "ts": "1464916621.002360"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "I have some questions on the consensus design:\n1. If I setup two peer nodes as the initial fabric network, after some time, I wanted to add the third peer node into the fabric network, will the third peer node have the consistent state with existing two peer nodes?   \nSince each peer is a replicant, the new peer node should synchronize data from existing peer nodes to keep the state consistency, however, I do not see such behavior,  the new peer will return different query response with the existing one.\n\n2. If I post `invoke` approaches to multiple peers concurrently, according to the consensus protocol, the eventual state of each node should be consistent, right?  \nHowever, this is my test: I post stress `invoke` requests to `peer1` and `peer2`, then stop the requests. After some time(aim to wait for the nodes to reach consensus), I send query request to both peer nodes, but I've got different value.  It seems replication state machine is not ready under current design.",
+        "ts": "1464936208.002361"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U142E5N0P>: #1 we don't support dynamically adding validators yet, this is coming a bit later on. #2 doesn't sound right though. which consensus plugin do you use?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1464936452.000000"
+        },
+        "ts": "1464936360.002362"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XQ35CDD>: I am using the default consensus plugin---`pbft`",
+        "ts": "1464936390.002363"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "If I sent single invoke query to peer nodes, I  can get consensus result.  But my experiment is to perform the stress testing on multple peer nodes concurrently",
+        "ts": "1464936455.002365"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "can you try this experiment with N=4 peers and report back?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1464936906.000000"
+        },
+        "ts": "1464936539.002366"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "sure, do you mean I try it in N=2 and N=3 peers is not correct ?",
+        "ts": "1464936578.002367"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "won't say that just yet; I want to reproduce this locally first (am traveling now, will have access to a laptop in ~12h)",
+        "ts": "1464936930.002369"
+    }
+]

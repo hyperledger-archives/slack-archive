@@ -1,0 +1,654 @@
+[
+    {
+        "user": "U2SBWEN56",
+        "text": "<@U2SBWEN56|mloepfe> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477039493.003019"
+    },
+    {
+        "user": "U2SCC3BB7",
+        "text": "<@U2SCC3BB7|nagu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477041002.003020"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "I am not running of from docker",
+        "ts": "1477041942.003021"
+    },
+    {
+        "user": "U2SCJN8F6",
+        "text": "<@U2SCJN8F6|zws> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477043890.003022"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Hello. I\u2019m starting 4 peers and a membersrvc with `docker-compose up` command. Then I register the user `user1` and enroll it with the provided password from JS via HFC API. \nAfter it I try to check the result via REST API using the endpoint `<http:\/\/localhost:7050\/registrar\/user1>`. The response is ```{\n  \"Error\": \"User user1 must log in.\u201d\n}```\nI try to send enrollId and enrollSecret to `<http:\/\/localhost:7050\/registrar>` and get this response: ```{\n  \"Error\": \"rpc error: code = 2 desc = Identity or token does not match.\"\n}```\nWhat is wrong in my scenario?",
+        "ts": "1477048750.003024"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "likely you have some leftover credentials from a prior use of the SDK?   Try deleting `\/tmp\/keyValueStore` and running again",
+        "ts": "1477048875.003025"
+    },
+    {
+        "user": "U2SE05657",
+        "text": "<@U2SE05657|mike_wall> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477048896.003026"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U0PB67X4K> I delete it on my host machine (where I run my script).",
+        "ts": "1477048933.003027"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "should it be enough?",
+        "ts": "1477048945.003028"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "generally yes",
+        "ts": "1477048966.003029"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "OH",
+        "ts": "1477048982.003030"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sorry",
+        "ts": "1477048984.003031"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "let me get this straight",
+        "ts": "1477048991.003032"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "when I use REST API I don\u2019t use it , I believe",
+        "ts": "1477049004.003033"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "1) are you enrolling via hfc?",
+        "ts": "1477049009.003034"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "1) yes",
+        "ts": "1477049014.003035"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ok - so let me try to explain (and apologize if you know all of this)",
+        "ts": "1477049120.003036"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "(I\u2019m sure I don\u2019t understand how exactly it works)",
+        "ts": "1477049205.003037"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "- You can enroll a user once as the enrollSecret is a one time password. \n- The Node SDK (hfc) and the REST API actually take different paths in how they work\n- The NodeSDK will enroll you and download the credentials locally (default is `\/tmp\/keyValueStore`).  At this point, you are enrolled (so you can't enroll again) but your credentials are local to the SDK and now you can only use the SDK to invoke\/query as the enrollID you used to enroll\n- The REST API works differently.  We you call the `\/registrar` endpoint via REST, what happens is the the peer actually acts as a \"wallet\" and enrolls you behind the scenes.  So in this case, the credentials end up being stored on the peer itself (by default in the `\/var\/hyperledge\/production\/client` directory and in your case this would be inside the Docker container)",
+        "ts": "1477049391.003038",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1W210996",
+                    "U2LHDBZM0"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so the bottom line is that if you enroll via HFC you can't use the ID via the REST API and vice versa - if you enroll via the REST API you can't use that ID via HFC",
+        "ts": "1477049441.003039"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hopefully this (somewhat) makes sense",
+        "ts": "1477049456.003040"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "So, before I work with the system I should choose the way I\u2019ll do it: HFC or REST?",
+        "edited": {
+            "user": "U1W210996",
+            "ts": "1477049538.000000"
+        },
+        "ts": "1477049515.003041"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you got it - you need to choose REST of HFC for any given enrollID",
+        "ts": "1477049550.003043"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Thank you! That was very helpful",
+        "ts": "1477049572.003044"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "And if I enroll a user on my host machine, its credentials are saved locally. Can they be used only from my host machine? Can they be used by a script running from another machine in the network?",
+        "ts": "1477049710.003045"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well the credentials will physically be on your host machine by default when using the SDK, but it is possible to store the credentials in a database (you'd need write a plugin) which could be access from multiple machines.",
+        "ts": "1477049792.003046"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "What about user\u2019s certificates?",
+        "ts": "1477049973.003047"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "is there any difference how certificates are used via HFC and REST?",
+        "ts": "1477050050.003048"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "interesting question - the answer is yes and no.  With HFC, the certificates are directly used within the hfc code - meaning you'll actually be submitting signed transactions via GRPC to a fabric peer (and technically you could control usages of trasnacaction certificates, etc).  When using the REST API, the crypto functions are delegated to the peer to act on your behalf (so you submit a REST call with SecureContext in it and then the peer takes that, converts it into a fabric transaction, signs it with the credentials it is storing on your behalf and then submits it)",
+        "ts": "1477051423.003049",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1M9R3C8Z"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So in the end, the system will see the same certificates either way, just that HFC is a more direct and controlled path for a client",
+        "ts": "1477051448.003050"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "And from the chaincode\u2019s point of view they are the same, right?",
+        "ts": "1477051591.003051"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "correct",
+        "ts": "1477051630.003052"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Thank you very much!",
+        "edited": {
+            "user": "U1W210996",
+            "ts": "1477051653.000000"
+        },
+        "ts": "1477051642.003053"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not a problem.  great questions.  we need to find a way to capture some of this stuff.  others will surely have the same question(s)",
+        "ts": "1477051680.003055"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I\u2019ve bookmarked this one :slightly_smiling_face:",
+        "ts": "1477051709.003056"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "hi i am getting the following error while executing vagrant up. Can anybody suggest the correction. error: RPC failed; result=6, HTTP code = 0",
+        "ts": "1477054840.003057"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "full error info:error: RPC failed; result=6, HTTP code = 0 fatal: The remote end hung up unexpectedly",
+        "ts": "1477055022.003058"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "Hello guys, \n\nIf maybe someone could help me out:\n\nI have a private peer network running on 4 virtual machines. 5th machine has membershipservice running on it.\n\nIn order to perform requests to any of those peers i need a certificate.\nOn Bluemix, we have a link in variables: \"cert\": \"<https:\/\/blockchain-certs.mybluemix.net\/us.blockchain.ibm.com.cert>\"\n\nWhen setting up a local network, how to get that certificate? Does membershipservice provide it somehow, or should i generate it in some way?\n\nMany thanks!",
+        "ts": "1477057047.003059"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "<http:\/\/vicominfinity.com\/blog\/index.php\/2016\/10\/replay-1020-vicom-infinity-lunch-n-learn-teleconference-blockchain-concepts-cases-systems-exploitation\/>",
+        "attachments": [
+            {
+                "fallback": "[October 18th, 2016 6:52 AM] echenrunner: Hi folks,   this Thursday there is a presentation on HyperLedger on IBM mainframes z\/VM platform.  The presentation is 12PM -1pm EST.",
+                "ts": "1476798736.002888",
+                "author_subname": "echenrunner",
+                "channel_id": "C0J02NU1E",
+                "channel_name": "general",
+                "is_msg_unfurl": true,
+                "text": "Hi folks,   this Thursday there is a presentation on HyperLedger on IBM mainframes z\/VM platform.  The presentation is 12PM -1pm EST.",
+                "author_name": "Eddie Chen",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/echenrunner",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/3672d55a05955b0a974039ec7a2762ca.jpg?s=48&d=https%3A%2F%2Fcfr.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0016-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1476798736002888",
+                "is_share": true,
+                "footer": "Posted in #general"
+            }
+        ],
+        "ts": "1477058121.003060"
+    },
+    {
+        "user": "U2SFSH10V",
+        "text": "<@U2SFSH10V|tim_main> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477058302.003061"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "dzadorozhnyi,   when you say VM on you running on z\/VM Linux?",
+        "ts": "1477058359.003062"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "ubuntu linux",
+        "ts": "1477058636.003063"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "so X86 processor not mainframe?  did you have you membersrvc.yaml and &lt;&lt;&lt;  core.yaml  setup to point to the membersrvc server &gt;&gt;&gt;",
+        "ts": "1477058792.003064"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1ZGYQPG9>  - we need to document exactly how to get TLS working, although if you look in the BDD tests folder I believe there is a compose file which does get TLS working",
+        "ts": "1477060310.003065"
+    },
+    {
+        "user": "U2SGGS3UZ",
+        "text": "<@U2SGGS3UZ|hoe> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477060311.003066"
+    },
+    {
+        "type": "message",
+        "user": "U2NEJ7U7M",
+        "text": "Looking into being able to setup in Dedicated BlueMix .  We have a setup in public BM .  Is there services or instructions to be able to do in Dedicated so we are able to access legacy data.",
+        "ts": "1477060350.003067"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "<@U0PB67X4K> BDD tests for hyperledger\/fabric, right?",
+        "ts": "1477060384.003068"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "<@U294C6FDW> yes, i have my membersrvc.yml and core.yml setup",
+        "ts": "1477060416.003069"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yes - sorry - for the fabric.   It's a bit tricky in that there is a \"chicken and egg\" problem if you try to use the TLS certificates issued by membership services since you have to start the peer without TLS, have it contact membership services to get its TLS certificate and then start it in TLS mode",
+        "ts": "1477060496.003070"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "For Bluemix, we actually circumvent this as we actually wanted to use a certificate signed by a public CA (we used Digicert).  So we actually use a wildcard certificate (for *.<http:\/\/us.blockchain.ibm.com|us.blockchain.ibm.com>) and configure all of the nodes to use that certificate and then we also create the proper DNS entries as well",
+        "ts": "1477060611.003071"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so we pass PKIX validation and hostname verification",
+        "ts": "1477060624.003072"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "are you interested in doing this more for demonstration purposes or are you really trying to get something securely deployed?",
+        "ts": "1477060660.003073"
+    },
+    {
+        "user": "U2SH0T3FZ",
+        "text": "<@U2SH0T3FZ|b0000000000000t> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477062194.003075"
+    },
+    {
+        "user": "U2SH2E3F1",
+        "text": "<@U2SH2E3F1|zahoor> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477062334.003076"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "Garisingh,   According to the DOCS when  the peer gets out of SYNC,    It  should  get \u201cstate may be inconsistent, cannot query\u201d. However, in order to get that,   the  \"engine.helper.valid\" must be false.  How do I know this Ledger I am looking one is not the latest because it was down?   Thnaks",
+        "ts": "1477063932.003077"
+    },
+    {
+        "user": "U2SK6AMHV",
+        "text": "<@U2SK6AMHV|easwarvivek> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477069372.003078"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "wow, github is down?",
+        "ts": "1477069729.003079"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I can access other sites just fine but I can't seem to access <http:\/\/github.com|github.com>",
+        "ts": "1477069756.003080"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "anybody else?",
+        "ts": "1477069762.003081"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "I also cannot access github",
+        "ts": "1477069773.003082"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "I thought it would be corporate IT",
+        "ts": "1477069782.003083"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "well, I was wondering if it was on my side too",
+        "ts": "1477069807.003084"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I'm guessing there are quite a few people annoyed right now...",
+        "ts": "1477069850.003085"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "Yea, this is bad",
+        "ts": "1477069869.003086"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "github works for me",
+        "ts": "1477069915.003087"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "where are you based <@U1W2FSHCY> ?",
+        "ts": "1477069979.003088"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I'm in brussels",
+        "ts": "1477069987.003089"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "I\u2019m in Bay Area",
+        "ts": "1477069996.003090"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ok, so it's not geographical",
+        "ts": "1477070008.003091"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yacov, stop bragging :wink:",
+        "ts": "1477070020.003092"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm not... you want something from github? I can fetch it if it's small",
+        "ts": "1477070050.003093"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "<http:\/\/www.cnbc.com\/2016\/10\/21\/major-websites-across-east-coast-knocked-out-in-apparent-ddos-attack.html>",
+        "attachments": [
+            {
+                "service_name": "CNBC",
+                "title": "Internet traffic firm Dyn warns of new attack, earlier assault impacted many",
+                "title_link": "http:\/\/www.cnbc.com\/2016\/10\/21\/major-websites-across-east-coast-knocked-out-in-apparent-ddos-attack.html",
+                "text": "Websites and services across the East Coast were shut down for two hours Friday by the denial of service attack.",
+                "fallback": "CNBC: Internet traffic firm Dyn warns of new attack, earlier assault impacted many",
+                "image_url": "http:\/\/fm.cnbc.com\/applications\/cnbc.com\/resources\/img\/editorial\/2014\/12\/30\/102301242-465629331.1910x1000.jpg",
+                "ts": 1477067570,
+                "from_url": "http:\/\/www.cnbc.com\/2016\/10\/21\/major-websites-across-east-coast-knocked-out-in-apparent-ddos-attack.html",
+                "image_width": 478,
+                "image_height": 250,
+                "image_bytes": 184624,
+                "service_icon": "http:\/\/www.cnbc.com\/favicon.ico",
+                "id": 1
+            }
+        ],
+        "ts": "1477070055.003094"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "Probably related to this ddos as my colleague pointed out",
+        "ts": "1477070079.003096"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah, that looks like it indeed",
+        "ts": "1477070084.003097"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks",
+        "ts": "1477070097.003098"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "good thing we're working with gerrit and github is only a mirror",
+        "ts": "1477070106.003099"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yeah, that's why I'm ok",
+        "ts": "1477070120.003100"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the attack according to that link is a DDOS on the DNS, github resolves to `192.30.253.112` on my machine, can you access it?",
+        "ts": "1477070266.003101"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "are you sure?",
+        "ts": "1477070437.003102"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it doesn't work for me",
+        "ts": "1477070445.003103"
+    },
+    {
+        "type": "message",
+        "user": "U1W2FSHCY",
+        "text": "not really, there are other artifacts to load and chrome re-resolves the address to <http:\/\/github.com|github.com>",
+        "ts": "1477070500.003104"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah, right",
+        "ts": "1477070530.003105"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "no biggie",
+        "ts": "1477070542.003106"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks",
+        "ts": "1477070542.003107"
+    },
+    {
+        "user": "U2SK7FU68",
+        "text": "<@U2SK7FU68|habpy> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477071032.003108"
+    },
+    {
+        "user": "U2SKRPTA5",
+        "text": "<@U2SKRPTA5|mmyersjr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477071271.003109"
+    },
+    {
+        "user": "U2SKZE7BR",
+        "text": "<@U2SKZE7BR|anneconnelly> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477072124.003110"
+    },
+    {
+        "user": "U2SKZ51K6",
+        "text": "<@U2SKZ51K6|stevenmoon> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477073598.003111"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "<@U0PB67X4K> thanks for your answer, what i am trying to do is to connect hfc to my private peer network and it requires a valid certificate to be downloaded",
+        "ts": "1477078009.003113"
+    },
+    {
+        "user": "U2SMANT3Q",
+        "text": "<@U2SMANT3Q|dcgrandview> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477078045.003114"
+    },
+    {
+        "user": "U2SN3M334",
+        "text": "<@U2SN3M334|jamesjong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477079279.003115"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1ZGYQPG9>  - do you already have TLS enabled on the peers?",
+        "ts": "1477082581.003116"
+    },
+    {
+        "type": "message",
+        "user": "U1ZGYQPG9",
+        "text": "not sure, will find that out only on monday :slightly_smiling_face:",
+        "ts": "1477082990.003117"
+    },
+    {
+        "user": "U2SPCSXRQ",
+        "text": "<@U2SPCSXRQ|js20161688> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477084795.003118"
+    },
+    {
+        "user": "U2SP7LR5M",
+        "text": "<@U2SP7LR5M|varone> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477084925.003119"
+    }
+]

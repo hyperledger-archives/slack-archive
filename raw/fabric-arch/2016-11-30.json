@@ -1,0 +1,145 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "posting here as well",
+        "ts": "1480495987.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "committed means in this context \"declared valid\" hence it pertains to committing (to a validated ledger) a transaction from from the raw ledger\nwe have both RL and VL to decouple more easily the ordering logic from the endorsement policy validation logic\nwhile it is possible to have consensus\/ordering service also do the (currently peers') job of validating the tx\nthis would entangle implementations too much\nbesides\nin many use cases one wants to know about invalid transactions - hence, they should not be \"swallowed\" by the ordering service\nso short answer for the separation of RL and VL is: to make consensus ordering logic as modular as possible\nand independent from the peer validation logic",
+        "ts": "1480496041.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "BTW if you wish to post perisisting comments to the Hyperledger fabric architecture do that here:\n\n<https:\/\/jira.hyperledger.org\/browse\/FAB-875>",
+        "ts": "1480496100.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "slack tends to forget stuff",
+        "ts": "1480496112.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0Y14MWA2> I have discussed the separate raw ledger and validated ledger with <@U0KN2SSKE> and <@U0PB67X4K> and gossip team <@U1HFNJB50> .  We are thinking it would be better to have a single ledger used by both ordering service and peer, and then have the committing peer indicate which transactions are invalid via a bit array saved in a non-hashed portion of the block, rather than removing the invalid transactions from the hashed part of the block.  This will enable peer-to-peer state transfer since the blocks and block hashes would be the same coming from ordering service and peers.  Also this will make it easier for auditors of a peer to identify invalidated transactions, without having to do a diff against the ordering service.  Invalidated transactions could eventually be pruned out once we support checkpoint\/pruning.  Does this make sense to you? If so how do we get the NCAP document updated?",
+        "ts": "1480508808.000063"
+    },
+    {
+        "user": "U0KN2SSKE",
+        "inviter": "U1KFCPFQA",
+        "text": "<@U0KN2SSKE|binhn> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480508831.000064"
+    },
+    {
+        "user": "U1HFNJB50",
+        "inviter": "U1KFCPFQA",
+        "text": "<@U1HFNJB50|c0rwin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480508831.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hi <@U1KFCPFQA>",
+        "ts": "1480510173.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I perceive this as an implementation choice",
+        "ts": "1480510180.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as such",
+        "ts": "1480510183.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I have no pbs with that",
+        "ts": "1480510187.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in the next revision of NCAP I will try to see if there is language that \"prevents\" such an implementation - if so I will modify NCAP",
+        "ts": "1480510268.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there probably is",
+        "ts": "1480510404.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1KFCPFQA>  <@U0Y14MWA2> - so we used to use the terms \"raw\" and \"validated\" ledger and we've had debates about which one peers should\/could keep.  I've always been of the opinion that we would always want the ability for peers to keep around the \"raw\" ledger if they wanted to.  The notion of \"validated\" ledger came from the fact that there are people who don't want to keep around invalid transactions.  Some might also recall that this was also one of the initial use cases for gossip - with no \"raw\" ledger the only way for peers to know if other peers had the same validated ledger was to gossip about them (and the  use their own custom block validation policy to decide how many peers they want to \"check\" with (e.g. some number of signatures form remote peers signing validated blocks).    \n\nThe bottom line is that I don't have any issues with the default behavior to be what you describe, but we must ensure that there are APIs \/ plug points , etc available for people to create validated ledgers if they so desire and gossip should be able to work with a validated ledger \/ expose the ability to use it.   Maybe this does not all have to be for the initial release and maybe no one cares about the validated ledger anymore, but would be good to find out",
+        "ts": "1480513753.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ack",
+        "ts": "1480515824.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no pb here",
+        "ts": "1480515829.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0PB67X4K> If we prune out invalid transactions upon checkpoint, perhaps that is close enough.  For example if you checkpoint nightly and prune invalidated trans out, then the peer would essentially have the validated ledger, except for the current day which would have the raw ledger (plus an indicator of invalid trans)",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1480516149.000000"
+        },
+        "ts": "1480516109.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1KFCPFQA> - you might be right - I think that could work - of course in that case technically we'd need to be able to get checkpoint signatures from multiple sources but in the end that's probably better than gossiping about blocks in a validated ledger",
+        "ts": "1480517369.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0PB67X4K>, <@U1KFCPFQA> joining the discussion a bit late. Want to add 2 cents, about the complexity of gossiping validated ledger with block which misses transactions due to some validation policy",
+        "ts": "1480530045.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1KFCPFQA> what you suggest in your last slack is exactly how its written now in NCAP (which does not stipulate the checkpoint period when talking about checkpoints)",
+        "ts": "1480538292.000079",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "perfect - so it was the initial committer impl that was not correct (it automatically removed invalid trans).  The NCAP was correct all along :slightly_smiling_face:",
+        "ts": "1480538847.000080"
+    }
+]

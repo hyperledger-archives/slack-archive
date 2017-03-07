@@ -1,0 +1,53 @@
+[
+    {
+        "user": "U3LKHA8G5",
+        "text": "<@U3LKHA8G5|simers> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485098678.001564"
+    },
+    {
+        "type": "message",
+        "user": "U3UPDJXV2",
+        "text": "<@U0YJUECE8> yeah good point with the 1 transaction per block analogy. So I get why blocks are used with the white paper you posted, it's too group in transactions with proof of work..(please correct me if I'm wrong).. if PoW isn't being done maybe you could just use a normal immutable queue like Kafka? Kafka doesn't need the overhead of blocks but still maintains good consistency and sequencing of events.",
+        "ts": "1485145678.001565"
+    },
+    {
+        "type": "message",
+        "user": "U3UPDJXV2",
+        "text": "<@U0PB67X4K> hmm not really sure I would say batching into blocks is confusing.. doesn't seem to do much for security if you are in a permission based system. I would like to explore this with someone.",
+        "ts": "1485145796.001566"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U3UPDJXV2> -- these are reasonable questions. (I've had similar doubts in the past.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1485155037.000000"
+        },
+        "ts": "1485154845.001569"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "1. Batching into blocks is an optimization. See Problem 1 + Solution 1 here: <https:\/\/docs.google.com\/document\/d\/1vNMaM7XhOlu9tB_10dKnlrhy5d7b1u8lSY8a-kVjCO4\/edit>",
+        "ts": "1485154852.001570"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "2. Hash-chaining is also an optimization because a hash-chained sequence means that you just need to verify the signatures on the tip of the chain, and the rest follows from the hash-chaining, i.e. no more signature verification needed, you just make sure that the block hashes match.",
+        "ts": "1485154863.001572"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "3. Hash-chaining also provides some extra safety against forging\/tampering. Extreme of a scenario as this might be, assume that the tip is now at block 1M and we don't do hash-chaining. There might be an attack where I focus all of my computing resources in coming up with block 2M that will carry my own, not-quite-right transactions. I now have 1M blocks ahead of me in order to come up with the right signature over the predictable payload `block number = 2,000,000 | transactions = evil-transaction-goes-here`. This is not an easy task by any means, but if we had a hash-chain, it would definitely be _much_ harder, because you cannot predict the payload of block `n` until you get block `n-1`. There's also an attack where if you do periodic key rotation and an earlier key gets leaked, the adversary will only be able to rewrite history up to a point (up to where the key was valid) and this tampering will be immediately obvious because the hash-chain is broken.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1485154936.000000"
+        },
+        "ts": "1485154917.001573"
+    }
+]

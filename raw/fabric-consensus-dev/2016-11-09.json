@@ -1,0 +1,754 @@
+[
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U294C6FDW> - You have to make up your mind about the system assumption. The protocol as implemented will halt when a second peer is down because it is designed to tolerate only 1 failing node (f=1). If you want it to continue with two down (f=2), you need n=7=3f+1 nodes. Alternatively, one could reconfigure the group (through a transaction that is ordered) and eliminate a node for which some trusted entity (or a majority of the nodes)  confirm it is failed and must be replaced. This is called \"reconfiguration\" and available in systems like BFT-SMaRT (<http:\/\/www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf>). The design of this is known but not yet implemented here. I believe it is important to have such a reconfiguration method implemented.",
+        "ts": "1478678601.003456"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "don't forget to review <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2065\/> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2037\/> :smile:",
+        "ts": "1478688747.003457"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is `ab.proto` changed to accommodate multi channel support? (it doesn't seem so to me, but I want to check)\nIf not- can someone please describe what will be the changes? is another item going to be added to `SeekInfo`?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478694540.000000"
+        },
+        "ts": "1478694485.003458"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "should be a `ChainID` parameter in there now?",
+        "ts": "1478695831.003460"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, didn't see that, thanks :slightly_smiling_face:",
+        "ts": "1478695925.003461"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and where is the credentials of the organization?",
+        "ts": "1478695959.003462"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought the orderer needs to be sure that the peer is in the right organization to give out blocks from the chain",
+        "ts": "1478696095.003463"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "Now you submit the `Envelope` to the orderers: ```\/\/ Envelope wraps a Payload with a signature so that the message may be authenticated\nmessage Envelope {\n    \/\/ A marshaled Payload\n    bytes payload = 1;\n\n    \/\/ A signature by the creator specified in the Payload header\n    bytes signature = 2;\n}```",
+        "ts": "1478700946.003464"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the signature on the envelop is the signature of who? the peer that calls deliver?",
+        "ts": "1478701027.003465"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I guess, so. <@U0XPR4NP4>, <@U0ULK2JPP> Can you please confirm?",
+        "ts": "1478701090.003466"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The signature is from the `creator` specified in the `Payload.header`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478701218.000000"
+        },
+        "ts": "1478701207.003467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And this should be from the client who calls `Broadcast` (not `Deliver`)",
+        "ts": "1478701250.003469"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but I asked about `Deliver`",
+        "ts": "1478701295.003470"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "there is no `envelope` there",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478701321.000000"
+        },
+        "ts": "1478701306.003471"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; the signature on the envelop is the signature of who? the peer that calls deliver?\n\nBut you asked about the Evelope signature?",
+        "ts": "1478701357.003473"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "true, true",
+        "ts": "1478701389.003474"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I was confsued",
+        "ts": "1478701395.003475"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you explain then where do the credentials pass in the Deliver?",
+        "ts": "1478701407.003476"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The authentication for `Deliver` is done at the TLS handshake",
+        "ts": "1478701621.003477"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't it a problem? I thought that it is not necessary that the SSL cert is related to the COP cert, so how do you associate the invocation to the peer's org?",
+        "ts": "1478701717.003478"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My working assumption has been that TLS certs will have a chain of trust to a peer org CA.  I'm not sure why this would not be the case.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478701863.000000"
+        },
+        "ts": "1478701845.003479"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4>  - so you are assuming mutual TLS (related to our discussion yesterday) for communication with the orderer nodes?",
+        "ts": "1478702707.003481"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct",
+        "ts": "1478702724.003482"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How else would it work <@U0PB67X4K>?",
+        "ts": "1478702827.003483"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "s\/would\/could",
+        "ts": "1478702901.003484"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "signature on the DeliverUpdate message",
+        "ts": "1478702909.003485"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "here's the thing - in the prior architecture, identity is always extracted from the signing certificate",
+        "ts": "1478702956.003486"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am not opposed to mutual TLS",
+        "ts": "1478702963.003487"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but we have never done mutual TLS to date",
+        "ts": "1478702975.003488"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Without mutual TLS auth, it introduces us to some other unpleasant problems, like unauthorized clients calling the RPC then going silent.  The auth at the upper layer simplifies things a bit, I think.",
+        "ts": "1478702983.003489"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "anywhere in this project",
+        "ts": "1478702985.003490"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I tend to agree",
+        "ts": "1478702996.003491"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but you'll still need to do the authorization check above the TLS layer",
+        "ts": "1478703047.003492"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "TLS will just filter out untrusted connections",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478703065.000000"
+        },
+        "ts": "1478703054.003493"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So you're saying that it's unavoidable and we should also be asking for a signature on the DeliverUpdate messages? Why?",
+        "ts": "1478703102.003495"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh - sorry - I tend to agree with using mutual TLS",
+        "ts": "1478703137.003496"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Certainly, for `Broadcast` and `Deliver` with channels we now have to make sure the call is authorized for the particular chainID",
+        "ts": "1478703139.003497"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right",
+        "ts": "1478703147.003498"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So - mutual TLS filters out untrusted connections - meaning you can't just hang around if you are not allows to connect at all",
+        "ts": "1478703174.003499"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "How does the orderer learn of the certificate of each peer then?",
+        "ts": "1478703217.003500"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "On `Broadcast` we _could_ filter by both TLS cert and signing cert, or just signing cert, but we must verify the signing cert.",
+        "ts": "1478703220.003501"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you'd still need to \"propagate \/ forward\" the client certificate to the Deliver call and check that they were authorized for the channel.  Now a nice model might be to actually use the GRPC interceptors to do this",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478703243.000000"
+        },
+        "ts": "1478703224.003502"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> In the TLS handshake, the certificates are exchanged.",
+        "ts": "1478703252.003504"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "is Layer 4 versus Layer 7",
+        "ts": "1478703269.003505"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "TLS is layer 4",
+        "ts": "1478703273.003506"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what about the hostname\/ip issue? in the client certificate",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478703291.000000"
+        },
+        "ts": "1478703273.003507"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Pretty sure <@U0XR6J961>'s TLS code intercepted the cert, would need to look again.",
+        "ts": "1478703278.003508"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think he did it that way",
+        "ts": "1478703292.003510"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no issue with hostname \/ ip on the client cert",
+        "ts": "1478703315.003511"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh? really?",
+        "ts": "1478703320.003512"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "only the server?",
+        "ts": "1478703324.003513"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right",
+        "ts": "1478703327.003514"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0XPR4NP4>: You cannot extract this in the application layer IIRC. <@U0ZJZBJLF> Wasn't that the point you were making when we had that call? ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478703436.000000"
+        },
+        "ts": "1478703338.003515"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so TLS client will verify the hostname of the server",
+        "ts": "1478703341.003516"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I remember exploiting the TLS Unique property to do some certificate pinning and associate one cert with another. But I might be wrong. ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478703404.000000"
+        },
+        "ts": "1478703384.003517"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "server will verify client cert against its trust store",
+        "ts": "1478703386.003518"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Yeah Gari you're right- I totally forgot what was the purpose of that in the first place :upside_down_face:",
+        "ts": "1478703388.003519"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I spent years dealing with TLS in DataPower)",
+        "ts": "1478703407.003521",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and all of its fun and exciting issues",
+        "ts": "1478703418.003522"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XQ35CDD>  you can if you configure the client in a different way",
+        "ts": "1478703482.003524"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when I said you can't I simply used fabric 0.5 with SSL on and saw you can't",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478703575.000000"
+        },
+        "ts": "1478703507.003525"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but Simon did something else entirely",
+        "ts": "1478703514.003526"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean, I haven't seen it- but I saw a commit simon did so I guess you can",
+        "ts": "1478703556.003527"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on another point that <@U0XPR4NP4> made as well - the \"out of the box\" plan for mapping peer certificates to \"participants\"  (since a participant may have multiple peers) was to use one of 2 mechanisms:\n\n1) mapping of participant to root \/ intermediate authority\n2) if all certs issued by same root authority use something in the DN to distiguish particpants",
+        "ts": "1478703614.003529"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "of course you could use individual certs as well",
+        "ts": "1478703642.003530"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we are going to need a common piece of crypto code for peers and orderers which implements this logic",
+        "ts": "1478703664.003531"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we REALLY need to write this all down somewhere  :disappointed:",
+        "ts": "1478703684.003532"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> and <@U0XQ35CDD>  - I'm in your neck of the woods early next week (M-W) if we want to draw it up on the board.   We'll be working through similar issue(s) for the endorsers, etc",
+        "ts": "1478703745.003533",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD",
+                    "U0XPR4NP4"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So based on what I read here, you'll need your own TransportAuthenticator to extract the TLS client certificate. <https:\/\/github.com\/grpc\/grpc-go\/issues\/111>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Access to TLS client certificate \u00b7 Issue #111 \u00b7 grpc\/grpc-go \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/grpc\/grpc-go\/issues\/111",
+                "text": "I can't see any way for an RPC method to authenticate a client based on a TLS certificate. An example program where an RPC method echoes the client TLS certificate would be great.",
+                "fallback": "GitHub: Access to TLS client certificate \u00b7 Issue #111 \u00b7 grpc\/grpc-go",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/419909?v=3&s=400",
+                "from_url": "https:\/\/github.com\/grpc\/grpc-go\/issues\/111",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478703921.003534"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so maybe start with the signature approach  :wink:",
+        "ts": "1478704014.003536"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "At any rate, it seems that you're all considering this as a solved problem, so I am good.",
+        "ts": "1478704020.003537"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right. ",
+        "ts": "1478704023.003538"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "depends on how much code you want to write   :wink:",
+        "ts": "1478704026.003539"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we can make it work either way",
+        "ts": "1478704039.003540"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "frankly, again we should have common GRPC server code as well",
+        "ts": "1478704064.003541"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Attaching a signature to `Deliver` would definitely not be much work.  But, if we are going to require mutual TLS, seems like we would be making the client do redundant work.",
+        "ts": "1478704075.003542"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "my initial take would be to forget about mutual TLS for now and go with the signature approach since that's the way it's being done in the peer code for now as well",
+        "ts": "1478704163.003543"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF> does it in gossip as well based on the discussion yesterday?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478704204.000000"
+        },
+        "ts": "1478704187.003544"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I just want to understand something- the server side (orderer) would implement its TLS server transport in a way that walks on the certificate chain up until the CA, and *BOTH* would need to check for CRLs right?\n<@U0PB67X4K> ?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478704793.000000"
+        },
+        "ts": "1478704208.003546"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In gossip I don't rely on signed certificates, it works with self-signed certificates because I have a challenge-response in the handshake when a peer connects to you (2-way handshake)",
+        "ts": "1478704254.003547"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the certificates used in the challenge-response are the application layer's",
+        "ts": "1478704270.003548"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I meant you use signatures anyway",
+        "ts": "1478704271.003549"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no reliance on mutual TLS for identification",
+        "ts": "1478704287.003550"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you mean no reliance on signed certs?",
+        "ts": "1478704311.003551"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sorry - you have a \"handshake\" mechanism which used signed messages to mutually identify each other.  You don't rely on mutual TLS for identification at the gossip layer",
+        "ts": "1478704460.003552"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't rely on the TLS certificates for anything",
+        "ts": "1478704489.003553"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "just on the application certs",
+        "ts": "1478704497.003554"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "after discussion with <@U1AU8DRQR> the idea is to proceed as follows with enabling simplebft to run efficiently on WANs",
+        "ts": "1478709292.003556"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-897> involves invasive changes to how simplebft (sbft) works",
+        "ts": "1478709341.003557"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so the goal is to have a separate implementation (called e.g., pipelinedPBFT) based on simplebft fork",
+        "ts": "1478709383.003558"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sbft could still be used in clusters and pipelinedPBFT could be used in WANs",
+        "ts": "1478709413.003559"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "solution to <https:\/\/jira.hyperledger.org\/browse\/FAB-897> will be implemented against the same interfaces (System\/Receiver) that sbft defines",
+        "ts": "1478709471.003560"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so orderer\/sbft will remain practically unchanged (except for refactoring to enable use of different consensus implementations)",
+        "ts": "1478709507.003561"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hence <https:\/\/jira.hyperledger.org\/browse\/FAB-897> is out of simple BFT epic",
+        "ts": "1478709524.003562"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "essentially we would have at least two bft core consensus components",
+        "ts": "1478709659.003563"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> <@U0XPR4NP4> <@U0XQ35CDD> <@U0PB67X4K> ^^^",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1478709829.000000"
+        },
+        "ts": "1478709796.003564"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Noted, skimming through the linked paper now.",
+        "ts": "1478709985.003566"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm a little wary of trying to make sbft too plugable.  We tried that with 'classic'\/'batch'\/'sieve' last time, and I think ultimately it caused a lot more headache than anticipated.  Obviously can be done, will just have to be careful how we architect this.",
+        "ts": "1478710030.003567"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it seems actually very nice - because <@U0XR6J961> definitions of System\/Receiver interfaces are entirely non-sbft or even non-pbft specific",
+        "ts": "1478710090.003568"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and we would reuse <@U1AU8DRQR>'s work on orderer",
+        "ts": "1478710114.003569"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as well as a future component for <https:\/\/jira.hyperledger.org\/browse\/FAB-474>",
+        "ts": "1478710136.003570"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "also, as implementing <https:\/\/jira.hyperledger.org\/browse\/FAB-897> may take some time - we want to have sbft alive and kicking in the meantime",
+        "ts": "1478710178.003571"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I would not change much\/anything in interfaces defined now in <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/simplebft\/simplebft.go>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/simplebft\/simplebft.go",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/simplebft\/simplebft.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478710297.003572"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "just refactor this to have a reusable API outside simplebft package",
+        "ts": "1478710326.003574"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "Thanks for the Information  on \"reconfiguration\".  The problem occurs when I bring down all 4 of my VPs and then bring them back again. \nThere are  other test where I did multiple time of bring down and up one VP at the time and eventually it will get out of sync as well. \nI put a temporary fix to go around the issue. \nBut the ideal of \"reconfiguration\" is something they should look at.",
+        "attachments": [
+            {
+                "fallback": "[November 9th, 2016 12:03 AM] cca: <@U294C6FDW> - You have to make up your mind about the system assumption. The protocol as implemented will halt when a second peer is down because it is designed to tolerate only 1 failing node (f=1). If you want it to continue with two down (f=2), you need n=7=3f+1 nodes. Alternatively, one could reconfigure the group (through a transaction that is ordered) and eliminate a node for which some trusted entity (or a majority of the nodes)  confirm it is failed and must be replaced. This is called \"reconfiguration\" and available in systems like BFT-SMaRT (<http:\/\/www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf>). The design of this is known but not yet implemented here. I believe it is important to have such a reconfiguration method implemented.",
+                "ts": "1478678601.003456",
+                "author_subname": "cca",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U294C6FDW> - You have to make up your mind about the system assumption. The protocol as implemented will halt when a second peer is down because it is designed to tolerate only 1 failing node (f=1). If you want it to continue with two down (f=2), you need n=7=3f+1 nodes. Alternatively, one could reconfigure the group (through a transaction that is ordered) and eliminate a node for which some trusted entity (or a majority of the nodes)  confirm it is failed and must be replaced. This is called \"reconfiguration\" and available in systems like BFT-SMaRT (<http:\/\/www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf>). The design of this is known but not yet implemented here. I believe it is important to have such a reconfiguration method implemented.",
+                "author_name": "C C",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/cca",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/cf26a0b1c59937e0f68ff31b7cc05c2d.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0005-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478678601003456",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478737531.003575"
+    }
+]

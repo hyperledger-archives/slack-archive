@@ -1,0 +1,285 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no it won't - it is not built",
+        "ts": "1481878227.000814"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I need some suggestions how to do this",
+        "ts": "1481878239.000815"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> <@U1KFCPFQA> Had another read through the answers, couple more questions:\n\n&gt;For each channel there will be a chain and associated state database.\n\nJust to check, am I correct in thinking there are multiple blockchains and multiple worldstates (one for each channel) on each peer?\n\nDo committers handle all transactions or only transactions for certain chaincode?\n\nHow does a submitting client know which endorser to end it's transaction proposal to?\n\n&gt;committers will not have a validated ledger\n\nWhat is a validated ledger?\n\n&gt;When checkpointing is introduced post-v1\n\nWhat is checkpointing?\n\n\nHow does a submitting client know which endorser has the chaincode for its transaction?\n\nWhy is sending the transaction proposals to all the endorsers the burden of the client instead of the client sending it to 1 endorser which spreads it around?\n\nDo the committers then execute the chaincode again? If not, do the endorsers send the results of their executions to the commiters? If that's the case, what governs where each committer gets it's results from?",
+        "ts": "1481897591.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1KFCPFQA> we need to sync on the terminology changes to NCAP",
+        "ts": "1481897650.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for instance early next week",
+        "ts": "1481897664.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Just to check, am I correct in thinking there are multiple blockchains and multiple worldstates (one for each channel) on each peer?\n\nCorrect. (One for each chain the peer is participating in)\n\n&gt; Do committers handle all transactions or only transactions for certain chaincode?\n\nAll transaction for each chain they are participating in\n\n&gt; How does a submitting client know which endorser to end it's transaction proposal to?\n\nThis is managed by the application\n\n&gt; What is a validated ledger?\n\nThere was the idea that once transactions were ordered into a 'raw chain' which would contain properly formed and signed, but not necessarily valid (because of MVCC conflicts etc.).  Then, the peers would essentially create a second chain from this 'raw chain', this 'validated chain\/ledger' would contain only the transactions that actually applied.  In implementation, it was easier simply to provide a bitmask for which transactions in a block are valid rather than essentially store two copies of everything.\n\n&gt; What is checkpointing?\n\nFor long running blockchains, it's infeasible to require that a new peer sync trillions of blocks, so instead, like with most dbs, there will need to be support for 'snapshotting' the world state, then archiving the old chain.  This could be done once a year, or every 10 million blocks, or 100 GB or whatever.\n\n&gt;  Why is sending the transaction proposals to all the endorsers the burden of the client instead of the client sending it to 1 endorser which spreads it around?\n\nThis was considered, but ultimately abandoned I believe because of the requirement to handle byzantine endorsers required clients to submit to multiple endorsers anyhow (or there may be other reasons I'm unaware of)\n\n&gt; Do the committers then execute the chaincode again? If not, do the endorsers send the results of their executions to the commiters? If that's the case, what governs where each committer gets it's results from?\n\nThe transaction contains the result of the chaincode execution, so they simply apply the results.  The application of the results is guaranteed to be deterministic even if the chaincode is not.  This is why you might have heard a clever line from <@U0PB67X4K> (and I may mis-state) but \"You don't need deterministic code because we have deterministic transactions\".",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1481898106.000000"
+        },
+        "ts": "1481898034.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> ^",
+        "ts": "1481898081.000820"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0Y14MWA2> Sure, I will be working part-time next week.  I believe you know about our bitmask for invalid trans in the BlockMetadata, and our intent to add checkpoint post-v1. Do you want to draft up the terminology changes and I will review?",
+        "ts": "1481898331.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is that",
+        "ts": "1481898357.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is consenters --&gt; orderers",
+        "ts": "1481898365.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is the stuff with writeset and readset",
+        "ts": "1481898374.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "am I missing sth big?",
+        "ts": "1481898390.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "batches --&gt; blocks",
+        "ts": "1481898499.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "blocks --&gt; Vblocks (and post v1)",
+        "ts": "1481898516.000828"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0Y14MWA2>, <@U10LM0FFZ> wrote a good glossary of v1 terms to review, I\u2019ll add my comments to that and send to both of you.",
+        "ts": "1481898582.000829"
+    },
+    {
+        "user": "U10LM0FFZ",
+        "inviter": "U1KFCPFQA",
+        "text": "<@U10LM0FFZ|nickgaski> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481898588.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok pls send me so we can sync all this stuff",
+        "ts": "1481898610.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we can add glossary to NCAP",
+        "ts": "1481898651.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is a good idea",
+        "ts": "1481898655.000833"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> thanks again! Few more questions:\n\n&gt;This is managed by the application\n\nHow does the application know where to send them?\n\n&gt;The transaction contains the result of the chaincode execution, so they simply apply the results. \n\nWhere do these results come from, I've heard that the way the endorsers check if the chaincode has the same outcome is that 1 runs it first, sends it to the client and the client then sends the transaction proposal with this result to everyone else - is this correct?\n\n&gt;The application of the results is guaranteed to be deterministic even if the chaincode is not.\n\nSurely the transaction would be rejected if the chaincode it calls doesn't behave in a deterministic manner? - I was under the impression endorsers check if chaincode is 'deterministic' and 'stable'",
+        "ts": "1481900429.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; How does the application know where to send them?\n\nThe application manages which peers are participating in which chains, so it already has this information.\n\n&gt; Where do these results come from, I've heard that the way the endorsers check if the chaincode has the same outcome is that 1 runs it first, sends it to the client and the client then sends the transaction proposal with this result to everyone else - is this correct?\n\n<@U0ULK2JPP> Can be more precise here, but that is my understanding.  The results are the readset, writeset, and postimage of the database query.  <@U1KFCPFQA> may be able to be more specific.\n\n&gt; Surely the transaction would be rejected if the chaincode it calls doesn't behave in a deterministic manner? - I was under the impression endorsers check if chaincode is 'deterministic' and 'stable'\n\nThe endorsement process ensures that if the execution results in different results across different endorsers, a valid transaction cannot be formed.",
+        "ts": "1481901059.000835"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "quick follow up question about endorsing logic - who sets this? Does it come with the chaincode when it's deployed to a peer or with the transactions from the submitter?",
+        "ts": "1481901060.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Chaincode deployment includes the endorsement policy",
+        "ts": "1481901074.000837"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "&gt;The application manages which peers are participating in which chains\n\nI''m a bit confused - when you say 'the application', what does this refer to exactly?",
+        "ts": "1481901154.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "\"The application\" is the useful thing which leverages the fabric, usually built on top of the SDK",
+        "ts": "1481901266.000839"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "so you mean the chaincode?",
+        "ts": "1481901335.000840"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "and I suppose the assosiated `.yaml` files to set things up",
+        "ts": "1481901373.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, the chaincode is a piece of the application, but think the thing which knows \"Website click routes to this binding which invokes X chaincode on Y endorsers\"",
+        "ts": "1481901375.000842"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "I'm still a bit confused - so let's say I have my client machine with some client program running on it and I tell this program to send a transaction to the network. How does it know which endorsers to send the transaction proposal to? (are some hardcoded? if so how does it find the others)",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1481901609.000000"
+        },
+        "ts": "1481901494.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2DHRR4TE> the application knows what the tx is all about (transfer $x from bank b to bank c) and that determines the context for endorsement",
+        "ts": "1481903967.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in other words, seperating the endorsement as a \u201cpre-consensus\u201d (pre-ordering) step makes it closer to the application \/ buisiness logic layer where the application\/SDK needs to know the actors of endorsement",
+        "ts": "1481904077.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0XQ35CDD> <@U0XPR4NP4> My results of comparing different approaches to queuing on\nthe broadcast side in the Kafka orderer are remarkably uninteresting. Here's\nmy interpretation of why: These clients are able to generate and broadcast\ntransactions much faster than they can be consumed by Kafka, and the clients\nare not considered complete until they have recieved an ACK for all\ntransactions they sent. Regardless of how work is split between threads, in\nthe end the clients are waiting for Kafka. There may be a small advantage to\ndoing the work in multiple threads, but there is no evidence of any consistent\nbenefit - the results look more or less random. Some kind of work queuing\nmight provide a small latency benefit for \"bursty\" clients, but in these\nthroughput-oriented runs the clients quickly stuff the queues and then work\nsimply proceeds at a rate based on Kafka. In the future this could possibly\nchange - if the overhead of signature checking is high for example, then it\nmight be advantageous to split front-end and back-end work into separate\nthreads. But for now there is no evidence that this is necessary.",
+        "ts": "1481921231.000847"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0N1D1UAE|bcbrock> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/bcbrock\/F3GKU8BK8\/broadcast_queueing.xlsx|Broadcast Queueing.xlsx>",
+        "file": {
+            "id": "F3GKU8BK8",
+            "created": 1481921270,
+            "timestamp": 1481921270,
+            "name": "Broadcast Queueing.xlsx",
+            "title": "Broadcast Queueing.xlsx",
+            "mimetype": "application\/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "filetype": "xlsx",
+            "pretty_type": "Excel Spreadsheet",
+            "user": "U0N1D1UAE",
+            "editable": false,
+            "size": 79812,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3GKU8BK8\/broadcast_queueing.xlsx?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3GKU8BK8\/download\/broadcast_queueing.xlsx?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/bcbrock\/F3GKU8BK8\/broadcast_queueing.xlsx",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3GKU8BK8-6ec063382d",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0N1D1UAE",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0N1D1UAE|bcbrock>",
+        "bot_id": null,
+        "ts": "1481921271.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The normalized graphs are telling. ",
+        "ts": "1481921515.000849"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks for the testing, I'll definitely be  curious about the changes once signature validation comes online ",
+        "ts": "1481921542.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Till then I suggest we stick with the first changeset of the series.",
+        "ts": "1481921569.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "The one that removes all Queuing? I agree it is simplest for now, easy to add queueing back in the future for testing.",
+        "ts": "1481921640.000852",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4",
+                    "U0UGH3X7X"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes.",
+        "ts": "1481921653.000853"
+    }
+]

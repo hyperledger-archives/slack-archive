@@ -1,0 +1,538 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I'm trying to understand this complaints stuff, trying to fix that failing test referenced in <#C11SL9YDV>",
+        "ts": "1463059887.001558"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In obcbatch, if we receive a complaint, first we check if we are the primary, and if so, go do some stuff and return",
+        "ts": "1463059937.001559"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If we are no the primary, we dedup, then `submitToLeader`, then for some reason check again if we are the primary, which I don't see how we can be? Then if not, we unicast the request to the primary",
+        "ts": "1463060037.001560"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then, eventually if a complaint timer expires, we'll get an event, and assuming the view is active, we'll send the view change request.",
+        "ts": "1463060264.001561"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I made an interim commit <https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest>   ... let's see how the discussion goes",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "tuand27613\/fabric",
+                "title_link": "https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: tuand27613\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/11295979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/tuand27613\/fabric\/tree\/whitelistTest",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1463062045.001562"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "now to see what all this make stuff is about",
+        "ts": "1463062072.001564"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: oh i have a patch",
+        "ts": "1463063557.001565"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: the problem is that i can't run my behave tests",
+        "ts": "1463063568.001566"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, so do I...",
+        "ts": "1463063570.001567"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "good",
+        "ts": "1463063573.001568"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i just fixed the test",
+        "ts": "1463063576.001569"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you have?",
+        "ts": "1463063580.001570"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sorry, i keep being distracted - gf broke her foot and needs help around the house",
+        "ts": "1463063622.001571"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ouch, definitely take care of that, far more important",
+        "ts": "1463063650.001572"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There are two pieces, was going to run past you for review, one is, I think the timer in the custodian is not being handled properly, because I was seeing multiple view changes sent back to back (same millisecond)",
+        "ts": "1463063680.001573"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The other piece was that the PBFT view change was being invoked on the batch thread, rather than being injected onto the PBFT one",
+        "ts": "1463063709.001574"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh wow",
+        "ts": "1463063767.001575"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so many bugs :confused:",
+        "ts": "1463063771.001576"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm sorry",
+        "ts": "1463063775.001577"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all this parallelism",
+        "ts": "1463063779.001578"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought i had tracked it down to replica 0 pbft expecting a request which never gets executed because the two requests are being reordered somehow",
+        "ts": "1463063853.001579"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe you can help me understand this flow.  When a request(s) that is in custody expires, it makes its callback into the consumer, which sends a view change",
+        "ts": "1463063944.001580"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What happens to the requests which remain in custody? It seems like they should all be submitted to the new primary, and their deadlines reset?",
+        "ts": "1463063998.001581"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I see that `Restart` is called out of `viewChange`, but it seems like we need to disable the custody timers after we request the view change, before the view actually changes",
+        "ts": "1463064132.001582"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea that is sort of an issue",
+        "ts": "1463064940.001583"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but does it really matter?",
+        "ts": "1463064955.001584"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah now with two threads, we could actually expire the custody after pbft did the view change, but before we received the view change event",
+        "ts": "1463065018.001585"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this all needs to run in one thread",
+        "ts": "1463065024.001586"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It would certainly make things easier.",
+        "ts": "1463065584.001587"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "frustrating races",
+        "ts": "1463066769.001588"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Another bug, `viewChange()` in batch modifies batch internal state, then tries to submit stuff to PBFT if the leader, which is on the PBFT thread, which can cause a deadlock, moving this to be an event",
+        "ts": "1463067962.001589"
+    },
+    {
+        "user": "U1296EA0M",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1296EA0M|maro> has joined the channel",
+        "ts": "1463069730.001590"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe we need more real mock tests?",
+        "ts": "1463071812.001591"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "real mock \u2026 hmmm",
+        "ts": "1463071831.001592"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where we test things really separate from each other",
+        "ts": "1463071831.001593"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "cbf: you know, right now we do sort of integration tests within consensus",
+        "ts": "1463071852.001594"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we create whole virtual networks, etc.",
+        "ts": "1463071862.001595"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead of just testing for one specific microscopic behavior",
+        "ts": "1463071875.001596"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes, but you could write more unit tests that mock the setup and just test the function",
+        "ts": "1463071886.001597"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes that's what i mean",
+        "ts": "1463071896.001598"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "exactly what we need because the setup etc is the part that takes time",
+        "ts": "1463071899.001599"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i'm talking about the unit tests",
+        "ts": "1463071914.001600"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I was just making fun of the juxtaposition of real and mock",
+        "ts": "1463071916.001601"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "our unit tests are really integration tests",
+        "ts": "1463071929.001602"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463071937.001603"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I have been trying to make this case for a while",
+        "ts": "1463071949.001604"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "go is more difficult to mock than other languages",
+        "ts": "1463071966.001605"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "at least it feels that way",
+        "ts": "1463071987.001606"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ginko can handle because it is go",
+        "ts": "1463072002.001607"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019ve been discussing this on and off with Jeff",
+        "ts": "1463072028.001608"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "certainly it is more difficult when your test infra is python and the target is go",
+        "ts": "1463072081.001609"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we need something that can generate mocks",
+        "ts": "1463072180.001610"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/onsi.github.io\/ginkgo\/>",
+        "ts": "1463072300.001611"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i had a quick look, didn't find anything about mocks",
+        "ts": "1463072832.001612"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`Ginkgo does not provide a mocking\/stubbing framework. It\u2019s the author\u2019s opinion that mocks and stubs can be avoided completely by embracing dependency injection and always injecting Go interfaces. `",
+        "ts": "1463072911.001613"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea,  i guess we should have that?",
+        "ts": "1463072922.001614"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "conveniently it completely ignores \"what if i want to check that function X calls function Y of interface Z\"",
+        "ts": "1463073162.001615"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I can hook you up with the author to discuss\u2026 alternately I have a few on my team that are very familiar",
+        "ts": "1463073260.001616"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Why is `currentExec` a pointer? Is it purely to give us an 'unset' value for testing?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1463078175.000000"
+        },
+        "ts": "1463078111.001617"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0UGH3X7X>: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1463013613001539> -- can you expand here? everything that you describe in these messages was taken care of in the branch that I had delivered IIRC",
+        "attachments": [
+            {
+                "color": "4D394B",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1463013613001539",
+                "fallback": "[May 11th, 2016 5:40 PM] tuand: the question now is, how do i make the engine wait until `obcXXXX` is ready to receiveMsg ?",
+                "author_subname": "tuand",
+                "ts": "1463013613.001539",
+                "text": "the question now is, how do i make the engine wait until `obcXXXX` is ready to receiveMsg ?",
+                "author_name": "Tuan Dang",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/tuand",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-05-01\/39256398483_5bf896c70623b7526e05_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1
+            }
+        ],
+        "ts": "1463080679.001619"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(I read <@U0XR6J961>'s comments BTW on that thread and I agree with all of them)",
+        "ts": "1463080681.001621"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so i had to make a few changes  ... write to db instead of to a file  ...  use a channel to wait until we have the whitelist  ... also, we added an engine object to handle talking directly to the local peer instead of grpc",
+        "ts": "1463080849.001622"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i was trying to see where obcXXXX should wait for the whitelist to complete",
+        "ts": "1463080892.001623"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "but in the end,  waiting on isSufficientlyConnected in RecvMsg seems still the right place",
+        "ts": "1463080941.001624"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It might work, but my vote would be to put the channel read in front of the `for` loop in `main()`",
+        "ts": "1463083677.001625"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The whitelisting isn't a message, so, I don't think that's the right place to block for it",
+        "ts": "1463083695.001626"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> - quick question - in PBFT, if a peer goes down and later comes back up and joins the network, my assumption would be that it will find that it is out of sync and request a state transfer or in the absence of new transactions during checkpointing this will be discovered.  Correct?",
+        "ts": "1463083935.001627"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K>: In the absence of transactions, no recovery will happen, recovery is driven by eavesdropping, so there needs to be requests on the network",
+        "ts": "1463084094.001628"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1454>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Allow non-byzantine replica to always catch up \u00b7 Issue #1454 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1454",
+                "text": "Description Per the classical PBFT implementation, the network is always able to make progress ordering and processing transactions, and the current PBFT implementation supports this. However, th...",
+                "fallback": "GitHub: Allow non-byzantine replica to always catch up \u00b7 Issue #1454 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1454",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1463084119.001629"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay - so peer goes down, misses N transactions, comes back up and transaction N+1 is invoked.",
+        "ts": "1463084203.001631"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The specific value of N matters a little here, but in general, no, unless there is some other sort of problem which prevents transaction n+1 from being committed to 2f+1 peers, the freshly restarted peer will not execute it",
+        "ts": "1463084301.001632"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay - well on a related note, let's say that state transfer does happen.  State transfer is more like a \"bulk\" event rather than transaction processing, correct?  Meaning both the K\/V store and the \"ledger\"  (blocks) are force updated?  Meaning potentially a different path through the code than normal transactions?",
+        "ts": "1463084440.001633"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That is correct, the normal path is basically `BeginBatchTX\/ExecTX\/CommitTxBatch`, and this modifies the state, and commits a block to the chain.",
+        "ts": "1463084481.001634"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The state transfer path retrieves blocks from the network, validates them against the valid hash from the consensus checkpointing, and then commits them to the ledger through `PutRawBlock`",
+        "ts": "1463084512.001635"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Once the blockchain is intact, the state is played forward to be current utilizing the state deltas stores in the DB.  At each step, the state hash is verified against the block has in the chain.",
+        "ts": "1463084549.001636"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Under some conditions, such as when the replica is very far behind, it will actually retrieve a fully copy of the state, and a partial copy of the blockchain, then restore the remainder of the chain in the background)",
+        "ts": "1463084592.001637"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "gotcha - so basically like bulk database transfer with some checkpointing (i.e. validating the state hash)",
+        "ts": "1463084638.001638"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, a similar idea.  There are some problems with this at the moment, since we store some things like chaincodes on the block which should probably be stored in the state, so it is possible that the partial copy of the blockchain is not good enough.",
+        "ts": "1463084699.001639"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP>: might have some insight as to if\/when the chaincodes will move off the block and into the state",
+        "ts": "1463084729.001640"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "many thanks",
+        "ts": "1463084804.001641"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No problem, always happy to help",
+        "ts": "1463084849.001642"
+    }
+]

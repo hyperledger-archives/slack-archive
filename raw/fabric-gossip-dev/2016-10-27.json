@@ -1,0 +1,108 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/docs.google.com\/document\/d\/157AvKxVRqgeaCTSpN86ICa5x-XihZ67bOrNMc5xLvEU\/edit#heading=h.rrii36vrca54>\n<@U0UGH3X7X>",
+        "ts": "1477577451.000314",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XPR4NP4> , we had a telco with Binh today and I understood from him that when a peer is added to an existing channel it is given by the SDK a block that already has the latest configuration, and the peer parses this configuration block even though its number is &gt;0 , did I understand correctly? If so- can a peer parse configuration blocks that come from the consensus in a similar fashion, without being needed to commit them into the ledger beforehand?",
+        "ts": "1477604422.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> My hope is that configuration transactions will always be a 'total configuration', so that they are standalone.  In this sense, that if you are given a block which you trust, then you are free to apply that configuration and execute.  However, receiving blocks out of order from the ordering service only gives you trust if you absolutely trust the orderer on the other end.  In general, they must be received sequentially to enforce the current block validation policy to make sure that the orderer has not inappropriately modified config properties which the orderer may not be entitled to change (such as peer org membership, for instance).",
+        "ts": "1477604944.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, a couple of questions. I'm trying to get the full picture (and my squad members can also read that and sync), I know you're discussing another channel in parallel so feel free to answer when you can spare the time.\n1) A configuration block contains *only* configuration transactions, right? if yes- than how many? 1? or more? just of 1 type (orderer membership, channel membership) or mixed types?\n2) Is it possible to write in each data block the last configuration sequence number of the channel membership? It's just 1 uint64, it can't hurt right? \nI'm of course thinking in the direction- if there is a byzantine set of orderers, and they fake that last conf number and maybe even the block- I can still send it, because the only thing that gets hurt here is data leakage, not corruption as long as the blocks are passed to the ledger in-order.\n3) Same question as above regarding an  orderer(s) membership configuration block this time- can it be \"opened\" without comitting all blocks before it, if we know somehow from some oracle that there were no conf blocks from our last committed orderer conf block and the conf block we just got (out of order)?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477606125.000000"
+        },
+        "ts": "1477605876.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, clearly, my expectations are being challenged, but:\n\n1) Exactly one transaction in the block\n2) I'm not opposed to this, I actually think it could be a pretty elegant solution, but since it would modify the block structure, I am hesitant to commit\n3) Orderer membership is a subset of 'the configuration block'",
+        "ts": "1477606586.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "your expectations are being challenged....?",
+        "ts": "1477606701.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "By challenged, I simply mean, there were assumption I made which I did not expect resistance on, but which others do not agree.  So, I am replying as to 'the system as I see it', with the caveat that some pieces are still up in the air.",
+        "ts": "1477606749.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok, and about what you said- \n```\n However, receiving blocks out of order from the ordering service only gives you trust if you absolutely trust the orderer on the other end\n```\nI remember from a previous discussion on slack that I mentioned that if we take into account only the validation policy derived from the last committed orderer-membership-block, we either:\n* throw a block away, which is a bummer, but we can live with it\n* believe that block, and forward it to the wrong peers (channel wise) in case it was both signed by malicious orderers and the membership of orderers increased, but that's OK too, since a malicious orderer could have leaked everything it had anyway, right? \nDo you see any problem with the strategy here? (always believing configuration blocks of channel membership, even if we didn't get prior blocks which could be configuration blocks of *any* kind)",
+        "ts": "1477607041.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I wouldn't say there's any strict problem with this, but, I might advocate for a third sort of 'quarantine' for a block, where instead of disseminating it or discarding it, you wait some amount of time (or until a cache overflows) before discarding it",
+        "ts": "1477607461.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But really, you could even make this configurable policy.  I suspect in most networks always believing will be right, because byzantine behavior is punishable",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477607646.000000"
+        },
+        "ts": "1477607610.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, good idea. Of course, it'll be configurable.",
+        "ts": "1477607696.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks (for the AMA)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477607747.000000"
+        },
+        "ts": "1477607729.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No problem, always happy to chat",
+        "ts": "1477607784.000330"
+    },
+    {
+        "user": "U24M29R4G",
+        "text": "<@U24M29R4G|nikileshsa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477613822.000331"
+    }
+]

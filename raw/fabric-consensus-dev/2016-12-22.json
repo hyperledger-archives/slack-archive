@@ -1,0 +1,731 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0N1D1UAE> there is no such requirement as this is impossible in case we use TCert like mechanism to anonymize clients",
+        "ts": "1482396756.001007"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If clients are not anonymized i.e., when they use sth like ECerts it is possible but it was never stated as a clear requirement to my knowledge",
+        "ts": "1482396835.001008"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Of course we are talking about clients submitting requests without waiting for request commit confirmation",
+        "ts": "1482396875.001009"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Intuitively with TCert anonimity and unlinkability one cannot link the two transactions and establish causal precedence between them",
+        "ts": "1482396972.001010"
+    },
+    {
+        "user": "U1V6SJ1FF",
+        "text": "<@U1V6SJ1FF|dgorman> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482399444.001011"
+    },
+    {
+        "user": "U3HUXKKEW",
+        "text": "<@U3HUXKKEW|haixu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482400801.001012"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U1AU8DRQR> <@U0Y14MWA2> Thanks for looking into this. To clarify, this grpc time out issue is seen only on Power (ppc64le) architecture.  It seems on z, the unit-tests are going through without issues as per confirmation from <@U0YK3KKCY> who is the Z lead guy who is running unit-tests on fabric every 3 hrs :slightly_smiling_face:",
+        "ts": "1482407912.001013",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0YK3KKCY"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I will have to look into grpc's power pc specific bugs (knows ones)",
+        "ts": "1482407968.001014"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "\"unit-tests_1  | 2016\/12\/21 12:08:11 grpc: Server.Serve failed to complete security handshake from \"127.0.0.1:59654\": EOF\"",
+        "ts": "1482407993.001015"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "my guess would be that this is the key. I have never ever seen this",
+        "ts": "1482408005.001016"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U1AU8DRQR> any suggestion on what I could try and check ?",
+        "ts": "1482408451.001017"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "how exactly is it run? with our without vagrant?",
+        "ts": "1482408573.001018"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "Not using vagrant. On ppc64le, we just have the docker environment.",
+        "ts": "1482409156.001019"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "I am just doing `make uni-test` to verify the fabric build",
+        "ts": "1482409188.001020"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the unit tests run in a docker as I remember",
+        "ts": "1482413265.001021"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so you use the same grpc as the others",
+        "ts": "1482413277.001022"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "Yes. Isn't it part of base-image itself ?",
+        "ts": "1482416171.001023"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1AU8DRQR>: Commented on the changeset. (Short answer: yes, but there are a few things that need to be taken care of. Thanks!)",
+        "ts": "1482419871.001024"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+        "ts": "1482422308.001025"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am totally not respecting this - but I was not aware - let me know if I should start",
+        "ts": "1482422327.001026"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0Y14MWA2> I think it would be reasonable to specify that if a single thread in a single client sends two transactions over a single gRPC connection to the ordering service, then those transactions should appear in the  client\u2019s transmission order in the final block, regardless of TCerts, ECerts, etc. It would also be reasonable not to guarantee this for many reasons. But it needs to be clearly specified which is true.",
+        "ts": "1482422458.001027"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hm, again not really possible at least in BFT case",
+        "ts": "1482422492.001028"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I could probably try to write a proof for it :slightly_smiling_face:",
+        "ts": "1482422502.001029"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the issue is that these requests would be linked within a grpc connection but it may take more time to order them",
+        "ts": "1482422528.001030"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and they would be changing hands a lot",
+        "ts": "1482422533.001031"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now - if we can link the request we can deliver FIFO (causal order) that you need here",
+        "ts": "1482422553.001032"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but with unlinkability of tcerts - this would not fly",
+        "ts": "1482422563.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is probably impossible with unlinkability even in crash-tolerant case",
+        "ts": "1482422586.001034"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(deterministically and in all executions)",
+        "ts": "1482422602.001035"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "This ordering is currently true with the Kafka orderer, I\u2019m don\u2019t understand what the certificates have to do with it. If 2 TX come in over a GRPC connection, the second TX is not even sent to Kafka until the first is known to be persisted.",
+        "ts": "1482422662.001036"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so if the service mimicks closed loop",
+        "ts": "1482422717.001037"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "then it is possible",
+        "ts": "1482422722.001038"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you allow open loop does not seem so",
+        "ts": "1482422748.001039"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in pure BFT case this closed loop trick would not seem to help",
+        "ts": "1482422770.001040"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "unless you do closed loop from the client",
+        "ts": "1482422785.001041"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and client does not submit n+1 until it sees n in ledger of some peer",
+        "ts": "1482422808.001042"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Does the client need to see n+1 in a ledger, or is the ACK from the broadcast service sufficient?",
+        "ts": "1482422853.001043"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ack meaning what - what is the semantics?",
+        "ts": "1482422892.001044"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "above I was talking about open loop *Of course we are talking about clients submitting requests without waiting for request commit confirmation*",
+        "ts": "1482422939.001045"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "ACK meaning receipt of the BroadcastResponse",
+        "ts": "1482422947.001046"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for closed loop we may be ale to do sth",
+        "ts": "1482422948.001047"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hm you seem to be talking about solo\/kafka specific stuff that I am not familiar with so much",
+        "ts": "1482422966.001048"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "let me speculate on what it can be",
+        "ts": "1482422971.001049"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if this is an ack from a single orderer - then clearly no because a byz orderer may \"forget\" to fwd it say to the leader",
+        "ts": "1482422997.001050"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "All AtomicBroadcast services must return the BroadcastResponse, no?",
+        "ts": "1482423002.001051"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "well the spec says there is broadcast and deliver",
+        "ts": "1482423025.001052"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "nothing about broadcast response",
+        "ts": "1482423030.001053"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what would be the properties of broadcast response?",
+        "ts": "1482423039.001054"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(diff from deliver)",
+        "ts": "1482423045.001055"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "That is the question :slightly_smiling_face: The BroadcastResponse in the Kafka case means that the TX has been ordered and persisted. A question though about the specification, are the proto definitions considered part of the specification, or simply one implmentation of the specification?",
+        "ts": "1482423210.001056"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "\"ordered and persisted\" seems to me as good as delivered",
+        "ts": "1482423249.001057"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "re spec\/impl",
+        "ts": "1482423254.001058"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I'd say they are currently the impl - until we are sure what is possible and what is not and what can be \"standardized\" by a proto",
+        "ts": "1482423290.001059"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Almost as good, it may not have been assigned to a block yet.",
+        "ts": "1482423309.001060"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now this is a very specific way kafka and solo operate",
+        "ts": "1482423328.001061"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "because they assign a block after order",
+        "ts": "1482423342.001062"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in all bft protocols I know it is the other way around",
+        "ts": "1482423352.001063"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "generate block and then order",
+        "ts": "1482423362.001064"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you do it other way around (as in solo\/kafka) you would",
+        "ts": "1482423376.001065"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "1) murder throughput",
+        "ts": "1482423380.001066"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "2) require very deterministic block sizes set upfront (blockcutter needs to be deterministic)",
+        "ts": "1482423405.001067"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so this is very impl thingy",
+        "ts": "1482423412.001068"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Interesting. So I think you would answer <@U1B9E51R8> question by saying that in general you have to wait for TX1 to be delivered before sending TX2 if you want them in order?",
+        "ts": "1482423598.001069"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I did not say that :slightly_smiling_face:",
+        "ts": "1482423609.001070"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I said that this is the case if you want unlinkability",
+        "ts": "1482423622.001071"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i.e., tcerts",
+        "ts": "1482423626.001072"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if not - we can do FIFO\/causal",
+        "ts": "1482423634.001073"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but we need timestamping at the client",
+        "ts": "1482423641.001074"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which means - no unlinkability",
+        "ts": "1482423650.001075"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in a sense causal and unlinkability do not go well hand in hand",
+        "ts": "1482423669.001076"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is, roughly speaking, one or the other",
+        "ts": "1482423687.001077"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or both but in closed loop",
+        "ts": "1482423693.001078"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "How does waiting guarantee unlinkability?",
+        "ts": "1482424097.001079"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Why does it matter whether there are 0 or N TX between two TCert-anonymized TX?",
+        "ts": "1482424135.001080"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "waiting serves to guarantee fifo trivially",
+        "ts": "1482424173.001081"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i submit first wait to see it appears and then I go to the second",
+        "ts": "1482424197.001082"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there i have fifo (albeit a non interesting one)",
+        "ts": "1482424208.001083"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and then the ordering can have unlinkability",
+        "ts": "1482424217.001084"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and there you have two",
+        "ts": "1482424221.001085"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482422308001025>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482422308001025",
+                "fallback": "[December 22nd, 2016 7:58 AM] vukolic: <@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "ts": "1482422308.001025",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1482424226.001086"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but you have closed loop",
+        "ts": "1482424234.001087"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+        "attachments": [
+            {
+                "fallback": "[December 22nd, 2016 10:58 AM] vukolic: <@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "ts": "1482422308.001025",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482422308001025",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1482424383.001089"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+        "attachments": [
+            {
+                "fallback": "[December 22nd, 2016 10:58 AM] vukolic: <@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "ts": "1482422308.001025",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0XQ35CDD> <@U0PB67X4K> so we in principle need a JIRA issue for every changeset?",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482422308001025",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1482424416.001090"
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U0XQ35CDD",
+        "item_type": "C",
+        "attachments": [
+            {
+                "fallback": "[December 22nd, 2016 8:33 AM] kostas: <@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+                "ts": "1482424383.001089",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ]
+            }
+        ],
+        "text": "<@U0XQ35CDD|kostas> pinned a message to this channel.",
+        "ts": "1482424417.001091"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok...",
+        "ts": "1482424434.001092"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the only changeset I tagged with JIRA is not getting merged though",
+        "ts": "1482424466.001093"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so I wonder about the pragmatism of following this :slightly_smiling_face:",
+        "ts": "1482424476.001094"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(kidding)",
+        "ts": "1482424487.001095"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ah, I reviewed this last night, forgot to +1.",
+        "ts": "1482424530.001096"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yeah yeah :wink:",
+        "ts": "1482424537.001097"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It's true (though I get the timing is fishy). I remember my conversations with Christian on this, and I had actually read the chapter on his book, so it was easy to check.",
+        "ts": "1482424615.001098"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I always have to recalculate those",
+        "ts": "1482424680.001099"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the numbers do not stick to brain",
+        "ts": "1482424696.001100"
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "FYI ... I'm drafting a Hyperledger v1.0 overview doc, at a medium-high level (est. one-half page per component, e.g.) so I am interested in this discussion on diffs between SOLO, Kafka and SBFT, for an audience of general HL readers. If these diffs \/ explanations get compiled at some point please LMK. Thanks!",
+        "ts": "1482425420.001101"
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "Working on doc-ing this for external ... SOLO, Kafka, vs. SBFT. mid-high level.",
+        "ts": "1482425819.001102"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U112NNFV4> Will do. Most of the team is on vacation these days, but we'll get something going in sprint 9.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1482425970.000000"
+        },
+        "ts": "1482425920.001103"
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "<@U0XQ35CDD> Right, just fyi. I'm committed to some kind of first draft \/ reviewable for Sprint 8. But placeholders for these details is fine for Spring 8 \/ short term, thanks.",
+        "ts": "1482426790.001105",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "<@U0XQ35CDD> i.e. working on an HL v1.0 overview doc at mid-high level. ...",
+        "ts": "1482427115.001106"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0Y14MWA2> <@U0N1D1UAE> <@U1B9E51R8>  My understanding is that definitely it is the client that must manage dependencies between transactions, ensuring T1 is committed before the 2nd proposal is submitted, or at least before T2 is broadcast to the orderers; if the sdk plays risky by getting endorsement for T2 and\/or broadcasting T2 before T1 is committed, then it risks failure. In v0.6, transactions could be processed out of order, and I don't think the ordering sevice of v1.0 guarantees transaction submission order will be same as commit order,  either.",
+        "ts": "1482435522.001107"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "I see how the ordering of transactions via trivial FIFO can be guaranteed by the client by waiting for an event notification that the transaction (successful or failed) has been written in a block to ledger (or earlier, such as when it is Delivered by ordering system, if an event is raised at that point). But, does the discussion about ordering transactions actually address the question, given the v1.0 architecture? If the client application submits the 2nd transaction proposal before the 1st one is ordered and\/or committed, then I would think we could agree that the 2nd may fail during validation (if not before) if the first has not been validated and committed already. But maybe the question is: would it be possible that the 2nd (dependent) transaction fail during ENDORSEMENT phase, when the first has not been committed? (How do we know if B has the money from A yet, to transfer it to C? Is that dependency test done during endorsement or validation? I guess answering this would answer my question.)  If so, then there may be other problems to deal with: one thought is that the SDK might have to be able to ensure that the transactions would be broadcast to the ordering service in the same order that the transaction proposals were submitted to the endorsers.",
+        "ts": "1482435533.001108"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "<@U1B2FF8LR> Thanks so much for the detailed explanation. I think that's basically in accordance with my understanding.  So, in short, the client has to wait for commitment of T1 and then send proposal for T2(assume T2 can succeed in both endorsement and validation if there's no T1) if T1 will change the state  of readset and\/or writeset of T2.",
+        "ts": "1482452897.001110"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "so in this case, endorsement test of T2 will pass with our assumption above, but the validation of T2 will fail",
+        "ts": "1482453239.001111"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "in this case, the client will wait for an uncertain long time for the block containing T1 generated. (the commit of T1 is asynchronous, how does the client know when the commit of T1 is done? by polling?) It seems there's no good support for a client to submit a large number of transactions if some of the transactions have dependency(weak dependency, each transaction can survive endorsement and validation if it's the only tx to be submitted, but may fail validation or endorsement if they are submitted by the client in batch)",
+        "ts": "1482453498.001112"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Hi <@U1B2FF8LR>, Can you provide some pointer on how the ordering and commit happens in v 0.6? thanks",
+        "ts": "1482468900.001113"
+    }
+]

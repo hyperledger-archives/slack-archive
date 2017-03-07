@@ -1,0 +1,870 @@
+[
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U2X9KDDL7> this indeed the case.",
+        "ts": "1481547663.000187"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Enrollment identity is encrypted with some key that can be given to auditors, for the latter to obtain a proof of the owner of an (otherwise anonymous) certificate.",
+        "ts": "1481547703.000188"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Adding <@U221LL03Z>  here, who is currently working on this.",
+        "ts": "1481547735.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U221LL03Z>  re: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481477533000182>  , I'm establishing TLS between an orderer  and a Kafka broker so for the orderer, I'll need a cert signed by that orderer's organization.  Can I use the ecert for that purpose ? earlier in the thread, <@U0ZR63HLK> had mentioned not using an identity cert for other purposes",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481477101000181",
+                "fallback": "[December 11th, 2016 9:25 AM] ashutoshkumar: TCerts can carry encrypted attributes.",
+                "ts": "1481477101.000181",
+                "author_subname": "ashutoshkumar",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "TCerts can carry encrypted attributes.",
+                "author_name": "Ashutosh Kumar",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/ashutoshkumar",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/216a004f9bfab8ccf302ac52ac0096f8.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0005-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "edited": {
+            "user": "U0UGH3X7X",
+            "ts": "1481550891.000000"
+        },
+        "ts": "1481550863.000190"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U2X9KDDL7> : Pre Key is per affiliation\/group  basis. TCert in v1.0 will be a library where , you need to pass on required parameters and it'll provide you with batch of TCerts. If TCerts are going to be issued by CoP server(new incarnation of membership service) , TCert genertation gets userid from request , obtain group\/affiliation that user belongs to and then get PreKey for that group\/affiliation.",
+        "ts": "1481551571.000193"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "When Group\/affiliation is being created for the first time , a random number string is generated , which acts as PreKey and it is stored in DB.",
+        "ts": "1481551661.000194"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "The key trees can be established based on the requirements.",
+        "ts": "1481551731.000195"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Getting decryption key is reverse of generating encryption key. So the party performing decryption , has to know how the encryption key is derived.",
+        "ts": "1481551897.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U221LL03Z> , to expand on our hallway talk ... the scenario is :  Peer &lt;--&gt; orderer &lt;--&gt; kafka",
+        "ts": "1481552892.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "peer and orderer both have MSP so transactions sent between orderer\/peer are signed and verified by msp.",
+        "ts": "1481552948.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "for the orderer\/kafka connection ,  kafka has its own TLS configuration and orderer is acting as a client.  The kafka admin is responsible for the certs that the brokers use.  The orderers will most likely belong to other organizations and have different admins than Kafka.  So, an orderer will need a cert for this TLS connection with kafka.",
+        "ts": "1481553278.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "At this point, I'm trying to see how this orderer cert should be created ?  Would COP create just like it's doing now for ecerts ? should the orderer admin create separately via something like openssl ?",
+        "ts": "1481553371.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0UGH3X7X> Where does kafka get it's certificate?  Are you enabling mutual TLS, i.e. does kafka have to authenticate the orderer also?",
+        "ts": "1481553590.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Is the kafka cert self-signed or not?",
+        "ts": "1481553663.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "Kafka admin is responsible for creating the certs for the kafka brokers ... kafka can be provided by one or more of the orgs that participate in fabric or it can be provided by a totally separate org ... in production, both orderers and kafka brokers would use signed certs",
+        "ts": "1481553910.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Easier if you call to discuss",
+        "ts": "1481554020.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "start a scrum in a few minutes ... will call after that",
+        "ts": "1481554060.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "ok",
+        "ts": "1481554066.000206"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, of course.",
+        "attachments": [
+            {
+                "fallback": "[December 12th, 2016 6:45 AM] tuand: Kafka admin is responsible for creating the certs for the kafka brokers ... kafka can be provided by one or more of the orgs that participate in fabric or it can be provided by a totally separate org ... in production, both orderers and kafka brokers would use signed certs",
+                "ts": "1481553910.000203",
+                "author_subname": "tuand",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "Kafka admin is responsible for creating the certs for the kafka brokers ... kafka can be provided by one or more of the orgs that participate in fabric or it can be provided by a totally separate org ... in production, both orderers and kafka brokers would use signed certs",
+                "author_name": "Tuan Dang",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/tuand",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-05-01\/39256398483_5bf896c70623b7526e05_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481553910000203",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1481558584.000207"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0UGH3X7X>: We should definitely should support a case where an `admin` provides \u201chis own\u201d certificate that can be signed by an external entity.",
+        "ts": "1481558645.000208"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U221LL03Z>: What <@U0UGH3X7X> describes above is a different use-case, that is separate than the TCertBatchRequest (as it is in `membersrvc` or the `cop`)",
+        "ts": "1481558701.000209"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0UGH3X7X>: the question is whether the support of these certs is just at \u201cbootstrapping\u201d, or do you want\/need some onboarding method\/steps.",
+        "ts": "1481558766.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "hi <@U11MANG9G>  ...  these certs would be provided to an orderer at bootstrap .",
+        "ts": "1481559014.000211"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yup, in that case, that should not be impossible.",
+        "ts": "1481559035.000212"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Sounds plausible\/reasonable to me.",
+        "ts": "1481559043.000213"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "And later on\u2026 the \u201cnetwork\u201d chooses whether these are considered as `trusted`, right?",
+        "ts": "1481559075.000214"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U11MANG9G>  : There is no TCert involved here.",
+        "ts": "1481559108.000215"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, exactly.",
+        "ts": "1481559117.000216"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U221LL03Z> That\u2019s what I meant here:",
+        "attachments": [
+            {
+                "fallback": "[December 12th, 2016 8:05 AM] jonathanlevi: <@U221LL03Z>: What <@U0UGH3X7X> describes above is a different use-case, that is separate than the TCertBatchRequest (as it is in `membersrvc` or the `cop`)",
+                "ts": "1481558701.000209",
+                "author_subname": "jonathanlevi",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "<@U221LL03Z>: What <@U0UGH3X7X> describes above is a different use-case, that is separate than the TCertBatchRequest (as it is in `membersrvc` or the `cop`)",
+                "author_name": "Jonathan Levi",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jonathanlevi",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-06\/76710770455_2316fc867e622c8f0008_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481558701000209",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1481559144.000217"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "These are different `certs`.",
+        "ts": "1481559158.000218"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yup. I agree with that.",
+        "ts": "1481559171.000219"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "and I do not want TCert\/ECert to be used as TLS cert.",
+        "ts": "1481559198.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "my thought is that orderers  and kafka already have each other's CA certs in their respective truststores",
+        "ts": "1481559206.000221"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "I assume so.",
+        "ts": "1481559228.000222"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U0UGH3X7X>  : As per our hallway talk , the trust store creation should fall in management aspect of configuration , which happens out of band.",
+        "ts": "1481559303.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "right ,  my original question was given that an orderer needs to establish a mutual TLS auth connection between itself and kafka,  could\/should  COP or MSP provide a TLS cert for the orderer to use",
+        "ts": "1481559688.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I think the two of us are leaning towards this being an admin task outside of COP and fabric",
+        "ts": "1481559724.000225"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, it has to be separate <@U0UGH3X7X>.",
+        "ts": "1481559742.000226"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are a few good reasons for it.",
+        "ts": "1481559758.000227"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Say we extend the cop to also sign CSR for TLS...",
+        "ts": "1481559780.000228"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Business-wise, now the cop will have the responsibility which can be translated to liability with relation to the link between the identity and one\u2019s public key.",
+        "ts": "1481559833.000229"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "While it may look \u2018friendly\u2019 if we simply \u201csign on someone\u2019s behalf\u201d...",
+        "ts": "1481559860.000230"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "\u2026 now you will need to have the public key of such \u201csigning entity\u201d as part of your trusted zone\/model.",
+        "ts": "1481559891.000231"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If you see what I mean?",
+        "ts": "1481559901.000232"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1481559903.000233"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "At this stage it may be easier (for all of us) to say something along the lines of: \u201cHey, if you have a certificate that was signed (say) by VeriSign\u2026)\u2026 you can use it\", and then it is subject to decision making steps taken as part of the TLS handshake\u2026 that decides whether such a signed cert is acceptable.",
+        "ts": "1481560018.000234"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1481560026.000235"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "This separation actually makes it stronger, as it allows the (seamless) support by design, of many certificates issuers\/providers.",
+        "ts": "1481560083.000236"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So the out-of-bound establishment\/bootstrapping, at this point, is much preferable.",
+        "ts": "1481560120.000237"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1481560132.000238"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If I haven\u2019t convinced, I can describe a few other use-cases where the other approach can limit us, going forward.",
+        "ts": "1481560166.000239"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0UGH3X7X>, <@U221LL03Z>: ^^^ (are these\/is this aligned with your hallway\/corridor discussion, more or less?)",
+        "ts": "1481560226.000242"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "The Entity that cop manages is end user's identity and the entity that is managed by PKI of TLS is domain. I do not think , these two can be linked together.",
+        "ts": "1481560399.000243"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "I agree with the statement : This separation actually makes it stronger, as it allows the (seamless) support by design, of many certificates issuers\/providers.\n11:28\nSo the out-of-bound establishment\/bootstrapping, at this point, is much preferable.",
+        "ts": "1481560472.000244"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U221LL03Z>: Yes, great\/sure thing. <@U0UGH3X7X>: The short (\u201clong\u201d) answer is that \u201cyes, the admin bootstrap part should remain out of bound\u201d. `But it\u2019s not because we are lazy! It is actually better.` :wink:",
+        "ts": "1481560717.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "sorry,  got caught up in another call ...  <@U11MANG9G>  <@U221LL03Z>   I agree with you two , ... configuration of orderer and kafka brokers would just be instructions saying \"use these certs\" ... how those certs are created if up to the admin, not required as part of cop\/fabric",
+        "ts": "1481561083.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0S5KF44D> ^^^ ?",
+        "ts": "1481561096.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "another question is how to handle in HSM given that the private key is now in hardware",
+        "ts": "1481561147.000248"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "___\nSorry I\u2019m pushing for these - but it\u2019s better to have these discussions \u201cin public\u201d or at least to summarize and list out assumptions, so that we don\u2019t \u201cwake up\u201d a week before locking a release and realize that there was an important user-story that we have completely missed.\n___",
+        "ts": "1481561269.000249"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "HSM: What exactly is the use-case?",
+        "ts": "1481561282.000250"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We can still get the associated \u201cpublic\u201d key endorsed by an \u201cauthority\u201d you trust. If you see what I mean?",
+        "ts": "1481561318.000251"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "But maybe I am not aware of the entire flow (mind you that I\u2019m jumping in and out of some of these discussions)...",
+        "ts": "1481561386.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "if I'm using mutual TLS auth between orderer and kafka,   does orderer need to have cert or cert+private key ?",
+        "ts": "1481561399.000253"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Cert + private key",
+        "ts": "1481561438.000254"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "When I establish an authenticated TLS connection with you, I verify that you really do have the associated private key.",
+        "ts": "1481561470.000255"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So a cert would not suffice.",
+        "ts": "1481561488.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "when I configure the orderer,  I give it the location of the cert and private key files",
+        "ts": "1481561529.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "for HSM , I think the private key is on some hardware card  ... how do I tell the orderer where to get the private key ?",
+        "ts": "1481561609.000258"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I haven\u2019t worked with\/on the HSM module yet. Vlad has, right?",
+        "ts": "1481561687.000259"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I can take a look and review things, if you guys like.",
+        "ts": "1481561715.000260"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "For TLS, you must be able to sign (with the private key) over some value that I provide to you.",
+        "ts": "1481561744.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U11MANG9G>  I owe you a beer :slightly_smiling_face:",
+        "ts": "1481561758.000262"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That\u2019s part of the protocol, so however it is configured, even if you \u201ctrust\u201d the signer of the certificate\u2026.",
+        "ts": "1481561790.000263"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "\u2026 the party \u201cpresenting\u201d you with that cert, has to also prove the ownership (access) to the private key.",
+        "ts": "1481561816.000264"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "\u2014\n<@U0UGH3X7X>: Sure! Beer is always welcome!\n__",
+        "ts": "1481561832.000265"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Just for intuition, while we are at it\u2026 the \u201ccerts\u201d are considered public information.",
+        "ts": "1481561864.000266"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So think about you copying amazon\u2019s pubic certificate.",
+        "ts": "1481561890.000267"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "And now you pretend to be \"<http:\/\/amazon.com|amazon.com>\"",
+        "ts": "1481561904.000268"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "-&gt; TLS breaks if you don\u2019t have amazon\u2019s private key.",
+        "ts": "1481561932.000269"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "-&gt; which renders \u201cstealing\u201d amazon\u2019s public certificate useless (for you).",
+        "ts": "1481561952.000270"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It\u2019s the (access to the) private key that matters.",
+        "ts": "1481561981.000271"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "___\nDid I help or confuse? :wink:",
+        "ts": "1481562002.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "and to keep in mind  ... we can only configure orderer and kafka , i.e.  tell both that \"these are the certs and keys to use\"  ...  both sides use packages to implement TLS so we have no control over that",
+        "ts": "1481562004.000273"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, that\u2019s normal. Sure.",
+        "ts": "1481562042.000274"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We \"set them up\u201d with credentials.",
+        "ts": "1481562057.000275"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I can take a look at the HSM interactions, etc. Whenever. Just let me know.",
+        "ts": "1481562108.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ok, let me get the \"normal\" TLS mutual auth going ...  I'll come back to HSM later",
+        "ts": "1481562699.000277",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "<@U1BC5A0F9> <@U221LL03Z> Thanks for the reply -- I have another, more concrete, question: in v0.6, is it possible to get the enrollment ID from the current transaction's TCert in chaincode (say for access control purposes), and if so, how?",
+        "ts": "1481564500.000278"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "Basically I want to know\/verify the identity of the caller, and I've had trouble getting the form of identity verification in asset_management.go to work -- it seems strange to use a TCert to identify each user, since for example if you were to shut the services down, start them back up, the new TCert the client would retrieve would be different and therefore useless in determining the ID of users in chaincode.",
+        "ts": "1481564586.000279"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "enrollmentid will always be the same for all tcerts corresponding to EcERT.",
+        "ts": "1481564677.000280"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "There is 1:1 mapping between EnrollmentId and ECert.",
+        "ts": "1481564719.000281"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "even if you get new batch of TCerts , your enrollment id will be the same.",
+        "ts": "1481564755.000282"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "<@U221LL03Z> That makes sense.  Though is there a way to get the necessary pre-key for decryption in chaincode?",
+        "ts": "1481564789.000283"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "It seems like use of the pre-key would be something done not in chaincode but in the client app -- perhaps passing the pre-key into the transaction would be insecure",
+        "ts": "1481564957.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2X9KDDL7> - I'm pretty sure we never finished up all the work to make all of this possible end to end.  We had the concept of passing along encrypted attributes (not just the enrollID) within tcerts and a mechanism for sharing the decryption key for those attributes with the validating nodes (using ecies to encrypt the attribute encryption key as well as a function to actually check to see if the encrypted attribute matches a specific value without actually decrypting it)",
+        "ts": "1481565510.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "It's been a while and I don't think we ever enabled all of that functionality end to end in v0.6",
+        "ts": "1481565536.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you can definitely pass and extract attributes in the clear though via tcerts",
+        "ts": "1481565562.000287"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "<@U0PB67X4K> Ah ok -- thanks for the clarification.  Would you say the identity verification done in the asset_management.go example is correct\/reasonable? (the function is `isCaller`, which verifies a signature put in the transaction metadata against a previously stored TCert for the user)",
+        "ts": "1481565780.000288"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "(this is in v0.6)",
+        "ts": "1481565825.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that's one way to do it and you may also want to take a look at <https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/examples\/chaincode\/go\/asset_management_with_roles\/asset_management_with_roles.go>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/examples\/chaincode\/go\/asset_management_with_roles\/asset_management_with_roles.go",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/examples\/chaincode\/go\/asset_management_with_roles\/asset_management_with_roles.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481566061.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "which shows how to use attributes with tcerts as well",
+        "ts": "1481566077.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the part I am not sure about was encrypted attributes - I'd have to look back but I'm pretty sure we didn't get that working end to end via any of the SDKs, etc",
+        "ts": "1481566129.000293"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "Thanks!",
+        "ts": "1481566483.000294"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "I have been looking at all those examples, it's just taking a while to internalize them all :slightly_smiling_face:",
+        "ts": "1481566526.000295"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "Would it be silly to just add the enrollment ID as its own additional attribute?  Redundant, yes, but the mechanism for retrieving it is right there in ChaincodeStubInterface",
+        "ts": "1481566747.000296"
+    },
+    {
+        "type": "message",
+        "user": "U2X9KDDL7",
+        "text": "I guess my question is more like is that still secure?",
+        "ts": "1481566808.000297"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4> if I understand it correctly, with the MSP design, peers and SDKs can mix and match signature algos within the same network and even the same chain? such that if peerA and peerB are in chainX, peerA can use ecdsa and peerB can use rsa, provided that they and the application\/SDK each have the MSP implementations for the signature algos?",
+        "ts": "1481567269.000298"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "(and the underlying BCCSP implementations)",
+        "ts": "1481567296.000299"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U0PB67X4K> : looking at TCert code , I do not see any reason why encryption\/decryption won't work. I see the flaw that symmetric key encryption is being used , client has to be aware of Key derivation mechanism which is not dynamic and key transport.",
+        "ts": "1481568639.000300"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U13TWBRBL> : My understanding is crypto will be configured with one BCCSP config which is static.",
+        "ts": "1481568908.000301"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U221LL03Z> what prevents a SigningIdentity implementation tied to a specific MSP ID to use one signature algo, while another impl tied to another MSP ID use another signature algo? where is the BCCSP config statically set?",
+        "ts": "1481569127.000302"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U13TWBRBL> : that makes sense. Maybe we should wait for reply from Elli and team.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1481569397.000000"
+        },
+        "ts": "1481569251.000303"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U0PB67X4K> <@U26T99AQ4>  Hi can I bring up why we decided  bundle the crytpo certificate and mspid into an ASN1 byte stream for the creator ?  Why not create a mspid as a string in protobuf along with the creator byte string of the PEM cert ? \nMany SDKs in the future will have this hurdle of finding a ASN1 library to meet this need.  This seems now he only place where this will be needed.",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1481569334.000000"
+        },
+        "ts": "1481569294.000304"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> <@U26T99AQ4> I agree with <@U2Q0HP4HY> that it\u2019s unnecessary to use ASN1 object in this case. ASN1 may have better cross-system support than protobuf (like supporting embedded systems) but since this is then wrapped inside a protobuf message anyway, there\u2019s really no benefit...",
+        "ts": "1481569510.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>  - I don't disagree.  If we're worried about marshaling, then I had previous suggested just using pure bytes with the first 1 or 2 bytes being used to represent the type and the remaining bytes would be the cert bytes",
+        "ts": "1481569648.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I'll be offline for a bit heading to the airport)",
+        "ts": "1481569688.000309"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U0PB67X4K> That sounds good if various part of the backend Fabric need this encoded in ASN1 .. but if that's not the case why not just keep it seperated",
+        "ts": "1481569790.000310"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> wouldn\u2019t your suggestion be equivalent (and easier to implement) if that proceeding 1 or 2 bytes are a separate protobuf field?",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1481569835.000000"
+        },
+        "ts": "1481569799.000311"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U13TWBRBL>: <@U221LL03Z> : so the bccsp indeed used to have a static configuration and hence an instance of bccsp would support either rsa or ecdsa certain lengths etc",
+        "ts": "1481572513.000313"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "However <@U0ZR63HLK> modified that and enabled calls of bccsp to specify as well crypto algos or hashes to be used within overwriting any default specs.  ",
+        "ts": "1481572590.000314"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "For a standard x509 msp implementation ignoring for a moment the tcert peculiar extensions a verifier would need to check the type of keys as described in the certificate to trigger the related signature verification algo within bccsp. ",
+        "ts": "1481572707.000315"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But one could indeed have one msp provider enforcing that certain keys are used throughout their infrastructure.",
+        "ts": "1481572757.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>:  serialization of protobufs is non deterministic and I believe the signature is over the creator. Of course we serialize other protos in any case  but was just trying to avoid that issue here since this is such a simple structure ",
+        "ts": "1481572893.000317"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I think there was also an additional argument that crypto items that are to be included in the blockchain eventually could make sense to be represented with asn.1 standard format.",
+        "ts": "1481573260.000318"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U1BC5A0F9> : So that I understand , you mean to say that crypto object , not being in , say , Golang format , you want to have it in ASN.1 so that other implementation , say Java , can consume it. Did I stated it right ?",
+        "ts": "1481575065.000319"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U1BC5A0F9> Could that be engineered  such that it's done on Fabric side without putting the burden on the SDKs requiring it ?",
+        "ts": "1481578134.000320"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U221LL03Z>: So ASN.1 was used to represent cryptographic material that is to persist, i.e., be included in the chain, as it is the standard encoding for such data.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481615865.000000"
+        },
+        "ts": "1481614684.000321"
+    }
+]

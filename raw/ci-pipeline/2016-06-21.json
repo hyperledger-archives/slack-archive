@@ -1,0 +1,1040 @@
+[
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF>: We are again seeing the java.io.IOException: in Z builds",
+        "ts": "1466528596.000214"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "java.io.IOException:",
+        "ts": "1466528596.000215"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-github-verify-z\/136\/console>",
+        "ts": "1466528604.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is perhaps this system had artifacts that persisted from the runs before the fix went in?",
+        "ts": "1466529056.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can someone go in an manually remove the build area and then see if it continues?",
+        "ts": "1466529082.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I will in a bit",
+        "ts": "1466529164.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool, if it starts with a clean fs and still does that, we have a problem but I suspect it was just left over from before",
+        "ts": "1466529196.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I agree. I suspect this issue will keep popping up until all outstanding pull requests are rebased the past the merge of the fix",
+        "ts": "1466529265.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, is that how jenkins works?",
+        "ts": "1466529283.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i found out recently that travis merges the pr branch with master",
+        "ts": "1466529295.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which is probably ideal, actually)",
+        "ts": "1466529305.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I just didnt know it did that",
+        "ts": "1466529312.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IMO it would be nice if Jenkins could too, or at least have them do it the same way",
+        "ts": "1466529348.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> <@U11HH3P7Y> it is conceivable that we could start to do more and more within docker, builds, unit-tests, etc",
+        "ts": "1466529420.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would isolate the CI environment to a degree",
+        "ts": "1466529429.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is this something worth exploring?",
+        "ts": "1466529438.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Jenkins pulls the commit ID, and parents. I assert merging a PR with master before building is a misfeature",
+        "ts": "1466529498.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh really? i see it as the opposite\u2026can I ask why?",
+        "ts": "1466529530.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Since you don't know master is the target branch",
+        "ts": "1466529542.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems to me that the most relevant config is PR + latest",
+        "ts": "1466529546.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see what you mean",
+        "ts": "1466529552.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, ok, so substitute \u201cmaster\u201d for \u201cintended target\u201d (assuming we can ascertain that)",
+        "ts": "1466529580.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is it then \u201cok\u201d ?",
+        "ts": "1466529590.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Perhaps merging with the parent branch is OK, but that prevents non mergable changes from building, which is probably less bad",
+        "ts": "1466529624.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "isnt that the point?",
+        "ts": "1466529649.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we want to find out if the proposed change plays nice with the most realistic place it would go",
+        "ts": "1466529666.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(though I understand its a constantly moving target)",
+        "ts": "1466529682.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I'm here to support what you guys want. I'm only mildly against merge before build.",
+        "ts": "1466529691.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, I also value experience here",
+        "ts": "1466529705.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i\u2019ve never run a large scale CI",
+        "ts": "1466529714.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I thought Travis was simply building the branch that the PR submitter built\u2026but I found out later it is actually merging to master\/parent",
+        "ts": "1466529752.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to me, this made some sense for the reasons I mentioned",
+        "ts": "1466529765.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, I dont have enough experience with CI in production to know what wrinkles this may cause either",
+        "ts": "1466529786.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "related, it strikes me that the concept is the most useful if it can automatically respin an unmerged+open PR every time master\/parent is updated",
+        "ts": "1466529848.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can see the merit of the data point of knowing if the change you made against the base you developed on passes CI\u2026but it seems that is less interesting than whether it passes with HEAD",
+        "ts": "1466529951.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ideally, we could know both",
+        "ts": "1466529965.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "where I see this as creating problems is long-lived feature branches and the like. you may not care that CI isn\u2019t passing on the eventual merge to your parent branch, because you\u2019re ripping out a lot of stuff, or you have two feature branches that are aware of each other but not yet merged. for instance, on one project I\u2019m on, we have changes that need to go in across multiple repos at once, or nothing works. So building the feature branch and running tests against the master on the other project will never work.",
+        "ts": "1466530111.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I propose we table my theoretical concerns about this for now, though",
+        "ts": "1466530132.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019ve cleaned up the two -z builders for now",
+        "ts": "1466530256.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, i see\u2026yes this makes sense",
+        "ts": "1466530435.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the \u201cautomerge\u201d approach really only makes sense for a PR like scenario",
+        "ts": "1466530453.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if the CI jobs can differentiate between branches and PRs, we could divide the policy decision on that predicate",
+        "ts": "1466530511.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thx you for the z cleanup\u2026lets see what happens now",
+        "ts": "1466530529.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if the \u2014user patch didnt work, we\u2019ll have to take more drastic measures in the build system",
+        "ts": "1466530570.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m almost certain it worked",
+        "ts": "1466530703.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, it did on x86 at least",
+        "ts": "1466530722.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im wondering if the z platform had a different docker install or something that handled it differently",
+        "ts": "1466530742.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "on x86 I set the builder recycle time to 60 idle seconds",
+        "ts": "1466530746.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so provided we don\u2019t have a queue, no builder should run two builds.",
+        "ts": "1466530766.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "on Z, there is no chance of recycling",
+        "ts": "1466530780.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you are right that jenkins is building PRs against their submitted base rather than HEAD, I think you are right that this could persist until the PRs that predate the fix are closed out",
+        "ts": "1466530799.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems to me that this wasnt an issue of timing as much as it was that the build was spraying UID 0 artifacts into the tree and then causing subsequent grief",
+        "ts": "1466530848.000265"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if you added something like a \u201cgit log -2\u201d to the top of the build job, you could see for yourself what the parent is",
+        "ts": "1466530851.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes, you\u2019re correct it isn\u2019t timing. I\u2019m saying building was less impacted on x86 because the builders get recycled",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1466530927.000000"
+        },
+        "ts": "1466530882.000267"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I would just add \u201cgit rev-parse HEAD\u201d or something like that",
+        "ts": "1466530884.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, gotcha, sorry",
+        "ts": "1466530892.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure, that works\\",
+        "ts": "1466530894.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually your idea is probably better",
+        "ts": "1466530916.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "mine would only show the PR sha",
+        "ts": "1466530921.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, same idea",
+        "ts": "1466530926.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure. Just show the parent or grandparent.\\",
+        "ts": "1466530946.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\u201cprint-context-somehow()\"",
+        "ts": "1466530957.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if you have a bunch of dependent changes, it would be best to get back to your merged parent, but that isn\u2019t visible in git really",
+        "ts": "1466530979.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wonder if there is a rev-parse type command that can show it",
+        "ts": "1466530995.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I know you can have it walk back to the last tag",
+        "ts": "1466531012.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wonder if there is a mode for branch",
+        "ts": "1466531017.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure. lots of our builds say something a little non-sensical like \u201c15.09 + 1400 commits\u201d which isn\u2019t helpful, really, but it\u2019s the same idea",
+        "ts": "1466531242.000281"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>: builds are stucked in Z machine <https:\/\/jenkins.hyperledger.org\/job\/fabric-github-verify-z\/138\/console>",
+        "ts": "1466539880.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>: I cleaned up both and rebooted them. -2 didn't come back from a reboot",
+        "ts": "1466542280.000283"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "thank you..",
+        "ts": "1466545733.000284"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>: PR#1940 is failing in jenkins (x86 and Z)..",
+        "ts": "1466545871.000285"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Can you please install `pip install -U 'grpcio==0.13.1'`",
+        "ts": "1466545936.000286"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1940>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Issues\/1922\/grpcio pip install: Moved from Makefile to hosts.sh script, varant destroy\/up required by jeffgarratt \u00b7 Pull Request #1940 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1940",
+                "text": "Description Moved the pip install of the python grpc package from the Makefile to the hosts.sh file. This will require developers perform a vagrant destroy\/up cycle. Motivation and Context The ...",
+                "fallback": "GitHub: Issues\/1922\/grpcio pip install: Moved from Makefile to hosts.sh script, varant destroy\/up required by jeffgarratt \u00b7 Pull Request #1940 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/4991920?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1940",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466545971.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>: that looks like a change you need to make here: <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=vagrant\/fabric\/bootstrap.sh;h=5951d56a225e8875debb1ae1a23c8d9ad5305acc;hb=HEAD>",
+        "ts": "1466546218.000289"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "looking at -2 builder for z.. one min",
+        "ts": "1466546297.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vpaprots: thanks",
+        "ts": "1466546455.000291"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U11HH3P7Y>: pip install is also done on z in setupRHELonZ.sh script",
+        "ts": "1466546614.000292"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U0UHG4VP1>: rebooted 73.169.212.227 through the cloud interface and started docker with `nohup docker daemon -g \/data\/docker -H <tcp:\/\/0.0.0.0:2375> -H unix:\/\/\/var\/run\/docker.sock 2&gt;&amp;1 &gt;\/dev\/null&amp;`",
+        "ts": "1466546829.000293"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "hmm\n\n\/dev\/dasdb1      45G   38G  4.8G  89% \/data",
+        "ts": "1466546908.000294"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "that looks like docker cleanup isnt happening...",
+        "ts": "1466546928.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "strange",
+        "ts": "1466546979.000296"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "maybe we need to insert something more 'nuclear' into the build script, like, on every start, kill docker, wipe \/data\/docker and start again?",
+        "ts": "1466546988.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m fine with it",
+        "ts": "1466547001.000298"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "not sure where that would go... <@U11HH3P7Y>?",
+        "ts": "1466547025.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vpaprots: take a look the ci-management repo",
+        "ts": "1466547044.000300"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "though that might be considered a patch... wonder why its happening in the first place.",
+        "ts": "1466547061.000301"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "do we rely on behave being a good citizen and cleaning up?",
+        "ts": "1466547106.000302"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I've seen, especially when its not a successful build, behave leaving lots of junk behind",
+        "ts": "1466547130.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "something is leaving stuff behind",
+        "ts": "1466547139.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hmm looks like -2 isn\u2019t coming back. this happened once before, right?",
+        "ts": "1466547181.000305"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I am logged in right now.. I thought docker was all that was needed..",
+        "ts": "1466547248.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vpaprots: I manually re-launched the jenkins jar",
+        "ts": "1466547289.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vpaprots: and now it\u2019s back up on jenkins",
+        "ts": "1466547303.000308"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "ah!",
+        "ts": "1466547308.000309"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=jenkins-scripts\/create_jenkins_user.sh;h=58878151471db98bdc4b6f3f99e3bbaf11872005;hb=HEAD> :slightly_smiling_face:",
+        "ts": "1466547320.000310"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "that looks familiar.. thanks for checking it in!",
+        "ts": "1466547330.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vpaprots: it looks like <@U1BC5NF2S> checked that in",
+        "ts": "1466547393.000312"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "oh.. wait, no.. I was thinking thats the `jenkins_user_setup.sh` I created for z..",
+        "ts": "1466547419.000313"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U10Q62R8X|vpaprots> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K1S1KPY\/-.sh|Untitled>",
+        "file": {
+            "id": "F1K1S1KPY",
+            "created": 1466547438,
+            "timestamp": 1466547438,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U10Q62R8X",
+            "editable": true,
+            "size": 1389,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K1S1KPY\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K1S1KPY\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K1S1KPY\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1K1S1KPY-f65401c46a",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K1S1KPY\/-.sh\/edit",
+            "preview": "[root@blockchain ~]# cat jenkins_user_setup.sh \r\ngroupadd docker\r\nuseradd -m -G docker -s \/bin\/bash jenkins\r\nmkdir \/home\/jenkins\/.ssh\r\nmkdir \/data\/jenkins\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>[root@blockchain ~]<span class=\"cm-comment\"># cat jenkins_user_setup.sh <\/span><\/pre><\/div>\n<div><pre>groupadd docker<\/pre><\/div>\n<div><pre>useradd <span class=\"cm-attribute\">-m<\/span> <span class=\"cm-attribute\">-G<\/span> docker <span class=\"cm-attribute\">-s<\/span> \/bin\/bash jenkins<\/pre><\/div>\n<div><pre><span class=\"cm-builtin\">mkdir<\/span> \/home\/jenkins\/.ssh<\/pre><\/div>\n<div><pre><span class=\"cm-builtin\">mkdir<\/span> \/data\/jenkins<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 19,
+            "lines_more": 14,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U10Q62R8X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U10Q62R8X|vpaprots>",
+        "bot_id": null,
+        "ts": "1466547438.000314"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "did think there were a couple of things missing.. nm then",
+        "ts": "1466547474.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "well, feel free to check it in so we have it in the repo",
+        "ts": "1466547499.000316"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "should really... I am behind times though.. how do I check it in?",
+        "ts": "1466547538.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "check out the ci-management repo and take a look",
+        "ts": "1466547556.000318"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "havent worked with gerrit before.. google probably has the answers :slightly_smiling_face:",
+        "ts": "1466547565.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "check this out",
+        "ts": "1466547589.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/ci-management>",
+        "ts": "1466547589.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U10Q62R8X>: <@U0UHG4VP1> did a session on gerrit",
+        "ts": "1466547595.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "was recorded\u2026 I\u2019d have to poke around slack and email for the link",
+        "ts": "1466547628.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/www.zephyrproject.org\/doc\/contribute\/gerrit_accounts.html> set up account here (use hyperledger when it says zephyrproject)",
+        "ts": "1466547668.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "instructions (s\/zephyr\/hyperledger\/): <https:\/\/www.zephyrproject.org\/doc\/contribute\/gerrit.html>",
+        "ts": "1466547704.000325"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "great, two birds one stone.. I need to figure out gerrit for upstreaming my golang changes back to google too. Thanks! :slightly_smiling_face:",
+        "ts": "1466547710.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/drive.google.com\/file\/d\/0B42vMkapQi1MSzRjYlhfSkFRSzA\/view>",
+        "ts": "1466547723.000327",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1",
+                    "U10Q62R8X"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "user": "U0UKTPMG8",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0UKTPMG8|jeffgarratt> has joined the channel",
+        "ts": "1466548553.000328"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U10Q62R8X>: for every build in jenkins, it will stop the docker and wipe of docker images and containers..",
+        "ts": "1466548747.000329"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>: submitted patch.. <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/205\/>",
+        "ts": "1466548781.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>: I see that. you need a better commit message.",
+        "ts": "1466548812.000331"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U11HH3P7Y>: can you also put that pip package under z as well pls?",
+        "ts": "1466548857.000332"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setupRHELonZ.sh#L91>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setupRHELonZ.sh#L91",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setupRHELonZ.sh#L91",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466548955.000333"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "sure.",
+        "ts": "1466549009.000335"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I wish there were more integration\/sharing between vagrant setup scripts and 'bare-metal' setups.. something for the future..",
+        "ts": "1466549122.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is there a reason to install it on its own with -U instead of with everything else the line above?",
+        "ts": "1466549141.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>: ^^^",
+        "ts": "1466549184.000338"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UKTPMG8>:  We observed this working with -U",
+        "ts": "1466549317.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "does that mean 0.13.1 or newer?",
+        "ts": "1466549335.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "no, 0.13.1",
+        "ts": "1466549419.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "the -U was needed on the Travis env because the dependent 'six' library was out of date",
+        "ts": "1466549448.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "above 0.13.1 had issues",
+        "ts": "1466549466.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "hopefully 0.14.2 will prove better",
+        "ts": "1466549476.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "but it has not yet been released",
+        "ts": "1466549530.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0UHG4VP1>: btw, on my local env (vagrant) I did NOT need the -U.  But on the Travis system was needed",
+        "ts": "1466549607.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>: are you going to add <@U10Q62R8X> file to this change or will it be another change?",
+        "ts": "1466549656.000347"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I am doing that change here \n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setupRHELonZ.sh#L91>",
+        "ts": "1466549770.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok",
+        "ts": "1466549806.000349"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Where can I get the z setup script in jenkins jobs?",
+        "ts": "1466549813.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0UKTPMG8>: I merged that change, so x86 should be OK",
+        "ts": "1466549863.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "thnx",
+        "ts": "1466550228.000352"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "tried installing `grpcio` on the z builders..",
+        "ts": "1466552533.000353"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "getting some strange conflicts...",
+        "ts": "1466552542.000354"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U10Q62R8X|vpaprots> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2KQCDT\/-.sh|Untitled>",
+        "file": {
+            "id": "F1K2KQCDT",
+            "created": 1466552561,
+            "timestamp": 1466552561,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U10Q62R8X",
+            "editable": true,
+            "size": 339,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K2KQCDT\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K2KQCDT\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2KQCDT\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1K2KQCDT-1ad24d5735",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2KQCDT\/-.sh\/edit",
+            "preview": "    Writing \/tmp\/easy_install-Gk_Onm\/futures-3.0.5\/setup.cfg\r\n    Running futures-3.0.5\/setup.py -q bdist_egg --dist-dir \/tmp\/easy_install-Gk_Onm\/futures-3.0.5\/egg-dist-tmp-3ToErf\r\n    \r\n    Installed \/tmp\/pip-build-TtVFNP\/grpcio\/futures-3.0.5-py2.7.egg\r\n    Traceback (most recent call last):\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>    Writing \/tmp\/easy_install-Gk_Onm\/futures-3.0.5\/setup.cfg<\/pre><\/div>\n<div><pre>    Running futures-3.0.5\/setup.py <span class=\"cm-attribute\">-q<\/span> bdist_egg <span class=\"cm-attribute\">--dist<\/span><span class=\"cm-attribute\">-dir<\/span> \/tmp\/easy_install-Gk_Onm\/futures-3.0.5\/egg-dist-tmp-3ToErf<\/pre><\/div>\n<div><pre>    <\/pre><\/div>\n<div><pre>    Installed \/tmp\/pip-build-TtVFNP\/grpcio\/futures-3.0.5-py2.7.egg<\/pre><\/div>\n<div><pre>    Traceback (most recent call last):<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 7,
+            "lines_more": 2,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U10Q62R8X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U10Q62R8X|vpaprots>",
+        "bot_id": null,
+        "ts": "1466552562.000355"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "from one problem to the next.. the package (aptly named) `six` is out of date.. so fine..",
+        "ts": "1466552905.000356"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U10Q62R8X|vpaprots> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2GLQN4\/-.sh|Untitled>",
+        "file": {
+            "id": "F1K2GLQN4",
+            "created": 1466553047,
+            "timestamp": 1466553047,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U10Q62R8X",
+            "editable": true,
+            "size": 2122,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K2GLQN4\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1K2GLQN4\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2GLQN4\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1K2GLQN4-bdf525b3ff",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/vpaprots\/F1K2GLQN4\/-.sh\/edit",
+            "preview": "      File \"\/usr\/lib\/python2.7\/site-packages\/pkg_resources.py\", line 630, in resolve\r\n        raise VersionConflict(dist,req) # XXX put more info here\r\n    pkg_resources.VersionConflict: (six 1.9.0 (\/usr\/lib\/python2.7\/site-packages), Requirement.parse('six>=1.10'))\r\n    \r\n    ----------------------------------------\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>      File <span class=\"cm-string\">&quot;\/usr\/lib\/python2.7\/site-packages\/pkg_resources.py&quot;<\/span>, line <span class=\"cm-number\">630<\/span>, <span class=\"cm-keyword\">in<\/span> resolve<\/pre><\/div>\n<div><pre>        raise VersionConflict(dist,req) <span class=\"cm-comment\"># XXX put more info here<\/span><\/pre><\/div>\n<div><pre>    pkg_resources.VersionConflict: (six <span class=\"cm-number\">1<\/span>.9.0 (\/usr\/lib\/python2.7\/site-packages), Requirement.parse(<span class=\"cm-string\">'six&gt;=1.10'<\/span>))<\/pre><\/div>\n<div><pre>    <\/pre><\/div>\n<div><pre>    <span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">--<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 35,
+            "lines_more": 30,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U10Q62R8X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U10Q62R8X|vpaprots>",
+        "bot_id": null,
+        "ts": "1466553047.000357"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "gah.. wonderful :confused:",
+        "ts": "1466553072.000358"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I take it grpcio package absent blocks builds?",
+        "ts": "1466553117.000359"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "given that openssl certainly works on z, this looks more like a misconfigured build, rather then a source issue.. but will take time to investigate.. and likely not today",
+        "ts": "1466553174.000360"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Thanks <@U10Q62R8X>.. I think it's better not to merge that PR",
+        "ts": "1466553226.000361"
+    }
+]

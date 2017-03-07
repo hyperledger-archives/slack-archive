@@ -1,0 +1,164 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes the client, in the end, in BFT protocols usually cares for having its request (periodically) resubmitted",
+        "ts": "1467961978.001872"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "*re caching raw ledger at consensus service*",
+        "ts": "1467965724.001873"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we may want to follow the footsteps of Kafka - which has configurable retention time for the partition retention <http:\/\/kafka.apache.org\/documentation.html#intro_topics>",
+        "attachments": [
+            {
+                "service_name": "Apache Kafka",
+                "title": "Kafka",
+                "title_link": "http:\/\/kafka.apache.org\/documentation.html#intro_topics",
+                "text": "A high-throughput, distributed, publish-subscribe messaging system.",
+                "fallback": "Apache Kafka: Kafka",
+                "from_url": "http:\/\/kafka.apache.org\/documentation.html#intro_topics",
+                "service_icon": "http:\/\/kafka.apache.org\/images\/apache_feather.gif",
+                "id": 1
+            }
+        ],
+        "ts": "1467965825.001874"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(it does not store the whole log for eternity - nor I think should we)",
+        "ts": "1467965848.001876"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now to facilitate the usage of this cache - Kafka allows the consumer (peer in our case) to *seek* on a given offset (batch) in the partition (ledger)",
+        "ts": "1467965929.001877"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "see \"seek\" in <https:\/\/kafka.apache.org\/090\/javadoc\/org\/apache\/kafka\/clients\/consumer\/KafkaConsumer.html>",
+        "ts": "1467965944.001878"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the question is how do we want this - I really would like to see - sth slightly different from Kafka for state transfer in which state transfer would be peer-to-peer not peer-consenter oriented",
+        "ts": "1467966011.001879"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Kafka does not have interconsumer state transfer and I strongly believe we should. IMO, we need to avoid, or discourage, peers from \"torturing\" consensus service with state transfer and make them rely predominantly on peer-to-peer for state transfer.",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1467966657.000000"
+        },
+        "ts": "1467966037.001880"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "BTW, another important design point as we have consenters split from peers is (Push vs Pull) <http:\/\/kafka.apache.org\/documentation.html#design_pull>",
+        "attachments": [
+            {
+                "service_name": "Apache Kafka",
+                "title": "Kafka",
+                "title_link": "http:\/\/kafka.apache.org\/documentation.html#design_pull",
+                "text": "A high-throughput, distributed, publish-subscribe messaging system.",
+                "fallback": "Apache Kafka: Kafka",
+                "from_url": "http:\/\/kafka.apache.org\/documentation.html#design_pull",
+                "service_icon": "http:\/\/kafka.apache.org\/images\/apache_feather.gif",
+                "id": 1
+            }
+        ],
+        "ts": "1467966111.001881"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "when peer is colocated with a consenter and trusts it - push (our v0.5) is obvious choice",
+        "ts": "1467966138.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not so clear with the separation...",
+        "ts": "1467966145.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "comments welcome",
+        "ts": "1467966147.001885"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "*re signatures vs multi connections*",
+        "ts": "1467966211.001886"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I would have basically two  parts of the consensus client library: 1) one in which peer trusts \"his\" consenter and 2) the other one in which does not",
+        "ts": "1467966268.001887"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "clearly 1 is not BFT but has its place in practice (single organization running peers trusting \"its\" consenter)",
+        "ts": "1467966293.001888"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now for 2) we discussed signatures vs. multi-connections",
+        "ts": "1467966309.001889"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with multi-connections we could reuse 1st part of the library and get only hash of the committed batches confirmation on other f connections",
+        "ts": "1467966345.001890"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this would be alternative to signatures - as part of brainstorming",
+        "ts": "1467966358.001891"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "comments welcome",
+        "ts": "1467966364.001892"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "*- over and out -*",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1467966381.000000"
+        },
+        "ts": "1467966367.001893"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> <@U0XPR4NP4> <@U0XQ35CDD> <@U0UGH3X7X> ^^",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1467966909.000000"
+        },
+        "ts": "1467966896.001897"
+    }
+]

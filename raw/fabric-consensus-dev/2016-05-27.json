@@ -1,0 +1,411 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "So it is not clear how to trigger a regular view change, because there are multiple outstanding requests at every time.  Maybe together with checkpoints?",
+        "ts": "1464342481.002634"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so #756, PR #1623   ...  how should we proceed ?   at first glance, do we move all that logic inside the plugin ?  get a peerconnected\/disconnected event and keep track inside consensus ?",
+        "ts": "1464354109.002635"
+    },
+    {
+        "user": "U14NC480K",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U14NC480K|charles-cai> has joined the channel",
+        "ts": "1464355855.002636"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i think that would be best",
+        "ts": "1464356615.002637"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "like the RecvMsg() interface, just with PeerConnected() and PeerDisconnected()",
+        "ts": "1464356646.002638"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or, alternatively, PeerEvent(connected\/disconnected)",
+        "ts": "1464356664.002639"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you remember why we need to wait for enough peers to connect before we start consensus?",
+        "ts": "1464356697.002640"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So that we can establish a total ordering of the replicas",
+        "ts": "1464356713.002641"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah yes",
+        "ts": "1464356719.002642"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "you don't know their IDs in advance...",
+        "ts": "1464356725.002643"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that is only required once",
+        "ts": "1464356737.002644"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's good",
+        "ts": "1464356741.002645"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "correct",
+        "ts": "1464356748.002646"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yes, we need to establish all the replicaIDs before doing anything",
+        "ts": "1464356753.002647"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "eventually we can also move `Broadcast` into the consensus",
+        "ts": "1464356759.002648"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but small steps at a time",
+        "ts": "1464356777.002649"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so i noticed that we still broadcast to all peers ... i'll change to broadcast to all validating peers",
+        "ts": "1464356845.002650"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i'll try to refactor on top of <@U0XPR4NP4> event manager ?  jason,  do you have a branch i can work off of ?",
+        "ts": "1464356907.002651"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "pbft-state-machine-pr2 includes the latest changes",
+        "ts": "1464356938.002652"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ok",
+        "ts": "1464356984.002653"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> <@U0XQ35CDD> <@U0UGH3X7X> : I'd like to get 1557, 1586, 1595, 1596, 1614, and 1622 merged today is possible if you could review and signoff",
+        "ts": "1464357119.002654"
+    },
+    {
+        "user": "U0Y55KNG2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Y55KNG2|kletkeman> has joined the channel",
+        "ts": "1464357643.002655"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tuand: well, or we just start unicasting from consensus directly",
+        "ts": "1464357772.002656"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: yea, let's go with it.  i'd prefer to change that timerfactory stuff, but i think it can be done later",
+        "ts": "1464357812.002657"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Yes, there will definitely be some tweaks down the line",
+        "ts": "1464357979.002658"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0XR6J961>: what's the logic behind moving broadcasting to consensus?",
+        "ts": "1464358001.002659"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "kostas: that broadcast doesn't block when sending to byzantine replicas",
+        "ts": "1464358102.002660"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and consensus doesn't send messages to non-whitelisted replicas",
+        "ts": "1464358122.002661"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "got it, good call",
+        "ts": "1464358200.002662"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does anybody have a suggestion how to do periodic view changes?",
+        "ts": "1464358443.002663"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess the primary would stop accepting new requests",
+        "ts": "1464358488.002664"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the backups send a view-change when they have a commit certificate for the last request of the primary",
+        "ts": "1464358526.002665"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and new pre-prepares that should not have been sent by the primary directly lead to a view change",
+        "ts": "1464358561.002666"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but rotating the primary means that requests may be lost initially, if the request was sent to the primary that now becomes a backup",
+        "ts": "1464358631.002667"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that means we probably should be broadcasting requests again...",
+        "ts": "1464358647.002668"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is all a bit hacky",
+        "ts": "1464358655.002669"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: My perhaps naive vision for periodic view change, was to have a config variable set, which would be \"change view of n checkpoints\", so, once the good primary hits that number, it sends a VIEW-CHANGE (That way we never change view with a non-empty pset and the xset just has the single null request)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1464360769.000000"
+        },
+        "ts": "1464359328.002670"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The backup who becomes the new primary would send a VIEW-CHANGE and a NEW-VIEW",
+        "ts": "1464359381.002672"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Shouldn't we already be resubmitting requests after a view change?",
+        "ts": "1464359426.002673"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "batch does, yes",
+        "ts": "1464362175.002675"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<!channel> As discussed on the last HL Arch WG on Wednesday - the proposal for the next consensus architecture is posted here: <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464362881.002676"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "please review, comment, discuss and contribute",
+        "ts": "1464362908.002678"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great!",
+        "ts": "1464364446.002679"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks for getting this out <@U0Y14MWA2> will be good to get some others to weigh in on the paper",
+        "ts": "1464365970.002680"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0Y14MWA2>,  can you also announce on the hyperledger mailing lists ?",
+        "ts": "1464367611.002681"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i am just doing that",
+        "ts": "1464367639.002682"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I will send to hl-fabric",
+        "ts": "1464367646.002683",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not sure if I should to others?",
+        "ts": "1464367651.002684"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "there's hyperledger-architecture-wg",
+        "ts": "1464367786.002685"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i thought there was a fabric-announce listserv but can't find it now",
+        "ts": "1464367830.002686"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: how do i wait for the pbft core to finish (for testing?)",
+        "ts": "1464372645.002687"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I just commented on your PR",
+        "ts": "1464372663.002688"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've been converting tests which were not network based, but only a single instance of the PBFT core, to simply not start up the event manager, and instead, have the test manually inject events in via `sendEvent(pbftCore, event)`",
+        "ts": "1464372730.002689"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With the latest changes, you can inject any message, like for instance `sendEvent(pbftCore, &amp;PrePrepare{...})`",
+        "ts": "1464372765.002690"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah!",
+        "ts": "1464372778.002691"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well eventually we should have a test event manager that doesn't use timers\/goroutines",
+        "ts": "1464372806.002692"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Will need to come up with some better solution for the networked ones in the future",
+        "ts": "1464372813.002693"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, exactly, eventually we'll want the test event manager to run entirely on the test thread",
+        "ts": "1464372824.002694"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No more non-determinism in our network tests",
+        "ts": "1464372838.002695"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1464372842.002696"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(The network based ones today, you can inject messages with `pbftCore.manager.queue() &lt;- &amp;Message{}`, which is ugly and I hate, and should go away once we fix up the mock network)",
+        "ts": "1464372892.002697"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1464372944.002698"
+    },
+    {
+        "user": "U1C3WNWRF",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1C3WNWRF|jphillips> has joined the channel",
+        "ts": "1464415298.002699"
+    }
+]

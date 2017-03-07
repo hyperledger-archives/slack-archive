@@ -1,0 +1,1149 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "[Hyperledger-fabric] About transaction IDs and replay attack\neverybody from that list, please have a look at this mail thread and help us decide the right method of TxID generation (more about this in the thread, please read)",
+        "ts": "1470900946.001273"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1AU8DRQR>: adding <@U0ZR63HLK> incase not in the list",
+        "ts": "1470915629.001274"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "thanks",
+        "ts": "1470916003.001275"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what list?",
+        "ts": "1470916186.001276"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we have a slack if half of the stuff is communicated via mail?",
+        "ts": "1470916203.001277"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1AU8DRQR>, I almost agree with Tamas, meaning signing everything but cert and signature. I'm just trying to understand if attacks can be mounted and then I will reply :slightly_smiling_face:",
+        "ts": "1470919607.001278"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ZR63HLK> do you mean including everything in the generation of TxID except cert and signature?",
+        "ts": "1470919664.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1470920510.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because that's the content of the transaction",
+        "ts": "1470920517.001281"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is the only thing we care about",
+        "ts": "1470920527.001282"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and is protected by the signature",
+        "ts": "1470920539.001283"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "now, if the transaction is about money transfer, let's say, Alice transfers to Bob 10 USD,",
+        "ts": "1470920573.001284"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if Bob mauls the transaction signature and replay",
+        "ts": "1470920612.001285"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it will be caught",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1470920667.000000"
+        },
+        "ts": "1470920617.001286"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if Bob replays only the content and sign it with one of his certificate, then the chaincode should ensure that only Alice can do this operation",
+        "ts": "1470920651.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "this is related to access control",
+        "ts": "1470920657.001288"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZR63HLK> is that enough to make the TID unique ? [transfer Alice, bob, 10] twice is valid and not unique",
+        "ts": "1470920719.001290"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but perhaps there are other things besides just \u201cpayload\u201d in composing a TID",
+        "ts": "1470920747.001291"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah, let's discuss this",
+        "ts": "1470920757.001292"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for confidential transaction",
+        "ts": "1470920762.001293"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "(or proposal)",
+        "ts": "1470920766.001294"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the hash will be on ciphertexts",
+        "ts": "1470920774.001295"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "which will be always different",
+        "ts": "1470920779.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so no issue here",
+        "ts": "1470920784.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but",
+        "ts": "1470920784.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for public transactions\/proposals",
+        "ts": "1470920792.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we need a nonce",
+        "ts": "1470920794.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "indeed, the nonce is good to have also for confidential transactions",
+        "ts": "1470920808.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but for other reasons",
+        "ts": "1470920909.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok.. for some reason I thought we wanted to go away from nonce\u2026 but maybe I was mistaken. Can you remind ?",
+        "ts": "1470921182.001303"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I didn't want to go away for it because it is helpful and for public transactions it is evident. If Alice wants to transfers 2 times 10 USD to Bob, the content of the transaction can potentially be the same and so to avoid replays the nonce can help",
+        "ts": "1470921273.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I think <@U0KN2SSKE> was arguing that the nonce can be avoided because at some point during the protocol the endorser can figure it out",
+        "ts": "1470921323.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "more details are needed",
+        "ts": "1470921337.001306"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what replay are we trying to prevent?",
+        "ts": "1470921371.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "proposal",
+        "ts": "1470921387.001308"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no?",
+        "ts": "1470921390.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of an attacker?",
+        "ts": "1470921393.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or of a byzantine node",
+        "ts": "1470921399.001311"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "by*",
+        "ts": "1470921404.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "attacker in the first place",
+        "ts": "1470921411.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "as the example I was mentioning above",
+        "ts": "1470921419.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "don't we use TLS connections?",
+        "ts": "1470921423.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "still, suppose that the attacker gets that transaction in some other way",
+        "ts": "1470921443.001316"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because he attacked an endorser",
+        "ts": "1470921454.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so byzantine endorser",
+        "ts": "1470921473.001318"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "or because he was listening at Alice before Alice send to the TLS channel",
+        "ts": "1470921476.001319"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "who replays the proposal to whom?",
+        "ts": "1470921505.001320"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in what communication step",
+        "ts": "1470921512.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "in that case the endorser is not byzantine, it is cursious buthonest",
+        "ts": "1470921514.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's recap",
+        "ts": "1470921527.001323"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Alice send a proposal for transferring 10 USD to Bob",
+        "ts": "1470921540.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "who is alice",
+        "ts": "1470921552.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "client?",
+        "ts": "1470921557.001326"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1470921561.001327"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sorry",
+        "ts": "1470921563.001328"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bob is endorser?",
+        "ts": "1470921566.001329"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "nono",
+        "ts": "1470921569.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Alice and Bob are two parties",
+        "ts": "1470921574.001331"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "who are transacting",
+        "ts": "1470921577.001332"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "application level?",
+        "ts": "1470921584.001333"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1470921587.001334"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then it is no fabric data structure",
+        "ts": "1470921594.001335"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we are trying to avoid that the same proposal is accepted two times",
+        "ts": "1470921618.001336"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, but what entity in the network is sending this proposal to what other entity",
+        "ts": "1470921638.001337"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the client-sdk",
+        "ts": "1470921646.001338"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is not the submitting peer",
+        "ts": "1470921659.001339"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to?",
+        "ts": "1470921659.001340"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "to the endorsers directly",
+        "ts": "1470921667.001341"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1470921672.001342"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's a tls connection",
+        "ts": "1470921678.001343"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1470921683.001344"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but let's suppose that the attacker gets the proposal in some other way",
+        "ts": "1470921695.001345"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "he can then replay",
+        "ts": "1470921701.001346"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how?",
+        "ts": "1470921706.001347"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the attacker needs a tls connection to the endorser",
+        "ts": "1470921714.001348"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I don't know, the ways to reach god are infinite",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1470921730.000000"
+        },
+        "ts": "1470921715.001349"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, it is fine",
+        "ts": "1470921737.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the attacker has a tls connection to the endorsers",
+        "ts": "1470921756.001352"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's say the attacker control the network",
+        "ts": "1470921767.001353"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1470921771.001354"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we are really going to the extreme here",
+        "ts": "1470921788.001355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but with tls, network control only means interruption",
+        "ts": "1470921790.001356"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1470921802.001357"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "this is the reason I said, the attacker gets the proposal in some other way",
+        "ts": "1470921819.001358"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because he taps into Alice",
+        "ts": "1470921825.001359"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, but then the proposal doesn't match the attacker's identity",
+        "ts": "1470921834.001360"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "or because he gets this information passed by an endorser who is honest but curious",
+        "ts": "1470921847.001361"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "mh, interesting.. what does that mean?",
+        "ts": "1470921864.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, there is a tls connection",
+        "ts": "1470921869.001363"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which identifies the attacker as party Eve",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1470921882.000000"
+        },
+        "ts": "1470921878.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which doesn't match Alice's identity",
+        "ts": "1470921892.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what if the proposal is signed with a TCert?",
+        "ts": "1470921905.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "there is no identity on the proposal",
+        "ts": "1470921911.001368"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha",
+        "ts": "1470921925.001369"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then you made your life harder",
+        "ts": "1470921930.001370"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I am",
+        "ts": "1470921937.001371"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I want to consider the worst scenario",
+        "ts": "1470921958.001372"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the worst scenario is everybody is compromised and nothing is safe",
+        "ts": "1470921976.001373"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or you mean worst configuration",
+        "ts": "1470921985.001374"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no comeon, that's too much :slightly_smiling_face:",
+        "ts": "1470921987.001375"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so sdk signs a proposal",
+        "ts": "1470922005.001376"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I mean, there are at least a certain number of non-corrupted entities",
+        "ts": "1470922013.001377"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and somehow this gets leaked",
+        "ts": "1470922013.001378"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1470922017.001379"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it can be leaked at the endpoints",
+        "ts": "1470922053.001380"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I agree not at TLS layer",
+        "ts": "1470922060.001381"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so replay protection on the transport layer",
+        "ts": "1470922068.001382"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I would say at the application layer",
+        "ts": "1470922087.001383"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because TLS already has that",
+        "ts": "1470922091.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i guess that's what i mean",
+        "ts": "1470922093.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "perfect",
+        "ts": "1470922097.001386"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you establish a nonce for the new tls connection",
+        "ts": "1470922111.001387"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm no",
+        "ts": "1470922173.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is the proposal signed at all?",
+        "ts": "1470922181.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where does this trust get transferred?",
+        "ts": "1470922197.001390"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel>: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric\/p1470922142001205>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric\/p1470922142001205",
+                "fallback": "[August 11th, 2016 6:29 AM] cbf: <!channel>: ACTION REQUIRED <http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/2016-August\/000234.html>",
+                "ts": "1470922142.001205",
+                "author_subname": "cbf",
+                "channel_id": "C0Y4PEU22",
+                "channel_name": "fabric",
+                "is_msg_unfurl": true,
+                "text": "<!channel>: ACTION REQUIRED <http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/2016-August\/000234.html>",
+                "author_name": "Chrisfer",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/cbf",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/eb4a014964885f16a760546340b5daa0.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0017-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric"
+            }
+        ],
+        "ts": "1470922250.001391"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for this let's wait the final message flow. The discussion started on how to construct txID and I was investigating the relation with replay attacks",
+        "ts": "1470922262.001393"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so I started speculating",
+        "ts": "1470922277.001394"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1470922289.001395"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, I'm now fine with Tamas' proposal",
+        "ts": "1470922292.001396"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "hash everything but cert and signature",
+        "ts": "1470922302.001397"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't care for this application level stuff",
+        "ts": "1470922324.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what i care about is what falls out of the endorsers",
+        "ts": "1470922337.001399"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm pretty sure that getting rid of the submitting peer is a bad idea",
+        "ts": "1470922367.001400"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but oh well",
+        "ts": "1470922369.001401"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "mh interesting, why?",
+        "ts": "1470922377.001402"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm also trying to understand",
+        "ts": "1470922389.001403"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the pros and cons",
+        "ts": "1470922396.001404"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's about optimizing the endorser execution",
+        "ts": "1470922689.001405"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you know what changeset you expect to be produced, you can use a proxy to shard the chaincode simulation across different machines which have different working sets in memory, etc.",
+        "ts": "1470922742.001406"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you don't know it, you basically need to blindly execute",
+        "ts": "1470922754.001407"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "hi, everyone. How can i ref  JIRA issue in gerrit pr?",
+        "ts": "1470939468.001408"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yaoguo: if the bug is FAB-4 (for instance) start your commit message like:",
+        "ts": "1470939503.001409"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "FAB-4: Fix frobnicator allocation",
+        "ts": "1470939515.001410"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "Thanks.",
+        "ts": "1470939772.001411"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "better for instance: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/389\/>",
+        "ts": "1470940024.001412"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if you look here: <https:\/\/jira.hyperledger.org\/browse\/FAB-1> you will see 389 shows up in the git commits tab and the git rollup tab",
+        "ts": "1470940078.001413"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "My commit is \"FAB-3: Fix Json output for empty network list\" . Is there anything incorrect?  JIRA has no response.",
+        "ts": "1470940307.001414"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "did you mean to re-open <https:\/\/jira.hyperledger.org\/browse\/FAB-1>, or was that an accident",
+        "ts": "1470941948.001415"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yaoguo: once <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/485\/> is merged it will link up to JIRA",
+        "ts": "1470942008.001416"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "oh, I see. I thought it will be linked after pushing the commit just like github PR.",
+        "ts": "1470964081.001417"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I closed FAB-1 again",
+        "ts": "1470966759.001418"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "Sorry for FAB-1 misoperation.    The latest  code build failed by Jenkins because some core.util unit-test.   It blocks all the new commits building.  Make a commit to fix it in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/489\/>.",
+        "ts": "1470970113.001419",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1M7K67EV",
+                    "U0UHG4VP1"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1VG8LNP3>: 489 doesn't seem to build either",
+        "ts": "1470976946.001420"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "is the gradle stuff in the build new? it doesn't seem to function behind a proxy",
+        "ts": "1470977832.001421"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'm also not a fan of the new [][]byte input to the chaincodes instead of []string... it seems to simplify the use case of raw binary args at the expense of the simplest use cases (like example02)",
+        "ts": "1470978233.001422"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "peer chaincode deploy -p <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02> -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}'\n\nno longer works as you need to base64 encode the arguments now",
+        "ts": "1470978269.001423"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "the REST API is also affected",
+        "ts": "1470978332.001424"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/481\/> the cli will work with string. the REST API is for programming, from that side a [][]byte \/ base64 should be easier\/simpler than a string",
+        "ts": "1470980415.001425"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "my CLI does not work",
+        "ts": "1470980425.001426"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "Error: Chaincode argument error: illegal base64 data at input byte 0",
+        "ts": "1470980434.001427"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "and I disagree, a plain text string is the simplest thing you can send... base64ing that string is an added layer of complexity",
+        "ts": "1470980509.001428"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it will break using the Swagger-UI with blockchain",
+        "ts": "1470980533.001429"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes it does not work yet but the commit I sent you will be the fix",
+        "ts": "1470980543.001430"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and base64ing comes from golang json. and I do not think real life chaincodes want to send strings instead of structures encoded into bytes",
+        "ts": "1470980582.001431"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "real life chaincodes are more complex than \"send\", \"11\", \"Alice\"",
+        "ts": "1470980635.001432"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and they should be interacted by programs, not manually",
+        "ts": "1470980659.001433"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "are they? plenty of applications accept simple JSON arguments... not binary blobs",
+        "ts": "1470980668.001434"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes but these are not just applications, this is a general thing for chaincodes",
+        "ts": "1470980700.001435"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I get that someone will want to send binary data.... but why can't they just base64 encode their binary blobs into an argument and unmarshal it inside their chaincode?",
+        "ts": "1470980723.001436"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and I guess most of the chaincodes in real life will do something e.g. with financial things - think of BTC, I would not think string would be enough for that",
+        "ts": "1470980740.001437"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "with financial things I wanted to mean that more complex things",
+        "ts": "1470980763.001438"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "sure, but why not make those apps responsible for their unmarshalling instead of imposing base64 input on everyone?",
+        "ts": "1470980819.001439"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "3 things:\n1) from a go point of view, []byte is nearly the same as string. And for a program []byte is easier and general to handle cause of the ability of structure encoding.\n2) the B64 things is caused by just the golang json implementation. as I see it could be just a string as that could be easily converted to []byte. and then everything would be the same from the REST point of view. \n3) despite 2) I think that for programs it is not a hardness to use base64 because I am nearly sure that a simple 1 liner can do that conversion. but they can surely benefit from []byte instead of string.",
+        "ts": "1470981632.001440"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but the best thing would be to find some solution that is good for everyone, e.g. for You and me",
+        "ts": "1470981656.001441"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I have been thinking on solutions but only came up with the worst practice thing that we could modify golang json source - big no-no",
+        "ts": "1470981734.001442"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "[][]byte and []string being so similar means it should be easy for your program to convert from []string to [][]byte (in a simple 1 liner)",
+        "ts": "1470981962.001443"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "then it could do its structure encoding from there",
+        "ts": "1470982022.001444"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I guess I'm a fan of simple APIs...",
+        "ts": "1470982061.001445"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but as I understand your only problem is that this whole byte things manifests itself in the REST API as base64",
+        "ts": "1470982674.001446"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "that and it makes the chaincode more complicated",
+        "ts": "1470982871.001447"
+    },
+    {
+        "user": "U1RLZ5729",
+        "text": "<@U1RLZ5729|abhishekseth> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1470982999.001448"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "why are bytes more complicated than string?",
+        "ts": "1470983005.001449"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "because if you're not dealing with binary data, then you need a whole bunch of helper functions",
+        "ts": "1470983088.001450"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "you are not dealing with binary data if you only use example02. the question is whether real life applications will be similar to example02",
+        "ts": "1470983186.001451"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw which helpers did you mean?",
+        "ts": "1470983265.001452"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "things like getFunctionAndParams()",
+        "ts": "1470983345.001453"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "and ToChaincodeArgs()",
+        "ts": "1470983373.001454"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "you're right though, it's about the use cases, maybe mine are too simple and people will always want to ship binary blobs around",
+        "ts": "1470983685.001455"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but those will be eliminated.",
+        "ts": "1470983784.001456"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the chaincode will only use stub. see Sheehan's proposal on the mailing list, he asked the devs\/architects if they like it and only got positive comments.",
+        "ts": "1470983818.001457"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but this leads to a chaincode API change and I wanted to avoid that in my commit as it was already large and had a big impact",
+        "ts": "1470983884.001458"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so that change is WIP",
+        "ts": "1470983889.001459"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "sorry, I don't follow the mailing lists.... do you have a link or a time\/date I can check for?",
+        "ts": "1470983963.001460"
+    }
+]

@@ -1,0 +1,2058 @@
+[
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "A few people are meeting to talk about the status of the Master code base.  I am slacking the information as a result- this is real time discussion",
+        "ts": "1485181979.001315"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There are multiple lists on the board-- these are all the stuff we want to walk through and determine where we are specifically-- TLS, validation message and TX, replay attacks, replication MSPs for gossip, anchor peers, channel leaders, HSM (key generation), chaincode return object, chaincode endorsement policy, revisit events, chaincode life-cycle (deploy\/init upgrade,.. and policy), ERror handling, bootstrap with pre-defined channels, custom TX, CLI accepts multiple peers, application crypto library, system Chaincode refactor (location) and Chaincode calling chaincode",
+        "ts": "1485182109.001316"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For SDK- (node.js, and Java)- Java only : create \"official\"branch, events support (example: rejection in blockchain), chain  join ( creation basically done), REST wrapper, anything left in MSP, Java Chaincode, TCERt private key derivation, query on ledger",
+        "ts": "1485182201.001317"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For SDK- add RSA , escc, vscc",
+        "ts": "1485182339.001318"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Docs- high level overview- ferris; technical overview- Josh; remove version 0.6 material; docker compose- 3 configs; ordering configs, CA configs- Keith ; APIs- Jz, SDK- JZ, policies- Murali; channels- murali",
+        "ts": "1485182406.001319"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Docs- end to end Barry\/Ramesh",
+        "ts": "1485182440.001320"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Fabric - CA: Docs- API doc \/swagger; readme; read the docs,... CLI simplification; TCERt- BCCSP integration\/. option 2 (HSM friendly) support; HSM support- BCCSP or lets ecnrypt PrSCH; BCCSP for auth. header; Intermediate CA support? ; Test",
+        "ts": "1485182527.001321"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For BDD- RSA, P384, Deploy CC, Mutlichannel",
+        "ts": "1485182556.001322"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "That is what is currently on the board...",
+        "ts": "1485182564.001323"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Binh- let's quickly review this list and anything else we can add on, but these are the items that we want to target for alpha for the end of this month",
+        "ts": "1485182588.001324"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(items are being added that I will try to add here)",
+        "ts": "1485182635.001325"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Doc- Couddb\/ledger- Dave",
+        "ts": "1485182646.001326"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Ledger- finish couch Miscellaneous items (versioning, deletes); Query expose to application chaincode; history of key values(level db) - add to QSCC, expose to application chaincode; Chaincode examples- table replacement, query, history",
+        "ts": "1485182783.001327"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "for DOC- Gossary of terms- Nick, SCC- Murali",
+        "ts": "1485182811.001328"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "----------------------here is where discussion has started-------------------------------------------",
+        "ts": "1485182837.001329"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "To original list- experation of MSP certs",
+        "ts": "1485182919.001330"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "what else on the list before we go through? (binh asked)",
+        "ts": "1485183010.001331"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Gari suggesting we go through first pass and eliminating pieces we should not go after",
+        "ts": "1485183049.001332"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "let's do the list starting with TLS first and then Ledger, then SDK, fabric CA and whatever we decide will effect the docs",
+        "ts": "1485183074.001333"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "TLS- the server side works and you can dynamically add certificates to it incrementally and that's all checked in---- Under BDD we added TLS",
+        "ts": "1485183111.001334"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Validation of messages and transactions- this is Ale's items, this is almost done",
+        "ts": "1485183175.001335"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Replay Attacks- Angelo indicated what we have committers check the transaction id is duplicated- only the committers, but we have to generate the transaction id, which we don't- so we had long discussion.. we agreed to generate a nonce and generate with creater's id and hash that.. that part is important. whether we can create the replay attacks or not may not be completed",
+        "ts": "1485183258.001336"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The discussion we had with murali is what if legacy software is using for application related- so generating for nonce of creator might not be accepted.",
+        "ts": "1485183332.001337"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Today- we need to solve replay attacks and mine the transaction id to the identity of the creator.  We need to use the TX-ID generator- this is equal to the creator plus the nonce.. this has to be done prior to preventing replay.. SDK is already generating a transaction id,.. but it's not done in the way that is highlighted here.  There as to be an adapter into a question- some event comes out- you call api and you can map the transaction id.. if you want to track it- pass it in as a parameter.   The question is for doing it- if we are going to be consistent on the SDKs and you agree and creator + nonce- it's not a hard piece of work. are we going to do it or not?  We do generate an ID today... the id is nonce so we have creator",
+        "ts": "1485183520.001338"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we will not do this for end of the month on transactionj id generator- creator + nonce",
+        "ts": "1485183559.001339"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Replication MSPs for gossip- basically we formatted a final document at end of last week, we need to close some edgers, but if enough time to talk with Elli, I will like Gari\/Binh to review and after that- we can finish this out",
+        "ts": "1485183657.001340"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Anchor peers- upon channel creation, anchor is there, and we checked manually it works.  I hav enot seen code that deels with configuration of stuff in peer when new configuration blocks comes from ordering service. and the adjacent manager config transaction is not in the peer.  Jeff added that yesterday in BDD... he added the anchor peers in BDD. BUT we don't have a configuration handler on the peer side- without that, we can not deal with the configurations that are not associated with channel creation..... We also need to do extra work in the peer.   We need to combine jeff's work.",
+        "ts": "1485183748.001341"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Board changes- Anchor config block with handler; BDD",
+        "ts": "1485183781.001342"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Channel Leader- basically the code that elects the leader is inside and has been merged since beginning of last week. the only thing missing is plugging into gossip.  I have a chainset that I need to code review for this",
+        "ts": "1485183812.001343"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "HSM (key generation)- Vlad said we need on key derivation... our proposal is to remove this from end of January.",
+        "ts": "1485183888.001344"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "last sentence is not clear.",
+        "ts": "1485183934.001345"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Chaincode Rerturn Object- We have a merge conflict and Murali is checking it right now.. we need to leave this here, but it's pretty close . WE are returning an object from protos that we effined a long time ago- now we are returning an object that we are returning code where we use HTTP return status code where 100's 200's 500's and a message in there and a payload (which is a byte array).  This gives more flexibility for chaincode to return what is needed.  If you ask me to endorse something and I need to kick off a workflow- I will return code saying incomplete,etc,.. ; SDK list is being updated",
+        "ts": "1485184020.001346"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "SDK: added Update CC return object",
+        "ts": "1485184032.001347"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U221LL03Z> we are making decisions on what we are going to get done for end of January for our Alpha\/Beta code- we will not try to tackle completing the HSM work is the net.  Clearly if open source team has it complete- we can relook at the decision, but we're trying to make sure we prioritize as we want to get very clean Docker images and compose scripts for members of the community who want to program and play with version 1.0",
+        "ts": "1485184106.001348"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I'm currently taking notes on the discussions here on what we should focus on among several people in community",
+        "ts": "1485184122.001349"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(not everyone is attending, so we are going to be looking for feedback to go to <@U0KN2SSKE>  .. this is a first cut proposal)",
+        "ts": "1485184143.001350"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "thanks <@U184J2R7S>",
+        "ts": "1485184197.001351"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We need to add some additional work on chaincode return object- the remaining work after we merge this latest piece is to take the work Jim has done and completing it writing it down to the ledger.  Why would you write the response down to the ledger?  Not in the state base, but we would write in the transaction, so we can record the response code.  We store events from chaincode into the ledger- so the worry was that we are getting all tehse responses and we are not saving it or persisting it.   So it's not in the signed part of the block?  The events are not in signed part of the block- yes they are in signed part of the block.  Is it important to persist this information?  If it's part of transaction and app is using it to make decisions, then it seems like it is important.  In the query - we never send that so it really does not matter there.  So if transaction id- what was the response?  that one piece of information- we store everything in transaction, that could be important for auditing like chaincode events... Added \"Transaction proto should contain repsonse\"",
+        "ts": "1485184321.001352"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Chaincode endorsement policy: what kind of policies are we going to provide?  My understanding is that you can specify bv VSCC in lifecycle chaincode- if you give complex policies- code validating is there... the code in CLI\/SDK is not... you send request, at time of commitment, the code is there to query the lifecycle chaincode and to validate that all the people are signing off.  Are we using same policy that we are in protos?  We use one policy specification that Jason defined.  When we complete whatever work in runtime and by specifying in SDK and SLI- that doe effect the SDK which we titled ESCC\/VSDD.. When you do specify it, you have to serailze it into Jason's format.  We should do this by Alpha.",
+        "ts": "1485184454.001353"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We need to check back with Ale  on this",
+        "ts": "1485184502.001354"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Revisit Events- this is from Pat (community member).  we need to do events from chain channels and hook it up for channels and hook it up with MSP.  So we added Revisit events (channel &amp;MSP) We should add security restriction because he's not authorized.. depends on how far we want to go.  We need to confirm with Pat. <@U0KQ9QKH6>  We need to check with Pat and verify with him if we need to specify any additional policy or we use policy from the channel. The easiset thing is if we have read permission on channel, you get events.  Based on my experience on how fast it works- the best we can hope for- backend he has chaincode and block events.. and he's working on SDK.  i don't know if he can get the rejection events in and support for SDK.  WE don't need rejection events.  In 0.6 we had this- because invalid transactoins were not part of block- but now they are part of block and we have bit array that marks invalid transactions",
+        "ts": "1485184668.001355"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We do need to add the channel ID-- we don't think we will be able to do any security on revisit events in 8 days",
+        "ts": "1485184688.001356"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "You have block come in- list of transaction. if they fail in MVCC\/VSCC,.. we still add a bit aray filter that points to location of which ones were invalid.  Basically means that we did not process a state change",
+        "ts": "1485184732.001357"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We do have ability to check for false\/invalid transactions.  that is always just there",
+        "ts": "1485184747.001358"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Do chaincode events get set for invalid transactions? Murali says today it is.. we should probably revisit this.",
+        "ts": "1485184770.001359"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "He builds in handler, the api that does it-- on the orderer side- it has to have the exact same logic of whether you are on channel or not.. and it will process signature from MSP list.  When Jason\/Kostas gets that code and we can take the handler code and use it for the events.  Jason and Kostas and that team will be able to probably do that faster for Pat",
+        "ts": "1485184819.001360"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "to utilize",
+        "ts": "1485184825.001361"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jim Zhang said we need to filter out the events for invalid transactions otherwise it may be really confusing... it is absolutely possible. the simplest way is that fabric won't send chaincode events. block has chaincode events. and SDK will do the parsing. SDK is already doing that today. events by transaction ids.. so you move that , Basically Jim will have to map for transaction id- you find out what #numberit was in the ordere and you check in bit array.",
+        "ts": "1485184930.001362"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We  need to do post processing on the SDK",
+        "ts": "1485184950.001363"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Do we have a size limit? i know we have number of transactions, but do we have a size limit-- we have preferred max bytes and max bytes.  it's 512K that's the preferred. I know it's north of 7 Megabytes... we need to revisit the block payload because it travels through the events like that. Pat is actually filtering out the deploy transaction and removing that and does not touch the other stuff yet and we need to make sure he's aware. I would prefer only transaction ids and events, but then they have to go back due to security.",
+        "ts": "1485185033.001364"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Chaincode lifecycle- do we want to redo the deployment and upgrade?  We need to make a decision on this today or tomorrow. the policy is done- Kostas said he needs to ask Jason . this is chaincode policy who can deploy and manipulate the lifecycle when creating the channel .   It is the deployment of the chaincode- who can deploy chaincode on the channel? We have some control on who can deploy and upgrade on the chaincode?",
+        "ts": "1485185143.001365"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There is a proposal on how we deploy chaincode- and we need to decide.  There are two parts of it,.. so we are highlighting chaincode life-cycle as a quesiton mark.",
+        "ts": "1485185253.001366"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Error handling- we have the base, but everyone needs to use this.  The base - we have code at the right place to encapsulate the stack trace.. if there is an error- and that error code indicates the components .. so you know this is chaincode error, or this is peer error, or this is orderer. The framework is done but not all components has used it.  Peer has done some of this. - define error codes for component",
+        "ts": "1485185333.001367"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Error handling is going to happen from now until GA honestly",
+        "ts": "1485185363.001368"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(GA is a relative word here,.. but it's when the fabric is stabilized for production use, which is dependent on quality work being completed)",
+        "ts": "1485185385.001369"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Bootstrap with predefined channel-- We have hardcoded in our code that we start up with a channel,.. but I'd rather do that as configuraiton out of the code. if we specify the configuration and we start it up with a configuration versus bake it into the code. In other words you don't create cli or SDK... you look at config- they need channel test id to start up and then we create it. rather than we have it in the code.  This assumes that we have ability in orderer and predefine in channel and genesis block and use with the peer.  We have to have block from orderer.  The orderer has to start the config block and they need to know members.. We just need to have a default thing that people start with.  This whole process is security based.. we haven't configured the orderers MSPs properly. . In our code we automatically create test channel-- that is the point. If that needs to go, we need to startup with channel for programming. We need to come up with dev mode kind of thing..  Easy to say create channel in peer, but I also need channel in orderer.  This is where the complication is.  The current feature will bootstrap system in 4 seconds. having a test id channel- the user test - i would just get rid of everything and it confuses everything.  We need to come up with a way- a nice simple way in the bootstrapping feature scenario how we have a system come up for people that is working,.. and we can do that.",
+        "ts": "1485185639.001370"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "BDD has a lot of this",
+        "ts": "1485185656.001371"
+    },
+    {
+        "user": "U23274813",
+        "text": "<@U23274813|nagasurya> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485185766.001372"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I worked hard on this- we should not shortcut ever-- for developers, to bring up system, we can't tell them to run BDD. But we can make that easier to do. So what we want is a CLI to bring up a system for development.. jeff stated tweeksk knobs parameters is pretty complex 27 steps- and there is a tweek in everything orderer, peer id, the signers, the developers,.. then creation policy, who are your anchors... someone is going to write it just like feature file.. but our test could just be the script.  This is a full blown interactive... WE are going to hackfest and we want people to have a simple way to do this",
+        "ts": "1485185772.001373"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The test chain id has to be in orderer- and this is bad part- having hard coded test chain id in orderer is bad.. in dev environment, we need to prime it in dev environment and not hardcoded in environment.  So we are getting in design discussions..",
+        "ts": "1485185831.001374"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "let's take this off line-- we are going through this list, but we want people to do something on the 31st- orderer comes up and peer comes up- create channel api and I get you default certificate, create channel, and add one org and the stuff should just work-- that is what is a development system..",
+        "ts": "1485185881.001375"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "ARe we telling developers that they ned to set up our system- vagrant and everything to run BDD-- NO.. Behave stuff only requires docker compose period... there are a million ways to do this-- so we want to get to prove this out and where this is consumable is to eliminate hard coded stuff and if it doesn't work, then we need to go fix it...",
+        "ts": "1485185976.001376"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Bootstrap with a channel for dev- Jeff Garrat is going to do this and work with Gari\/Jim...",
+        "ts": "1485186003.001377"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "there are simplist- CLI,. SDK .. the usre wants to do something more complex with BDD.. the test chain id we need to remove and make it simple",
+        "ts": "1485186026.001378"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I worry about concept of having a separate network that is for developer mode- i think those days are gone.  in that case you provide sample ceritifcates and run through the process. no more shortcuts--",
+        "ts": "1485186052.001379"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "all keys loaded from files,etc,.. even SDK is doing that now... Jeff made important point there are 2 main places we are hard coding- test chain code id... certs was hardcoded- we still have a sample out there- we generate using bdd and this is directory or use directory already shipping",
+        "ts": "1485186096.001380"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Custom Transactions- not for end of Jan",
+        "ts": "1485186126.001381"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "CLI accepts multiple peers; we need this to test endorsement policy",
+        "ts": "1485186139.001382"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "App crypto lib- this is a run at for alpha",
+        "ts": "1485186147.001383"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "system chaincode refactor- this is eash given Ale's work",
+        "ts": "1485186155.001384"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Chaincode calling chaincode- we have addresswed the query case",
+        "ts": "1485186163.001385"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "QUERY CASE only on CC calling CC",
+        "ts": "1485186189.001386"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Exsperiation MSP certs- we will not address this for alpha",
+        "ts": "1485186197.001387"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "------------------------------------",
+        "ts": "1485186201.001388"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For SDK (node.js, Java)",
+        "ts": "1485186213.001389"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The master is still on 0.6.,engaging with DTCC- we have created a 1.0 branch that we want to be master.",
+        "ts": "1485186249.001390"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are having to merge this.",
+        "ts": "1485186255.001391"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Between DTCC and those on phone- there is also another guy from Fujitsu we need to merge everything",
+        "ts": "1485186279.001392"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Java only: create \"official\" branch.  #1 does not have to be done by end of htis month, but we do need to \"clean\" the directories up",
+        "ts": "1485186301.001393"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "and that is being worked on to ensure we have clean consolidation",
+        "ts": "1485186310.001394"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Events support- Jim Zhang needs to talk about the eventing piece with Pat (see discussion above )",
+        "ts": "1485186354.001395"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Rest Wrapper- we have now handed off to the team that has joined the community in Hursley to do this",
+        "ts": "1485186375.001396"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "GRPC for Join is in there- Brett has committed that- but we have trouble with MSP definitions",
+        "ts": "1485186387.001397"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "it fails at that point- but we are getting all the way through the GRPC aspect",
+        "ts": "1485186395.001398"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "ChainQuery on Ledger- The api is available in GO code is there, but it is not there for GRPC.. pass through query",
+        "ts": "1485186441.001399"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "chaincode join- synce it's system chaincode call you can copy a lot of logic on query on ledger to complete this",
+        "ts": "1485186458.001400"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Remove RSA and HSM for SDK goal for end of month",
+        "ts": "1485186506.001401"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have the Go implementationfor TCERT- we have the TCERT derivation form the last implementation is there.  It takes a key derivation on the SDK side and it's exactly the same.. we can maybe get there and Gari Singh can help that",
+        "ts": "1485186602.001402"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U11MANG9G>  please make sure you read the fabric-dev channel as I know you are helping on many of these pieces- (this is a side note)",
+        "ts": "1485186621.001403"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "ESCC\/VSCC- we need to add reference to a name in the proposal and we can do that",
+        "ts": "1485186637.001404"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For query on ledger- this is just AP that you already call on channel join, but we are down to 2 1\/2 to 3 developers.. on priority list query on ledger seems low. can't clients call system chaincode on any special thing on SDK.. they can also do from query CLi and get it",
+        "ts": "1485186677.001405"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U184J2R7S>: Sure thing.",
+        "ts": "1485186702.001408"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jim is probably going to x out query on ledger",
+        "ts": "1485186708.001409"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "SDK already accepts multiple peers (this was a question).",
+        "ts": "1485186725.001410"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "--------",
+        "ts": "1485186790.001411"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For ledger- finishing couch misc items (versioningk deletes)",
+        "ts": "1485186799.001412"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Query APi is already exposed, but need to do work related to application chaincode-",
+        "ts": "1485186812.001413"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "WE are in middle of history of key values (level db)",
+        "ts": "1485186819.001414"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We started doing the work on couch for history of key values and pushed down into level so that everyone can have the history not juts couch people",
+        "ts": "1485186836.001415"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For couch- we do not support remote- we will only support local to the peer",
+        "ts": "1485186847.001416"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Finalize QSCC block\/tran structure that gets returned to client has to be discussed between Binh\/Dave.. we definitely won't get through examples, but we may try to go through table replacement\/query as we can before end of next week",
+        "ts": "1485186874.001417"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U0Z541B3P>  wanted to make sure you are reading the channel here- see all up above and start of conversation",
+        "ts": "1485186896.001418"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "maybe Mohan can help with examples possibly?",
+        "ts": "1485186907.001419"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "-------------------",
+        "ts": "1485186916.001420"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For fabric- CA",
+        "ts": "1485186919.001421"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "comments on the list from up above",
+        "ts": "1485186927.001422"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith is trying to generate the swagger",
+        "ts": "1485186940.001423"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We need to decide on whether we do something on HSM support or later-- I think we decided that we are not committing HSM for alpha but HSM support (BCCSP or let's ecnrypt) - the way i'm leveraging- i want to use BCCSP integration throughout and then get HSM support through BCCSP. there are multiple places for private keys- signing of CSR request, singing of authoization header, signing of TCERts.. thing that is where we need to do the integration.  We already have BCCSP config integrated in.  The thing unclear right now is can we assume if we have BCCSP integration then we do have HSM support or no?",
+        "ts": "1485187039.001424"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Vlad is going to have to clarrify",
+        "ts": "1485187071.001425"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We want to do HSM support on BCCSP",
+        "ts": "1485187084.001426"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Vlad had done CFFSL has their own layer of singer on top",
+        "ts": "1485187125.001427"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U10Q62R8X>  see above",
+        "ts": "1485187145.001428"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "you have to send future request, they are authenticated in authorization header that covers certificate.. and it contains sig, the sig contains the signature and the body. we need to do the signing wiht VSCSP..",
+        "ts": "1485187180.001429"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "the signing in our CLI client",
+        "ts": "1485187196.001430"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if we did on the server side- it does not mean that yo uhave to do at the same time as the SDK side",
+        "ts": "1485187217.001431"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "It comes down to request and re-enroll . On the CA side, the CA is some refactoring but perspective of using it, it works.  so we need to finish the register from SDK- we have almost ready to check in,.. by default we use SHA384 (only register\/reneroll for off token),.. we would have register and create new users, enroll already works beautifully (Jim integrated it).. we enroll and get cert back.. no more work on SDK side for that.",
+        "ts": "1485187303.001432"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We just need to finish register and re-enroll.. do we take a cut. if you want to do a few things to clean up the document, it does not stop doing additional work. and we just take a cut of the CA before. so we can merge stuff after that.. and CA is in very good shape.",
+        "ts": "1485187334.001433"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The only thing that is merged with HSM support for BCCSP.. BCCSP you can configure but it's not being used for HSM yet.  Just like HSM is out of the peer. You know that the default you changed to 256- so this is hard coded.. I di dnot change I implemented to SHA 384.. it's hard coded today so we can't change it.",
+        "ts": "1485187380.001434"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Intermediate CA support- I assume that is something that could wait, but i put that up there because the place where this is nice- if you set up a cluster of cop servers or fabric ca servers and you want to get enrollment certs distributed for them. you can start a root ca and cluster of intermediate servers that enroll with it.. I may be overly optimistic- this is 1 day's worth of work. it's not a big effort. Binh is saying this is very useful for testing out  multiple MSP concept. it will be nice to have a single ca and generate something intermediate.  IT's also nice to reknew a CA certificate ultimately.",
+        "ts": "1485187470.001435"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if you do the first thing with Swagger doc.. and top list. if we are willing that SDk is not complete- you can use ecerts we have that working.. we have ability to node sdk to enroll, we finish register api, cop is up- you can get certificates fo rany # of peers for encorsement and for joining channels and connecting.  We can use what Keith gets done. but we can take CA and build that out today and use that for the 31st.",
+        "ts": "1485187545.001436"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "If we don't have TCERT support throughout- that's fine",
+        "ts": "1485187557.001437"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "--------------",
+        "ts": "1485187560.001438"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For documentation",
+        "ts": "1485187565.001439"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We should have remove the version 0.6,... we are already started on high level overview, high level architecture, glossary of terms, how to get docker up and running with compose,.. and how developers program against chaincode -- which includes APIs, channels, couchdb\/ledger and chaincode.",
+        "ts": "1485187691.001440"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Binh asking how much more we need to help on doc based on where we are- i need the apis and how to program against chaincode with Murali... Murali will sit with a couple of hours to step through all that stuff",
+        "ts": "1485187732.001441"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "need to have some prebuilt things- x number of the MSP- -we should at minimum in policy have that... for the docuementation things like query system chaincode, config system chaincode,",
+        "ts": "1485187796.001442"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "docker compose is self descriptive instead of reams of documentation-- just explain like was done before",
+        "ts": "1485187813.001443"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U10LM0FFZ>  <@U112NNFV4>",
+        "ts": "1485187841.001444"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Today we have sample config- we should have sifferent sample config and put them-- and use docker compose",
+        "ts": "1485187867.001445"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "and we generate the sample config",
+        "ts": "1485187871.001446"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "What does it mean to have identity to invoke chaincode?  ours is a permissioned ledger.. this is important concept.. but we need to at least need to highlight that.. wecan go into details in MSP, but at minimum this should be outlined.",
+        "ts": "1485187901.001447"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "How can I use to invoke chaincode?",
+        "ts": "1485187910.001448"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "How about we have one config and config has identities that are pre-generated and we describe how we got identities and the places we are going to use",
+        "ts": "1485187933.001449"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "This is trying to explain the initial set for end of this month and starts to be the framework- i agree that a high level description of how membership is enforced- explain permissions are organization based, we will have notion of membership defined via crypto mechanisms and x509 based support and here is a simple paragraph on that",
+        "ts": "1485187982.001450"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We then at end of this month- you want multiple orgs- each has x509 certificate- here is what you need to gather and we have worked out in api the config transaction for create channel has that MSP config struct. we make it simple at high level that the basics have MSP name plus the pem certificate and this is how it works. Then we can add more as we go along- it gives you the basic framework to start wtih",
+        "ts": "1485188054.001451"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "In addition with that- we do some configurations for reference- we provide with 3 organizaitons and here is 3 root certificate authorities and an MSP policy that is 2 out of 3 for endorsement and have at it. <@U11HTMW0H>",
+        "ts": "1485188088.001452"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Angelo indicated that we already have a lot of this written up- so Nick and Josh can pick up from the dock from Elli and team",
+        "ts": "1485188126.001453"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "----------------------------",
+        "ts": "1485188142.001454"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "What I want to do- put your name on the items on the board and you work on it-- I want to have a standup scrum at 3pm today where I will transcript again here on the fabric-dev channel.  We will only do 2 things- what are the things preventing you from progressing? we will then keep people who need.",
+        "ts": "1485188207.001455"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we will do this at 9:30 and 3pm and will post on the channel",
+        "ts": "1485188216.001456"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if there is feedback from any of  the items above from those not involved in discussion (where there were many)- please get with squad laters or Gari Singh or Binh Nguyen",
+        "ts": "1485188254.001457"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "With Clayton- we will take a quick break- we want to have discussion with Keith, Jim, and Binh so we talk about the scenario on how we use this- what is it that we expect to do on February 1st",
+        "ts": "1485188364.001458"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "This may further refine the list up above- again we should ask that the community contribute to what we have written here",
+        "ts": "1485188384.001459"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "----------------------",
+        "ts": "1485188390.001460"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U0W7D64LC>  highlighting that you need to read the channel",
+        "ts": "1485188818.001461"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "-----------------------",
+        "ts": "1485188823.001462"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have drawn a  pic on the board",
+        "ts": "1485188938.001463"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Boxes are fabric-ca, orderer(solo), peer, SDK\/App",
+        "ts": "1485188949.001464"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We want someone to be able to program and use the fabric at end of month",
+        "ts": "1485188964.001465"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Solo needs to come up- so someone needs to call create channel. There has to be a CA\/Id that the orderer has to trust",
+        "ts": "1485189111.001466"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "From SDK you must be able to create channel (orderer) and join channel (peer)",
+        "ts": "1485189171.001467"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Let's assume that we have multiple peers\/cc 's",
+        "ts": "1485189185.001468"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have multiple peers\/cc",
+        "ts": "1485189205.001469"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Org1 peer, org 2peer, org 3peer",
+        "ts": "1485189233.001470"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "in orderer- you have config block (chain name, address of orderer, msp config- cert\/anchor peer.. cert\/anchor,. cert\/anchor)",
+        "ts": "1485189356.001471"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if we agree to this- the end scenario is that your application to prove out more than our single endorser..",
+        "ts": "1485189392.001472"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have definition of create channel and taking in MSP config is in there.. but the orderer is not reading it; for create channel- the orderer takes what SDK channel takes so we have to come up with the right materials... jeff has it on the screen as he worked it.  The only thing missing orderer is not taking generated MSP information- i already do it on the peer side.",
+        "ts": "1485189459.001473"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Does the peer itself write to the block? yes.. does the peer load any of the information and loads into the channel MSP config and utilize for cert config",
+        "ts": "1485189501.001474"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Current policy one of all members of the channel",
+        "ts": "1485189511.001475"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Then why do we have to do any additional work for January 31st?",
+        "ts": "1485189526.001476"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The local MSP for orderer.. do i care if orderer signs messages... the high level scenario write chaincode, deploy chaincode, and use basic policy that is more than one guy endorsing it.. 1 of MSP configured for channel",
+        "ts": "1485189571.001477"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "All the info is in messages ...",
+        "ts": "1485189583.001478"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "If you don't need access control- then we are done",
+        "ts": "1485189595.001479"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "simple scenario that works-- all the stuff surrounding it that we need to have some level of code, because in February we really need to start testing.",
+        "ts": "1485189618.001480"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "If I want to have someone use this thing- is it useable now and prove out basics of system. What is missing?  should we just do doc improvement on this scenario?",
+        "ts": "1485189658.001481"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "WE can work on  how we integrate the CA into scenario.. and process of SDK can utilize what Jeff did in his script already showing this scenario work.",
+        "ts": "1485189685.001482"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "If changes to from last week- too many merges can happen... and can hurt us",
+        "ts": "1485189702.001483"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We should probably have ability to create multiple channels---",
+        "ts": "1485189727.001484"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(this works)",
+        "ts": "1485189754.001485"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "@bmoss299 we should make sure that this scenario up above is what is documented by Nick\/Josh",
+        "ts": "1485189775.001486"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Do we want to show negative checking? do we need to verify endorsements?  it would be trivial to add a user that is not signed by cas that is not accepted by channel creation and that works-",
+        "ts": "1485189805.001487"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "for SDK to do the precheck- we need MSP on backend to be done and we do need work on SDK",
+        "ts": "1485189820.001488"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Brett seems to be working on join channel... we need to publish those as mpms alpha version. you want to have a sample",
+        "ts": "1485189843.001489"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "on sample i would separate out deploy\/invoke- here is how you create\/join channel and here's how you deploy and invoke chaincode.",
+        "ts": "1485189860.001490"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "It can fail any one of those processes, but it helps to see those steps.  we are in better shape than thought. We should take this same scenario",
+        "ts": "1485189885.001491"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "now we decide we add TLS or add authentication by ordering side and we should then iterate... we use the images from what we have",
+        "ts": "1485189910.001492"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we could tag a version of master and build the images from there",
+        "ts": "1485189920.001493"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "----------",
+        "ts": "1485189922.001494"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Current behave images- effectively the top part is the CA definition- you can see defined order nnetwork (only signle organization)",
+        "ts": "1485189940.001495"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we have process a subject, a context, and a signer.. even though different verbiage we have admin tuple- cert from subject for context given an org",
+        "ts": "1485189963.001496"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "this guy orderer0signer, order0o, orderorg() this is cert that puts under orderer when it starts- we can pass the yaml file to orderer. you will have local MSPs",
+        "ts": "1485189992.001497"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "all that information is passed around",
+        "ts": "1485189997.001498"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "ordererOrg()- this points to org that points to pem file with self sgining",
+        "ts": "1485190013.001499"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "in scenario- we can decide if we do 3 cops- we can integrate that into scenario.. we can use ca for short",
+        "ts": "1485190041.001500"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "this minimizes and nick can improve on docs... Jeff feels he can generate docs dynamically",
+        "ts": "1485190058.001501"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "on volume- i'm going to output all the key artifacts",
+        "ts": "1485190107.001502"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "so organization- all key organizations you want to define, ie peer org2",
+        "ts": "1485190117.001503"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "So now you have afccess to the organization- orderer generates the GUId- so ordersystemcainid... so we utilize this name",
+        "ts": "1485190135.001504"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "then bootstram creates chain policy- so basically i'm creating policy so thhree orgs can create channels , ie peer org0, 1\/3",
+        "ts": "1485190156.001505"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "so now signed items are created-- and now we have to create the msp using that policy (chaincreate policy 1)",
+        "ts": "1485190174.001506"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Now you have to create the genesis block for that chain id using policy solo and  referencing all tehse policies and associated names",
+        "ts": "1485190193.001507"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "chain creator does enforce that in that msp based on whatever that policy is",
+        "ts": "1485190207.001508"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "that creates the genesis block",
+        "ts": "1485190215.001509"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are missing a step instead of guy creating a block- the guy has to create the block data and collects signature on the orderer just like developer- orderer has to get the sigs if there is one org or multiple org in orderer. but we have to add that",
+        "ts": "1485190263.001510"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "But none of that is enforced today- no, but I don't want to miss it",
+        "ts": "1485190276.001511"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "so you tell that story- how we have to incrementally plug those features in",
+        "ts": "1485190286.001512"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "couple of other things- and this thing i'm defining th e peer network- this generates signer certs to each peer and peer starts with right  local msp",
+        "ts": "1485190316.001513"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i gave peer 0 to peerorg0 but peer 2 and 3 peer 2 in org 1, peer 3 in org 1",
+        "ts": "1485190333.001514"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "this is template stuff--",
+        "ts": "1485190337.001515"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "the next thing we do is identify developer for peer organization- give a subject and give context chaincreate policy1 (the one we gave to orderer)",
+        "ts": "1485190355.001516"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "this is like giving developer access to a space- because I don't want anyone using the peer certs .. this gives sdk it's own identity as example",
+        "ts": "1485190374.001517"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "peer org signs and devleoping in this space which we call chain create policy1",
+        "ts": "1485190386.001518"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I need identities for organization- so i chose peerorg0 and peerorg1 and this is subset of the genesis block- I could limit my channels to single org or subset of the org-",
+        "ts": "1485190423.001519"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if you have create chain policy- you can add any org you want.. because it has to be in the orderers- right now it does.. how can they validate it. how can they verify the sig. they do verify sigs. you verify signatures of public but it has to be in trusted root",
+        "ts": "1485190460.001520"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if i have create chain- theat everybody in this list-everyone has to sign it- so you have signature across the bytes, but remember these are the peerorgs you are asking for endorsement from",
+        "ts": "1485190490.001521"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "cft ordering system- there has to be at simplest- you have to then decide continue certs .. so you have to have one guy must add a bunch of root cas of who can do a create channel . now I am allowed to create channels i should not have list and should go out and pick 15 other people as long as signed by those CAs ...",
+        "ts": "1485190562.001522"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "acceptance of block- i inspect,... or never join acceptance without signing. at what point will orderer enforce his certification. On broadcast",
+        "ts": "1485190588.001523"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "IN this scneario- we are defining the peer organizations before we bootstrap the orderer. the reason we are doing that is we don't support the reconfiguration. so now who are the endorsements and particpate in the channel i'm going to create",
+        "ts": "1485190614.001524"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i create peer anchor set and I'm saying my anchor is from peer org 0, peer 2 from peer org 1 so I'm picking 1 out of each group",
+        "ts": "1485190638.001525"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i crate signed envelope- i have to reference channel, template, chain creation policy name and the anchor",
+        "ts": "1485190652.001526"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Thetemplate is a reference to the ones I'm going to use that i defined,.. chaincreate policy1 is a logical name must be used in all channel creation",
+        "ts": "1485190691.001527"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "So now i get my signed config envelope- the orderer should ask all the order to sign before genesis block- org 0 collects signatures ...",
+        "ts": "1485190744.001528"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "now create config transaction using signed above",
+        "ts": "1485190781.001529"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i save as configtx1 and broadcast to orderer",
+        "ts": "1485190792.001530"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I wait",
+        "ts": "1485190794.001531"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "then i connect to deliver fucnation and seek request with those properties with chainid",
+        "ts": "1485190809.001532"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i should get delivery from order0 in 1 block within 1 second",
+        "ts": "1485190818.001533"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i then request to join using genseis block on peer 0 with result",
+        "ts": "1485190831.001534"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I am calling api on system chaincode",
+        "ts": "1485190837.001535"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "then let's say it works (which it deos",
+        "ts": "1485190845.001536"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "now i'm delivering waiting and what does happen- we got a 200 response from peer",
+        "ts": "1485190887.001537"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "for information on immediate up above Jeff Garrat can help",
+        "ts": "1485190924.001538"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "the only thing that is not there orderer is not using the cert available to it (peer does this already so similar code)",
+        "ts": "1485190939.001539"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I just need to deploy and have code in deploy and ask for multiple endorsements at the same time",
+        "ts": "1485190956.001540"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "lot of steps to get network up and running",
+        "ts": "1485190980.001541"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "my docker network is running and you can use cli",
+        "ts": "1485191002.001542"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "but developer should not run bdd- they should just run docker compose",
+        "ts": "1485191010.001543"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "it's more involved than that, because under the covers, i'm creating genesis file dynamically and also generating the local msp",
+        "ts": "1485191027.001544"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "so i create ca certs, pstore and parameterized",
+        "ts": "1485191038.001545"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "docker compose can bring up entities unles syou hard code- so now you need scripts to link them together",
+        "ts": "1485191049.001546"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have to do the work on SDK sde to make this work and they should replicate this",
+        "ts": "1485191073.001547"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "ARe you saying angelo we support one of msp policy today- we do on VSCC",
+        "ts": "1485191098.001548"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "do you define that at the ESCC side? they do have to match but we have the one of",
+        "ts": "1485191108.001549"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "and does that work when you deploy chaincode- we have to work that- which is chaincode lifecycle",
+        "ts": "1485191122.001550"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "which is in the list",
+        "ts": "1485191126.001551"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we have everything to joined channel and we can inject deployment",
+        "ts": "1485191139.001552"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "but deployment not ready yet",
+        "ts": "1485191143.001553"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "to deploy chaincode- you need one of policy--- we need that",
+        "ts": "1485191151.001554"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if we expect people to not break apis' we probably need chaincode return object",
+        "ts": "1485191165.001555"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "it is implemented but  merged and committed and documented",
+        "ts": "1485191176.001556"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "you need deploy transaction and need in SDK to specify the ESCC policy",
+        "ts": "1485191187.001557"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jeff- if i look at the log for gossip peer- which is peer 1- i see something that is concerning-",
+        "ts": "1485191255.001558"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "there is \"no such channel\" on the anchor",
+        "ts": "1485191262.001559"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i would tag master and build and go through 20 steps and everything provisioned",
+        "ts": "1485191394.001560"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "there is a mismatch in gossip and way we are encoding",
+        "ts": "1485191424.001561"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "VSCC would only check to see if one of members is singing",
+        "ts": "1485191434.001562"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Things for absolute minimum- chaincode return object, chaincode endorsement policy, escc\/VSCC, events support (includ rejection ), chainjoin (creation basically needs to get done)",
+        "ts": "1485191522.001563"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The rest of the other items should progress- but we know what the most important it is",
+        "ts": "1485191750.001564"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The other piece we MUST decide on is chaincode lifecycle",
+        "ts": "1485191766.001565"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U0KPFAZNF>  please make sure to read this channel- lots of discussion today",
+        "ts": "1485191784.001566"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "holy cow, that is a big backlog, heh",
+        "ts": "1485191815.001567"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "i don't know that I have everyone marked and i tired to put --- in at the places where we sto;ped and talked different topics",
+        "ts": "1485191882.001568"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "and can't say anything about my spelling -",
+        "ts": "1485191894.001569",
+        "reactions": [
+            {
+                "name": "relaxed",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": ":wink:",
+        "ts": "1485191895.001570"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I havent had a chance to digest all of that, but fwiw, I am currently driving a few areas related to busybox\/dns fixes, devmode deployment via SDK, chaintool CAR deployment via SDK, chaintool support for v1.0, and cleanup of the chaincode deployment logic in general",
+        "ts": "1485191969.001571"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(much of which I already have completed but it hasnt yet been merged or submitted",
+        "ts": "1485192019.001572"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that will be happening over the next few days",
+        "ts": "1485192029.001573"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U184J2R7S> <@U0KPFAZNF> that will be on the wiki soon",
+        "ts": "1485192115.001574"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U184J2R7S> what is the context for this?",
+        "ts": "1485192337.001575"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/wiki.hyperledger.org\/community\/fabric-notes>",
+        "ts": "1485194072.001576"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U0UHG4VP1> Binh met with several people that develop on the fabric",
+        "ts": "1485196435.001577"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We already have docker images that people can utilize (not sure it's all checked in), but we wnat to make sure for the hackfest that we have all the right pieces for people to",
+        "ts": "1485196464.001578"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "1) start up the fabric",
+        "ts": "1485196480.001579"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "2) be able to bootstrap a network",
+        "ts": "1485196498.001580"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "3) be able to  join, create and deploy chaincode on multiple chains based on who is allowed to be in that channel  (ie we have multichannels working)",
+        "ts": "1485196524.001581"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "4) they should be able to do the full transaction from sending transactions to the endorsers (where a policy is set- for example one out four endorsers can approve the transaction), be able to send to orderer and have it ordered and then put into the ledger (whether couchdb or level db).. they should be able to query the result---&gt; this should be able to be done against multiple channels",
+        "ts": "1485196594.001582"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "5) who is allowed on the channel is important part of scenario",
+        "ts": "1485196605.001583"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "As a result the items above- we took assessment where all the pieces are in the fabric (there are some holes as not everyone anted up information during hte call)... and highlighted what we thought we needed to be done.  So you will see categories of fabric, SDK, BDD (for testing) , documentation, and cop",
+        "ts": "1485196651.001584"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "after that, and this is probably where the notes got fuzzy, Jeff Garrat took us through BDD showing how to bootstrap the network",
+        "ts": "1485196674.001585"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "as this is already working and flowing an what minor pieces just need to be completed there",
+        "ts": "1485196687.001586"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Belay that, I mis-remembered that",
+        "ts": "1485197161.001589"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "To be clear- not everyone from community has inputted on this ... but if there is input- would be good to get it..  to ensure everyone has right priorities.",
+        "ts": "1485198100.001590"
+    },
+    {
+        "type": "message",
+        "user": "U3781DR97",
+        "text": "Hi, I recently added support for \"PortBindings\" in vm.docker.hostConfig. What would be the best way to submit a patch to you guys? It's single digit LOC.",
+        "ts": "1485204667.001591"
+    },
+    {
+        "user": "U344ZJT9P",
+        "text": "<@U344ZJT9P|drteck> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485205066.001592"
+    },
+    {
+        "user": "U1MSZ37NK",
+        "text": "<@U1MSZ37NK|sstone1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485206114.001593"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3781DR97> awesome, welcome to the project",
+        "ts": "1485206148.001594"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/CONTRIBUTING\/>",
+        "ts": "1485206149.001595"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in short, we use Gerrit...its all documented in there.  Ping back if anything isnt clear",
+        "ts": "1485206183.001596"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "another quick conversation--&gt; Now the thing that we can do, we can run Jeff Garrat's BDD- capture the block, put in sample directory and we run with that.  That allows our CLI to work,.. that would allow the demo scenario to work with the new configuration block.  With that configuration block- what would we have to do to submit that transaction to the orderer.  Have you look at config txt template stuff?  Basically there is under config tx test thereis order template file and peer template file.  This is the statically exported thing (not fromjeff's tool) this is configuration tool.. and feed in new chain- and spits out the transaction you have to spit it out to create a new chain- there is no import cycles,etc,..",
+        "ts": "1485206400.001597"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "So what if you did this? bring up compose, another docker container we boot up and tells people to console into it (exec batch into it).. it has the CLi and it has a series of commands... it can be any of those things. You can log into xyz, you run CDE,.. and then your thing is initialized an dyou can run your nodejs.sdk to run your transactions.  People just have a hard time running CLI-- it allows us to use docker and not vagrant.  Have a CLI container and do stuff.  We just add additional commands- this is admin configuring the network.  So you want to create chain and here's what you do.",
+        "ts": "1485206476.001598"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We can do that easily without channel create. and specify flag default cahnnel, use your template.",
+        "ts": "1485206490.001599"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "You can actually do interactive- whatever command you run- you run batch script and then test just exec docker and run as a command line and without invoking the container- htat is how we did this last week, we put it in a container",
+        "ts": "1485206533.001600"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "As long as we don't hardcode, but include the \"generation part\"... how many templates... let's just cli create to take argument where CLI chain create command will it do it for you.. we will call the templates",
+        "ts": "1485206562.001601"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "so now on board -- we are adding CLI channel create for alpha",
+        "ts": "1485206586.001602"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jeff has this working in behave- it's completely parameterized.. you get a language- you can add orgs, change orgs, create as many channels you want, create as many order networks.... will we intimidate developers to do that... Jeff says- it would be good to do a python setup .. you can clone the get... Actually, what we should really do is bake into the image.. Behave stuff drives docker compose.. and you can drive docker.. bind in the docker socket.",
+        "ts": "1485206658.001603"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U10Q62R8X> <@U0YK3KKCY> <@U11HH3P7Y> regarding: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4359\/>",
+        "ts": "1485206675.001604"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "how do we want to proceed ?",
+        "ts": "1485206694.001605"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "talking with John atm..",
+        "ts": "1485206703.001606"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1485206706.001607"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill look to you guys: if you come back and are confident my concerns are unfounded, ill remove my -2",
+        "ts": "1485206728.001608"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "John showed me that softhsm was not installed.. and I forgot that its debian..",
+        "ts": "1485206729.001609"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "I think for the first step, we'll need to get softhsm2 into testenv for fabric",
+        "ts": "1485206766.001610"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats a very low-risk proposition from my perspective",
+        "ts": "1485206794.001611"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I do need it in asap, sitting on quite the few changes that cant go in without it.. but.. found some issues with how I specify pkcs11-slot.",
+        "ts": "1485206815.001612"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "what is important is they need to have an admin thing that is clear-- so the only way to build an app is to use the SDK.. we should have two simple scripts that create channel to call the apis-- just to make it easy.",
+        "ts": "1485206817.001613"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(sorry weeds, cross-talked over your stream of consciousness ;)",
+        "ts": "1485206856.001614"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are set on CLI and run clis in an interactive docker container.  So we are going to modify channel create.. it will take default template and use it as the configuration (it's ok greg- just trying to capture discussion here for your guys- can't tell if you can even follow the stream of consciousness)",
+        "ts": "1485206887.001615"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "understood, just apologizing for interrupting it",
+        "ts": "1485206912.001616"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jason- how would in default template get cert--- you would have to regenerate the template. Basically the tool that I keep alluding to essentially is order admin tool that connects to and dumps a template chain by looking at the block",
+        "ts": "1485206951.001617"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The tool does not exist- there is a static tool that exists, but we need this to work at run time. then we would check template in and can be generated... as part of the compose once you are running services which dumps template and would be fed into chain creation tool",
+        "ts": "1485207003.001618"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "My developer needs a private key- we self generate all that stuff.  we will have docker image for the cli.. so we could just use a shared volume to the local msp which is needed for that key and bake it in ahead of time... hmmm.  the one jeff does bdd does it through shared volumes.   someone is outside of docker writing a node app.. he has to find stuff.. if we just started a container rather than docker run, we can do docker exec,.. you could template, keys being there,etc,..",
+        "ts": "1485207108.001619"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "in their application, where do we get their certificate from- there in a shared volume- they are on local file system,,.. you could put that in... that would be the easiest thing to do.. REally Jason said he needs to talk about the SDK guys -  they really should not know how to do that and pick up from template and be able to print them,. .for now it's an efficiency, because we only have templates working is in go.. but that really should be in sdk at this point",
+        "ts": "1485207190.001620"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Binh suggested maybe give them an api to implement?  Jason said- ok.. give them an api to use the templates we generate. Open a JIRA or slack it to them?  Slack it to them.",
+        "ts": "1485207222.001621"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Barry- maybe I have Latitia to help you?  Jason- I would love to get more people to know how this works. It's tying hte config and node program and spinning up something quickly.",
+        "ts": "1485207261.001622"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(we need to forget not to miss the java sdk)",
+        "ts": "1485207274.001623"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There are some questions for Jim in terms of validation process for Barry and Latitia",
+        "ts": "1485207316.001624"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We have an image, spins up fabric, runs templates,.. which crypto mounted to volume and then tell sdk here is how you connect and use this.",
+        "ts": "1485207354.001625"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Just to get someone writing ... the thing with  say I had another image he spins everything up and it's a done deal for me- i have all certs and network. if I run a behave (instead of the cli) run the docker image that runs the behave- we mount that.. in behave, you would have to generate all the cert stuff.. it will do it for you.. we just tell the end user.. hey sdk developer- yo uare ready to go.  If you just basically toe do not decompose.. if you can get an image.. put.  now we can hardcode behave .. maybe that's an easier fix.",
+        "ts": "1485207449.001626"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Which is better? at end of the day, people are going to have to know how to create the configuration transaction and you won't have all your stuff in one place and you will have to deal with templates... Yes, that's true.",
+        "ts": "1485207482.001627"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The big thing is can you make behave from inside a docker container-- that's going to be the question- you can bind docker socket into docker image.  That's unit test, but Jeff  might know.",
+        "ts": "1485207519.001628"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U184J2R7S>: on that front, it was my intention, though I have yet to prove it out that \"make behave\" would eventually drive the behave tests with a \"$(DRUN) behave\", similar to how we do unit tests",
+        "ts": "1485208134.001629"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as part of that, I would be moving the python installation stuff that we currently do in the baseimage to be within the testenv container that is JITted as part of the build",
+        "ts": "1485208172.001630"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "from there, it should be straight forward to grant the behave container permissions to dockerd for its own control of futher containers, similar to what we do in other places",
+        "ts": "1485208209.001631"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but where I am going with this is: I woulnt classify it as \"make behave\" running in a container, as much as \"make behave\" drives behave within docker",
+        "ts": "1485208249.001632"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats probably the same thing you meant, but good to clarify",
+        "ts": "1485208258.001633"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0KPFAZNF> :+1: We were talking about what would be the best way to help app developers set up a working environment, and the thought was to run a bdd feature (pick an appropriate one)",
+        "ts": "1485224141.001634"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, as in use bdd to help create an app developer environment?",
+        "ts": "1485224165.001635"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "yes, but we wouldn\u2019t want developers to have to install vagrant + other tools, just bring up a docker image to run the bdd from it",
+        "ts": "1485224229.001636"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, but we are already largely there, arent we ?",
+        "ts": "1485224267.001637"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the majority of functions (excluding bdd) only need make\/git\/docker\/docker-compose",
+        "ts": "1485224292.001638"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and I think bdd could be brought into that fold fairly easily",
+        "ts": "1485224309.001639"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "some of what you are talking about reminds me of this old issue: <https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/5>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "add &quot;chaintool new&quot; \u00b7 Issue #5 \u00b7 hyperledger\/fabric-chaintool \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/5",
+                "text": "Would be nice if the tooling could emit a skeleton project to get things started, similar to \"lein new\".",
+                "fallback": "GitHub: add \"chaintool new\" \u00b7 Issue #5 \u00b7 hyperledger\/fabric-chaintool",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/5",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1485224369.001640"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "i think the work is to enable bdd inside a container to create images and launch other containers",
+        "ts": "1485224369.001641"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I was envisioning a user doing something like \"chaintool new\" and it will spit out a skeleton chaincode app",
+        "ts": "1485224441.001643"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it would be fairly easy to make different profiles that are both CCI based and those that are not",
+        "ts": "1485224470.001644"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure if that is exactly what you were looking for though",
+        "ts": "1485224503.001645"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "and \u201cchaintool new\u201d with an option to launch an env and deploy the app",
+        "ts": "1485224527.001646"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, i see where you are going",
+        "ts": "1485224548.001647"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, you could use chaintool code-generation capabilities to spit out whatever you wanted, and then drive an environment with docker-compose",
+        "ts": "1485224581.001648"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it would mostly be a function of defining the templates that we need",
+        "ts": "1485224616.001649"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "chaintool is currently based on the stringtemplate engine (<http:\/\/www.stringtemplate.org\/>)",
+        "ts": "1485224660.001650"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "right and that is done with bdd features today, so we were thinking about capture that in an image, but it can definitely chaintool",
+        "ts": "1485224697.001651"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok...i think regardless, moving towards integrating bdd with the $(DRUN) stuff makes sense",
+        "ts": "1485224738.001652"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "agreed",
+        "ts": "1485224822.001653"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0KPFAZNF> btw, we could use some feedback on this chaincode deployment proposal <https:\/\/jira.hyperledger.org\/browse\/FAB-1783>",
+        "ts": "1485224962.001654"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "will take a look, thx",
+        "ts": "1485224990.001655"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "thanks",
+        "ts": "1485225026.001656"
+    },
+    {
+        "user": "U10PJ3XH9",
+        "text": "<@U10PJ3XH9|lowry1515> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485229995.001657"
+    }
+]

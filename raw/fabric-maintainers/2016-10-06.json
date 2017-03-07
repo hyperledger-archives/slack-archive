@@ -1,0 +1,883 @@
+[
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That\u2019s a good point. I\u2019m torn between the following 2 options:",
+        "attachments": [
+            {
+                "fallback": "[October 5th, 2016 12:44 PM] hgabor: We should have a plan for that. Do you think we should do it in small steps or with one big commit?",
+                "ts": "1475696690.000885",
+                "author_subname": "hgabor",
+                "channel_id": "C28CXQXD5",
+                "channel_name": "fabric-maintainers",
+                "is_msg_unfurl": true,
+                "text": "We should have a plan for that. Do you think we should do it in small steps or with one big commit?",
+                "author_name": "Gabor Hosszu",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/hgabor",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/00f4290e36c198abb7d4f0ea586245db.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0012-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-maintainers\/p1475696690000885",
+                "is_share": true,
+                "footer": "Posted in #fabric-maintainers"
+            }
+        ],
+        "ts": "1475750487.000888"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Option 1: All it all in one big\/huge commit, with no new tests - but making sure that most of existing tests fail, disabling all lint checks, no sign-offs, tabs, spaces, random licensing info (if at all), and not deploying anything to any CI\/build or other online repos, hopefully breaking the preferred\/agreed-upon versioning scheme.",
+        "ts": "1475750549.000889"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Option 2: Gradually, using several iterations, planning, coordinating - also in writing, breaking bigger tasks to sprints, letting everybody know what to expect, sharing the work, added more unit-tests and slowly cross-component integration tests, improving coverage, code-quality and making more people feel-good.",
+        "ts": "1475750658.000890"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If option 2 does not come across as the preferred way, then I\u2019d beg to differ :wink:",
+        "ts": "1475750720.000891"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "----",
+        "ts": "1475750721.000892"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "In short: definitely in small steps. Though some parts might be a bit easier than others, so we (can) schedule such changes accordingly.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1475750812.000000"
+        },
+        "ts": "1475750768.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jonathanlevi if I understand the scope of changes, let me propose this to be torn apart: start _n_ repos that are basically copies of the one repo, removing and reworking until we have the right number of subsets in good shape",
+        "ts": "1475750839.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11MANG9G>  <@U1AU8DRQR>  - sadly, my hope had been that this is the way things were being done in the convergence branch - and I think this is partially true for things like the orderer and ledger components",
+        "ts": "1475750853.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "assuming you stick with one repo to start with  ^^^^    (although I think that membersrvc should actually be a separate project - because there should be ZERO dependency between the fabric and a particular implementation of membersrvc if you do that part right)",
+        "ts": "1475750932.000897",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G",
+                    "U1AU8DRQR"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I totally agree re: membersrvc + it might be easy(ier) too to do so for the chaincode.",
+        "ts": "1475750978.000898",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I simply can't understand why we are struggling with getting a base project \/ structure in place for the \"skeleton\" end to end flow.  I know people disagree on throwing stuff out, etc, but that has always been my take",
+        "ts": "1475750998.000899",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP",
+                    "U1AU8DRQR"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, I don\u2019t understand that either. In general, my take is that throwing away code, especially in Incubation is GOOD ! It will be so much more expensive (if possible at all) to do so later.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1475752214.000000"
+        },
+        "ts": "1475751004.000900"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There is a increasingly growing number of vendors looking and working with fabric already. The sooner we make `such` changes, the better.",
+        "ts": "1475751131.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "My personal theory \/ preference for v1 has always been basically start fresh with the basic outline \/ skeleton for the end to end flow (stubbing \/ mocking pieces as required for communication between components) and then literally cutting and pasting previous code when appropriate.   I believe this is what <@U0XR6J961> did with the sBFT stuff and the ordering service (solo and kafka) have been built as nice self-contained components as well",
+        "ts": "1475751143.000903"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "___\nWhat I was adding earlier though is that we do also need to restructure the code (that core\/\u2026 part which is \u201cshared\u201d still)",
+        "ts": "1475751169.000904"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "\u2014\nNothing\u2019s really \u201cfree\u201d. It requires some work, sweat, breaking, fixing, etc...",
+        "ts": "1475751194.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed - especially because some of it should't be shared  :wink:",
+        "ts": "1475751195.000906"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Cycles\/iterations",
+        "ts": "1475751201.000907"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Don\u2019t want to swim against the stream here, but I\u2019m still all for LESS exotics features, more NATIVE support for the main use-cases.",
+        "ts": "1475751304.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the happy path should be well trodden, yes",
+        "ts": "1475751353.000909"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We can\/should have others extending\/building on top\u2026 should such features be needed. Stronger foundations are needed, IMHO.",
+        "ts": "1475751354.000910"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0UHG4VP1>: exactly. The happy-path, the positive-flow, etc\u2026. exactly. The main use-cases should be really intuitively supported\/tested\/documented\/etc. Nobody has an infinite amount of resources\u2026",
+        "ts": "1475751421.000911"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "\u2014\nAnd believe me, I\u2019m now at the end of an almost 4 weeks long \"round-the-globe-tour\" of various BC technologies -  evaluating\/viewing so many \u2018sexy\u2019 blockchain features, and most of them are still in `alpha`. It\u2019s good to `innovate` but we should also work to `stabilize`. Especially if we are really focusing on enterprise deployments, etc.\n\u2014",
+        "ts": "1475751686.000912"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Maybe I should start signing my emails\/reviews with `LEMS`",
+        "ts": "1475751704.000913"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "`L`ess `E`xotic, `M`ore `S`tability.",
+        "ts": "1475751724.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "everyone wants to write Angular, nobody wants to write COBOL, but I\u2019d be willing to be the majority of the world\u2019s money is still underpinned by the latter",
+        "ts": "1475751789.000915"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I hear you.",
+        "ts": "1475751879.000916"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Though I think that Go, especially the latest, is really cutting edge\u2026 nice\/fun features, good community, etc. We do have a nice tool\/stack here.",
+        "ts": "1475751902.000917"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We really need more tests, more documentation, more use-cases presented plainly etc. and these will be\/are needed regardless of language\/platform.",
+        "ts": "1475751961.000918"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "BTW: <@U0UHG4VP1> We should talk about <http:\/\/www.blockchainweek2016.org>\u2026 it highlighted exactly what you wrote above\u2026. still, I\u2019d give more weight to stability even if it is just for a few months (or done in parallel).",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1475752182.000000"
+        },
+        "ts": "1475752124.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I might have missed something (or getting out of topic)\u2026 once convergence goes to master, there is no turning back to old ways of doing stuff. The only thing we\u2019d then have that limps along is the skeletal. Given that the very first thing is, (1) is it ok to merge convergence first with just the skeletal and nothing else so we get to master or (2) we take a bit of time to identify other things to go into convergence to make it more functional and then merge ?",
+        "ts": "1475755379.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "BTW, the thing I wanted to do next is complete the ledgernext integration with the chaincode framework and make all the chaincode unit tests run with ledgernext\u2026 that could fall into the category of \u201cthings to do in convergence before moving to master\u201d as it would help validate the move",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1475755525.000000"
+        },
+        "ts": "1475755469.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP>  - so have you documented somewhere how to run the end to end skeleton in convergence?",
+        "ts": "1475755831.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> there is instructions in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1385\/> comments",
+        "ts": "1475755892.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I can write more",
+        "ts": "1475755895.000927"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "am I right that we are aiming for one clean repo now?",
+        "ts": "1475756313.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hgabor I thought we were going for seven repos, did that change?",
+        "ts": "1475756384.000929"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "&gt;jonathanlevi\n&gt;8:18 PM <@U0KPFAZNF>, <@U0UKTPMG8> I agree. I would argue that the code reorganization within the &gt;repo is a critical milestone (which is needed either way).\n&gt;8:18 I think that would be a good start.",
+        "ts": "1475756509.000930"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I guess he meant that the first step should be code reorg in our current repo (and if needed we can introduce new repos THEN). and I agree",
+        "ts": "1475756550.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "evetually we\u2019ll have to do the repo split (and it could be 7 or around 7)\u2026 but probably baby steps with just move from convergence to master in 1 repo ?",
+        "ts": "1475756580.000932"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "would we have to do the repo split if we had a clean repo with separated components?",
+        "ts": "1475756671.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hgabor the goal, as I understood it, was to let people focus on the parts of the project where they had the most to offer, without having to pay attention to the other parts",
+        "ts": "1475756735.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it lets people iterate on one part quickly without requiring sign off from other maintainers, and without inflating the maintainer list",
+        "ts": "1475756773.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "once the parts are decomposed, each edge will be a well-defined API and as such things become independent and pluggable",
+        "ts": "1475756819.000936"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah but can't they focus if the repo is well-organized and the component borders are well-defined etc?",
+        "ts": "1475756831.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m thinking in particular about <@U0ZJZBJLF>\u2019s work getting stuck in limbo due to timezones and not enough committers in that code area",
+        "ts": "1475756907.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one of the things I think we should ideally achieve is to at least clean things up so that the modularization mechanisms actually work properly",
+        "ts": "1475756911.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance \u201cgo get <http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim|github.com\/hyperledger\/fabric\/core\/chaincode\/shim>\u201d should be something that works, but its super awkward today",
+        "ts": "1475756949.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one, its subject to the fabric.git\/vendoring, which is not necessarily the right context",
+        "ts": "1475756983.000941",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "second, it also pulls in other things like nodejs and java code, the devenv scripts, etc",
+        "ts": "1475757008.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am not sure if someone can make both repo organization and go happy at the same time though",
+        "ts": "1475757121.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "go is a little weird in this sense in that the repo is also the packaging",
+        "ts": "1475757137.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for example: both golang and java shims are \u201cshims\u201d, so you would be inclined to organize them accordingly\u2026maybe fabric.git\/shims\/[go,java]",
+        "ts": "1475757217.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that creates a weird go package as a result (<http:\/\/github.com\/hyperledger\/fabric\/shims\/go|github.com\/hyperledger\/fabric\/shims\/go>)",
+        "ts": "1475757254.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or maybe that is fine, I don\u2019t know",
+        "ts": "1475757269.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the main point is that what makes the most sense from a code org perspective gets harder to align with what makes the most sense from a modular package perspective as we add more and more stuff to the same repo",
+        "ts": "1475757308.000948"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, from this perspective, I am leaning towards things like the shims and sdks to have their own repos",
+        "ts": "1475757351.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> as long as versioning doesn\u2019t become hairy\u2026 most people want to use and a smaller percentage contribute. I can see merit in the separate repo though.  In any case I\u2019d think - for expediency - we should do convergence merge to master first and then work on repos ?",
+        "ts": "1475757598.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that makes sense to me",
+        "ts": "1475757623.000951"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP> but yes, versioning can be more challenging with extra repos, agreed",
+        "ts": "1475757674.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "specifically when concurrent streams exist",
+        "ts": "1475757696.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. v0.6 AND convergence",
+        "ts": "1475757702.000954"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right that\u2019s what I was thinking of",
+        "ts": "1475757710.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to me, that is the biggest downside",
+        "ts": "1475757718.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes again!",
+        "ts": "1475757728.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "have to get ready for work\u2026 will be online soon",
+        "ts": "1475757883.000958"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "anyways, I would prefer having 1 repo with separate components (in separate directories) and a clean structure. And interfaces for communication between them.",
+        "ts": "1475758137.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on a different topic, as most of you know, maintainers now have the ability to merge branches, intended to be used to keep things like v0.6-&gt; master -&gt; convergence",
+        "ts": "1475759534.000960"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but FYI, the merge between master-&gt;convergence is currently a mess",
+        "ts": "1475759548.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "lots of conflicts",
+        "ts": "1475759550.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "looks like its primarily in bddtests",
+        "ts": "1475759568.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but someone is probably going to need to look at that sooner rather than later",
+        "ts": "1475759582.000964"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so <@U0KPFAZNF> you already checked the merge out ?",
+        "ts": "1475761782.000965"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i issued the merge command, but I havent resolved the conflicts or committed anything",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1475763149.000000"
+        },
+        "ts": "1475763138.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins do you mean master-&gt;convergence or convergence-&gt;master?",
+        "ts": "1475763183.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was attempting the former, though I would guess the conflicts would exist similarly in either direction",
+        "ts": "1475763214.000971"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "he means updating it from master, hm?",
+        "ts": "1475765380.000972"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes",
+        "ts": "1475765492.000973"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just to clarify, i checked out the convergence branch, and then tried to merge master into it.  I would classify this as master-&gt;convergence (or \u201cmaster into convergence\u201d)",
+        "ts": "1475766670.000974"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes",
+        "ts": "1475766694.000975"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "saw perhaps 30-50 conflicts, most in bddtests, a few in my area (baseimage, etc)",
+        "ts": "1475766703.000976"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I was surprised you were doing it in that direction is all",
+        "ts": "1475766706.000977"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, why?",
+        "ts": "1475766718.000978"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I thought the point of convergence was to replace what is in master",
+        "ts": "1475766723.000979"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "on a gross level.",
+        "ts": "1475766739.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think that is true, in general, but the way I see it there is a topology like v0.6-&gt;master-&gt;convergence",
+        "ts": "1475766767.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i.e. convergence is a superset of master which is superset of v0.6",
+        "ts": "1475766784.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok.",
+        "ts": "1475766792.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, at some point, master and convergence diverged, but I dont think that means we want to discard the work that went into master per se",
+        "ts": "1475766817.000984"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(for instance, I did all the baseimage updates in master",
+        "ts": "1475766829.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "case in point, master uses baseimage v0.1.0 (the new CI stuff) where as v0.6 and convergence still use the old v0.0.11",
+        "ts": "1475766857.000986"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, I want to make sure we retain the \u201csupetset\u201d nature",
+        "ts": "1475766873.000987"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it could be I am one of the few who is contributing to master though, I am not sure",
+        "ts": "1475766887.000988"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in the ideal world, they wouldn\u2019t have diverged at all, but we only had the merge capability added recently as one of a few steps to prevent the divergence",
+        "ts": "1475766937.000989"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, obviously the point is to diverge, heh",
+        "ts": "1475766965.000990"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mean w.r.t. the superset nature",
+        "ts": "1475766973.000991"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "convergence should be superset, not orthogonal",
+        "ts": "1475766987.000992"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I suppose we could do cherry picks of specific work on master to move over important stuff",
+        "ts": "1475767036.000993"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at some point, it might be a good idea to have a jenkins job that goes \u201cred\u201d when a merge is needed",
+        "ts": "1475767037.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(im not sure a fully automated merge is a good idea, but we can at least have something monitoring the condition)",
+        "ts": "1475767080.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, to your point, there could very well be stuff in master that is no longer relevant",
+        "ts": "1475767099.000996"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I know at least the baseimage stuff should be in convergence, but I dont know about the other changes",
+        "ts": "1475767118.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "personally, id probably feel better about a merge rather than a cherry pick though\u2026less likely to miss something important",
+        "ts": "1475767165.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "depends on how much work it is to resolve vs how much value we think went into master, I suppose",
+        "ts": "1475767185.000999"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "a cherry pick should be reasonably atomic",
+        "ts": "1475767186.001000"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure.",
+        "ts": "1475767189.001001"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "understood, i wasnt saying it wouldnt be, sorry",
+        "ts": "1475767203.001002"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just meant, its easy to miss something",
+        "ts": "1475767212.001003"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a merge is fairly comphrehensive, at least w.r.t. the the tenacity of the conflict resolver",
+        "ts": "1475767240.001004"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "agreed",
+        "ts": "1475767251.001005"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to your point though, I was contemplating trying to do some kind of zip-merge",
+        "ts": "1475767291.001006"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "walk the master commits 1 by 1 until I hit the nasty bdd conflicts, and then handing them to the SME\/responsible-parties :wink:",
+        "ts": "1475767326.001007",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            },
+            {
+                "name": "squirrel",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "sorry but thumbs up is too mainstream",
+        "ts": "1475769921.001008",
+        "reactions": [
+            {
+                "name": "woo",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: revisiting the v0.6 releases",
+        "ts": "1475771177.001009"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "two items on agenda to discuss",
+        "ts": "1475771182.001010"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#1) should we re-push 0.6.0 since you updated them with some 0.6.1-snapshot hybrid?",
+        "ts": "1475771208.001011"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#2) v0.6.1 is ready to go when you are",
+        "ts": "1475771221.001012"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(fwiw, I am currently consuming the \u201cv0.6.0-preview\u201d tag (even though I know that isnt fully accurate) from dockerhub in a kubernetes setup and its working well",
+        "ts": "1475771267.001013"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> we are waiting for one more bug fix, and possibly some doc improvements",
+        "ts": "1475771353.001014"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "let me get the JIRA",
+        "ts": "1475771360.001015"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-392?filter=10164>",
+        "ts": "1475771393.001016"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "that one is top priority and should land soon",
+        "ts": "1475771405.001017"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "once it does we can cut a 0.6.1-preview",
+        "ts": "1475771415.001018",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me know if you want me to restore 0.6.0 from the tag",
+        "ts": "1475771558.001019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "brb",
+        "ts": "1475771561.001020"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": " I'd say we should either restore or delete",
+        "ts": "1475771666.001021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Right now we have false advertising ;)",
+        "ts": "1475771682.001022"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1599\/>",
+        "ts": "1475789102.001023"
+    }
+]

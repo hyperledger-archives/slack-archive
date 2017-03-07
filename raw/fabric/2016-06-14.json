@@ -1,0 +1,507 @@
+[
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Does anybody have worked on to compile .proto files in fabric into python ?  I did some initial test like:\n\n```protoc --python_out=\/tmp\/python  --proto_path=\/usr\/include -I=. fabric.proto```\n\n\nAnd create a small python program, but failed like:\n\n```$ python test.py\nTraceback (most recent call last):\n  File \"test.py\", line 2, in &lt;module&gt;\n    import fabric_pb2\n  File \"\/home\/amnt\/tmp\/fabric_pb2.py\", line 16, in &lt;module&gt;\n    import chaincode_pb2 as chaincode__pb2\n  File \"\/home\/amnt\/tmp\/chaincode_pb2.py\", line 17, in &lt;module&gt;\n    from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2\nImportError: cannot import name timestamp_pb2```\n\nThe purpose is to add dump feature for restapis (e.g. \/transactions\/{txuuid}) result. e.g. \"payload\". Dump to something like:\n\n``` transaction = transaction = fabric_pb2.Transaction()\ntransaction.payload = '&lt;returnvalue-of -resultapi&gt;'.decode('base64') \nprint transaction.payload```",
+        "ts": "1465888323.000029"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Or in other word, dump utility of protocol buffer message enbbeded in the result of restapi are actually fine for me.",
+        "ts": "1465888428.000030"
+    },
+    {
+        "user": "U1GLPP8QN",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GLPP8QN|deeflorian> has joined the channel",
+        "ts": "1465896310.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "why python?",
+        "ts": "1465902140.000032"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "Hi Guys,  Sorry if this is the wrong forum.  Can I have multiple membership service nodes?",
+        "ts": "1465912082.000033"
+    },
+    {
+        "user": "U1GNUNKRV",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GNUNKRV|ezhil> has joined the channel",
+        "ts": "1465912495.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11CP8FF1>: cant comment on python specifically, but this general notion is trivial in nodejs and its derivative environments",
+        "ts": "1465913646.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if that is of interest, i could point you at some examples",
+        "ts": "1465913664.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U11RW82PM>: I am not sure that we are there just yet, but the intention is that the service will not be an SPoF",
+        "ts": "1465915506.000037"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U0KM61BCP> Thanks for the response.  Is there an eta when this will not be a SPoF?  Or is there a way to backup a membership node.   I don\u2019t see how I could go into production with this being a SPoF.",
+        "ts": "1465915716.000038"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(Good morning) <@U11RW82PM> Give me a use-case please?",
+        "ts": "1465918110.000039"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It might be a bit more than merely having a few `membersrvc` servers running. Is it for load-balancing? Do you want them fully in synch?",
+        "ts": "1465918188.000040"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U11MANG9G>: It\u2019s mainly for redundancy. If I have a \"mission critical\" application that requires 99.9% uptime and  I have a membersrvc on one node\/machine\/data centre and any of those components should go down, I cannot perform any of the membership services while that node is offline.   If I\u2019m able to have redundancy,  I can mitigate against machine\/data centre failures.  I\u2019d like a membersrvc nodes to act like the rest of the validating and non-validating nodes and replicate themselves.",
+        "ts": "1465918824.000041"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, thanks for the info! So a few things.",
+        "ts": "1465918872.000042"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "1. Redundancy in terms of replicated `membersrvc` servers... (let's call them CAs going forward, easier to type ;-))",
+        "ts": "1465918925.000043"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "is not supported at all. I can tell you right away.",
+        "ts": "1465918942.000044"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There isn't  a RAID type\/back-end syncrhonization process, which allows changes to propagate.",
+        "ts": "1465918994.000045"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "2. However, that said, you can use more than one server to 'split the load' by having multiple CAs.",
+        "ts": "1465919035.000046"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Say, by region\/responsibility or some other form(s) of grouping.",
+        "ts": "1465919060.000047"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "3. Another alley worth exploring is understanding why you need the `membersrvc` uptime.  In a way, when looking at the ECert\/TCert (and ACert) design...",
+        "ts": "1465919134.000048"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(for Enrollment-, Transcation and Attribue- Certificate), you can work in a relatively asynchronous mode, if you pre-generate the certs that you would need.",
+        "ts": "1465919193.000049"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "----\nThat said, and I'm really being careful here, not to over-sell... we\/some of us are spending a considerable amount of time to make the CAs more of a set of standalone process, preparing also for a pretty intense set of stress testing, looking into the scalability and performance... but also the resiliency and stability, which sound like your main concerns too!",
+        "ts": "1465919354.000050"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I hope to be able to give you some more numbers by the end of this week, or towards the beginning of next week... but you are more than welcome to get in touch and share some of your numbers\/performance\/set up\/etc... and we can take a look into more specifics.",
+        "ts": "1465919444.000051"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Don't know if I answered your question (too directly\/discouragingly) or otherwise? Because I would really encourage you to try it, and provide us feedback.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465919507.000000"
+        },
+        "ts": "1465919493.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks very helpful",
+        "ts": "1465919544.000054"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U11MANG9G>: Thanks so much for your response!!  That is very useful information.  I understand that CAs don\u2019t need to be up on such a high level, but what is the consequence at the moment if one is destroyed though an act of God or a bad actor?  So I have a CA that does Europe and it\u2019s destroyed, what are my options then?",
+        "ts": "1465919703.000055"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK. So there are two ways to think about such scenarios:\n1. Act of God: say CA (let's think about VeriSign, for example. WLOG) is not available.",
+        "ts": "1465919808.000056"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "In that case, if Verisign is offline and cannot issue new certificates (think SSL certificates) for web-servers, then it's not really the end of the world, right?",
+        "ts": "1465919846.000057"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "cool.. understood",
+        "ts": "1465919869.000058"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "They just don't accept new CSR (Certificate Signing Requests)\/issue new certs.",
+        "ts": "1465919871.000059"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK. Number 2",
+        "ts": "1465919876.000060"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "2. A bad actor\/player. Here the concern is how to revoke someone's public key actually, right?",
+        "ts": "1465919914.000061"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "correct",
+        "ts": "1465919928.000062"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Either by using CRLs (Certificate Revocation Lists) or another mechanism... to be very honest? The CAs don't support CRLs interactively just yet.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465920701.000000"
+        },
+        "ts": "1465919942.000063"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We have the mechanics, in place, for one to be able in the future to verify a (E\/T\/A) Certificate... but while this will be more secure in some way, it won't scale as such.",
+        "ts": "1465920035.000065"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "My preference is to have a customizable policy. That is:",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465920725.000000"
+        },
+        "ts": "1465920067.000066"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You should be able to configure in a granular way, how you choose to validate certificates before accepting them.",
+        "ts": "1465920096.000067"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It will give you the ability to check once a week\/day or so, that nothing was revoked (still, not too much load in terms of stability)",
+        "ts": "1465920131.000068"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That's one end of the spectrum.... or on the other hand, verify everything...",
+        "ts": "1465920153.000069"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "... in which case, keeping a side DDoS attacks, etc, will really make you bound to the uptime of the CAs (which is probably what you were asking about earlier on).",
+        "ts": "1465920221.000070"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If I could choose (and I don't know enough about the application), I tend to prefer something in between.",
+        "ts": "1465920247.000071"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Verify that stuff in not revoked, periodically (but not for every Cert\/request), but also statistically, check from a time to time....",
+        "ts": "1465920287.000072"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1465920295.000073"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Another related question: How many CAs\/nodes do you envisions deploying? Are they all in your control (at least, at first)?",
+        "ts": "1465920335.000074"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "What's the Transaction\/Enrollment request ratio (roughly estimated, etc.). These parameters can help you choose\/configure the right policy...",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465920416.000000"
+        },
+        "ts": "1465920384.000075"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U11MANG9G>:  Thanks again for the information!!! very very useful.  I\u2019m still getting my head around this in detail, but the customizable policy sounds good.",
+        "ts": "1465920761.000080"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK. Please feel free to ask away as you are learning this. I'll just throw one last thing at you...",
+        "ts": "1465920875.000081"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "sure",
+        "ts": "1465920892.000082"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Client Authentication can also help reduce load.",
+        "ts": "1465920893.000083"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So in some cases, it is quick for the server to not accept connections from nodes if they don't authenticate well. If you are able to know enough about the nodes, etc (again, subject to your deployment), that's also something to look it. Not always possible (e.g. some versions of, IoT\/mobile\/roaming too frequently, of course... really a function of how much control you have on the nodes, and whether or not you can make it a smooth(er) process to enroll). CAs do support various levels of delegated roles (e.g. a \"registrar\" role that can accept new enrollments, etc.)",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465921211.000000"
+        },
+        "ts": "1465920992.000084"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U11RW82PM>, Just adding some extra info to the ongoing discussion with <@U11MANG9G>:\nCAs don't hold in-memory state: all required data is persisted into a relational db.\nYou should be able to use a DB of your choice as there are no vendor-specific sql statements being used. You could have a replicated db and schedule backups as you consider appropriate, so if a CA goes down, it could be easily restarted without sync delays.",
+        "ts": "1465922828.000086"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, we can probably move the DB settings to the configuration, so that one can replace the DB easily. At the moment we have sqlite3 in the code. But it will be easy to move out.",
+        "ts": "1465923355.000087"
+    },
+    {
+        "user": "U11M1GJHG",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U11M1GJHG|andres> has joined the channel",
+        "ts": "1465923758.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "Hi all,\n\nHas anyone had success developing chaincode that imports vendored Go packages which are also imported (and vendored) by fabric itself? (I'm developing my chaincode outside of the fabric repo).\n\nFor example, I want to define a function to manipulate the result of `stub.GetTxTimestamp()`. The result type is `gp.Timestamp` which is imported from `\"google\/protobuf\"`.\n\nIf I add the line `gp \"google\/protobuf\"` to my chaincode program import lines, and add the `vendor\/google\/protobuf` (and its dependency `vendor\/github.com\/golang\/protobuf`) dir to my repo, I get the following error about the colliding types:\n\n```\n.\/example.go:77: cannot use timestamp (type *\"<http:\/\/github.com\/hyperledger\/fabric\/vendor\/google\/protobuf|github.com\/hyperledger\/fabric\/vendor\/google\/protobuf>\".Timestamp) as type \"org\/example\/vendor\/google\/protobuf\".Timestamp in argument to isOK\n```\n\nThe reason here is that I'm importing `shim` as a library,  but Go libraries should not have a `vendor` dir (but fabric has a `vendor` dir because it is also an executable). If this is not clear I can open a Github issue with a proper code example.",
+        "ts": "1465924381.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea that doesn't work",
+        "ts": "1465924421.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you can't really use a package that uses vendoring",
+        "ts": "1465924439.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "exactly because of these type compatibility issues",
+        "ts": "1465924467.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: I assume a proper solution would be to create a new `hyperledger\/fabric-shim` project which includes only the shim package, without vendor. Then chaincode program should only import that package.",
+        "ts": "1465924526.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465924534.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: It might also make the chaincode docker containers a bit smaller, on the way.",
+        "ts": "1465924553.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465924558.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: Should I suggest this in a github issue? (I can't do this in a PR because it involves creating a new repo.)",
+        "ts": "1465924659.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465924708.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(I'm laughing by myself with all the consequent yeses)",
+        "ts": "1465924838.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: are you a bot that only says \"yes\" ?",
+        "ts": "1465924869.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465924907.000101",
+        "reactions": [
+            {
+                "name": "grinning",
+                "users": [
+                    "U0MSG4RL7",
+                    "U1ENXTQRL",
+                    "U1GLPP8QN"
+                ],
+                "count": 3
+            },
+            {
+                "name": "goat",
+                "users": [
+                    "U0XR6J961"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U18D82GJH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U18D82GJH|codascud> has joined the channel",
+        "ts": "1465938566.000102"
+    },
+    {
+        "type": "message",
+        "user": "U18D82GJH",
+        "text": "How can I create a new user using REST? I can login as \u201cjim\" via REST.. no problem with that\u2026 Thanks in advance\u2026 Referring to: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/SandboxSetup.md#vagrant-terminal-2-chaincode>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/SandboxSetup.md#vagrant-terminal-2-chaincode",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/SandboxSetup.md#vagrant-terminal-2-chaincode",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465939179.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0MSG4RL7>: I was suggesting just that earlier in another thread... an issue would be appropriate if you haven't already created",
+        "ts": "1465945272.000105"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Hello guys! I'm reading the hyperledger fabric protocol specs and it's surely an interesting project. Very comprehensive and elegantly designed.\n\nHowever, I don't see much mentioning about digital currencies or other assets over the hyperledger fabric. Am I missing something? ...I know this is intended as a framework for more general blockchain applications, but what if I want to build an incentivized network with hyperledger? Is this not suitable for cryptocurrencies?",
+        "ts": "1465950530.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0KM61BCP>: I opened Github issue 1832:  <https:\/\/github.com\/hyperledger\/fabric\/issues\/1832> . Also suggested there to \"hide\" the protobuf internals - for example, GetTxTimestamp should return a standard Go time.Time that doesn't require another dependency.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Can&#39;t build chaincode that uses Go packages used by shim \u00b7 Issue #1832 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1832",
+                "text": "Description I'm developing a chaincode program in my own repo (outside the fabric repo). I want to define a private function that accepts a parameter of type gp.Timestamp, where gp is package alia...",
+                "fallback": "GitHub: Can't build chaincode that uses Go packages used by shim \u00b7 Issue #1832 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/9211?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1832",
+                "thumb_width": 96,
+                "thumb_height": 96,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465959825.000107"
+    },
+    {
+        "user": "U1CJY8A7J",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1CJY8A7J|mikeb> has joined the channel",
+        "ts": "1465969023.000109"
+    }
+]

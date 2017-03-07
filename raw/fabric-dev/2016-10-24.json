@@ -1,0 +1,350 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Can anyone explain how this CI failure can happen even though that map is now protected by a RWMutex? \n<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/1955\/console>",
+        "ts": "1477300959.002165"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0ZJZBJLF> Try running that single test with the `-race` flag set and it will tell you exactly.",
+        "ts": "1477302021.002166"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "```go test -race <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto|github.com\/hyperledger\/fabric\/core\/crypto>\n=== Start tests for scenario 'Using crypto_test.yaml properties' ===\n10:50:08.318 [ca] NewCA -&gt; INFO 001 Fresh start; creating databases, key pairs, and certificates.\nopen socket...\nopen socket...done\n10:50:08.374 [aca] Start -&gt; INFO 002 Staring ACA services...\n10:50:08.374 [aca] startACAP -&gt; INFO 003 ACA PUBLIC gRPC API server started\n10:50:08.374 [aca] Start -&gt; INFO 004 ACA services started\n==================\nWARNING: DATA RACE\nRead at 0x00c420167b90 by goroutine 13:\n  runtime.mapaccess2_faststr()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/runtime\/hashmap_fast.go:297 +0x0\n  <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*moduleLeveled).Log()|github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*moduleLeveled).Log()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging\/level.go:113 +0x9f\n  <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*Logger).log()|github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*Logger).log()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging\/logger.go:170 +0x34d\n  <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*Logger).Info()|github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*Logger).Info()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging\/logger.go:239 +0x68\n  <http:\/\/github.com\/hyperledger\/fabric\/membersrvc\/ca.(*ECA).Start()|github.com\/hyperledger\/fabric\/membersrvc\/ca.(*ECA).Start()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/membersrvc\/ca\/eca.go:192 +0x108\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.startPKI()|github.com\/hyperledger\/fabric\/core\/crypto.startPKI()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:1574 +0x24d\n\nPrevious write at 0x00c420167b90 by goroutine 15:\n  runtime.mapassign1()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/runtime\/hashmap.go:442 +0x0\n  <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*moduleLeveled).SetLevel()|github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.(*moduleLeveled).SetLevel()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging\/level.go:104 +0x8e\n  <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.SetLevel()|github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging.SetLevel()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/op\/go-logging\/backend.go:33 +0x70\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.TestCryptoInitDoesntOverrideLoggingLevel()|github.com\/hyperledger\/fabric\/core\/crypto.TestCryptoInitDoesntOverrideLoggingLevel()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_settings_test.go:35 +0x50\n  testing.tRunner()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:610 +0xc9\n\nGoroutine 13 (running) created at:\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.before()|github.com\/hyperledger\/fabric\/core\/crypto.before()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:140 +0x47\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.runTestsOnScenario()|github.com\/hyperledger\/fabric\/core\/crypto.runTestsOnScenario()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:155 +0x234\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.TestMain()|github.com\/hyperledger\/fabric\/core\/crypto.TestMain()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:80 +0xf0\n  main.main()\n      <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto\/_test\/_testmain.go:124|github.com\/hyperledger\/fabric\/core\/crypto\/_test\/_testmain.go:124> +0x1b5\n\nGoroutine 15 (running) created at:\n  testing.(*T).Run()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:646 +0x52f\n  testing.RunTests.func1()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:793 +0xb9\n  testing.tRunner()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:610 +0xc9\n  testing.RunTests()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:799 +0x4ba\n  testing.(*M).Run()\n      \/usr\/local\/Cellar\/go\/1.7.1\/libexec\/src\/testing\/testing.go:743 +0x12f\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.runTestsOnScenario()|github.com\/hyperledger\/fabric\/core\/crypto.runTestsOnScenario()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:156 +0x245\n  <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto.TestMain()|github.com\/hyperledger\/fabric\/core\/crypto.TestMain()>\n      \/Users\/donovanhide\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/crypto\/crypto_test.go:80 +0xf0\n  main.main()\n      <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto\/_test\/_testmain.go:124|github.com\/hyperledger\/fabric\/core\/crypto\/_test\/_testmain.go:124> +0x1b5\n==================```",
+        "ts": "1477302901.002167"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "There were other data races found in other parts of the code, so I\u2019d recommend adding the `-race` flag to a unit test pass of the CI process.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477302963.000000"
+        },
+        "ts": "1477302956.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "first of all- thanks for the tip. second- I'm not interested in data races of other stuff but only in this specific test because I *thought* I fixed that bug, and even had a test that fails with high probability without the fix, and I ran that test with 10000 goroutines with -race enabled and didn't see a data race :confused: so I'm trying to see if there is some other code path my test doesn't check",
+        "ts": "1477303186.002170"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The above quote shows the race that resulted in the panic in your Jenkins log.",
+        "ts": "1477303288.002171"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait a second.... `fabric\/vendor\/github.com\/op\/go-logging\/level.go:104` this is a blank line in my IDE and I'm on the master branch. Is it possible the CI server doesn't have the updated vendor folders?",
+        "ts": "1477303354.002172"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Run this locally:\n`go test -race <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto|github.com\/hyperledger\/fabric\/core\/crypto>`\nand see if you get a race.",
+        "ts": "1477303444.002173"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I tried but it outputted too much stuff",
+        "ts": "1477303474.002174"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Did you add a `-v`?",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477303495.000000"
+        },
+        "ts": "1477303488.002175"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Your race is the first one.",
+        "ts": "1477303510.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oops. yes",
+        "ts": "1477303571.002180"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why did it output level.go:104? that's a blank line",
+        "ts": "1477303665.002181"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I think when the optimisers kick in the line numbering tends to be before the actual optimised function.",
+        "ts": "1477303783.002182"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "did that crypto test run for a long time on your PC too?",
+        "ts": "1477303990.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "go test -race <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto|github.com\/hyperledger\/fabric\/core\/crypto>",
+        "ts": "1477304000.002184"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yes, took a minute or two...",
+        "ts": "1477304038.002185"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "`-race` recompiles all dependencies with race detection enabled and then everything runs more slowly. It\u2019s the valgrind of Go :slightly_smiling_face:",
+        "ts": "1477304094.002186"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "valgrind detects data races too?",
+        "ts": "1477304117.002187"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "That\u2019s mostly what I\u2019ve used it for :slightly_smiling_face:",
+        "ts": "1477304144.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh right, ripple is C++",
+        "ts": "1477304194.002189"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think it's stuck",
+        "ts": "1477304222.002190"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the test",
+        "ts": "1477304225.002191"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep. it was killed because it ran for too long",
+        "ts": "1477304236.002192"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019d recommend writing a unit test for your patch to `op\/go-logging` that demonstrates the race and fix that first. Maybe you should add that unit test to your PR :slightly_smiling_face:",
+        "ts": "1477304237.002193"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Maybe I needed to run the peer before",
+        "ts": "1477304255.002194"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U2BGFAHC7> , I *have* a unit test, that's the whole problem. I ran it with 100,000 goroutines and it didn't catch fire",
+        "ts": "1477304400.002195"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "core\/utils\/utils_test.go , last function",
+        "ts": "1477304434.002196"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s not a complete test:\n<https:\/\/github.com\/yacovm\/go-logging\/blob\/b042c5e48dcf4b2c19b6feea14e7f4b5eaca7ddf\/logger_test.go#L64-L75>\nYou need to look at the data race report, and see that you are invoking the Log() method.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477304508.000000"
+        },
+        "ts": "1477304502.002197"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "And also run the test itself with the `-race` flag",
+        "ts": "1477304535.002200"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Also it\u2019s possible that the goroutine finishes before the second loop even begins :slightly_smiling_face: You\u2019d need to synchronise the starting of the two loops and maybe stick some `time.Sleep()` in so that the scheduler gets a chance to kick in. Testing concurrency is hard :slightly_smiling_face:",
+        "ts": "1477304641.002201"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well,  that's true, but empirically- when I tested it on my machine it failed almost all times without the patch and didn't fail once with the patch so I thought that was good enough",
+        "ts": "1477304772.002202"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Empirically you have evidence above that it does fail :slightly_smiling_face: Anyway, I need to some other work now :wink:",
+        "ts": "1477304820.002203"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sure, thanks for the -race tip.",
+        "ts": "1477304852.002204"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't see the logging data race when I run it locally, weird",
+        "ts": "1477306049.002205"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I have had a lot of questions in terms of where all the design documentation is for Hyperledger-fabric.  Apparently there are people in the community that have problems finding it.  As a result, Binh Nguyen created a link in Hyperledger wiki to help. Hopefully this helps everyone: <https:\/\/wiki.hyperledger.org\/community\/fabric-design-docs>",
+        "ts": "1477315860.002206",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCHE3TN\/move_convergence_changeset_to_master.txt|move_convergence_changeset_to_master.txt> and commented: cheat sheet for bringing change sets from convergence to master post merge <@U0KPFAZNF> <@U0UHG4VP1>",
+        "file": {
+            "id": "F2TCHE3TN",
+            "created": 1477324090,
+            "timestamp": 1477324090,
+            "name": "move_convergence_changeset_to_master.txt",
+            "title": "move_convergence_changeset_to_master.txt",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ULK2JPP",
+            "editable": true,
+            "size": 1091,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCHE3TN\/move_convergence_changeset_to_master.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCHE3TN\/download\/move_convergence_changeset_to_master.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCHE3TN\/move_convergence_changeset_to_master.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2TCHE3TN-2ba1572a6d",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCHE3TN\/move_convergence_changeset_to_master.txt\/edit",
+            "preview": "Cheat sheet for moving changes sets from convergence to master\n==============================================================\n\nExample changeset in convergence to be moved to master \n    - https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1633\/ ",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Cheat sheet for moving changes sets from convergence to master<\/pre><\/div>\n<div><pre>==============================================================<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Example changeset in convergence to be moved to master <\/pre><\/div>\n<div><pre>    - https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1633\/ <\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 23,
+            "lines_more": 18,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0YPYBVJM"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2TCTPZV3",
+                "created": 1477324090,
+                "timestamp": 1477324090,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "cheat sheet for bringing change sets from convergence to master post merge <@U0KPFAZNF> <@U0UHG4VP1>",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1477324090.002207"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ULK2JPP> <@U0KPFAZNF> I\u2019m getting errors like below when trying to run \u201cdocker-compose-next-4.yml\u201d in a freshly rebuilt vagrant (destroy\/up) with latest master:\n\nvp1_1          | panic: runtime error: invalid memory address or nil pointer dereference\nvp1_1          | [signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x710947]\nvp1_1          | \nvp1_1          | goroutine 56 [running]:\nvp1_1          | panic(0xb1d660, 0xc420018070)\nvp1_1          | \t\/opt\/go\/src\/runtime\/panic.go:500 +0x1a1\nvp1_1          | <http:\/\/github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).handleChat(0xc4203c26c0|github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).handleChat(0xc4203c26c0>, 0x7f83d73ee928, 0xc4200182a0, 0x7f83d73eecb8, 0xc4203f25a0, 0x1, 0x0, 0x0)\nvp1_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/peernext\/peer.go:566 +0x1d7\nvp1_1          | <http:\/\/github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).chatWithPeer(0xc4203c26c0|github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).chatWithPeer(0xc4203c26c0>, 0xc42000c94d, 0x8, 0x20, 0xc420125a20)\nvp1_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/peernext\/peer.go:553 +0x61b\nvp1_1          | created by <http:\/\/github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).chatWithSomePeers|github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).chatWithSomePeers>\nvp1_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/peernext\/peer.go:534 +0x115",
+        "ts": "1477336168.002208"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "that was vp1, vp0 crashed like below:",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1477336265.000000"
+        },
+        "ts": "1477336199.002209"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "vp0_1          | panic: runtime error: invalid memory address or nil pointer dereference\nvp0_1          | [signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x710947]\nvp0_1          | \nvp0_1          | goroutine 16 [running]:\nvp0_1          | panic(0xb1d660, 0xc420018070)\nvp0_1          | \t\/opt\/go\/src\/runtime\/panic.go:500 +0x1a1\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).handleChat(0xc4203b03c0|github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).handleChat(0xc4203b03c0>, 0x7f1a5303cd78, 0xc420155830, 0x7f1a530772b0, 0xc4203db120, 0x421500, 0x0, 0x0)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/peernext\/peer.go:566 +0x1d7\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).Chat(0xc4203b03c0|github.com\/hyperledger\/fabric\/core\/peernext.(*Impl).Chat(0xc4203b03c0>, 0x115bdc0, 0xc4203db120, 0xc42001e4a8, 0xc42001e4d0)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/peernext\/peer.go:258 +0xa8\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/protos._Peer_Chat_Handler(0xbc8da0|github.com\/hyperledger\/fabric\/protos._Peer_Chat_Handler(0xbc8da0>, 0xc4203b03c0, 0x115a500, 0xc42009dd00, 0xc420155830, 0x0)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/protos\/fabric.pb.go:696 +0xbb\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).processStreamingRPC(0xc4201d0bd0|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).processStreamingRPC(0xc4201d0bd0>, 0x115b520, 0xc42007c2d0, 0xc42008c3c0, 0xc4203ad290, 0x113db80, 0xc420155800, 0x0, 0x0)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc\/server.go:657 +0x6f3\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).handleStream(0xc4201d0bd0|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).handleStream(0xc4201d0bd0>, 0x115b520, 0xc42007c2d0, 0xc42008c3c0, 0xc420155800)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc\/server.go:741 +0xc33\nvp0_1          | <http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).serveStreams.func1.1(0xc4203db070|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).serveStreams.func1.1(0xc4203db070>, 0xc4201d0bd0, 0x115b520, 0xc42007c2d0, 0xc42008c3c0)\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc\/server.go:402 +0xab\nvp0_1          | created by <http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).serveStreams.func1|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*Server).serveStreams.func1>\nvp0_1          | \t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc\/server.go:403 +0xa3",
+        "ts": "1477336269.002211"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U13TWBRBL> will have to look but the only thing that has been tested to work is the simple skeletong with CLI",
+        "ts": "1477337949.002212"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "was talking with <@U0UKTPMG8> about this infact",
+        "ts": "1477337980.002213"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U13TWBRBL> working on this right now",
+        "ts": "1477338013.002214"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "putting in a default engine which will remedy this issue",
+        "ts": "1477338025.002215",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

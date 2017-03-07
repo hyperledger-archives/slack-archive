@@ -1,0 +1,2460 @@
+[
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Hi everyone! I'm trying to understand the current status of the security features of fabric, and I have some questions.\n\n- A security context is provided after login on the membership service; and is sent for each transaction to peers. What is it, exactly? I've not found any documentation related to that. Is is some kind of Ecert? The peer binary does not seem to send any other \"secure\" information other than this security context.\n\n- In the current implementation, is the ACA working? This authority is not specified in the fabric protocol, and I'm wondering if I can use the ACA and the <http:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim#ChaincodeStub.VerifyAttribute> function while only sending the security context in the chaincode invocation.\n\n- Basically, is it a good idea to start building things on top of the security features right now, or is it a better idea to wait for more stable API?\n\nThanks",
+        "edited": {
+            "user": "U1MNES6NR",
+            "ts": "1469696441.000000"
+        },
+        "ts": "1469696429.000275"
+    },
+    {
+        "type": "message",
+        "user": "U11M1GJHG",
+        "text": "Hi lbonniot, A security context includes a CallerCert, it is a transaction certificate (TCert). ECert is generated at enroll time and before transaction the client request to the TCA per a batch of TCerts (the default value is 200 TCerts), the client invokes the chaincode using one of these TCerts in each invocation. When there is no more TCert, client invokes TCA again per a new batch. TCert keys are derived from ECert keys, in this way the client uses a different key in each invocation avoiding linkability. About ACA is working you can see a recently added documentation here <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/AttributesUsage.md> . You can start building on top of the security features, you can join in <#C1J0BM448> channel where we can help you to address your questions",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/AttributesUsage.md",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/API\/AttributesUsage.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U11M1GJHG",
+            "ts": "1469706880.000000"
+        },
+        "ts": "1469706842.000278"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "How to query system chaincode? I didn't find anything helpful here. <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/SystemChaincodes\/noop.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/SystemChaincodes\/noop.md",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/SystemChaincodes\/noop.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469706963.000281"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "curl -i -X POST -H \"Content-Type: application\/json\" <http:\/\/localhost:5000\/chaincode> -d '{ \"jsonrpc\": \"2.0\", \"method\": \"query\", \"params\": { \"type\": 1, \"chaincodeID\":{ \"name\":\"noop\" },\"ctorMsg\": { \"function\":\"getTran\", \"args\":[\"530923200208163348\"] }, \"secureContext\":\"B003003H8000\" }, \"id\": 5}'\nresult:  {\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32003,\"message\":\"Query failure\",\"data\":\"Error when querying chaincode: Error:Failed to launch chaincode spec(Could not get deployment transaction for noop - LedgerError - ResourceNotFound: ledger: resource not found)\"},\"id\":5}",
+        "ts": "1469706990.000283"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Thanks a lot <@U11M1GJHG> , I'll check that :slightly_smiling_face:",
+        "ts": "1469706999.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "zuowang: did you enable the noop system chaincode?",
+        "ts": "1469707019.000285"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "simon: how to enable? like this?\n\t{\n\t\tEnabled:   true,\n\t\tName:      \"noop\",\n\t\tPath:      \"<http:\/\/github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop|github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop>\",\n\t\tInitArgs:  []string{},\n\t\tChaincode: &amp;noop.SystemChaincode{},\n\t},",
+        "ts": "1469707104.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't really know",
+        "ts": "1469707119.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "isn't there something in the config yaml file?",
+        "ts": "1469707128.000288"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "Thanks a lot! I didn't find any config in yaml file.",
+        "ts": "1469707271.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe that was removed",
+        "ts": "1469707901.000290"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0KM61BCP>: should I add reviewer on Gerrit by self? and where can add comment for change in Gerrit?I have migrated a PR",
+        "ts": "1469708786.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i find reviewing on gerrit extremely difficult",
+        "ts": "1469708956.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can't see all changes on the same page",
+        "ts": "1469708973.000293"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "yep, i also like github",
+        "ts": "1469709548.000294"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "hey",
+        "ts": "1469711205.000295"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if anybody needs a reviewer please invite me",
+        "ts": "1469711217.000296"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "use my nickname 'hgabre' or my e-mail",
+        "ts": "1469711275.000297"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "now, I m reviewing changesets from the 'All open' tab",
+        "ts": "1469711334.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hgabor: is there a way to see changes across all files in one view?",
+        "ts": "1469711519.000299"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "simon: if you mean the classic github style view where one can see all the files under one another then I think there is no such view",
+        "ts": "1469711587.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "who thinks of that?",
+        "ts": "1469711604.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course i need to see all concurrently",
+        "ts": "1469711615.000302"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I suggest you to click on the first file and then use the arrows to navigate - at the first look, it may be harder than github",
+        "ts": "1469711714.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the more difficult the interface, the less reviewing will take place",
+        "ts": "1469711949.000304"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0Z541B3P>: what is your username in Gerrit? Need you review first i think",
+        "ts": "1469712091.000305"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "simon: I hope people will get used to it and will like it. I was in projects where we had Gerrit and for me it is much better than github. Much cleaner.",
+        "ts": "1469712302.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1469712360.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hgabor: can you suggest some strategies?",
+        "ts": "1469712393.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "seems i can only review +1\/-1, not +2\/-2",
+        "ts": "1469712725.000309"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the one I use is the following:\n1, read the commit message and get the general goal of the changeset (if it does not tell enough then it is a bad commit message)\n2, go over all the files and check higher level things like formatting (whitespaces have a red background etc. so it is easy to see), what files were modified, whether the tests were updated and the higher level structure of the modification\n3, go over once again and try to understand the changes (lower level). I often use multiple tabs for the multiple, related files\nWhile doing this, one can add comments, tips etc.",
+        "ts": "1469712757.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, while we're talking about reviews",
+        "ts": "1469712979.000311"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Only maintainers (now called \"committers\" in Gerrit terminology if I am right) can give +2. But I think it is very important to give +1\/-1 to those changesets that you review because it will help maintainers give +2 and merge. Maybe one could also write comments like \"I had a deeper look and the changes are totally OK\" to indicate that one is an expert of the topic (while the maintainers are not always experts of all the topics).",
+        "ts": "1469712985.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how stickly do we want to be about different semantic changes being mixed into one commit?",
+        "ts": "1469713027.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i should be a maintainer, but i am not",
+        "ts": "1469713037.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0UHG4VP1>: can you check?  my lf id is `corecode`",
+        "ts": "1469713052.000315"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think we should not mix semantic changes.",
+        "ts": "1469713437.000316"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "But if you have a PR that has already have them then that may be OK. But in the future we should avoid them I think.",
+        "ts": "1469713479.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i try to keep my commits as small as possible",
+        "ts": "1469713761.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hgabor: can one proposed change consist of multiple commits?",
+        "ts": "1469713781.000319"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Yeah but now we have dozens of PRs that need to be migrated to Gerrit. And now I am trying to find out the best way of migration for one of my PRs. As you may know a commit from a PR equals 1 changeset in Gerrit. So if one wants to create 1 changeset from a PR then a squash is needed.",
+        "ts": "1469713925.000320"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Sorry I just read it. So the answer is no, it cannot. 1 changeset = 1 commit.",
+        "ts": "1469713967.000321"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "It is a smaller thing than the PR concept of GitHub. But one can have a chain of changesets (like a chain of commits).",
+        "ts": "1469714012.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what?",
+        "ts": "1469714347.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's terrible",
+        "ts": "1469714351.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or will it all be one \"subject\"",
+        "ts": "1469714373.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with multiple changesets?",
+        "ts": "1469714378.000326"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what exactly do you mean by subject?",
+        "ts": "1469714531.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/q\/status:open>",
+        "ts": "1469714543.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "says \"subject\"",
+        "ts": "1469714547.000329"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah now I get it",
+        "ts": "1469714584.000330"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no, with different subjects",
+        "ts": "1469714595.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so if i implement a feature in 10 small commits, then there will be 10 lines?",
+        "ts": "1469714638.000332"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes",
+        "ts": "1469714727.000333"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but these should be merged much quicker and 'smoother' than PRs",
+        "ts": "1469714765.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "lol",
+        "ts": "1469714766.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this project is doomed",
+        "ts": "1469714769.000336"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if you change an existing feature why would it make any harm to have N changesets? (where N &gt;= 10)",
+        "ts": "1469714824.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's fine to have N commits",
+        "ts": "1469714842.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "mandatory even",
+        "ts": "1469714846.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but a list where these are no longer grouped together",
+        "ts": "1469714860.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but floating around independent of each other...",
+        "ts": "1469714871.000341"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "they are grouped together but not in that list",
+        "ts": "1469714877.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1469714917.000343"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if you open one of the commits (changesets) you can see all the others from the chain (depending on it or dependencies)",
+        "ts": "1469714920.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll venture a guess:",
+        "ts": "1469714926.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all will run sort of okay until there is an IBM bluemix release, or something like that",
+        "ts": "1469714948.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "suddenly there will be the need to fix a lot of things in a short time",
+        "ts": "1469714959.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then there either will be dozens or hundreds of half okay changesets proposed",
+        "ts": "1469714987.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or implementations will diverge, because gerrit cannot keep up with the creation of changesets",
+        "ts": "1469715014.000349"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "5 minutes and I will be back and answer :slightly_smiling_face:",
+        "ts": "1469715017.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961> yep it's doomed, just like openstack ... not - you'll get used to it. go read how openstack uses it. google is your friend.",
+        "ts": "1469715230.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think review is essential",
+        "ts": "1469715255.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my fear is that at some point a deadline will push to diverge code bases",
+        "ts": "1469715270.000353"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP> it would be good to some wikis\/slides about the best practices of Gerrit. Maybe Ry could help us with them.",
+        "ts": "1469715577.000354"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XR6J961> half okay changesets: we need cool CI and lots of reviews and that won't happen :slightly_smiling_face:",
+        "ts": "1469715658.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, they will happen anyways",
+        "ts": "1469715683.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's just that via gerrit we can prevent those to land in the repo",
+        "ts": "1469715702.000357"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XR6J961> how would implementations diverge? on github if everybody has a fork it is easy to have divergent implementations",
+        "ts": "1469715711.000358"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XR6J961> yep I meant the prevention thing",
+        "ts": "1469715759.000359"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "ok and I will write no more at_simon as there is too much now here :slightly_smiling_face:",
+        "ts": "1469715787.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0XR6J961>: is your email @zurich.ibm.com?",
+        "ts": "1469715788.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, as long as we can get managements to accept that the gerrit repo is the only source of code, that's fine",
+        "ts": "1469715794.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ry: yes, i added both the ibm address and the github openid one",
+        "ts": "1469715829.000363"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what about mirroring it to github? as I remember it was planned to have such a feature",
+        "ts": "1469715831.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0XR6J961>: I sent the invite to your IBM address",
+        "ts": "1469715853.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ry: should i have accepted the invite before registering with gerrit?",
+        "ts": "1469715878.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "simon: no, I don\u2019t think you could have",
+        "ts": "1469715892.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1AU8DRQR>: <mailto:cbf-fabric-docs@readthedocs.org|cbf-fabric-docs@readthedocs.org> - I have a bunch of info in the works... hope to push this afternoon",
+        "ts": "1469716446.000368"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP> you mean about gerrit and such things?",
+        "ts": "1469716529.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yep",
+        "ts": "1469716545.000370"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "sounds good",
+        "ts": "1469716574.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "new content in contributing and index in left hand margin",
+        "ts": "1469716577.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "lmk if you have any feedback... not complete... gathering from other projects",
+        "ts": "1469716614.000373"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U1AU8DRQR>: I saw you comment for my change, i am not familiar with gerrit. Could you tell me how to change my commit message?Does it need a new patchset?",
+        "ts": "1469716885.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "git commit --amend ",
+        "ts": "1469716923.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "then push again",
+        "ts": "1469716931.000376"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U12452RAP> you have two options 1, check it out and use amend 2, use the icon",
+        "ts": "1469716934.000377"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I am not sure that option two is still present in Gerrit. I meant that there somewhere one can find a small pencil icon which is called 'Edit commit message'. <@U0UHG4VP1> do we still have such a feature? on the GUI",
+        "ts": "1469717049.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1AU8DRQR>: I don\u2019t know if it is enabled by default",
+        "ts": "1469717086.000379"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0UHG4VP1> where to enable?",
+        "ts": "1469717100.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "amend commit is better anyways to adapt for other review remarks",
+        "ts": "1469717118.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something to get familiar with",
+        "ts": "1469717123.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yep",
+        "ts": "1469717129.000383"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw <@U12452RAP> note that using git commit --amend will create a new patchset and you will be able to view all your patchsets under one changeset which is cool :slightly_smiling_face:",
+        "ts": "1469717130.000384"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "ok",
+        "ts": "1469717152.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hgabor: I mean it may not be enabled on Gerrit at all by default",
+        "ts": "1469717154.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961>: poke around Settings - there are different ways to configure the review ux",
+        "ts": "1469717279.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah thanks",
+        "ts": "1469717290.000388"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "that's a really cool feature: <https:\/\/gerrit-review.googlesource.com\/Documentation\/user-inline-edit.html>",
+        "ts": "1469717439.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "meh",
+        "ts": "1469717513.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd rather have gerrit integration in my editor :slightly_smiling_face:",
+        "ts": "1469717538.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Gerrit has a REST api: <https:\/\/gerrit-review.googlesource.com\/Documentation\/rest-api.html> would probably allow that",
+        "ts": "1469717673.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so there is a git-review thing",
+        "ts": "1469717814.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and magit-gerrit for emacs",
+        "ts": "1469717820.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes git-review is very popular",
+        "ts": "1469717873.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KM61BCP>: you might want to reference <http:\/\/chris.beams.io\/posts\/git-commit\/#seven-rules> (or incorporate it)",
+        "ts": "1469719681.000396",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11M1GJHG"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ok thx <@U0UHG4VP1>",
+        "ts": "1469719714.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961> ping Brad Topol or Steve Martinelli - they can give you all kinds of insights into gerrit use at openstack",
+        "ts": "1469719823.000398"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "<http:\/\/gerrithub.io\/>",
+        "ts": "1469719885.000399"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Did anyone check that out?",
+        "ts": "1469719889.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1ENXTQRL>: IIUC, I think the issue isn\u2019t purely \u201cwe want Gerrit\u201d, but rather there is some legal ramifications for things such as how the changesets are processed into the tree, etc, that LF requires governance over",
+        "ts": "1469720584.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "therefore, I think part of the story is the project needs to be hosted in <http:\/\/hyperledger.org|hyperledger.org> control",
+        "ts": "1469720611.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats just me reading between the lines, not sure I got that right",
+        "ts": "1469720623.000403"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I understand.",
+        "ts": "1469720905.000404"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Well I'm not 100% acquainted with the particular nuances of hyperledger development. I just thought it was a matter of gerrit providing a more powerful code review tool currently lacking on github.",
+        "ts": "1469720986.000405"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "So I thought that might be useful, since it probably allows you to keep using github while leverating gerrit... After all, github has a lot of nice features, specifically when dealing with usability.",
+        "ts": "1469721046.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, that is part of it",
+        "ts": "1469721047.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if that were the _only_ issue, gerrithub might have been a good option",
+        "ts": "1469721064.000408"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I see..",
+        "ts": "1469721073.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im just saying, its more complicated than that",
+        "ts": "1469721083.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins: the key issue is provenance. we can enforce DCO assertion with Gerrit easily",
+        "ts": "1469721091.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(or, thats my take, I should say)",
+        "ts": "1469721092.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, right, thats my understanding, but I also thought there was a requirement for DCO domain such as being tied to an LF identity, etc",
+        "ts": "1469721156.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(i.e. its not just the mere presence of DCO, but the provenance of the DCO being something we know the user has agreed to LF mandated terms, etc",
+        "ts": "1469721225.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF>: when you sign up for an LFID you are jumping through the \u201csign the DCO\u201d hoop",
+        "ts": "1469721233.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes, you\u2019re right",
+        "ts": "1469721236.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im also guessing that would be harder\/impossible to enforce with something like <http:\/\/gerrithub.io|gerrithub.io> vs <http:\/\/gerrit.hyperledger.org|gerrit.hyperledger.org>",
+        "ts": "1469721275.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, not as sure about that",
+        "ts": "1469721286.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "service as a service!",
+        "ts": "1469721300.000419"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "why can I get errors like these?\ngo install <http:\/\/github.com\/hyperledger\/fabric\/core\/crypto\/attributes\/proto|github.com\/hyperledger\/fabric\/core\/crypto\/attributes\/proto>: open \/opt\/gopath\/pkg\/linux_amd64\/github.com\/hyperledger\/fabric\/core\/crypto\/attributes\/proto.a: permission denied\ngo install <http:\/\/github.com\/hyperledger\/fabric\/core\/util|github.com\/hyperledger\/fabric\/core\/util>: open \/opt\/gopath\/pkg\/linux_amd64\/github.com\/hyperledger\/fabric\/core\/util.a: permission denied\ngo install <http:\/\/github.com\/hyperledger\/fabric\/membersrvc\/protos|github.com\/hyperledger\/fabric\/membersrvc\/protos>: open \/opt\/gopath\/pkg\/linux_amd64\/github.com\/hyperledger\/fabric\/membersrvc\/protos.a: permission denied",
+        "ts": "1469721312.000420"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "when compiling",
+        "ts": "1469721319.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "agricultural -&gt; industrial -&gt; service -&gt; meta service economy",
+        "ts": "1469721334.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's next",
+        "ts": "1469721340.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: one thing that might be happening is that the build was initially performed as root (such as by the vagrant setup.sh",
+        "ts": "1469721359.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hgabor: your \/opt\/gopath is not writable by your owner",
+        "ts": "1469721371.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is this within vagrant?",
+        "ts": "1469721377.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m providing customer service for the service ||: as a service : ||",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1469721400.000000"
+        },
+        "ts": "1469721385.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually, i think vagrant setup.sh does a chown",
+        "ts": "1469721390.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hehe",
+        "ts": "1469721400.000429"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF>: yes it is in vagrant",
+        "ts": "1469721402.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "check the perms of that .a",
+        "ts": "1469721414.000432"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it it seemed that vagrant up was successful",
+        "ts": "1469721415.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is it was owned by root",
+        "ts": "1469721420.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "now the question is, why?",
+        "ts": "1469721427.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hgabor: the root ownership bug was fixed a while ago",
+        "ts": "1469721435.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, this looks like a host build problem",
+        "ts": "1469721453.000437"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this is for the gerrit repo",
+        "ts": "1469721454.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. its not in the fabric\/build, but rather top level \/opt\/gopath",
+        "ts": "1469721467.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I will step aside :slightly_smiling_face:",
+        "ts": "1469721504.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, i didn\u2019t mean it that way, your input is always welcome",
+        "ts": "1469721886.000441",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually you were the one that caught the docker-level problem last time, so I appreciate your eyes here)",
+        "ts": "1469721938.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but as far as I can tell, I _think_ this is host-level this time",
+        "ts": "1469721950.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: can you check this: <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469722713.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in particular, <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning#prompt>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning#prompt",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Troubleshooting-devenv-provisioning#prompt",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469722728.000446"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes",
+        "ts": "1469722732.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do you have a prompt that looks like \"vagrant@hyperledger-devenv:v0.0.10-667d977:~$\"",
+        "ts": "1469722750.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or does it look like vagrant@ubuntu",
+        "ts": "1469722778.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1469722791.000451"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "look",
+        "ts": "1469722804.000452"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "vagrant@ubuntu-1404:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ echo \"needed prompt:   vagrant@hyperledger-devenv:v0.0.10-667d977:~$\"",
+        "ts": "1469722806.000453"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so as you see I have the ubuntu one",
+        "ts": "1469722818.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, so your environment is messed up",
+        "ts": "1469722876.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect that happened is it failed in the compilation step",
+        "ts": "1469722885.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, that would mean the \u201cgo install\u201d wrote packages to \/opt\/gopath\/pkg as root, but the chown never ran",
+        "ts": "1469722913.000457"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep",
+        "ts": "1469722921.000458"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so destroy vagrant, up vagrant?",
+        "ts": "1469722931.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as per here",
+        "ts": "1469722949.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setup.sh#L99>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setup.sh#L99",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/setup.sh#L99",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469722950.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, you can do that yes",
+        "ts": "1469722962.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you want, you can just run the rest of those steps from L99 down",
+        "ts": "1469722986.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whatever you feel like",
+        "ts": "1469722989.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "We have a PR outstanding that will make this more obvious that your environment is toast",
+        "ts": "1469723015.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it hasnt been merged yet, I probably need to resubmit it to Gerrit",
+        "ts": "1469723027.000467"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "destroy vagrant seems to be easier for me",
+        "ts": "1469723057.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sounds good, thx",
+        "ts": "1469723124.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you dont get the vagrant@hyperledger prompt, save off the vagrant log",
+        "ts": "1469723140.000470"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "'running inline script' I guess this part runs setup.sh",
+        "ts": "1469723182.000471"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it seems that it is OK",
+        "ts": "1469723351.000472"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the inline script",
+        "ts": "1469723360.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "correct",
+        "ts": "1469723542.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear, i think it did partially run",
+        "ts": "1469723550.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it just didnt complete",
+        "ts": "1469723553.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "unfortunately, the system is not super clear when that occurs",
+        "ts": "1469723567.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there is a PR to address this, because people keep stumbling into it",
+        "ts": "1469723580.000478"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "after the vagrant is up, we will see",
+        "ts": "1469723824.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "-_- who keeps writing code that logs transaction content?",
+        "ts": "1469726486.000480"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what code do you mean?",
+        "ts": "1469726846.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh this actually was a problem of an unexpected log",
+        "ts": "1469726881.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the system suddenly output a whole deployment transaction",
+        "ts": "1469726893.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "turns out `ledger.RollbackTxBatch(id interface{})` prints the id...",
+        "ts": "1469726920.000484"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "simon, what will happen to your consensus separation feature branch?",
+        "ts": "1469727173.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we hope that we will get a feature branch in gerrit",
+        "ts": "1469727278.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or decide that we destabilize master for a while",
+        "ts": "1469727292.000487"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "my opinion is that it may be OK to have a branch for such a big feature",
+        "ts": "1469727389.000488"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but merging can be difficult and keeping uptodate",
+        "ts": "1469727411.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we should look into splitting the repo into smaller things",
+        "ts": "1469727464.000490"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do you mean more than one repos?",
+        "ts": "1469727517.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1469727543.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe break out some libraries",
+        "ts": "1469727577.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "client sdk, membership services",
+        "ts": "1469727598.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "different consensus implementations",
+        "ts": "1469727606.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chaincode shim",
+        "ts": "1469727615.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "protobuf api definitions",
+        "ts": "1469727624.000497"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "client sdk and membership services - it would be a good idea to put those to other repos",
+        "ts": "1469727948.000498"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but then we need integration tests",
+        "ts": "1469727961.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh yes, they would also be in a separate repo",
+        "ts": "1469728426.000500"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "that would be okay but maybe it would make testing harder",
+        "ts": "1469728691.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why?",
+        "ts": "1469728784.000502"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "because it would imply that you cannot run some tests on your own machine",
+        "ts": "1469729272.000503"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "(more precisely you can but you have to have all the needed repos and a special environment)",
+        "ts": "1469729308.000504"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "think of the behave tests, I dunno if there is any bdd test working with membersvc but if membersvc was in another repo then it made running bdd tests harder",
+        "ts": "1469729365.000505"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "don't you think?",
+        "ts": "1469729373.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1469729404.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the integration tests repo would contain scripts to build docker images and run the tests",
+        "ts": "1469729435.000508"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "oh good idea,",
+        "ts": "1469729536.000509"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but that part remains true that you will have to have all the repos",
+        "ts": "1469729557.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1469730172.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i think if we break apart repos, we can't use vendoring",
+        "ts": "1469730194.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or at least can't pass vendor data structures between different code parts",
+        "ts": "1469730233.000513"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw isn't that an antipattern? vendoring",
+        "ts": "1469730297.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: I am too new to golang to know what is considered anti-pattern, but I can say that I think the golang concept of dependency specification is a bit broken and vendoring is the only semblance of sanity I have come across",
+        "ts": "1469730376.000515"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "ghaskins, go downloads things from the github, right?",
+        "ts": "1469730413.000516"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so it has no real version control",
+        "ts": "1469730422.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it does, and you can't specify a version",
+        "ts": "1469730425.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, they totally bungled that aspect of the language",
+        "ts": "1469730434.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somebody changes the API, poof",
+        "ts": "1469730435.000520"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep then really vendoring is needed",
+        "ts": "1469730442.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "systems like maven(leiningen) and npm do a much better job here",
+        "ts": "1469730468.000522"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "isnt there any fix for that? I mean some workaround or anything",
+        "ts": "1469730477.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, vendoring :wink:",
+        "ts": "1469730484.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there was one alternative I looked at",
+        "ts": "1469730498.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me see if I can find it",
+        "ts": "1469730501.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this was it:",
+        "ts": "1469730561.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<http:\/\/labix.org\/gopkg.in>",
+        "attachments": [
+            {
+                "title": "gopkg.in - Stable APIs for the Go language",
+                "title_link": "http:\/\/labix.org\/gopkg.in",
+                "text": "Stable APIs for the Go language",
+                "fallback": "gopkg.in - Stable APIs for the Go language",
+                "from_url": "http:\/\/labix.org\/gopkg.in",
+                "service_icon": "http:\/\/labix.org\/favicon.ico",
+                "service_name": "labix.org",
+                "id": 1
+            }
+        ],
+        "ts": "1469730562.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it was somewhat promising because you could essentially add a version coordinate to normal <http:\/\/github.com\/golang|github.com\/golang> things",
+        "ts": "1469730590.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but its not foolproof, it only works if the upstream author happens to maintain tags well, etc",
+        "ts": "1469730610.000531"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it would be good if one could use git hashes, no?",
+        "ts": "1469730658.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i seem to recall you cant though",
+        "ts": "1469730670.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that seems like a good feature though",
+        "ts": "1469730680.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont remember, it was a while ago and we decided a short while later to switch to vendoring",
+        "ts": "1469730703.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which has its own set of problems)",
+        "ts": "1469730717.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but does seem to be about as good as you can get within golang",
+        "ts": "1469730733.000537"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay I see, the problem is golang",
+        "ts": "1469730763.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah",
+        "ts": "1469730769.000539"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and its funny \"package\/dep management\"",
+        "ts": "1469730777.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i never bothered to research why it was done the way it was done",
+        "ts": "1469730830.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps there was a valid argument",
+        "ts": "1469730839.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it seems fairly braindead from my perspective",
+        "ts": "1469730850.000543"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I dont think there could be any",
+        "ts": "1469730858.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, to your point, without upstream participation, SHAs are really your best coordinate mechanism",
+        "ts": "1469730922.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and vendoring is the only way I am aware of to get that",
+        "ts": "1469730931.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(indirectly, anyway)",
+        "ts": "1469730968.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "more like \u201csha coordinates by brute force\u201d, heh",
+        "ts": "1469730983.000548"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "wasnt it enough to have shell scripts that would download all the vendor packages?",
+        "ts": "1469731002.000549"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "or do we have artifactory or something like that?",
+        "ts": "1469731018.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could probably do that, rather than use go-get you mean?",
+        "ts": "1469731024.000551"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes I meant that",
+        "ts": "1469731036.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one problem is that it isnt just about the coordinate, but also about the context",
+        "ts": "1469731043.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "vendoring means that you can have different deps for different subsystems (with some obvious limitations)",
+        "ts": "1469731072.000554"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do we use this feature of vendoring?",
+        "ts": "1469731088.000555"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if yes, where",
+        "ts": "1469731090.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but for example, say projects foo and bar both use a logger, but use diffferent versions of it",
+        "ts": "1469731098.000557"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and foo uses bar",
+        "ts": "1469731102.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "with vendoring, foo and bar can each bring in their own, theoretically at least",
+        "ts": "1469731127.000559"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah yeah yeah I get it, but in our project, do we have such subsystems?",
+        "ts": "1469731129.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure, but probably",
+        "ts": "1469731143.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think we were primarily interested in stable coordinates",
+        "ts": "1469731175.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but there could be some heterogeneity too if we broke out the digraph",
+        "ts": "1469731197.000563"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but how can you do this foo bar thing with vendoring? doesnt it mean just putting all the vendor things under a vendor directory?",
+        "ts": "1469731207.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, if I had bar\/vendor\/logger(v2) and foo\/vendor\/[logger(v3), bar] for instance",
+        "ts": "1469731271.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the system applies context",
+        "ts": "1469731300.000566"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and what does go do with this structure?",
+        "ts": "1469731303.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the vendor directory has hierarchical significance, IIUC",
+        "ts": "1469731326.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, under \u201cbar\u201d v2 would be in effect",
+        "ts": "1469731335.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "v3 elsewhere in foo",
+        "ts": "1469731345.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "etc",
+        "ts": "1469731346.000571"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "how does go know which is bar? does it have to be named bar.go?",
+        "ts": "1469731373.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure I understand your question",
+        "ts": "1469731388.000573"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its package name based",
+        "ts": "1469731397.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "generally its the dirname that matters",
+        "ts": "1469731428.000575"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not the .go files",
+        "ts": "1469731430.000576"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay okay that was the question",
+        "ts": "1469731432.000577"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but in vendor directory, there are no directories the name of which is a module name",
+        "ts": "1469731495.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in go, if I had $GOPATH\/src\/bar\/[bat.go, baz.go], I am implicitly bringing both files in by saying \u201cimport bar\"",
+        "ts": "1469731498.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its a fqp",
+        "ts": "1469731537.000580"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance",
+        "ts": "1469731561.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/vendor\/github.com\/kr\/pretty>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/vendor\/github.com\/kr\/pretty",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/vendor\/github.com\/kr\/pretty",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469731562.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I could say \u201cimport \u2018<http:\/\/github.com\/kr\/pretty'|github.com\/kr\/pretty'>\"",
+        "ts": "1469731578.000584"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and it would be satisfied by $mypkg\/vendor first, or $GOPATH\/src second",
+        "ts": "1469731607.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(falling back to trying to git-cloning it if those fail)",
+        "ts": "1469731634.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats why I said its contextual via the heirarchy",
+        "ts": "1469731658.000587"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anything under $mypkg has its imports aliased to $mypkg\/vendor (if it exists)",
+        "ts": "1469731699.000588"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay then I will have to search for directories called vendor",
+        "ts": "1469731726.000589"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we only have these",
+        "ts": "1469731969.000590"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": ".\/build\/docker\/pkg\/linux_amd64\/github.com\/hyperledger\/fabric\/vendor\n.\/vendor",
+        "ts": "1469731970.000591"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure what you are trying to do",
+        "ts": "1469733386.000592"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that .\/build is just a transient artifact directory",
+        "ts": "1469733415.000593"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I know that",
+        "ts": "1469733751.000594"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I meant that we only use \/vendor for the full project but there are no overrides",
+        "ts": "1469733775.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, i am not clear on what you are after",
+        "ts": "1469733778.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see what you are doing",
+        "ts": "1469733788.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you are looking for vendoring within one of our vendored packages?",
+        "ts": "1469733803.000598"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep exactly",
+        "ts": "1469733813.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, sorry, i get it now",
+        "ts": "1469733818.000600"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "my guess is that as we only use a project-wide vendor dir, we could also use shell scripts with exact git hashes (those script could fetch the vendor package at build time)",
+        "ts": "1469733871.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "probably\u2026what problem are you trying to solve?",
+        "ts": "1469733888.000602"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "(or we could create a gradle plugin to do that etc etc... :slightly_smiling_face: )",
+        "ts": "1469733895.000603"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I do not know if this is a problem for others but we store the repos of other vendors in our own repo, dont we?",
+        "ts": "1469733924.000604"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this is one of the disadvantages of vendoring",
+        "ts": "1469733939.000605"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, but that is the whats intended with vendoring",
+        "ts": "1469733944.000606"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep but it could be workarounded",
+        "ts": "1469733957.000607"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "while perhaps wasteful, I dont see it as particularly problematic",
+        "ts": "1469733973.000608"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but I am OK with the current situation if everybody likes this",
+        "ts": "1469733974.000609"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep, kinda wasteful",
+        "ts": "1469733990.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, well, to be clear, I wish golang just had a more reasonable dep system",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1469734007.000000"
+        },
+        "ts": "1469734000.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I wouldnt say I \u201clike this\u201d :wink:",
+        "ts": "1469734021.000613"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes I wish too but I guess we will have to wait some decades for that",
+        "ts": "1469734025.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it does seem to be the way golang is supposed to work",
+        "ts": "1469734033.000615"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I guess the idea behind it is that golang programmers have to write backward compatible code",
+        "ts": "1469734065.000616"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "including APIs",
+        "ts": "1469734071.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the biggest issue I have seen is sometimes people inadvertently patch the vendored code, such as an errant gofmt run",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1469734106.000000"
+        },
+        "ts": "1469734097.000618"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah and I think this has something to do with the fact that we have the code of others in our repo",
+        "ts": "1469734139.000620"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, that would be typically with vendoring though",
+        "ts": "1469734348.000621"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/24\/>",
+        "ts": "1469734469.000622"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "does anybody have any idea what's the error there? I do not see any error",
+        "ts": "1469734492.000623"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U1AU8DRQR>:  Please check this <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/24\/testReport\/junit\/peer_basic\/Network%20of%20Peers\/chaincode_example02_with_4_peers_and_1_membersrvc__test_crash_fault_____1_1_Consensus_Options\/>",
+        "ts": "1469734613.000624"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "oh thx ramesh",
+        "ts": "1469734665.000625"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "isn't that an unstable test?",
+        "ts": "1469734694.000626"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "not sure..but seems failure is related to timeout issue..",
+        "ts": "1469734939.000627"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "to be honest I have tried all the test on my local machine and they worked fine",
+        "ts": "1469735030.000628"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "can I retrigger that Jenkins job?",
+        "ts": "1469735060.000629"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "No I think.. Do you see `retrigger` option in jenkins?",
+        "ts": "1469735152.000630"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no :disappointed:",
+        "ts": "1469735175.000631"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "will do that now..",
+        "ts": "1469735235.000632"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "done",
+        "ts": "1469735266.000633"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "thanks",
+        "ts": "1469735278.000634"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "is it possible somehow to create a retrigger option?",
+        "ts": "1469735312.000635"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "that comes with user permissions in jenkins..",
+        "ts": "1469735378.000636"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what if I had a Jenkins user? would I be able to retrigger?",
+        "ts": "1469735447.000637"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "could I get the proper permissions?",
+        "ts": "1469735466.000638"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I am not sure but please check with ry..",
+        "ts": "1469735567.000639"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay",
+        "ts": "1469735577.000640"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "thanks ramesh",
+        "ts": "1469735589.000641"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "now it is a +1 so it was test instability",
+        "ts": "1469738572.000642"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/313\/> anyone's review is welcome",
+        "ts": "1469738588.000643"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "So should we be manually be adding reviewers or will that happen automatically?",
+        "ts": "1469756332.000644"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "I just published a draft change and the `Hyperledger Jobbuilder` didn't get added",
+        "ts": "1469756392.000645"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "just added it manually though",
+        "ts": "1469756534.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "you need to manually add people",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1469757662.000000"
+        },
+        "ts": "1469757440.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1M7K67EV>: it looks like you\u2019re going to have some conflicts as well (click the conflicts tab) <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/273\/2>",
+        "ts": "1469757565.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1M7K67EV>: the build for your change is behind one other build: <https:\/\/jenkins.hyperledger.org\/view\/fabric\/>",
+        "ts": "1469757645.000650"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Sweet, thanks <@U0UHG4VP1>",
+        "ts": "1469757682.000653"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "for those conflicts, should I wait until the other changes are merged to fix them?",
+        "edited": {
+            "user": "U1M7K67EV",
+            "ts": "1469757711.000000"
+        },
+        "ts": "1469757703.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jcarrivick: draft change means something special in gerrit land, I apologize for my confusion",
+        "ts": "1469757713.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I would wait",
+        "ts": "1469757730.000657"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "great :slightly_smiling_face:",
+        "ts": "1469757787.000658"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "One other question from your comments there, gerrit likes commit message lines to be &lt;70 chars?",
+        "ts": "1469757812.000659"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "what about issues now? submit in JIRA?",
+        "ts": "1469757922.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "grapebaba: for fabric and sawtooth lake, yes",
+        "ts": "1469758048.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I haven\u2019t set up fabric-api project yet",
+        "ts": "1469758057.000662"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": ":ok_hand::skin-tone-6:",
+        "ts": "1469758118.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "there will be an import in the future but I\u2019m not sure when - in weeks, not days or months",
+        "ts": "1469758190.000664"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "ry, another question. How to find the jenkins build number in gerrit?",
+        "ts": "1469759231.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U12452RAP>: look in comments at bottom of change",
+        "ts": "1469759657.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Bottom of page",
+        "ts": "1469759667.000667"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": ":cool:",
+        "ts": "1469759897.000668"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "how to add a specific reviewer",
+        "ts": "1469763013.000669"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "cannot find username",
+        "ts": "1469763043.000670"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "does anyone here use the HTTP endpoint for Git on Gerrit? I seem to get a lot of authentication failures with the same username and password that I log into the website with",
+        "ts": "1469763129.000671"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I can see it posting to <https:\/\/gerrit.hyperledger.org\/r\/fabric\/info\/refs?service=git-receive-pack> (encrypted obviously) but rejects my credentials... same happens in my browser, but works with <https:\/\/gerrit.hyperledger.org\/r\/>",
+        "ts": "1469763225.000672"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "and before anyone suggests the SSH endpoint... I haven't figured out how to use SSH through a HTTP proxy",
+        "ts": "1469763283.000673"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U11HH3P7Y>: that bdd test always failure",
+        "ts": "1469764240.000674"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U12452RAP>: I am just familiarising myself with Gerrit. I\u2019ll create an Id today if it needs one",
+        "ts": "1469768887.000675"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": ":ok_hand::skin-tone-2:",
+        "ts": "1469769057.000676"
+    }
+]

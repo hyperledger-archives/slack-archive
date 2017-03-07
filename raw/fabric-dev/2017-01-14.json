@@ -1,0 +1,134 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF> - my guess would also be that you'd likely only see this issue when running on OSX  (and possibly Windows - although I believe that the VM used on Windows has the correct libraries)",
+        "ts": "1484437925.001133"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "is there any reason for us not to use the \"official\" busybox images?   Or minimally we could just copy their build for say the uclibc version?   (I guess we do have to build for Z and P)",
+        "ts": "1484438056.001134"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this looks nice:    <https:\/\/github.com\/docker-library\/busybox\/blob\/master\/uclibc\/Dockerfile.builder>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "docker-library\/busybox",
+                "title_link": "https:\/\/github.com\/docker-library\/busybox\/blob\/master\/uclibc\/Dockerfile.builder",
+                "text": "busybox - Docker Official Image packaging for Busybox",
+                "fallback": "GitHub: docker-library\/busybox",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/7739233?v=3&s=400",
+                "from_url": "https:\/\/github.com\/docker-library\/busybox\/blob\/master\/uclibc\/Dockerfile.builder",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484438091.001135"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K>: actually the problem is build environment neutral.  We compile both busybox and the golang code in our baseimage container",
+        "ts": "1484442413.001137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The glibc in question is therefore picked up in our Debian\/Ubuntu ecosystem",
+        "ts": "1484442453.001138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I explain the ratioale for not using the official busybox here: <https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "[BUILD] Minimize docker container sizes \u00b7 hyperledger\/fabric@b61723f \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32",
+                "text": "We use two techniques: 1) the use of a minimal docker base (FROM scratch + busybox) 2) the use of a static binary ... to create a minimally sized image for 'peer' and 'orderer' Before this patc...",
+                "fallback": "GitHub: [BUILD] Minimize docker container sizes \u00b7 hyperledger\/fabric@b61723f",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/367132?v=3&s=200",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/commit\/b61723f9ddcc91cafd4f3a8c3634bd8d32388b32",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484442564.001139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "One complication here is the multiarch stuff as you noted.  Another is that it's not only busybox that is broken",
+        "ts": "1484442632.001141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Our golang apps pick up the bad dns functions too",
+        "ts": "1484442651.001142"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "There are numerous ways to solve this but most of them are probably untenable from either a support and\/or licensing perspective ",
+        "ts": "1484442705.001143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think I have a workable solution being tested right now though",
+        "ts": "1484442726.001144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'm mobile ATM but I'll provide details later",
+        "ts": "1484442766.001145"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "We'll need to take a small hit on size for the short term (e.g. Peer goes from 25M to 155M (uncompressed)",
+        "ts": "1484442831.001146"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think I can reign this in again (at least on X) in the midterm",
+        "ts": "1484442871.001147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "But right now focus is on correctness ",
+        "ts": "1484442883.001148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Honestly though, the size thing is probably less important than we make it out.  The peer still needs ccenv or something like it in order to function, no matter how clever I can get here",
+        "ts": "1484443045.001149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I still think a minor argument can be made that smaller is still better, so I am not giving up on this.",
+        "ts": "1484443088.001150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Just a detour ;)",
+        "ts": "1484443094.001151"
+    }
+]

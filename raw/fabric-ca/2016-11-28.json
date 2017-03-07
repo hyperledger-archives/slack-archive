@@ -1,0 +1,225 @@
+[
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "FYI, a couple of folks have asked about the missing db-config.json file in fabric-cop\/testdata directory.  This is intentional in a recent merge so that the COP server has a single config file rather than two.  So the two lines of DB config that used to be in db-config.json are now in the single config file.   See fabric-cop\/testdata\/test-config.json for an example",
+        "ts": "1480359451.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Note these two lines:",
+        "ts": "1480359456.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "\"driver\":\"sqlite3\",\n \"data_source\":\"cop.db\",",
+        "ts": "1480359458.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Actually, these lines will be optional in the future and the default values will be those above, just so it works out-of-the-box if these lines are missing",
+        "ts": "1480359560.000092"
+    },
+    {
+        "user": "U2Q0HP4HY",
+        "text": "<@U2Q0HP4HY|rickr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480360791.000093"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I created a cop-db.json with just these lines.\n\n```\nvagrant@hyperledger-devenv:v0.2.1-86bc1ff:\/opt\/gopath\/src\/github.com\/hyperledger\/cop\/server$ bash -x .\/startServer \n+ export COP_HOME=\/opt\/gopath\/src\/github.com\/hyperledger\/cop\/server\n+ COP_HOME=\/opt\/gopath\/src\/github.com\/hyperledger\/cop\/server\n+ \/opt\/gopath\/bin\/cop server start -ca ca-cert.pem -ca-key ca-key.pem -config cop.json -db-config cop-db.json\n2016\/11\/28 19:16:48 [FATAL] No database specified, a database is needed to run COP server\nvagrant@hyperledger-devenv:v0.2.1-86bc1ff:\/opt\/gopath\/src\/github.com\/hyperledger\/cop\/server$ cat cop-db.json\n{\n \"driver\":\"sqlite3\",\n \"data_source\":\"cop.db\"\n}```",
+        "ts": "1480360999.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "You need to add the lines that used to be in cop-db.json to your cop.json file",
+        "ts": "1480361100.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "and you do not need the -db-config option",
+        "ts": "1480361125.000096"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "so essentially :\n```\nexport COP_HOME=\/opt\/gopath\/src\/github.com\/hyperledger\/cop\/server; \/opt\/gopath\/bin\/cop server start -ca ca-cert.pem -ca-key ca-key.pem  -config   testconfig.json\n```",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1480361518.000000"
+        },
+        "ts": "1480361368.000097"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "that is just use testconfig.json for your config",
+        "ts": "1480361403.000098"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Seems to be running \n2016\/11\/28 19:30:43 [INFO] Now listening on 127.0.0.1:8888",
+        "ts": "1480361441.000099"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Thanks",
+        "ts": "1480361499.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "yes, that's it",
+        "ts": "1480361845.000102"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "any thoughts on a dockerized edition ?",
+        "ts": "1480362489.000103"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U0S5KF44D>  I just noticed it listening on 127.0.0.0.1  is there a config option for all ? 0.0.0.0 ?",
+        "ts": "1480362657.000104"
+    },
+    {
+        "user": "U0XQX3U9G",
+        "text": "<@U0XQX3U9G|diego_m> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480362769.000105"
+    },
+    {
+        "user": "U0MRY2LKY",
+        "text": "<@U0MRY2LKY|troyronda> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480368233.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U2Q0HP4HY> Use the following",
+        "ts": "1480372018.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "cop server start -address '' -ca ${TD}\/ec.pem -ca-key ${TD}\/ec-key.pem -config cop.json",
+        "ts": "1480372021.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "note the \"-address\" arg with value of empty string",
+        "ts": "1480372096.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "it is kludgy but comes from cfssl",
+        "ts": "1480372109.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "will try to change the default to listen on any port but need to do so w\/o changing cfssl code",
+        "ts": "1480372162.000111"
+    },
+    {
+        "user": "U0Z81GL6S",
+        "text": "<@U0Z81GL6S|anya> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480373572.000112"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Thx",
+        "ts": "1480375178.000113"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I noticed this when re-starting COP .. are these really more WARNINGs than errors ?\n`2016\/11\/28 23:22:43 [ERROR] Group already registered`",
+        "ts": "1480375218.000114",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z81GL6S"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "Hi, I'm trying to contribute code to cop, but can't get access to the gerrit repo",
+        "ts": "1480377572.000115"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "git clone <ssh:\/\/tcz001@gerrit.hyperledger.org:29418\/fabric-cop>\nCloning into 'fabric-cop'...\nssh: connect to host <http:\/\/gerrit.hyperledger.org|gerrit.hyperledger.org> port 29418: Connection refused\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.",
+        "ts": "1480377592.000116"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "I followed the <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/CONTRIBUTING\/> section on document, but seems still not working. even can't download the repo locally",
+        "ts": "1480377691.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "is tcz001 a valid linux foundation ID?",
+        "ts": "1480377722.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "you can create one at <https:\/\/identity.linuxfoundation.org\/>",
+        "ts": "1480377810.000119"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "yes, the http way works, but ssh doesn't",
+        "ts": "1480378036.000120"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "just tried `git clone <http:\/\/tcz001@gerrit.hyperledger.org\/r\/a\/fabric-cop>`",
+        "ts": "1480378056.000121"
+    },
+    {
+        "user": "U1B9E51R8",
+        "text": "<@U1B9E51R8|xixuejia> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480397151.000122"
+    },
+    {
+        "user": "U2Y9ZFS48",
+        "text": "<@U2Y9ZFS48|nakamura> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480400144.000123"
+    }
+]

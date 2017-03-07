@@ -1,0 +1,484 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U0KPFAZNF>: <@U0ULK2JPP> I do think it\u2019s important to have the value be configurable actually for PR #1720. The whole point of putting it into the .yaml was to make sure that a person who is trying to deploy a random chaincode package on the peer could do that without having to edit our source code. What if they are reading some dependent information in their chaincode that is stored into a file that they need and we are filtering it out during the packaging? Then this requires them to edit writer.go to make that happen. That seems a bit ridiculous\u2026 I\u2019d like to ask <@U0UKTPMG8> what he thinks before we proceed with the hard coding approach. <@U0UKTPMG8> do you know how to make the .yaml parameters be accessible from the UTs? somehow my PR (linked below) is failing CI because as <@U0KPFAZNF> points out, the UTs are not able to extract the info from the .yaml with line: viper.GetStringSlice(\"chaincode.filetypes\u201d). Though I also had all the UTs pass locally, which is really confusing to me.\n\n<https:\/\/github.com\/hyperledger\/fabric\/pull\/1720>",
+        "edited": {
+            "user": "U0Z81GL6S",
+            "ts": "1465470209.000000"
+        },
+        "ts": "1465470125.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "Also, we do use viper.ReadInConfig and viper.GetString and viper.SetDefault in other Go unit test files. Look at api_test.go or ledger\/pkg_test.go which references testutil.SetupTestConfig(). That has all kinds of <http:\/\/viper.xxx|viper.xxx> usage in there relative to the .yaml file. So I am wondering how that could possibly be true that in writer.go during UTs these methods do not work. I do recall that for me locally they passed with no issues.",
+        "edited": {
+            "user": "U0Z81GL6S",
+            "ts": "1465471104.000000"
+        },
+        "ts": "1465470956.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Z81GL6S> : note that every file that\u2019s part of the chaincode itself is (and always has been) included",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1465471752.000000"
+        },
+        "ts": "1465471591.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the filtering in WriteGopathSrc just collects files that is part of the peer NOT in the user\u2019s chaincode path",
+        "ts": "1465471642.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Z81GL6S>: I would tend to agree with you which is why I was pushing for 1720 too\u2026.I think I am \u201cok\u201d with not having it in the YAML only because I recognize that the \u201creal right way\u201d is to use the go-list tricks, at which point the 1708\/1720 solution goes away anyway",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465474706.000000"
+        },
+        "ts": "1465474690.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, because I view it as a stop-gap, I am ok with the more hardcoded approach\u2026.that said, if the yaml access issue is trivial, that is fine too",
+        "ts": "1465474755.000145"
+    },
+    {
+        "type": "message",
+        "user": "U1751P7U4",
+        "text": "when i start a peer i get x 509 certificate invalid or expired ....need help",
+        "ts": "1465475220.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U0KPFAZNF>: I will touch base with Jeff today and let you know what he says. If there is just something simple that we are missing regarding the .yaml access, great. If not, we will go with your approach.",
+        "ts": "1465476666.000147",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "can anybody tell me where imports such as viper come from at build time?",
+        "ts": "1465487933.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: most likely in <http:\/\/github.com\/hyperledger\/fabric\/vendor\/|github.com\/hyperledger\/fabric\/vendor\/>...",
+        "ts": "1465488544.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you can use \u201cgo list\u201d to ask the resolver specifically, when in doubt",
+        "ts": "1465488567.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think something like \u2018go list -f \u201c{{ .Imports }}\u201d <http:\/\/github.com\/hyperledger\/fabric\/peer> | grep viper\u2019 would do it",
+        "ts": "1465488627.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0Z81GL6S>: <@U0KPFAZNF> <@U0ULK2JPP> since the files that we filter making up the peer-go-chaincode-base, so in a way, we know the files at build time, and I would vote for hardcode them in 1708 and move on",
+        "ts": "1465490043.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KN2SSKE>: ok..   <@U0ULK2JPP> makes a good point also:  the only thing the filter impacts are the deps\/transitive-deps of the chaincode which by their nature cannot be anything outside of the \u201cSource Files\u201d section here: <https:\/\/golang.org\/cmd\/go\/#hdr-List_packages>",
+        "ts": "1465490164.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because, even if the chaincode itself packages non-go files, that mechanism to bring those files in is discrete from this one",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465490197.000000"
+        },
+        "ts": "1465490188.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, we could arguably include some of those others (CXX, M, S, Swig) but I think it would be overkill",
+        "ts": "1465490241.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can update the hardcoded filter to at least replicate the superset in 1720, and fix that other busywork\/Makefile thing I mentioned and update the PR",
+        "ts": "1465490295.000157",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z81GL6S"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "ok, thanks",
+        "ts": "1465490321.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: btw: I gave you the wrong template parameters",
+        "ts": "1465490426.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you want .Deps, not .Imports",
+        "ts": "1465490433.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": ".Imports will only give explicit imports, not transitives",
+        "ts": "1465490453.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do i call system chaincode?",
+        "ts": "1465493845.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "same as any chaincode, except it acts kind of like devmode in the sense that it has a name instead of a hash",
+        "ts": "1465494059.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, for example \u2018-n sample_syscc'",
+        "ts": "1465494084.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "otherwise, it acts the same",
+        "ts": "1465494107.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: ping",
+        "ts": "1465501130.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF>: pong",
+        "ts": "1465501161.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hey, I just saw your 1772 go by",
+        "ts": "1465501172.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I think I neglected to add dependencies to vendored stuff",
+        "ts": "1465501186.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "silly me",
+        "ts": "1465501196.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure what problem you were seeing, but if its just a matter of ensuring at tool is installed grep \u201cgolint\u201d in the makefile",
+        "ts": "1465501200.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, ok, if its a vendoring thing that is something different",
+        "ts": "1465501218.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "nm, i thought you might have hit an issue where something like golint\/gofmt binary wasnt available",
+        "ts": "1465501264.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "no, ginkgo and gomega",
+        "ts": "1465501287.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "do I just add the source trees to the vendor tree?",
+        "ts": "1465501297.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(not familar, but I am assuming from the contexts they are import-only facilities",
+        "ts": "1465501308.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "honestly, i am not sure as <@U0TFEHX8E> handled all that, but I think the \u201cgovendor\u201d tool is involved somehow",
+        "ts": "1465501329.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think he put something in the doc about this",
+        "ts": "1465501342.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "looking",
+        "ts": "1465501416.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/eff71af26919eebeed0c3fe0e00c27bd8915a264\/CONTRIBUTING.md#adding-or-updating-go-packages->",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465501461.000000"
+        },
+        "ts": "1465501455.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "related to my earlier comment about golint, if you find you dont have \u201cgovendor\u201d, just do \u201cmake gotools\"",
+        "ts": "1465501515.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that should install it",
+        "ts": "1465501518.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yeah found it",
+        "ts": "1465501520.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks!",
+        "ts": "1465501533.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "oh, it gets weirder",
+        "ts": "1465504375.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "apparently you cannot vendor ginkgo and gomega",
+        "ts": "1465504385.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so we will need to add them to the development environment",
+        "ts": "1465504395.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ugh",
+        "ts": "1465504397.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh really? any idea why?",
+        "ts": "1465504580.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(not that I am an expert on what can and can\u2019t be vendored",
+        "ts": "1465504598.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I can ask Onsi (the guy who wrote it) but I just confirmed",
+        "ts": "1465505297.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so we need to go get foo as a function of the vagrant file, I think",
+        "ts": "1465505317.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes?",
+        "ts": "1465505322.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might be better if we can do it as a function of the makefile",
+        "ts": "1465505830.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "then it wont depend on vagrant",
+        "ts": "1465505834.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but worst case, yes",
+        "ts": "1465505837.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "first question: do you care to pin it to a specific version?",
+        "ts": "1465505857.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually if all you need is the current, I think we can just add \u201cgo get\u201d in the makefile and that should pull in all deps",
+        "ts": "1465506003.000200"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "go get should be fine",
+        "ts": "1465506014.000201"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(It's a pretty stable suite). Again, don't quote me on that, in case hell breaks loose... but yeah.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1465506081.000000"
+        },
+        "ts": "1465506057.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, this should be really straight forward then\u2026would be best if it can go in behind #1774",
+        "ts": "1465506063.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "after #1774, i think we\u2019d just need to tweak this block: <https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/85837442c2dfb92cf0be0455581387bfbe0c2f48\/Makefile#L142>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465506164.000000"
+        },
+        "ts": "1465506159.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The method I know would be to add a similar \u201cgo get\u201d above the \u201cgo install\u201d, though there may be a slicker way to handle that",
+        "ts": "1465506188.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(for instance, perhaps \u201cgo install\u201d can be configured to pull missing deps\u2026TBD",
+        "ts": "1465506205.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is this only pulled in during unit-tests?",
+        "ts": "1465506252.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "FYI <https:\/\/github.com\/onsi\/gomega\/issues\/156>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "cannot vendor gomega using govendor tool \u00b7 Issue #156 \u00b7 onsi\/gomega \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/onsi\/gomega\/issues\/156",
+                "text": "I was adding some ginkgo and gomega tests to the Hyperledger project, and oddly, I get an error when I run the tests after adding ginkgo and gomega to the vendor packages installed with the project...",
+                "fallback": "GitHub: cannot vendor gomega using govendor tool \u00b7 Issue #156 \u00b7 onsi\/gomega",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/3630697?v=3&s=400",
+                "from_url": "https:\/\/github.com\/onsi\/gomega\/issues\/156",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465508479.000211",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019ll be adding the makefile changes in a push of a new commit",
+        "ts": "1465508497.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "just running the tests now from scratch",
+        "ts": "1465508512.000214"
+    }
+]

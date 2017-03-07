@@ -1,0 +1,20 @@
+[
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Many thanks <@U0PB67X4K>.\n\nIs it both the tx public and private keys that are sent to the peer (and encrypted with the chain public key)?\n\nWhen ECIES does the encryption, does it encrypt with both the *txPrivateKey* and the *chainPublicKey* on the client side, which allows the validator to decrypt using the *chainPrivateKey* and the *txPublicKey* (which has been sent encrypted as well)? \n\nOr does the client more simply encrypt with the *txPrivateKey* and send the *txPublicKey* to the peer for decryption?\n\nOne more question. If Company A is trading with Company B, and Company A adds a transaction to the blockchain. For Company B to see that, I\u2019m guessing Company A would need to send the transaction keys out-of-band to Company B? Depending on the previous answer this might need to be just the txPublicKey or both?",
+        "ts": "1483622803.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Just the private key of txKey is sent  (there is also another ephemeral public key which is sent as well - on the client side it uses the public key of txKey plus the private key of the ephemeral key for its side of the ECIES encryption).   Then it sends over the txKey private key over in encrypted form (using an ephemeral private key and the chainPublicKey)\n\nRegarding the Company A \/ Company B question(s), all of the validating nodes have access to the \"stateKey\" which is used to actually encrypt the values in the state database (the key is generated, stored and encrypted  as part of the \"deploy\" transaction - so you can have different state encryption keys per chaincode but all validating nodes extract and decrypt the state encryption key from the actual deploy transaction).  I'd have to double check which key(s) are used to encrypt the \"blocks\" but I believe that's the same as well\n\n(as an aside, I am not sure I would wast much time digging into all of this given we don't do these things in V1)",
+        "ts": "1483634865.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> ^^^^   did I get this basically correct?",
+        "ts": "1483634878.000940"
+    }
+]

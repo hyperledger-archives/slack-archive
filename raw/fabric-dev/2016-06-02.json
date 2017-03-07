@@ -1,0 +1,354 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961> <@U0N1D1UAE> pleased to announce I was able to get the build logic sorted so that we have full build avoidance\/intelligence now: <https:\/\/github.com\/hyperledger\/fabric\/compare\/master...ghaskins:make-enhancement-preview>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464873710.000000"
+        },
+        "ts": "1464873703.001790"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: it dawned on me that I could get the best of both worlds\u2026.native-docker builds AND $GOPATH\/pkg acceleration",
+        "ts": "1464873746.001793"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im just wrapping up some local testing and will PR this hopefully today",
+        "ts": "1464873768.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "cool!",
+        "ts": "1464873791.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(though we are down a maintainer this week with <@U0TFEHX8E> out, so it might have a longer acceptance cycle than typical)",
+        "ts": "1464873806.001796"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0UKTPMG8>: you around?",
+        "ts": "1464873806.001797"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0XR6J961>: Im here :slightly_smiling_face:",
+        "ts": "1464874097.001798"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yey!",
+        "ts": "1464874105.001799"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jeffgarratt:  <https:\/\/github.com\/hyperledger\/fabric\/issues\/1056>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Investigate blocking network operations in fabric \u00b7 Issue #1056 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1056",
+                "text": "Per a discussion with @chetmurthy we should audit the fabric code to ensure that we never expect network operations to only succeed\/fail immediately, but instead ensure that we also handle the time...",
+                "fallback": "GitHub: Investigate blocking network operations in fabric \u00b7 Issue #1056 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1056",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464874157.001800"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jeffgarratt: basically we need to stop blocking when a peer takes too long to receive messages",
+        "ts": "1464874186.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jeffgarratt: right now broadcast waits for all sends to be done, but that doesn't work if one peer is byzantine and does not accept data",
+        "ts": "1464874211.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jeffgarratt: now, this we could work around, but we also need to make sure that we don't buffer data unboundedly",
+        "ts": "1464874262.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jeffgarratt: so i figure we should drop the connection\/context if that peer is slow",
+        "ts": "1464874294.001805"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is that chatstreams can be either client or server streams, and you close them in different ways (awkward in any case)",
+        "ts": "1464874379.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "We can make some modifications to the handler that allow certain error conditions to close the stream",
+        "ts": "1464874452.001807"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, but how?",
+        "ts": "1464874462.001808"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "I had discussed with <@U0XPR4NP4> a change to the handleMessage return to include a boolean of whether the stream should be closed.",
+        "ts": "1464874492.001809"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "in this way, the handler can determine.",
+        "ts": "1464874503.001810"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well that's not the issue here",
+        "ts": "1464874530.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how can the handler close the stream in the first place?",
+        "ts": "1464874540.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "Failure at the moment",
+        "ts": "1464874558.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "but discovery would more than likely re-establish the stream",
+        "ts": "1464874583.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i didn't find a way to close the connection",
+        "ts": "1464874585.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "re-establish is fine",
+        "ts": "1464874592.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "k, so closing the stream from either side would be sufficient?",
+        "ts": "1464874631.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "either side needs to be able to close the stream, i'd say",
+        "ts": "1464874644.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "k, think we can accommodate this fairly simply",
+        "ts": "1464874662.001819"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great, because i didn't figure out a way",
+        "ts": "1464874677.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "is the above issue the one we could do this work under?",
+        "ts": "1464874684.001821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the client side could use a cancelable context",
+        "ts": "1464874686.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the server side can't",
+        "ts": "1464874694.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "however the server side can call .Close() on the serverconnection",
+        "ts": "1464874714.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i think the issue is the right place to coordinate",
+        "ts": "1464874727.001825"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "k",
+        "ts": "1464874733.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "need to wrap up a bit of stuff first, will then jump into it",
+        "ts": "1464874769.001827"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't mean to dump this on you",
+        "ts": "1464874779.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i tried figuring out myself, but it is unclear to me how we can cancel\/close the connection",
+        "ts": "1464874805.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or stream",
+        "ts": "1464874808.001830"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1DK8NN6S\/-.sh|Untitled> and commented: Anyone else having trouble with ubuntu repos today?",
+        "file": {
+            "id": "F1DK8NN6S",
+            "created": 1464876005,
+            "timestamp": 1464876005,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 1324,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1DK8NN6S\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1DK8NN6S\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1DK8NN6S\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1DK8NN6S-a185644d4d",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1DK8NN6S\/-.sh\/edit",
+            "preview": "==> default: Reading package lists...\r\n==> default: Building dependency tree...\r\n==> default: Reading state information...\r\n==> default: apt-transport-https is already the newest version.\r\n==> default: ca-certificates is already the newest version.\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-operator\">=<\/span><span class=\"cm-operator\">=<\/span>&gt; default: Reading package lists...<\/pre><\/div>\n<div><pre><span class=\"cm-operator\">=<\/span><span class=\"cm-operator\">=<\/span>&gt; default: Building dependency tree...<\/pre><\/div>\n<div><pre><span class=\"cm-operator\">=<\/span><span class=\"cm-operator\">=<\/span>&gt; default: Reading state information...<\/pre><\/div>\n<div><pre><span class=\"cm-operator\">=<\/span><span class=\"cm-operator\">=<\/span>&gt; default: apt-transport-https is already the newest version.<\/pre><\/div>\n<div><pre><span class=\"cm-operator\">=<\/span><span class=\"cm-operator\">=<\/span>&gt; default: ca-certificates is already the newest version.<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 22,
+            "lines_more": 17,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YPYBVJM"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc1DK6EQGL",
+                "created": 1464876005,
+                "timestamp": 1464876005,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Anyone else having trouble with ubuntu repos today?",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1464876006.001831"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "opps, sorry, <http:\/\/dockerproject.org|dockerproject.org> repos",
+        "ts": "1464876030.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "seems to have  resolved itself now",
+        "ts": "1464881328.001833"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how do I stop a travis build?",
+        "ts": "1464881830.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can anyone stop 830 please?",
+        "ts": "1464881879.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can do it (I think)",
+        "ts": "1464881983.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "canceled",
+        "ts": "1464882017.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see, thanks a lot",
+        "ts": "1464882029.001838"
+    },
+    {
+        "user": "U0KQ9QKH6",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KQ9QKH6|pmullaney> has joined the channel",
+        "ts": "1464897494.001839"
+    }
+]

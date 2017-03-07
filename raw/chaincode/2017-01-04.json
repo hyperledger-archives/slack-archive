@@ -1,0 +1,443 @@
+[
+    {
+        "user": "U3M7XS98D",
+        "text": "<@U3M7XS98D|foam> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483532040.000912"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "hi all! I was wondering if there is any way to get the caller that has performed the invocation to the chaincode? (something like msg.sender on solidity)",
+        "ts": "1483533592.000913"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "by the way is there any documentation of the shim package? (function that have, parameters...)",
+        "ts": "1483533633.000914"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U2D62LCQJ> the shim package docs are available here: <https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim>",
+        "attachments": [
+            {
+                "title": "Package shim",
+                "title_link": "https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim",
+                "text": "Package shim provides APIs for the chaincode to access its state variables, transaction context and call other chaincodes.",
+                "fallback": "Package shim",
+                "from_url": "https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim",
+                "service_icon": "https:\/\/godoc.org\/favicon.ico",
+                "service_name": "godoc.org",
+                "id": 1
+            }
+        ],
+        "ts": "1483534589.000915"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "thanks <@U1MSZ37NK> !",
+        "ts": "1483534762.000917"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "v1.0 System chaincode like lccc, eccc  are launched in-process to peer launch. What are the specific use of the type of different system chaincode launch?",
+        "ts": "1483535801.000920"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "As per documentation, chaintool package is used to develop, package and deploy the user chaincode. will this be one of the standard practice for chaincode development life cycle?",
+        "ts": "1483536011.000921"
+    },
+    {
+        "user": "U1MJA61PD",
+        "text": "<@U1MJA61PD|joeb> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483541514.000922"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "hey guys i dont quite understand what exactly `CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/gochaincode` does",
+        "ts": "1483542272.000923"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "deploying is clear to me, but what exactly am i doing with this line",
+        "ts": "1483542302.000924"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "isnt it basically starting a go programme with parameters?",
+        "ts": "1483542330.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U3BSMKS21> this is a developer mode of operation that runs the chaincode natively (as opposed to having the peer launch a Docker image of your chaincode) thus allowing you to do things such as attach a debugger etc.",
+        "ts": "1483544964.000926"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0KM61BCP> i thought this would do running `peer node start --peer-chaincodedev`",
+        "ts": "1483545629.000927"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "i thought `CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/gochaincode` would have something to do with registering the chaincode",
+        "ts": "1483545828.000928"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "what ever that means :smile:",
+        "ts": "1483545835.000929"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "would you be so kind and help me with my confusion",
+        "ts": "1483545876.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3BSMKS21> copying instructions for running in `\u2014peer-chaincodedev` mode in 1.0\u2026 (still a bit of WIP but this should work)",
+        "ts": "1483547252.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```Will use the CLI\/Vagrant env for these steps to run in --peer-chaincodedev mode in 1.0\n\nVagrant window 1 - build peer\n   make peer\n\nVagrant window 2 - start orderer\n   cd orderer\n   go build\n   .\/orderer\n\nVagrant window 2 - start peer in dev mode\n   cd peer\n   peer node start --peer-chaincodedev\n\nVagrant window 3 - start chaincode example02 in dev mode\n   cd examples\/chaincode\/go\/chaincode_example02\n   go build\n   CORE_PEER_ADDRESS=127.0.0.1:7051 CORE_CHAINCODE_ID_NAME=mycc .\/chaincode_example02\n\nVagrant window 4 - initialize the chaincode using the \"deploy\" command\n   cd peer\n   CORE_CHAINCODE_MODE=dev peer chaincode deploy -n mycc -c '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}'\n\n   CORE_CHAINCODE_MODE=dev is needed in 1.0 with chaincode deploy. Unlike 0.6\/0.7, 1.0 builds the\n   chaincode in the deploy command. CORE_CHAINCODE_MODE=dev is needed to tell the deploy command\n   not to skip build related activities\n\n#wait for about 10seconds\n#kill Ctrl-C chaincode_example02 and start chaincode_example02 again in Vagrant window 3.\n#This is needed - for now - as the fabric deregisters the chaincode after deploy\n\nVagrant window 3 - restart chaincode\n   Ctrl-C running chaincode\n   CORE_PEER_ADDRESS=127.0.0.1:7051 CORE_CHAINCODE_ID_NAME=mycc .\/chaincode_example02\n\n#now you can send invokes and queries as usual from window 4\n\nVagrant window 4 - send an invoke\n   cd peer\n   CORE_CHAINCODE_MODE=dev peer chaincode invoke -n mycc -c '{\"Args\":[\"invoke\",\"a\",\"b\",\"10\"]}\u2019```",
+        "ts": "1483547256.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^^ above does not address running from SDK but hopefully has enough details to help you with that as well (basically how do you set the equivalent of CORE_CHAINCODE_MODE=dev in the SDK when doing deploy)",
+        "ts": "1483547331.000933"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0ULK2JPP> thx a lot but im not using vagrant and i can already run a peer node in dev mode. my questions aimed at a better understanding of what i am actually doing",
+        "ts": "1483547383.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "understood. my goal was to make sure you can run in dev mode first in 1.0",
+        "ts": "1483547467.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you have already done that, great!",
+        "ts": "1483547474.000936"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "yeah thx for that. im using v.06",
+        "ts": "1483547482.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah nm then",
+        "ts": "1483547489.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sorry about that",
+        "ts": "1483547493.000939"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "so my main question is: before deploying a chaincode",
+        "ts": "1483547498.000940"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "im running this cmdline `CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/gochaincode` what exactly is it doing",
+        "ts": "1483547530.000941"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0KM61BCP> already answered but i dont get the point",
+        "ts": "1483547546.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in dev mode, it is connecting to the peer and registering with it",
+        "ts": "1483547565.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the \u201cinit\u201d method has not been called to initialze the chaincode",
+        "ts": "1483547578.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "which has to be done via the \u201cdeploy\u201d command",
+        "ts": "1483547590.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in dev mode \u201cdeploy\u201d will skip the actualy deploying of the chaincode (because you have already done that by starting and registering) and will just do the init part",
+        "ts": "1483547635.000946"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0ULK2JPP>  when the peer is not running in dev mode what command would i have to enter then to register the chaincode",
+        "ts": "1483547637.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no",
+        "ts": "1483547642.000948"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "ahhhh",
+        "ts": "1483547658.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "when not running in dev mode, the peer would start the CC and registration happens without your involvement",
+        "ts": "1483547670.000950"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "i think i get it now",
+        "ts": "1483547747.000951"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3BSMKS21> ..have to be away for a bit but will be online later if you have more qs",
+        "ts": "1483547763.000952"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0ULK2JPP> thx a lot this helped me to get a better picture",
+        "ts": "1483547786.000953"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "so when NOT being in dev mode this cmdline `CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/gochaincode` is obsolete because i do that when deploying the chaincode?",
+        "ts": "1483547855.000954"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "using the -p flag and pointing to the compiled gocode",
+        "ts": "1483548023.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes",
+        "ts": "1483548063.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "basically, the command is only to test your chaincode",
+        "ts": "1483548086.000957"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0KM61BCP> <@U0ULK2JPP> very nice thx for the input",
+        "ts": "1483548088.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "when operating normally, you would deploy the chaincode via the SDK and the peer node would be responsible for spinning it up in a Docker container",
+        "ts": "1483548119.000959"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U0KM61BCP> thx for clarification. btw do you know an answer for my question in the fabric channel?",
+        "ts": "1483548171.000960"
+    },
+    {
+        "user": "U3J4NPVJ9",
+        "text": "<@U3J4NPVJ9|series0ne> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483549501.000961"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "I'm trying to deploy chaincode from the hyperledger tutorials to an IBM Bluemix Hyperledger Blockchain. Both v1.0 and v2.0 are failing with this error: Error when deploying chaincode: Error getting chaincode package bytes: Error getting code 'go get' failed with error: \\\"exit status 1\\",
+        "ts": "1483549618.000962"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "Can anyone help?",
+        "ts": "1483549625.000963"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Hi, Have you tried using one of the demo chaincode deployments from within the blockchain service dashboard? How are you trying to deploy (REST or HFC)? Which tutorial are you trying to deploy?",
+        "ts": "1483550164.000964"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "<@U1V6SJ1FF> I've tried the demos, and various other things...nothing seems to work :sweat:",
+        "ts": "1483550533.000965"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "I'm trying to deploy via the swagger api on the bluemix dashboard, so presumably this is REST",
+        "ts": "1483550559.000966"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Yes that does use REST. Did you create the blockchain service a while ago? There is a retention policy in place now. V1.0.0 of the blockchain service added \u201cDormant networks will be removed after 15 days of inactivity\u201d.",
+        "ts": "1483551055.000967"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "The blockchain was created this morning.",
+        "ts": "1483551079.000968"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "This is the response I'm getting via the swagger API",
+        "ts": "1483551090.000969"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "{\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32001,\n    \"message\": \"Deployment failure\",\n    \"data\": \"Error when deploying chaincode: Error getting chaincode package bytes: Error getting code 'go get' failed with error: \\\"exit status 1\\\"\\npackage <http:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished|github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished>: cannot find package \\\"<http:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished\\|github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished\\>\" in any of:\\n\\t\/opt\/go\/src\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished (from $GOROOT)\\n\\t\/opt\/gopath\/_usercode_\/237815087\/src\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished (from $GOPATH)\\n\\t\/opt\/gopath\/src\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished\\n\"\n  },\n  \"id\": 1\n}",
+        "ts": "1483551092.000970"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "ok, what does your REST message look like?",
+        "ts": "1483551281.000971"
+    },
+    {
+        "type": "message",
+        "user": "U3J4NPVJ9",
+        "text": "{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"deploy\",\n  \"params\": {\n    \"type\": 1,\n    \"chaincodeID\": {\n      \"path\": \"<https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished>\"\n    },\n    \"ctorMsg\": {\n      \"function\": \"init\",\n      \"args\": [\"HELLO, WORLD\"]\n    },\n    \"secureContext\": \"user_type1_0\"\n  },\n  \"id\": 1\n}",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "IBM-Blockchain\/learn-chaincode",
+                "title_link": "https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished",
+                "text": "learn-chaincode - Learn how to write chaincode.",
+                "fallback": "GitHub: IBM-Blockchain\/learn-chaincode",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/17178768?v=3&s=400",
+                "from_url": "https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/tree\/v2.0\/finished",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1483551336.000972"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "ok, let me try too, be a couple of mins",
+        "ts": "1483551365.000974"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "I get the same error message, let me see if I can figure out what is wrong, 1 min",
+        "ts": "1483551509.000975"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "try changing the chaincode path to <http:\/\/gopkg.in\/ibm-blockchain\/learn-chaincode.v2\/finished>",
+        "ts": "1483551640.000976"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "that worked for me",
+        "ts": "1483551645.000977"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "the readme says to use the gopkg path rather than github: <https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/blob\/master\/README.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "IBM-Blockchain\/learn-chaincode",
+                "title_link": "https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/blob\/master\/README.md",
+                "text": "learn-chaincode - Learn how to write chaincode.",
+                "fallback": "GitHub: IBM-Blockchain\/learn-chaincode",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/17178768?v=3&s=400",
+                "from_url": "https:\/\/github.com\/IBM-Blockchain\/learn-chaincode\/blob\/master\/README.md",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U1V6SJ1FF",
+            "ts": "1483551866.000000"
+        },
+        "ts": "1483551680.000978"
+    },
+    {
+        "user": "U37BX5KQ8",
+        "text": "<@U37BX5KQ8|smiley> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483595046.000981"
+    },
+    {
+        "user": "U35EMQWK1",
+        "text": "<@U35EMQWK1|jojocheung> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483599162.000983"
+    }
+]

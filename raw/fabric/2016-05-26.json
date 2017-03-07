@@ -1,0 +1,754 @@
+[
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "Can we run asset management example in dev mode? what is a right metadata for that example?",
+        "ts": "1464251959.001958"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "what is listening on port 31315? I can\u2019t find anything in the logs but I can see the port is in use by fabric",
+        "ts": "1464255044.001959"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "how to deploy fabric to a production enviornment? It seems all the existing documents are sandbox or dev environment on single machine.",
+        "ts": "1464261534.001960"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U142E5N0P>: I would study the docker-compose files to see what they are setting for each VP",
+        "ts": "1464262888.001961"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11TAFPUP>: can you clarify what you mean by \u201clocally\"",
+        "ts": "1464262931.001962"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. do you mean from within chaincode? or just from something colocated with the node that runs the vp",
+        "ts": "1464262971.001963"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for the former, no\u2026.for the latter, the db is stored in \/var\/hyperledger\/production (by default)",
+        "ts": "1464262998.001964"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(though you would want to be aware of rocksdb-specific rules governing concurrent access",
+        "ts": "1464263036.001965"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i.e. you might only be able to safely open the database if the peer is not actively running",
+        "ts": "1464263063.001966"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U195M30MD>: its helpful to grep peer\/core.yaml to find that answer",
+        "ts": "1464263177.001967"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U142E5N0P>: support for production deployments is emerging, the project is too young to have this polished",
+        "ts": "1464263222.001968"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0KPFAZNF>: could I run fabric on multiple physical nodes?",
+        "ts": "1464263285.001969"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "of course",
+        "ts": "1464263538.001970"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its just a matter of setup",
+        "ts": "1464263547.001971"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the docker-compose stuff is effectively doing the same things, they are all isolated from one another in terms of filesystem\/network\/etc",
+        "ts": "1464263588.001972"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, you could take hints from the docker-compose as to how its configuring the different nodes and replicate that on physical boxes",
+        "ts": "1464263616.001973"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you would just be on your own to actually orchestrate it",
+        "ts": "1464263639.001974"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "alternatively, you could try to use docker-swarm to distribute the docker-compose based workload out to physical machines",
+        "ts": "1464264277.001975"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i\u2019ve never tried this, but it should be theoretically possible",
+        "ts": "1464264292.001976"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "here is my experiments using calico as docker SDN <https:\/\/github.com\/hyperledger\/fabric\/issues\/1602>, but i got wrong when deploying chaincodes",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Deploy fabric using other kinds of overlay networks \u00b7 Issue #1602 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1602",
+                "text": "Description My aim is to deploy fabric using docker images on several machines using existing orchestration frameworks, such as mesos\/kubernetes\/swarm, and I hope to utilize some kinds of SDN such...",
+                "fallback": "GitHub: Deploy fabric using other kinds of overlay networks \u00b7 Issue #1602 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/7248?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1602",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464264314.001977"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am not an expert in this regard by any stretch, but @corecode is correct, you need to ensure that the deployed peer image can reach the docker daemon since the peer uses docker to isolate chaincodes too",
+        "ts": "1464264436.001979"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "seeing it use a unix channel is most certainly a bad configuration, the docker daemon will be running outside the peer container",
+        "ts": "1464264471.001980"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "You need to set vm.endpoint, as per <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/bddtests\/compose-defaults.yml#L5>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/bddtests\/compose-defaults.yml#L5",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/bddtests\/compose-defaults.yml#L5",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464264577.001981"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so that the peer instance running in the container can break out of the container and find the relevant docker controller",
+        "ts": "1464264600.001983"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "failing to set this will result in it looking for the daemon via UDS, which will not work",
+        "ts": "1464264626.001984"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i would scrutinize the docker-compose config, its already doing mostly what you need, you just need to port to your environment",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464264695.000000"
+        },
+        "ts": "1464264685.001985"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>: I mean whether I can read directly data from \/var\/hyperledger\/production\/db using rocksdb client.",
+        "ts": "1464265049.001987"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i do not imagine you \u201ccan\u2019t\u201d, its not like we altered the rocksdb engine",
+        "ts": "1464265109.001988"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whether you can do so safely or in any meaningful way is an exercise for the reader :wink:",
+        "ts": "1464265134.001989"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont know rocksdb specifics, but I have worked with a ton of other dbs and most of them might not be happy with multiple concurrent access, so you might need to shut the peer down first",
+        "ts": "1464265202.001990"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i'd like to have a rocksdb cli as well",
+        "ts": "1464265238.001991"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>:  I got it.",
+        "ts": "1464265264.001992"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: or do you want to build an application on that?",
+        "ts": "1464265270.001993"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "I want to examine how data ecrypted in rockdbs.",
+        "ts": "1464265315.001994"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11TAFPUP>: reading between the lines: are you trying to see how\/if peer protects the rocksdb layer itself?",
+        "ts": "1464265356.001995"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "yes.",
+        "ts": "1464265371.001996"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or are you interested in just seeing the raw ledger data",
+        "ts": "1464265374.001997"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "both :slightly_smiling_face:",
+        "ts": "1464265394.001998"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, i see\u2026i havent been involved in any of that impl, but I am reasonably certain you are not going to see much in the way of protecting the rocksdb layer",
+        "ts": "1464265412.001999"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that this is perfectly ok in my mind",
+        "ts": "1464265422.002000"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the threat model is not local access at the peer level",
+        "ts": "1464265435.002001"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the peer environment is considered trusted by the peer, its the network of other actors that is not trusted",
+        "ts": "1464265471.002002"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but as such, the peer code doesnt try to obfuscate neither .text nor .data within the node",
+        "ts": "1464265493.002003"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: why do you want to read the database directly?",
+        "ts": "1464265506.002004"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "therefore, it is perfectly acceptable to store data in the local filesystem generally unprotected, and I suspect we do exactly that\u2026.the only way to go deeper would be to use HW enclaves, etc",
+        "ts": "1464265574.002005"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0XR6J961>: someone ask me how much security of data on rocksdb does.",
+        "ts": "1464265578.002006"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but we dont do that today",
+        "ts": "1464265579.002007"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: what?",
+        "ts": "1464265595.002008"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the security is derived from the node itself, not the rocksdb layer",
+        "ts": "1464265604.002009"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand that sentence",
+        "ts": "1464265608.002010"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11TAFPUP>: the node is a black box accessible via port 31315\u2026all of the security is derived from that",
+        "ts": "1464265658.002011"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0XR6J961>: I mean that someone ask whether hacker reading directly data from rocksdb.",
+        "ts": "1464265666.002012"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(or whatever the grpc channel is, cant recall)",
+        "ts": "1464265674.002013"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah",
+        "ts": "1464265676.002014"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "my mistake.  After I set CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375>,  the chaincode deploy will not meet error outputs, but when I use restful apis as invoke\/query, the peer will report (Error starting container: no such image), and i did not see chaincode images have been created",
+        "ts": "1464265696.002015"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, intruder having local access to the machine = pwnd",
+        "ts": "1464265702.002016"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: well, hold on, not quite",
+        "ts": "1464265713.002017"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>: your information is very useful. I should read it carefully.",
+        "ts": "1464265715.002018"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rocksdb does nothing to add security, yes",
+        "ts": "1464265728.002019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but you arent necessarily completely pwnd\u2026heh",
+        "ts": "1464265743.002020"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "joseph: all data of the local peer is accessible if you have access to rocksdb",
+        "ts": "1464265758.002021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just pwnd w.r.t. info that the particular VP may have been privy too",
+        "ts": "1464265762.002022"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1464265769.002023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if the VP was not in the endorser scope, that is still safe",
+        "ts": "1464265777.002024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I think we are in agreement",
+        "ts": "1464265800.002025"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U142E5N0P>: im guessing you do not have the basemage deployed perhaps",
+        "ts": "1464265837.002026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11TAFPUP> <@U0XR6J961> I think its safe to say generally that the security is derived at the network level (and this is ok, IMO)",
+        "ts": "1464265908.002027"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0KPFAZNF>: only hyperledger-peer is not enough ?",
+        "ts": "1464265917.002028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "until we have an enclave like solution, anyway",
+        "ts": "1464265924.002029"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>: I got it.",
+        "ts": "1464265927.002030"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "this is the output of `docker images`:\nhyperledger-peer         latest              0f28d42a3384        About an hour ago   1.963 GB",
+        "ts": "1464265959.002031"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could try to further encrypt the db, but that is security theater without using a HW protection",
+        "ts": "1464265980.002032"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U142E5N0P>: yes, you need to have hyperledger\/fabric-baseimage:latest on those nodes too",
+        "ts": "1464266000.002033"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that this is a synthetic image that is generated by \u201cmake base-image\"",
+        "ts": "1464266016.002034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. you wont find it on dockerhub",
+        "ts": "1464266022.002035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the chaincode layer will base its isolation on that image",
+        "ts": "1464266046.002036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect that is what you are running into now",
+        "ts": "1464266058.002037"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>: I'll try it. Thank you so much. I have a better understanding.",
+        "ts": "1464266186.002038"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0KPFAZNF>:  This is my current output of `docker images`:\n\nREPOSITORY                     TAG                 IMAGE ID            CREATED             SIZE\nhyperledger-peer               latest              0f28d42a3384        About an hour ago   1.963 GB\nhyperledger\/fabric-baseimage   latest              1f49b23262c1        5 hours ago         1.297 GB\nhyperledger\/fabric-baseimage   x86_64-0.0.9        70328eed56aa        2 weeks ago         990 MB\n\nStill could not create chaincode image, yet~",
+        "ts": "1464266285.002039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U142E5N0P>: you have that on all of your nodes?",
+        "ts": "1464266301.002040"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "have to step out, will be back later",
+        "ts": "1464266338.002041"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: so what are the messages?",
+        "ts": "1464266374.002042"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "yes, i have two nodes, and both hyperledger-peer and hyperledger\/fabric-baseimage are imported from the development machine",
+        "ts": "1464266380.002043"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what consensus protocol do you use?",
+        "ts": "1464266404.002044"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>  the default config.\n\nThese are outputs:\n{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"7b07c59e9b9405c1aef33493b63b9a766d9bb836989ded1730052de650aa8ce5654274d148ceff96a4e5bd43bca26aba099f55c400e4befdc8b2ee4c0a94e30b\"}  \nThis is the response of rest api after deploying.\n\n\n\n12:35:40.459 [rest] ProcessChaincode -&gt; INFO 01c REST processing chaincode request...\n12:35:40.460 [rest] processChaincodeDeploy -&gt; INFO 01d REST deploying chaincode...\n12:35:41.780 [container] WriteGopathSrc -&gt; INFO 01e rootDirectory = \/opt\/gopath\/src\n12:36:25.883 [rest] processChaincodeDeploy -&gt; INFO 01f Successfuly deployed chainCode: 7b07c59e9b9405c1aef33493b63b9a766d9bb836989ded1730052de650aa8ce5654274d148ceff96a4e5bd43bca26aba099f55c400e4befdc8b2ee4c0a94e30b\n12:36:25.883 [rest] ProcessChaincode -&gt; INFO 020 REST sucessfully deploy chaincode: {\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"7b07c59e9b9405c1aef33493b63b9a766d9bb836989ded1730052de650aa8ce5654274d148ceff96a4e5bd43bca26aba099f55c400e4befdc8b2ee4c0a94e30b\"},\"id\":1}\nThese are outputs of peer node.",
+        "ts": "1464266505.002045"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you will have to set the loglevel to DEBUG",
+        "ts": "1464266531.002046"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that you can see what is happening",
+        "ts": "1464266537.002047"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>:  \nThis is the log config:\npeer:      debug\ncrypto:    info\nstatus:    debug\nstop:      warning\nlogin:     warning\nvm:        warning\nchaincode: debug\n\nIs it enough?  It seems the log outputs have not change",
+        "ts": "1464268220.002048"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know",
+        "ts": "1464268919.002049"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U142E5N0P>: try CORE_LOGGING_LEVEL=debug .\/peer node start",
+        "ts": "1464270520.002050"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: but why wouldn't the logging level work when configured from the config file?",
+        "ts": "1464271048.002051"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "How to do an off-line registration to membership services?",
+        "ts": "1464274066.002052"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "<@U142E5N0P> the 'no such image' error may also mean that there's an error in your chaincode which caused it to fail to build.",
+        "ts": "1464289842.002053"
+    },
+    {
+        "user": "U1BLB3EFQ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1BLB3EFQ|bc> has joined the channel",
+        "ts": "1464299234.002054"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "This is my debug outputs:\n<https:\/\/github.com\/hyperledger\/fabric\/issues\/1602>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Deploy fabric using other kinds of overlay networks \u00b7 Issue #1602 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1602",
+                "text": "Description My aim is to deploy fabric using docker images on several machines using existing orchestration frameworks, such as mesos\/kubernetes\/swarm, and I hope to utilize some kinds of SDN such...",
+                "fallback": "GitHub: Deploy fabric using other kinds of overlay networks \u00b7 Issue #1602 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/7248?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1602",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464313142.002055"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "there is some remaining issues to support overlay for hyperledger",
+        "ts": "1464313340.002057"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "one is waiting to solve, see <https:\/\/github.com\/hyperledger\/fabric\/pull\/1583>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Let chaincode container networkmode configurable by yeasy \u00b7 Pull Request #1583 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1583",
+                "text": "Let user can set the networkmode for the chaincode container Description Read from the viper variable when using networkmode; Add chaincode.containerNetworkmode in core.yaml file. Motivation a...",
+                "fallback": "GitHub: Let chaincode container networkmode configurable by yeasy \u00b7 Pull Request #1583 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/1920564?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1583",
+                "thumb_width": 115,
+                "thumb_height": 115,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464313362.002058"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U142E5N0P>:",
+        "ts": "1464313500.002060"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "Hi, <@U0Z41KY5V> ,  I applied your patches actually but did no help~, it's just an extra configuration.",
+        "ts": "1464313614.002061"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "actually, when u use overlay, you will meet this issues, but from your configuration, seems there\u2019s also other problem. will reply u later.",
+        "ts": "1464313655.002062"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "Actually,  I created the dockernetwork with name of \"net1\", and when I use \"net1\" in the configuration `containerNetworkmode`,  the chaincode container could not be even created.",
+        "ts": "1464313724.002063"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "So the above outputs(in issue 1583, chaincode image was created, but query failed) still belong to the situation of `containerNetworkmode: host`",
+        "ts": "1464313808.002064"
+    },
+    {
+        "user": "U1934J6RX",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1934J6RX|iamsamwood> has joined the channel",
+        "ts": "1464315310.002065"
+    },
+    {
+        "type": "message",
+        "user": "U1934J6RX",
+        "text": "can someone please point me in the direction of some chain code examples? I looked at the chaincode_example02.go but I was wondering if there were others. Is it possible to hit an HTTP end point from a contract?",
+        "ts": "1464315734.002066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "did you see the others along side example02?",
+        "ts": "1464316455.002067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464316461.000000"
+        },
+        "ts": "1464316456.002068"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as far as HTTP access, the short answer is \u201cno\"",
+        "ts": "1464316475.002071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the long answer is, this will probably \u201cwork\u201d if you try it today, as we are not locking down the container very much",
+        "ts": "1464316495.002072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but a) this will change eventually, and b) its a really bad idea regardless w,r,t, deterministic responses from the chaincode",
+        "ts": "1464316525.002073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rather, try to think about injecting whatever state\/data to the contract, rather than the contract pulling the state\/data in",
+        "ts": "1464316601.002074"
+    },
+    {
+        "type": "message",
+        "user": "U1934J6RX",
+        "text": "<@U0KPFAZNF> makes sense, thank you!",
+        "ts": "1464316935.002075"
+    },
+    {
+        "type": "message",
+        "user": "U1934J6RX",
+        "text": "i gather this state is public to anyone on the chain ?",
+        "ts": "1464317079.002076"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "How to login to peer network in development mode ?  I used the configuration (e.g. &lt;fabric-path&gt;\/bddtests\/docker-compose-4-consensus-classic.yml ) to setup my development network in localhost, then try to login to each peer.  I was able to login one of them, but others failed like:\n\n```$ curl -X POST 172.17.0.5:5000\/registrar --data '{\"enrollId\": \"test_user0\", \"enrollSecret\": \"MS9qrN8hFjlE\"}'\n{\"OK\": \"Login successful for user 'test_user0'.\"}\n$ curl -X POST 172.17.0.6:5000\/registrar --data '{\"enrollId\": \"test_user0\", \"enrollSecret\": \"MS9qrN8hFjlE\"}'\n{\"Error\": \"rpc error: code = 2 desc = 'Identity or token does not match.'\"}\n$ curl -X POST 172.17.0.3:5000\/registrar --data '{\"enrollId\": \"test_user0\", \"enrollSecret\": \"MS9qrN8hFjlE\"}'\n{\"Error\": \"rpc error: code = 2 desc = 'Identity or token does not match.'\"}\n$ curl -X POST 172.17.0.4:5000\/registrar --data '{\"enrollId\": \"test_user0\", \"enrollSecret\": \"MS9qrN8hFjlE\"}'\n{\"Error\": \"rpc error: code = 2 desc = 'Identity or token does not match.'\"}```\n\nIs there anything I need to setup to use muliple peers ?  I'm trying to setup 4 apps. Each try to access peers (e.g. vp0, vp1, vp2, vp3) in dependently.",
+        "edited": {
+            "user": "U11CP8FF1",
+            "ts": "1464328495.000000"
+        },
+        "ts": "1464328463.002077"
+    }
+]

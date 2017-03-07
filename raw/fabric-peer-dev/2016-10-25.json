@@ -1,0 +1,81 @@
+[
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "FYI - transaction id being discussed on <#C25AQBS4B|fabric-sdk-dev>",
+        "ts": "1477408470.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "something isn't very clear to me from the peer code, can anyone shed some light?\nHow does the peer code handle the following situation?\n`vp_i` and `vp_j` both send a hello message to one another.\nI know this situation is rare, but essentially what happens is the creation of two handlers for the same peer, once in chatWithPeer--&gt;handleChat and once in Chat--&gt;handleChat. \nI don't see any synchronization there which would result to two handlers looping with handleChat? \nAm I missing something here?",
+        "ts": "1477429016.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Or maybe the code execution is \"optimistic\" and it's not such a bad corner case to have 2 FSM created for the same remote peer?",
+        "ts": "1477429122.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "lets check with <@U0UKTPMG8>  ?",
+        "ts": "1477429506.000598",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "And a follow-up question. Let's say I'm building a p2p system where like in fabric, a peer can connect to another peer and from some reason I want to enforce a single Recv loop and a single Send destination- be it serverStream or ClientStream.\nI have the following problem: if at the same time, `p_i` connect to `p_j` and `p_j` connects to `p_i`, I have both the gRPC server-side method invoked, *and* the client-side stream is created. \nIf I put logic that checks at the server-side stream method invocation that I'm already connected via a client stream and I abort that client stream, that means that the server-side stream of the other peer would get a disconnect, and the other peer would do the same (since it has the same code as I do) so my server-side stream would also get a disconnect.\nIf I put logic that checks at the server-side stream method invocation that I'm already connected via a client stream and I *don't* want to abort the client stream, I need to abort the server-side stream by returning nil at the server-side gRPC stream method, but since it's the same code, the other peer would do the same--&gt; hence we are both disconnected again.\nOther than making a handshake that breaks symmetry, is there a better way of managing that?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477430809.000000"
+        },
+        "ts": "1477430721.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I manage things like that with deterministic asymmetry ",
+        "ts": "1477433324.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "For instance, if I can compute a fixed coordinate for each, assume lower ordered coordinate is the client",
+        "ts": "1477433374.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "For instance, the hash of an x509 is a convenient coordinate",
+        "ts": "1477433424.000605"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah i can do that of course but i asked if someone has another idea for that specific problem",
+        "ts": "1477435771.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe i overlooked something",
+        "ts": "1477435801.000607"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "I want to do <https:\/\/jira.hyperledger.org\/browse\/FAB-846> . Anyone knows the plan of REST API in v1? This issue said remove REST API from peer. should we remove it to a independent binary or just delete it?",
+        "ts": "1477461382.000608"
+    }
+]

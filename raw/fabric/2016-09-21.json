@@ -1,0 +1,291 @@
+[
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "Hi, all.. I am still struggling trying to build up the environment using vagrant. I followed exactly the instructions in <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/#option-1-vagrant-development-environment>  when I tried make membersrvc &amp;&amp; membersrvc\nI always got the error The command '\/bin\/sh -c wget <https:\/\/services.gradle.org\/distributions\/gradle-2.12-bin.zip> -P \/tmp --quiet' returned a non-zero code: 4\nmake: *** [build\/image\/javaenv\/.dummy] Error 4",
+        "ts": "1474441599.001383"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "could anyone tell me how to resolve that? very much appreciate it.",
+        "ts": "1474441628.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U2CBG8V9U> Looks like it errors out not being able to download gradle from the internet",
+        "ts": "1474442451.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Do you have an working internet from inside your vagrant ?",
+        "ts": "1474442475.001386"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "<@U0YNFB22X>  Thanks for your response. I will take a look at it",
+        "ts": "1474443093.001387"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11RW82PM> - sorry for the late response.  looks like you were only running 2 peers so you'd be running in NOOPS consensus mode.  In this mode, while you technically you can add another peer after the fact, it will actually not receive any of the transactions which were executed on the other peer prior to it connecting.  Deploying chaincode is a transaction so the second peer would not have received the deploy and therefore would not have the chaincode deployed",
+        "ts": "1474447867.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11TAFPUP> -  \n\n```\nIs it possible to run a memberservices on one host and fabric-peers on another hosts without Swarm or Kubernetes or so on?\n```",
+        "ts": "1474447995.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is definitely possible.   I'll assume you are running the the peer and member services in Docker containers.  The key is that you'll need to make sure you expose the ports on the routable IPs for each node and then you can just wire things together as usual using the IP addresses",
+        "ts": "1474448106.001391"
+    },
+    {
+        "type": "message",
+        "user": "U2C55KE65",
+        "text": "<@U0KM61BCP> hi, if chaincode docker container down,how can i recorvery it ?",
+        "ts": "1474448149.001392"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2C55KE65> - you should only need to run another invoke or query transaction and the peer should create and start the container (if the container is down it basically removes the previous instance and creates and starts a new one)",
+        "ts": "1474448620.001393"
+    },
+    {
+        "type": "message",
+        "user": "U2C55KE65",
+        "text": "<@U0PB67X4K> thank you",
+        "ts": "1474448757.001394"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U0PB67X4K> Hi, thanks for the response!!! You are absolutely correct, I am running two nodes in noops mode.  That\u2019s a shame that it doesn\u2019t sync.  It makes testing hard.  Can you point me to the docs which explains this so I can set up correctly?",
+        "ts": "1474448965.001395"
+    },
+    {
+        "user": "U1AU9JL6P",
+        "text": "<@U1AU9JL6P|hurf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474449373.001396"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11RW82PM>  - if you start the two node first and make sure they connect prior to deploying your chaincode, then things will work in NOOPS mode.  But there's no guarantees that nodes in NOOPS mode will stay in sync.   For multiple to nodes to stay in sync, you'll want to run PBFT and you would want to run 4 nodes.   In the `bddtests`  folder you can find some sample docker compose files for getting a 4 peer PBFT network up and running",
+        "ts": "1474449468.001397"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "<@U0PB67X4K> That\u2019s great to know.  I can get the nodes setup.  How is one supposed to know this? did I miss some reading?",
+        "ts": "1474449662.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I wouldn't say you missed some reading but if you check out <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/>   and scroll down there's a small section titled consensus which gives a quick explanation of NOOPs but probably not enough about what it really means",
+        "ts": "1474450324.001399"
+    },
+    {
+        "user": "U25R83TAP",
+        "text": "<@U25R83TAP|thomas.marckx> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474458694.001401"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U268EB76W|chainsaw> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/chainsaw\/F2E8V973Q\/error_when_querying_chaincode_on_bmx_ibm_blockchain.txt|Error when querying chaincode on BMX IBM Blockchain>",
+        "file": {
+            "id": "F2E8V973Q",
+            "created": 1474473976,
+            "timestamp": 1474473976,
+            "name": "Error_when_querying_chaincode_on_BMX_IBM_Blockchain.txt",
+            "title": "Error when querying chaincode on BMX IBM Blockchain",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U268EB76W",
+            "editable": true,
+            "size": 1535,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2E8V973Q\/error_when_querying_chaincode_on_bmx_ibm_blockchain.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2E8V973Q\/download\/error_when_querying_chaincode_on_bmx_ibm_blockchain.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/chainsaw\/F2E8V973Q\/error_when_querying_chaincode_on_bmx_ibm_blockchain.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2E8V973Q-674e8a9ba7",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/chainsaw\/F2E8V973Q\/error_when_querying_chaincode_on_bmx_ibm_blockchain.txt\/edit",
+            "preview": "@garisingh on BMX IBM Blockchain after I successfully register\/login a user and deploy my learn-chaincode\/finished (a Fabric Chaincode v.5 interface), I keep getting the following error when I execute a query after a successful deploy. This worked prior to the upgrade from v0.4.1 to v0.4.2, so what changed that would break this? \r\n\r\nHere is error response from the query:\r\n\r\n{\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>@garisingh on BMX IBM Blockchain after I successfully register\/login a user and deploy my learn-chaincode\/finished (a Fabric Chaincode v.5 interface), I keep getting the following error when I execute a query after a successful deploy. This worked prior to the upgrade from v0.4.1 to v0.4.2, so what changed that would break this? <\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Here is error response from the query:<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>{<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 48,
+            "lines_more": 43,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U268EB76W",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U268EB76W|chainsaw>",
+        "bot_id": null,
+        "ts": "1474473977.001403"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> ^^^",
+        "ts": "1474474035.001404"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "fyi for folks working with hyperledger fabric ... <https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1474487700001089>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1474487700001089",
+                "fallback": "[September 21st, 2016 12:55 PM] weeds: As people move from 0.5 to 0.6-  the chaincode interface was updated from *ChaincodeStub to ChaincodeStubInterface.  Basically to update a chaincode for v0.6, search for \"*ChaincodeStub\" and replace with \"ChaincodeStubInterface\".\n\n\nMore detail:\n\nChangeset <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/365\/> \n\nv0.5  Chaincode interface\ntype Chaincode interface {\nInit(stub *ChaincodeStub, function string, args []string) ([]byte, error)\nInvoke(stub *ChaincodeStub, function string, args []string) ([]byte, error)\nQuery(stub *ChaincodeStub, function string, args []string) ([]byte, error)\n}\n\nv0.6 Chaincode interfacetype Chaincode interface {\nInit(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)\nInvoke(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)\nQuery(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)",
+                "ts": "1474487700.001089",
+                "author_subname": "weeds",
+                "channel_id": "C0J02NU1E",
+                "channel_name": "general",
+                "is_msg_unfurl": true,
+                "text": "As people move from 0.5 to 0.6-  the chaincode interface was updated from *ChaincodeStub to ChaincodeStubInterface.  Basically to update a chaincode for v0.6, search for \"*ChaincodeStub\" and replace with \"ChaincodeStubInterface\".\n\n\nMore detail:\n\nChangeset <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/365\/> \n\nv0.5  Chaincode interface\ntype Chaincode interface {\nInit(stub *ChaincodeStub, function string, args []string) ([]byte, error)\nInvoke(stub *ChaincodeStub, function string, args []string) ([]byte, error)\nQuery(stub *ChaincodeStub, function string, args []string) ([]byte, error)\n}\n\nv0.6 Chaincode interfacetype Chaincode interface {\nInit(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)\nInvoke(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)\nQuery(stub ChaincodeStubInterface, function string, args []string) ([]byte, error)",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/weeds",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a235e152d57aff17c7adae8c427e59b9.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #general"
+            }
+        ],
+        "ts": "1474488471.001407"
+    },
+    {
+        "user": "U2CSLPV1Q",
+        "text": "<@U2CSLPV1Q|hhadass> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474492044.001410"
+    },
+    {
+        "type": "message",
+        "user": "U2C55KE65",
+        "text": "the command line : pdsh -w ssh:10.210.33.[84,85,111,115] \"docker-compose -f \/home\/gituser\/docker-compose-with-membersrvc.yml down\"\n\nthe log:",
+        "ts": "1474509846.001413"
+    },
+    {
+        "type": "message",
+        "user": "U2C55KE65",
+        "text": "10.210.33.115: vp3_1  | 10:03:40.694 [peer] handleChat -&gt; ERRO 0e7 Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created\n10.210.33.85: vp1_1  | 02:03:41.439 [peer] handleChat -&gt; ERRO 12b Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created\n10.210.33.85: vp1_1  | 02:03:41.444 [peer] handleChat -&gt; ERRO 12c Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created\n10.210.33.111: vp2_1  | 10:03:32.020 [peer] handleChat -&gt; ERRO 0e7 Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created",
+        "ts": "1474509850.001414"
+    },
+    {
+        "user": "U2B4EFQVB",
+        "text": "<@U2B4EFQVB|nowhere> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474519097.001416"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[September 22nd, 2016 11:55 AM] venkat: How do we implement access control for the users of a chaincode app? Do we have any docs or samples? The membership services doc seems to address CA setup, but not about access control for the users of a chaincode app.",
+                "ts": "1474525517.001095",
+                "author_subname": "venkat",
+                "channel_id": "C0J02NU1E",
+                "channel_name": "general",
+                "is_msg_unfurl": true,
+                "text": "How do we implement access control for the users of a chaincode app? Do we have any docs or samples? The membership services doc seems to address CA setup, but not about access control for the users of a chaincode app.",
+                "author_name": "Venkat",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/venkat",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/beacd341ddd4485ba22cdc39df754356.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0000-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1474525517001095",
+                "is_share": true,
+                "footer": "Posted in #general"
+            }
+        ],
+        "ts": "1474526135.001418"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[September 22nd, 2016 11:56 AM] venkat: For example, my chiancode would like to identify the user who is making the request through HFC, and their application role, and accordingly allow them to invoke txns or query data.",
+                "ts": "1474525613.001096",
+                "author_subname": "venkat",
+                "channel_id": "C0J02NU1E",
+                "channel_name": "general",
+                "is_msg_unfurl": true,
+                "text": "For example, my chiancode would like to identify the user who is making the request through HFC, and their application role, and accordingly allow them to invoke txns or query data.",
+                "author_name": "Venkat",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/venkat",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/beacd341ddd4485ba22cdc39df754356.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0000-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1474525613001096",
+                "is_share": true,
+                "footer": "Posted in #general"
+            }
+        ],
+        "ts": "1474526157.001419"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[September 22nd, 2016 11:59 AM] venkat: What will the NodeJS app send to chaincode via HFC, as user credentials for the access to chaincode?",
+                "ts": "1474525775.001098",
+                "author_subname": "venkat",
+                "channel_id": "C0J02NU1E",
+                "channel_name": "general",
+                "is_msg_unfurl": true,
+                "text": "What will the NodeJS app send to chaincode via HFC, as user credentials for the access to chaincode?",
+                "author_name": "Venkat",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/venkat",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/beacd341ddd4485ba22cdc39df754356.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0000-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/general\/p1474525775001098",
+                "is_share": true,
+                "footer": "Posted in #general"
+            }
+        ],
+        "ts": "1474526170.001420"
+    }
+]

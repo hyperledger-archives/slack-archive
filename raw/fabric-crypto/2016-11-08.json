@@ -1,0 +1,1409 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> <@U1BC5A0F9>  - been looking at <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2243\/2\/idp\/idp.go> and all of the comments as well",
+        "ts": "1478607619.001975"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "here's my take - I think we are trying to bite off too much here on the first go around",
+        "ts": "1478607644.001976"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think we need to start simple and then back into \/ expand out to more functionality",
+        "ts": "1478607671.001977"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "basically, from a fabric and orderer perspective, what we need to start with are the Identity and SigningIdentity interfaces and concrete implementation of PeerIdentity and OrdererIdentity  (the peer one might be tricky in that a concrete PeerIdentity may not always be a SigningIdentity)",
+        "ts": "1478607825.001978"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm So why would peer identity and orderer identity would be different you think?",
+        "ts": "1478607961.001979"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I mean generically defined one can have a different provider for each of them true",
+        "ts": "1478607981.001980"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think we have a use case we can try here:\n\n1) fabric-cop can generate \"enrollment\" credentials\n2) we can create a PeerIdentity from those credentials (would be a file-based provider later on)\n3) we can leverage that identity to sign endorsements\n\nthe other side:\n\n4) on the verifying of endorsements, we need to create a PeerIdentity from the public cert used to sign (in steps 1-3 above)\n5) we use that identity to verify the endorsement signature",
+        "ts": "1478607989.001981"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well not sure if they would ever have different fields",
+        "ts": "1478608009.001982"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "aha",
+        "ts": "1478608024.001983"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but we could go with FabricIdentity or something as well",
+        "ts": "1478608026.001984"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but in the test file i think at least for verification we follow the same steps",
+        "ts": "1478608040.001985"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "here",
+        "ts": "1478608045.001986"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the use case makes sense to me and I think we would have started anyway from that",
+        "ts": "1478608050.001987"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - of course - you can't really start anywhere else  :wink:",
+        "ts": "1478608076.001988"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "indeed :slightly_smiling_face:",
+        "ts": "1478608081.001989"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but don't steal my thunder!   hehe",
+        "ts": "1478608096.001990"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2243\/2\/idp\/idp-tests.go>",
+        "ts": "1478608103.001991"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":stuck_out_tongue:",
+        "ts": "1478608105.001992"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":smile:",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1478608109.000000"
+        },
+        "ts": "1478608106.001993"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "never!",
+        "ts": "1478608114.001995"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, we added the tests there exactly to show also a flow",
+        "ts": "1478608132.001996"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I agree, anyway. It is better to start from the simple scenarios",
+        "ts": "1478608159.001997"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So the flow is simple on the peer side doing verification",
+        "ts": "1478608162.001998"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this way we can get some basics committed and argue about the more \"complex\" interfaces as we go",
+        "ts": "1478608194.001999"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "clearly Identity and SigningIdentity are straight forward",
+        "ts": "1478608211.002000"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct",
+        "ts": "1478608244.002001"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "else I fear we won't be able to hook into the ESCC and VSCC flows early enough to see if we are right or wrong",
+        "ts": "1478608247.002002"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "just my 2 cents",
+        "ts": "1478608258.002003"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "more complex, and attribute based functionalities are anyway to be used as of now only byu the application",
+        "ts": "1478608266.002004"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and not the peer\/validator",
+        "ts": "1478608270.002005"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right",
+        "ts": "1478608278.002006"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "we will start from the identity interfaces that are the basic ones, and then we see from there what we need more int erms of attributes",
+        "ts": "1478608293.002007"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sounds good",
+        "ts": "1478608308.002008"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and I'll keep pushing your change sets as they come in",
+        "ts": "1478608323.002009"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "trying too keep this stuff moving",
+        "ts": "1478608328.002010"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "off to cause trouble elsewhere!  ttyl",
+        "ts": "1478608387.002011"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":grinning:",
+        "ts": "1478608404.002012"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Good luck!",
+        "ts": "1478608409.002013"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "heheheh",
+        "ts": "1478608696.002014"
+    },
+    {
+        "user": "U1M9R3C8Z",
+        "text": "<@U1M9R3C8Z|rascal> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478609978.002015"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "quick meeting- Keith: you as the node sdk- you have to plug in multiple identity providers. So somewhere there is an API to be able to talk to that.  -Jim:  But an MSP for SDK, does not mean registration and enroll.  Sometimes enroll is provided by ecerts are put in place where i can get access It will be useful iff we can separate the core API- identity based on certificates as required for signing purposes or even for encryption versus the registration and enroll.   -- Elli stated- we should have api deefined for the peer and one for the application. Then one app might use membership services a or b- we can start implementing api for the peer and the minimum one. And then we can add later the api for applications to use.",
+        "ts": "1478618426.002016"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith: this means we go back what we had last week -pulling out MSP peer API, and we had a client API.  At least they are separate.  If we don't keep client in fabric, we're not sure where we put it.  Gari: you can put it in COP, but put in separate file.  It's likely going to change anyway",
+        "ts": "1478618488.002017"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Gari: Here is a customer example- there is a Java SDK requirement.  In their case, they don't plan to use COP (many people want to use their own).  We just have to have a format- so we start out with these APIs... and we can then parse that information.  Identity has the ability to parse the certificate.  Then, from SDK perspective- it becomes a nice interface.  So if someone wants to register- they can call API and it gets loaded from the store they are using.  BTW, this is how we can do unit testing.",
+        "ts": "1478618589.002018"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hey, I have a couple of questions unclear to me and if someone could explain to me that'd help:\n1) In fabric v1 (next architecture) - how can a peer from org A verify an SSL certificate of a peer of org B, when they have different CAs? \n2) in SSL from what I know- when you connect to a remote server, the certificate of the server needs to sign on the DNS name or ip address, because you don't know the certificate of the remote server before you connect to it, so if the certificate does not sign the hostname\\ip, you won't be able to connect, right?\n3) If the above (2) is true, then how will that work in fabric v1 ? the PKI infrastructure would hand out certificates with ip\/hostnames signed ?\n4) if the above (3) is true, then how will fabric work in a cloud environment where the ip address is something dynamic and random? Does the PKI layer know how to deal with it? It sounds to be pretty complex because you need to keep track of changing data.",
+        "ts": "1478618640.002019"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith: the signing identity-we need the implementation for signing identity and identity.  What we agreed is that Elli and team would do that for ECerts.  For timeline- how long is that going to take to do.  Elli- there is a lot of code already ready for ecert signing functionality.  And she will have to think through that with Angelo.  They thought if the Ali\/Angelo, they could get this within the week, they could offer the signing\/verification.",
+        "ts": "1478618770.002020"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I was planning to ask the same thing here to <@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4>",
+        "ts": "1478618788.002021"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Gari: the main thing is hooking up between identity and the BCCSP too.  Elli said that is the largest extent we have and is pretty close. Gari: We have to load up multiple root certificate authorities.",
+        "ts": "1478618898.002022"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jim: isn't that supposed to go through BCCSP interface instead of specifically knowing how you sign?  Gari: yes- we should hook those together",
+        "ts": "1478618922.002023"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Angelo checked in the signer and it's been merged in",
+        "ts": "1478618929.002024"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Gari: this gets us to an end to end path and a little refactoring after that... this should be the goal.",
+        "ts": "1478618960.002025"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My impressions have been that:\n\n1. The peer org CAs are encoded in the configuration, so anyone can verify that a certificate chain presented by the peer chains to a trusted CA.\n2.\/3.\/4. I do not think we can do certificate validation by DNS\/common name.  Here we use certs for identity not location.  So, a CA signing a cert chain implies that the peer is authorized to transact under the authority of that CA.  Unlike with something like https on the web, where you care not simply that a CA has signed, but that the CA intended to sign for that URL.  For chaincode, I know there are attributes which are set on the certificate, so that not all certificates which chain to a CA have the same authority, but from an orderer\/gossip perspective, I expect this to be coarse enough that presenting a valid cert chain to a CA implies authority to transact on the network.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478619514.000000"
+        },
+        "ts": "1478618983.002026"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jim: once we have identity and signing identity- we should be able to do almost everything.  It will poll the dependent classes.",
+        "ts": "1478618990.002027"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "in the other classes- what is a member?  Gari suggesting to remove that or-- should called memberservice- it's really the API side of all the registration.  The rest are really entity definitions, where member is a noun and interface to call a service.",
+        "ts": "1478619039.002028"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Gari: I would strip down to bare minimum that we can.",
+        "ts": "1478619052.002029"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Jim: I am struggling with member- member respresents and enroll entity with identity provider. Enroll means you have a signed certificate,.. isn't that what identity class represents?  why do we still need member?",
+        "ts": "1478619096.002031"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith: the original idp.go that he sent had different names and it did not have member.  I was just trying to make progress at this point.  I was trying to simplify in the one Keith sent-- Elli plans to look at it.",
+        "ts": "1478619150.002032"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Elli: for identity and signing identity- sounds like we are converging.",
+        "ts": "1478619186.002033"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Elli: there is some design work on access control for the channels.  This is an item we are collaborating with consensus and endorser team.  The high level flow is included in document in pdf. - fab 633",
+        "ts": "1478619277.002034"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "from high level design- wrote a document that we are going to reach out to the community- where we are adding interfaces related to that story.. and next sprint we will implement in the next sprint",
+        "ts": "1478619324.002039"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There is design interface of application level and invocation access management.  These are things that we are going to do in future sprints.",
+        "ts": "1478619351.002040"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF> :\n\n\n1) In fabric v1 (next architecture) - how can a peer from org A verify an SSL certificate of a peer of org B, when they have different CAs? \n\nPart of the material that we need to distribute to all peers that are part of the network will be the set of root certificates used by each participant.  We'll need to decide if we need to separate the truststore for signing\/verification from the truststore used for TLS communication but basically this material needs to be collected from every network participant prior to them joining and then distributed via the appropriate config transaction(s) (which may be scoped to channels possibly).  But the bottom line is that the trust stores need to be distributed\n\n\n2) in SSL from what I know- when you connect to a remote server, the certificate of the server needs to sign on the DNS name or ip address, because you don't know the certificate of the remote server before you connect to it, so if the certificate does not sign the hostname\\ip, you won't be able to connect, right?\n\nThe CN or the SAN in the TLS certificate must match the hostname that will be used to access the endpoint.  This is a must in terms of the TLS certificates that the various components need to use.  The trust will be established via the truststore mentioned in 1) above\n\n3) If the above (2) is true, then how will that work in fabric v1 ? the PKI infrastructure would hand out certificates with ip\/hostnames signed ?\n\nSee above\n\n4) if the above (3) is true, then how will fabric work in a cloud environment where the ip address is something dynamic and random? Does the PKI layer know how to deal with it? It sounds to be pretty complex because you need to keep track of changing data.\n\nIf you are not going to have a static IP, then you must use a FQDN instead.   This is exactly what we do in BMX today",
+        "ts": "1478619677.002042"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0ZJZBJLF> <@U0XPR4NP4> \n&gt; 1. The peer org CAs are encoded in the configuration, so anyone can verify that a certificate chain presented by the peer chains to a trusted CA.\n\nI expect the same too, the (self-signed) certificates of all CAs should be available to everyone. Adding or revoking them should be a job of the configuration system.\n\n&gt; 2.\/3.\/4. I do not think we can do certificate validation by DNS\/common name.  Here we use certs for identity not location.  So, a CA signing a cert chain implies that the peer is authorized to transact under the authority of that CA.  Unlike with something like https on the web, where you care not simply that a CA has signed, but that the CA intended to sign for that URL.  For chaincode, I know there are attributes which are set on the certificate, so that not all certificates which chain to a CA have the same authority, but from an orderer\/gossip perspective, I expect this to be course enough that presenting a valid cert chain to a CA implies authority to transact on the network.\n\nI agree - a node looks up another peer\/node they want to talk to (somehow) or they reach out to us, at which point in the course of the TLS exchange we'll mutually authenticate based on our TLS certs. At the end of the TLS handshake, we'll know that the node at the other end of the wire possesses legitimately that certificate. At this point we need to inspect it, see who signed it (do we trust them) and what they signed (attributes) and make a determination whether we wanna talk to them.",
+        "ts": "1478619694.002043"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So when someone presents their 'identity', this will be a full certificate chain, down to the CA root?",
+        "ts": "1478619801.002044"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "It should be, yes. The same happens on the web - websites usually present their chain, which is rooted with something your browser has (the set of CAs it trusts)",
+        "ts": "1478619881.002045"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "you'll notice that presenting the root is redundant",
+        "ts": "1478619909.002046"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "since you've got to have a copy of it yourself",
+        "ts": "1478619917.002047"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait wait wait, isn't that a chicken and egg problem?",
+        "ts": "1478619957.002048"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "5) how can I connect to an orderer (part of the fabric) if I get its certificate from the... well, ledger?\n6) you're telling me there will be some system-crypto-channel in which orderers would publish certificates?\n7) In fabric there will *most likely* be peers that won't be connected to the orderer directly, but will get information indirectly via other peers. They will have a bootstrapping problem, because they won't be able to connect to any peer.",
+        "ts": "1478620102.002049"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "there has got to be some root of trust hardcoded somewhere (genesis block)",
+        "ts": "1478620132.002050"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "much like when you install your browser, it comes with its set of CAs",
+        "ts": "1478620146.002051"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought that a genesis block is now per channel",
+        "ts": "1478620162.002052"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there is",
+        "ts": "1478620429.002053"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In order to join a channel, you must have a copy of the genesis block (or some later config block)",
+        "ts": "1478620442.002054"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So you have all the CA certs.",
+        "ts": "1478620446.002055"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok let me make it more specific, <@U26T99AQ4>  - My gossip code needs a way of verifying a signature of a remote peer, having the signature, the plaintext (obviously) and the peer's (the signer's) PKI-ID. \nDo we still have this functionality in v1.0? (please say yes)",
+        "ts": "1478620476.002056"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I'm still confused why you are using PKI-ID when you have access to the full cert (chain)",
+        "ts": "1478620504.002057"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "is this in the scope of TLS?",
+        "ts": "1478620521.002058"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1478620526.002059"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Jason- well, as I said on gerrit- when I designed everything, I was told I'll be able to use the PKI-ID, and that was what the code in 0.5 was doing, and no one told me along the way anything different",
+        "ts": "1478620580.002060"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "so you have a message of sorts, a signature over it, and a cert",
+        "ts": "1478620608.002061"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no no, it's more simpler than that- imagine I know of a peer and it's PKI-ID and I already authenticated it",
+        "ts": "1478620633.002062"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "and you want to\n1) verify that signature\n2) get some assurance about the signing cert - who are they? who signed their cert?",
+        "ts": "1478620634.002063"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes!",
+        "ts": "1478620639.002064"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "exactly - 1+2",
+        "ts": "1478620643.002065"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> But could you not compute a PKI-ID from the cert if need be?",
+        "ts": "1478620661.002066"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I could if I had the function that computes it (I have no idea the hash algorithm)",
+        "ts": "1478620686.002067"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "everything I'm talking about here is merged long ago,btw:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/api.go#L59>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/api.go",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/api.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478620737.000000"
+        },
+        "ts": "1478620721.002068"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I think the primitives to sign\/verify will be there",
+        "ts": "1478620765.002071"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I expect the following abilities when the gossip is initialized: \n```\n\tSign(msg []byte) ([]byte, error)\nVerify(vkID, signature, message []byte) error\n```",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478620785.000000"
+        },
+        "ts": "1478620771.002072"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "they might look different from what they used to",
+        "ts": "1478620791.002074"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess my concern, is that we had the (IMHO terrible) dependence on a network call in order to authenticate peers in 0.5.  And we should not be trying to emulate this as a pattern.",
+        "ts": "1478620806.002075"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Especially if we have all of the certificate material present.",
+        "ts": "1478620821.002076"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4>  - we are getting rid of that bootstrap for enrollment",
+        "ts": "1478620830.002077"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, I thought that was out.",
+        "ts": "1478620839.002078"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF>  - at the end of the day, when a network starts you must have some bootstrap material which is distributed \/ resides outside the ledger",
+        "ts": "1478620868.002079"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Wait so a quick recap- The fabric is running for 1 month, and I'm a new peer. the first thing I ever do is grab a genesis crypto block and commit it and connect with it to the orderer?",
+        "ts": "1478620900.002080"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the first thing is that the existing folks need to allow you to join  :wink:",
+        "ts": "1478620935.002081"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, the 'channel join' operation takes as a parameter a genesis block (or in the future, a configuration block)",
+        "ts": "1478620963.002082"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why is this context-based on a channel? I'm talking about just the first connection to an orderer",
+        "ts": "1478620996.002083"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Logically, connecting to the 'system chain' and a channel are equivalent to me.",
+        "ts": "1478621034.002084"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But to bootstrap a peer, you also provide it with a genesis block",
+        "ts": "1478621044.002085"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so there will be an \"infrastructure channel\" then?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478621062.000000"
+        },
+        "ts": "1478621053.002086"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In order to first start up a peer period, the agreed upon boostrapping mechanism was to provide it with the genesis block of the 'system chain'",
+        "ts": "1478621103.002088"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, I really see no strong reason you could not bootstrap a peer to a particular channel instead of to the 'system chain'",
+        "ts": "1478621126.002089"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Every genesis block need to contain a full config (complete with CA certs et al)",
+        "ts": "1478621149.002090"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then you'll need to insert the certs into the genesis block of the channel",
+        "ts": "1478621152.002091"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh ok",
+        "ts": "1478621158.002092"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U26T99AQ4>  is there a way of looking up the certificate by the PKI-ID?",
+        "ts": "1478621371.002093"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I understand that the certificates would be saved in the ledger, is it possible to also save their PKI-id and be able to perform a search for that?",
+        "ts": "1478621461.002094"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "otherwise, you won't be able to perform: verify(pkiID, sig, plaintext)",
+        "ts": "1478621480.002095"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "All the info is there - certs have a subject (who) and an issuer (who signed it), so I guess it's a matter of exposing APIs to lookup a cert by subject",
+        "ts": "1478621523.002096"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I don't think these APIs are there",
+        "ts": "1478621531.002097"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "so you get a cert, you see its issuer and then you lookup in your trust bag if you have a cert whose subject is your issuer",
+        "ts": "1478621610.002098"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but how am I going to verify someone's message by knowing only his PKI-ID and not the full cert then?",
+        "ts": "1478621615.002099"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "so you are saying that you don't even have a certificate, only an ID (like a plain string)?",
+        "ts": "1478621671.002100"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes, just that the id is the hash on the cert",
+        "ts": "1478621696.002101"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's how all the 6000+ lines of gossip code works, and I built it under the assumption that I would be able to perform `verify(PKIid, sig, text)` just like it is done in 0.5, , and as was told to me.... <@U0ZR63HLK>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478621811.000000"
+        },
+        "ts": "1478621770.002102"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I'll reach out to you in pvt and we can try to sort it out",
+        "ts": "1478621927.002105"
+    },
+    {
+        "user": "U2Q0HP4HY",
+        "text": "<@U2Q0HP4HY|rickr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478622565.002106"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok so we talked on the phone and we came to a conclusion that:\n1) Gossip *has* to have a way of mapping a PKI-ID of a peer to its certificate\n2) The Ledger guys that are responsible for writing the certificate crypto data into the chain need to be aware of it, and need to implement a way for the crypto layer to create a mapping between PKI-ID (essentially it's a hash of the cert) to the cert itself.\n<@U1BC5A0F9>  , <@U0ZR63HLK>  , <@U26T99AQ4>  , \n<@U0PB67X4K>  and <@U0KN2SSKE>  , I'll create a JIRA item in a few min, but who should I tag here to explain the need? (who is it going to be from the ledger guys? Maybe <@U0ULK2JPP> ?)",
+        "ts": "1478623591.002107"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> For my edification, why does gossip need PKI-ID instead of the cert itself? And is there an instance where a peer has a reference to a PKI-id but does not already have the corresponding cert locally?",
+        "ts": "1478623733.002108"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I use the PKI-ID to identify a peer",
+        "ts": "1478623752.002109"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I send this information every few seconds (configurable)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478623881.000000"
+        },
+        "ts": "1478623791.002110"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't want to send every few seconds a few KBs",
+        "ts": "1478623807.002111"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so I need a deterministic way of converting a cert ---&gt; to a []byte without collisions, so in 0.5 it was implemented as a simple hash.",
+        "ts": "1478623856.002112"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nAnd is there an instance where a peer has a reference to a PKI-id but does not already have the corresponding cert locally?\n```\n yeah, he won't be able to communicate with the peer until it has. I don't see it as a big problem",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478623928.000000"
+        },
+        "ts": "1478623912.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF>  - write up the requirement and tag me and murali for now",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478623965.000000"
+        },
+        "ts": "1478623917.002115"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT",
+        "ts": "1478623920.002116"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's more to this than PKI-ID",
+        "ts": "1478623928.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll write a JIRA item, is that ok?",
+        "ts": "1478623938.002119"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep",
+        "ts": "1478623941.002120"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what is there more except that?",
+        "ts": "1478623948.002121"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "The way you are currently using PKI-ID assumes that every peer already has and\/or has access to every other peer's certificate (at least the certificate they use to sign messages).   This works in v0.5\/v0.6 because the peer actually calls out to membersrvcs (as I recall) to download the public certificate(s) for other remote peers.  This IS NOT going to be possible in v1",
+        "ts": "1478624115.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so what? eventually it will have access to that, because it'll get the ledger",
+        "ts": "1478624145.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it'll simply re-connect",
+        "ts": "1478624157.002125"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well I don't actually think that we are going to put every peer certificate in the ledger.  we were going to start with putting the root certificates for every participant into the ledger not the individual peer certificates",
+        "ts": "1478624212.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "My point is that there's more to this story",
+        "ts": "1478624220.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is just one piece",
+        "ts": "1478624228.002128"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this also means that when people sign messages, they need to include the public key in the message itself",
+        "ts": "1478624256.002129"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm, and how is the authentication going to work then?",
+        "ts": "1478624259.002130"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, the peer can absolutely maintain a cache of peer certs it knows about, when it connects via TLS it will get the certs.  And I think, for gossip, this is okay.",
+        "ts": "1478624265.002131",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The chain has all the _CA_ certs, and the TLS cert will chain to the CA for auth",
+        "ts": "1478624277.002132"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we don't do mutual TLS",
+        "ts": "1478624296.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and the TLS cert is not the same as the signing cert",
+        "ts": "1478624307.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "aha!",
+        "ts": "1478624316.002135"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Peer&lt;-&gt;Peer does not do mutual TLS? Why not?",
+        "ts": "1478624318.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and we track identity based on signing cert",
+        "ts": "1478624319.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "WELL - we can move to that model",
+        "ts": "1478624330.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, if the TLS certs are different, is the TLS cert self-signed?",
+        "ts": "1478624332.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we don't do it today",
+        "ts": "1478624334.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "No",
+        "ts": "1478624341.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so?",
+        "ts": "1478624345.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "If we do mutual TLS and in gossip you choose to use the client certificate as the PKI-ID, that may be OK",
+        "ts": "1478624398.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait so just to understand what jyellic said- when I'm a peer I present to a fellow peer a certificate that has a chain of signatures all the way up to some CA which the fellow peer can verify, right?",
+        "ts": "1478624427.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My assumption had been that this 'presented cert' was the TLS cert.  But it sounds like there is maybe some other mechanism here?",
+        "ts": "1478624458.002145"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Gari- in gossip, the TLS configuration is pluggable, so I just put whatever I get, unless I don't get anything at all- and then I generate a self-signed certificate myself and use that in SSL",
+        "ts": "1478624473.002146"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "THIS IS MY POINT - that's what I mean by there's more to this than the PKI-ID thing",
+        "ts": "1478624490.002147"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then I verify the remote peer using the PKI-ID",
+        "ts": "1478624491.002148"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "where'd you get it from in the first place?",
+        "ts": "1478624513.002149"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you're asking jason?",
+        "ts": "1478624528.002150"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no - you",
+        "ts": "1478624533.002151"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where did I get what",
+        "ts": "1478624539.002152"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Let's start with a simple case of 2 peers",
+        "ts": "1478624549.002153"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's the only case actually",
+        "ts": "1478624556.002154"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Let's assume mutual TLS (e.g. client certificates)",
+        "ts": "1478624592.002155"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "mutual TLS with signed certs?",
+        "ts": "1478624616.002156"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "let's start with signed certs",
+        "ts": "1478624664.002157"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1478624672.002158"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so lets say `p0` connects to `p1` and presents him with a signed challenge signed by him, and the PKI-ID (for identity)",
+        "ts": "1478624724.002159"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what is the signed challenge?  not TLS but application level?",
+        "ts": "1478624749.002160"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep",
+        "ts": "1478624753.002161"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "didn't you say they are different certs? the TLS and the peer cert?",
+        "ts": "1478624785.002162"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(they could be different or they could be the same)",
+        "ts": "1478624828.002163"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but let's continue",
+        "ts": "1478624845.002164"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but of course you understand, I already implemented everything so I assumed the \"worse\"",
+        "ts": "1478624852.002165"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so now `p1` has some bytes which were signed by `p0` and also has `pkiID` from `p0` (which is theoretically the hash of the certificate `p0` used to sign the bytes?)",
+        "ts": "1478624968.002166"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1478624989.002167"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and vice-versa regarding the challenge but it's not important",
+        "ts": "1478625003.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "he now looks into the ledger and asks it- \"dear ledger, give me the cert of pkiID\"",
+        "ts": "1478625047.002169"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so `p1` cannot verify the signed bytes without being in possession of the public key  of the keypair  `p0` used to sign them",
+        "ts": "1478625052.002170"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1478625061.002171"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "correct",
+        "ts": "1478625063.002172"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but this isn't too hard to fix- because `p0` can send it in this 1-time-only message also the certificate of itself, and have it hash it and compare to the PKIid)",
+        "ts": "1478625110.002173",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you got it",
+        "ts": "1478625126.002174"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and like <@U0XPR4NP4>  said- it can cache it",
+        "ts": "1478625127.002175"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and that's what I was getting at",
+        "ts": "1478625133.002176"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I thought you meant- there is something more *except that*",
+        "ts": "1478625144.002177"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "now what we would distribute would be the root certificates for all the participants",
+        "ts": "1478625191.002178"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "of course, one could distribute the public keys of everyone instead as well",
+        "ts": "1478625233.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so maybe I can skip the JIRA item then and simply assert that in the gossip's constuctor, the full cert is going to be needed to be passed, and I'll add a method `cert2PKI-ID` or something like that that is supposed to be supplied by the crypto guys",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478625265.000000"
+        },
+        "ts": "1478625252.002180",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K",
+                    "U0XPR4NP4"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but wanted to make sure we can support a model which only requires distribution of root certificates",
+        "ts": "1478625252.002181"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but would be good to document this in the overall design",
+        "ts": "1478625278.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BTW - (and I like this fact) - use of gossip implies that TLS is always used, correct?",
+        "ts": "1478625306.002184"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1478625312.002185"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh - sorry - we sign the bytes",
+        "ts": "1478625323.002186"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it is \"adaptive\" but it has to be symmetrical",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478625349.000000"
+        },
+        "ts": "1478625324.002187"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"if I use TLS you should use too\"",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478625607.000000"
+        },
+        "ts": "1478625329.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "personally I think we should only enable gossip over TLS  - that way we'll solve the usability \/ censurability \/ configurability right from the beginning.",
+        "ts": "1478625383.002190"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you initialize gossip with your own SSL options (serverOptions and DialOptions I think) I use them as they are, otherwise- I generate self-signed SSL certs and use them",
+        "ts": "1478625396.002191"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "today - it's a pain in the butt to get TLS working because it was treated as a second class citizen",
+        "ts": "1478625411.002192"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1478625439.002193"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so to sum things up- <@U0ZR63HLK>  and <@U1BC5A0F9>  and <@U26T99AQ4>  and everyone I tagged above, the bottom line is that we'll simply pass the certificate in the authentication handshake of the gossip, but the security guys would need to implement a method that converts a cert to a PKI-ID in a deterministic way.  (did I get that right <@U0PB67X4K>  ? )\nMaybe do []byte(PKI_ALGORITHM) concatenated with the public key hash?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478625551.000000"
+        },
+        "ts": "1478625537.002194"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you got it",
+        "ts": "1478625610.002197",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1BC5A0F9>  I hope you don't mind I assigned it to you, because I have no idea of what to put in other fields in the jira item (such as epic, etc.)\n<https:\/\/jira.hyperledger.org\/browse\/FAB-1034>",
+        "ts": "1478625946.002198"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi <@U0ZJZBJLF>, sure. Will discuss with the team and re-assign it if necessary but keep you posted.",
+        "ts": "1478627005.002199",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Wait a second <@U0PB67X4K> , if I cache internally the peer's certificate and it is not saved in the ledger- how does the COP infrastructure revoke a peer's certificate then?",
+        "ts": "1478642224.002200"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To my knowledge, CRLs are put into the configuration block.  In general, CRLs are short and not updated frequently.",
+        "ts": "1478642347.002201"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - given that you will take the PKI-ID and make sure it matches the hash of the \"cached\" certificate at the same time you could extract the serial number and check it against the CRL stored on the ledger",
+        "ts": "1478642474.002202"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "or we could have that in the method `validatePKID` or `isValidPKIID` or something",
+        "ts": "1478642580.002203"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it not only checks that the hash matches but also that the cert is not revoked",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478642609.000000"
+        },
+        "ts": "1478642597.002204"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "got it, thanks (Jason&amp;Gari) but also what needs to be done is something that \"listens\" to that chain and updates the gossip component, because the connection to the peer might be open and we would want to close it. I already have a method in the comm layer that black-lists a remote peer by PKI-Id, it can be used.",
+        "ts": "1478643095.002206"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool",
+        "ts": "1478643138.002207"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think we'll have the \"means\" to do what we need",
+        "ts": "1478643152.002208"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "v1 is going to be a monster (complexity-wise)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478643209.000000"
+        },
+        "ts": "1478643190.002209"
+    }
+]

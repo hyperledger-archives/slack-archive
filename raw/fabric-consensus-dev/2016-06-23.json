@@ -1,0 +1,508 @@
+[
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "This is the pipelining support for Raft, could pbft be modified to support pipeling as well such that the throughput could be improved?\n\n```\nPipelining is also well-supported by Raft. The AppendEntries consistency check guarantees that pipelining is safe; in fact, the leader can safely send entries in any order. To support pipelining, the leader treats the next index for each follower optimistically; it updates the next index to send immediately after sending the previous entry, rather than waiting for the previous entry\u2019s acknowl- edgment. This allows another RPC to pipeline the next entry behind the previous one. Bookkeeping is a bit more involved if RPCs fail. If an RPC times out, the leader must decrement its next in- dex back to its original value to retry. If the AppendEntries consistency check fails, the leader may decrement the next index even further to retry sending the prior entry, or it may wait for that prior entry to be acknowledged and then try again. Even with this change, LogCabin\u2019s original threading architecture still prevented pipelining because it could only support one RPC per follower; thus, we changed it to spawn multiple threads per peer instead of just one.\n```",
+        "ts": "1466670751.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: pbft uses pipelining",
+        "ts": "1466678723.000598"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: thoughput is limited by chaincode execution, not by pbft",
+        "ts": "1466678768.000599"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "simon: do you know why the chaincode execution should be done one after another? Could you site any paper to me to get a fully understand? Thank you very much!",
+        "ts": "1466679256.000600"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "simon: do you mean chaincode execution is the bottleneck? then why single peer node without p2p will have a much higher tps? i think it should because of the sequential execution that has lead to the blocking between two batches",
+        "ts": "1466680019.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it does?",
+        "ts": "1466680865.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Going back to the conversation about locally generated requests versus external ones and the issue of fairness (let's set aside pacing for now). If I'm parsing the path correctly, a request generated locally via the REST API will essentially take a shortcut to the consenter's `RecvMsg()` method. The external request, on the contrary, gets there via the goroutine who services the gRPC connection with the submitting replica, who adds it to the handler's `consenterChan`, where another goroutine will pick it up from and add it to the consenter's `out` channel, where the goroutine that was spawned in the `GetEngine` constructor will pick it up and pass it on to `RecvMsg()`. At any rate, in `RecvMsg()`, both the REST thread (that serves the locally generated request) and the goroutine spawned in `GetEngine` (serving the external request) try to add their respective requests to the unbuffered `events` channel of the manager in `obcpbft` for processing.",
+        "ts": "1466699884.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "_If_ the paths are right, can we make any claims on lack of fairness? I don't quite see it.",
+        "ts": "1466700000.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't think there is a fairness problem there.  The fairness problem would arise only if we split the `RecvMsg` into `RecvConsensus` and `RecvLocalTran` and prioritized the `RecvConsensus` over `RecvLocalTran`.  But, if instead we make them equal priority when there is room in our outstanding reqs, and otherwise ignore `RecvLocalTran` I think we're fine.",
+        "ts": "1466700821.000605"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Why would we ignore `RecvLocalTran()` when `outstandingReqs` is full, and not keep them at the same priority?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466701063.000000"
+        },
+        "ts": "1466701055.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It would be when `localOutstandingReqs` is full, so that we can provide backpressure to the invoker.  Because it is only based on our own requests, we cannot be spammed by the network into ignoring local invokes.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466701573.000000"
+        },
+        "ts": "1466701510.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I do not follow, and that is because you're switching to a different model and I don't think we have the same set of assumptions in mind.",
+        "ts": "1466701707.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Let's discuss how the `localOutstandingReqs` structure will be used for instance.",
+        "ts": "1466701758.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "A locally generated request gets routed to `RecvLocalTran`, and is then placed to a finite-size `localOutstandingReqs`.",
+        "ts": "1466701850.000612"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If there is no room in that structure, that call blocks until there is",
+        "ts": "1466701872.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Or, blocks and times out, or returns an error on block, whatever defined behavior we want)",
+        "ts": "1466701901.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If there is room, the request is added there, sure. Do you then assume a separate goroutine that attempts to pick it up and pass it on to the manager's queue?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466702332.000000"
+        },
+        "ts": "1466702187.000615"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think that would probably be the easiest way to implement it.",
+        "ts": "1466702625.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Additional go routines should not be problematic so long as they do not manipulate or reference PBFT internal state",
+        "ts": "1466702657.000618"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; But, if instead we make them equal priority when there is room in our outstanding reqs, and otherwise ignore `RecvLocalTran`",
+        "ts": "1466702713.000619"
+    },
+    {
+        "user": "U150L8BDF",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U150L8BDF|clessor> has joined the channel",
+        "ts": "1466702900.000620"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So it's not that you ignore `RecvLocalTran`. Both the goroutine that it spawns, and the goroutine that is spawned via `RecvConsensus` always get the same treatment when it comes to adding to the manager's queue. (Whatever treatment the Go scheduler gives them, that is.) Instead, it may happen that the `RecvLocalTran` call will drop the transaction that it brings along, if the `localOutstandingReqs` store is full.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466703030.000000"
+        },
+        "ts": "1466702970.000621"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As I think about this, I might eliminate the delivery go routine, and instead, structure it as:\n\n1. REST API go routine enters `RecvLocalTran`\n2. It attempts to queue onto a buffered new tran channel of configurable size\n3. If successful, it then pushes a `newTranEvent` into the event manager\n * If  PBFT thread has a free virtual client spot, it reads a tran from the new tran channel\n * If the PFBT thread has no free virtual client spot, when one frees up, it will attempt to read from the new tran channel",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466703326.000000"
+        },
+        "ts": "1466703263.000624"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Of course, if there is not room in the buffered channel, then we can do configurable behavior, either block until a timer expires, block indefinitely, or reject immediately",
+        "ts": "1466703294.000625"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What is the problem that you're trying to solve?",
+        "ts": "1466703533.000628"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Remember that my focus on this thread is on fairness --or lack thereof--, and the conclusion is that there is no unfairness in the existing mechanism. I take it we're switching to flow control?",
+        "ts": "1466703635.000629"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, this is to address flow control, not fairness",
+        "ts": "1466704053.000630"
+    },
+    {
+        "text": "`git stash; git checkout flow-control`",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466704116.000000"
+        },
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0XQ35CDD",
+        "ts": "1466704099.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The system is 'fair' today.  The suggestion to prioritize consensus messages over local trans, as a mechanism of flow control, exposes the possible lack of fairness.  The proposal above adds flow control while maintaining fairness.",
+        "ts": "1466704117.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That works for me. The proposal make sense.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466704910.000000"
+        },
+        "ts": "1466704635.000634"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XPR4NP4>:  I\u2019m assuming <https:\/\/github.com\/hyperledger\/fabric\/pull\/1928> is still in progress. Is that correct?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Ensure message order of broadcasts by jyellick \u00b7 Pull Request #1928 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1928",
+                "text": "Description This changeset modifies the obcpbft broadcast.go to always send messages in the order in which they were received. As @corecode was the original author of the broadcast.go his review ...",
+                "fallback": "GitHub: Ensure message order of broadcasts by jyellick \u00b7 Pull Request #1928 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1928",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466710791.000636"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it's good to go... the exact same changeset was already merged into 0.5 I believe",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466710905.000000"
+        },
+        "ts": "1466710835.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: ^",
+        "ts": "1466710966.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "ok, so that dangling conversation is taken care of?",
+        "ts": "1466711008.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0TFEHX8E>,  PR #1971 should be labeled as 0.5",
+        "ts": "1466711057.000644"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: Yes, that PR was paired with one that was merged into 0.5 that the conversation continued on, I added a reply to that effect.",
+        "ts": "1466711319.000645"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "thanks!",
+        "ts": "1466711331.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thank you",
+        "ts": "1466711364.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XPR4NP4>:   can you take a look at #1942 ?   behave test is in one of the comments ...  i thought nullrequest=1s cleared it but it's behaving differently today.  also changing  k=10 also seems to trigger something  ...  looks like some number of requests are being duplicated",
+        "ts": "1466712512.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure, I will take a look, got a few other things pending, so may be a few minutes, but I will get to it",
+        "ts": "1466712596.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "danke !",
+        "ts": "1466712625.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XPR4NP4>: Just had build fail on the master branch after <https:\/\/github.com\/hyperledger\/fabric\/pull\/1928>",
+        "ts": "1466713515.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<https:\/\/travis-ci.org\/hyperledger\/fabric\/builds\/139861185>",
+        "ts": "1466713527.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looking...",
+        "ts": "1466713542.000653"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "Raw log link <https:\/\/s3.amazonaws.com\/archive.travis-ci.org\/jobs\/139861187\/log.txt>",
+        "ts": "1466713623.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Running the tests locally off my branch to see if I can reproduce",
+        "ts": "1466713654.000655"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "It wasn\u2019t there when Travis ran against the PR",
+        "ts": "1466713720.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They pass in my local non-merged branch",
+        "ts": "1466713724.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Fetching upstream to try again",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466713773.000000"
+        },
+        "ts": "1466713730.000658"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "It looks like that test case already passed in the next master branch build <https:\/\/travis-ci.org\/hyperledger\/fabric\/builds\/139861848> so the error is not consistent",
+        "ts": "1466713792.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I see the bug",
+        "ts": "1466713911.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This should definitely be fixed, I imagine this could occur in production",
+        "ts": "1466713922.000662"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "you want me to open an issue?",
+        "ts": "1466713933.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Actually...  this may be less serious than I thought, but obviously should be fixed",
+        "ts": "1466713969.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yeah, this could cause a crash at startup",
+        "ts": "1466714037.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Easy verifiable fix, I can turn it around in 10 minutes",
+        "ts": "1466714051.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1978>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Concurrent map read and map write crash during \u00b7 Issue #1978 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1978",
+                "text": "Description Failed build Raw log Describe How to Reproduce Seen while running <http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft|github.com\/hyperledger\/fabric\/consensus\/obcpbft> unit test. The error is not consistent. fatal error: concurrent...",
+                "fallback": "GitHub: Concurrent map read and map write crash during \u00b7 Issue #1978 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/4872087?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1978",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466714247.000667"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks",
+        "ts": "1466714400.000669"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1979>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Eliminate possible broadcaster concurrent map read\/write by jyellick \u00b7 Pull Request #1979 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1979",
+                "text": "Description This changeset waits to start the broadcaster go routines until after the map they read from has been initialized. It also eliminates a constant map lookup inside a for loop which is ...",
+                "fallback": "GitHub: Eliminate possible broadcaster concurrent map read\/write by jyellick \u00b7 Pull Request #1979 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1979",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466714529.000670"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1980>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Eliminate possible broadcaster concurrent map read\/write by jyellick \u00b7 Pull Request #1980 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1980",
+                "text": "Description This changeset waits to start the broadcaster go routines until after the map they read from has been initialized. It also eliminates a constant map lookup inside a for loop which is ...",
+                "fallback": "GitHub: Eliminate possible broadcaster concurrent map read\/write by jyellick \u00b7 Pull Request #1980 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1980",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466714994.000672"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: Those are for master and v05 respectively",
+        "ts": "1466715006.000674"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, my apologies, despite what I had just told you about 1928, when I tried to cherry pick the commit in, I noticed that apparently one of the broadcaster commits that made it into 0.5 did not make it into the 1928 PR, so, I just added it back in to 1979.",
+        "ts": "1466715262.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "np",
+        "ts": "1466715415.000676"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: Does one of the 1942 behave tests reproduce the issue?",
+        "ts": "1466716314.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "leticia provided a behave test in #1942",
+        "ts": "1466716411.000678"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "`lhaskins`  comment timestamped \"2 days ago\"",
+        "ts": "1466716445.000679"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yesterday, this behave test worked with core_pbft_general_timeout_nullrequests=1s , today, it's been inconsistent.   I also tried K = 2 or 10,  sometimes when K=2 it'll work",
+        "ts": "1466716588.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: I may see what's going on here, verifying",
+        "ts": "1466718940.000681"
+    }
+]

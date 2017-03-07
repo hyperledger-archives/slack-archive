@@ -1,0 +1,675 @@
+[
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF> My question is a bit more practical (I think): how do I know which IP I'm going to add to the file? How do we imagine this playing out in a real-world scenario?",
+        "attachments": [
+            {
+                "fallback": "[October 10th, 2016 12:46 PM] yacovm: the address is to be acquired in any manner you want, i guess. It can be like fabric 0.5 in the core.yaml file, or any other way (dns? multicast? I don't know)",
+                "ts": "1476117993.001827",
+                "author_subname": "yacovm",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "the address is to be acquired in any manner you want, i guess. It can be like fabric 0.5 in the core.yaml file, or any other way (dns? multicast? I don't know)",
+                "author_name": "Yacov Manevich",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/yacovm",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-30\/85916865123_74ecb5d18535acea44aa_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476117993001827",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1476174843.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Kostas, I'm really not sure why you're asking this now. This is essentially the way fabric works...",
+        "ts": "1476174887.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Well, for one - just because 0.5 made some assumptions doesn't mean they have to necessarily carry over to v1.",
+        "ts": "1476175016.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "okay- this is a fair point",
+        "ts": "1476175045.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but let me ask you something then- how does discovery works in the real world?",
+        "ts": "1476175067.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you *always* need some bootstrapping endpoint",
+        "ts": "1476175076.001839"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "either it's your DNS server, or your preconfigured files",
+        "ts": "1476175088.001840"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or maybe sometimes your address is known to someone else and it contacts you (i.e - ip multicast)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476175123.000000"
+        },
+        "ts": "1476175104.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am asking this however because it's a genuine question. For instance for the orderers, it's a given that these guys that run the ordering network will need to call\/email\/fax each other before they come online, so that's how they know who's who.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476175500.000000"
+        },
+        "ts": "1476175141.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "depends on what type of orderers they are",
+        "ts": "1476175162.001844"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if its a SOLO then its alone",
+        "ts": "1476175169.001845"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if it's KAFKA, then they need to know their brothers (Zookeeper is statically configured AFAIK)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476175222.000000"
+        },
+        "ts": "1476175179.001846"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but this has nothing to do with the gossip bootstrapping",
+        "ts": "1476175186.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The solo work is a stopgap measure.",
+        "ts": "1476175187.001848"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Again, I understand this.",
+        "ts": "1476175194.001849"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What I am simply asking: you expect then, that a peer who joins the network knows the address of another peer already and will use that as the bootstrapping peer address?",
+        "ts": "1476175261.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1476175271.001852"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it can be btw not a peer but someone else like the membership service, or the consensus itself",
+        "ts": "1476175375.001853"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "essentially the only thing that entity needs is to be able to answer to a certain protobuf stream object:\n```\nmessage MembershipRequest {\n    AliveMessage selfInformation = 1;\n    repeated string        known = 2;\n}\n```\nWith:\n```\nmessage MembershipResponse {\n    repeated AliveMessage alive = 1;\n    repeated AliveMessage dead  = 2;\n}\n``` \nSo if any entity embeds inside itself a gossip component it'll work.",
+        "ts": "1476175483.001854"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "currently from what I know- when a peer needs to know the certificate of another peer to verify messages signed by it, it contacts the membership service via a gRPC call.",
+        "ts": "1476175532.001856"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, if security is enabled - the membership service needs to be up all the time, or else messages won't be verified in new peers (that have joined lately)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476175578.000000"
+        },
+        "ts": "1476175564.001857"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and, of course- if you have further questions feel free to ask me here or in private or in <#C2HHHJCSU|fabric-gossip-dev>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476175723.000000"
+        },
+        "ts": "1476175707.001859"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and btw it obviously can be a list of bootstrapping peers, not only 1...",
+        "ts": "1476175766.001861"
+    },
+    {
+        "user": "U231RFLFP",
+        "text": "<@U231RFLFP|bala.vellanki> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476201088.001862"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/hangouts.google.com\/hangouts\/_\/nkqa6vwc6jeo3j4wsrp2shgi3qe> &lt;- Writing a bootstrapping feature file for a single chain",
+        "ts": "1476201241.001863"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hey, can anyone explain to me something regarding to what <@U0XQ35CDD>  wrote?\n```\nThe orderer configuration needs to be embedded within the raw ledger.\n\nThis is for two reasons:\n```\n```\n1. The orderer service needs to be able to convey initial configuration and configuration changes to the peer service so that the peer knows how to properly validate the raw ledger being returned (this may be different per orderer implementation, and may as simple as verifying a public key, or as complicated as a PBFT f+1 out of N signatures or connections)\n```\nObviously I understand that the \"block validating policy\" differs between types of orderers, but isn't the type of orderer in the network a static thing? if it doesn't change, why can't we have several \"strategies(policies)\" (like the strategy design pattern) pre-implemented in the peer, and the confugration of the peer will select which policy to use?\n```\n2. The orderer service must agree to an initial configuration as without a common initial configuration (and common points of time for changing the configuration) the correctness of the orderer service may not be guaranteed.\n```\nI don't understand how this backs up the claim. The orderer doesn't need to agree on its configuration with the peers, only with other orderers.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476208128.000000"
+        },
+        "ts": "1476208086.001864"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I didn't write the above, but I can answer your questions.",
+        "ts": "1476209399.001866"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How would the configuration of the peer would select which policy to use?",
+        "ts": "1476209410.001867"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought that email was from you, sorry",
+        "ts": "1476209425.001868"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, oops",
+        "ts": "1476209468.001869"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the email is but the jira issue isn't :slightly_smiling_face:",
+        "ts": "1476209478.001870"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let's say we have in the yaml file a string that maps to a certain struct type",
+        "ts": "1476209558.001871"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and that struct type has an implementation of \"what to do with a block\"",
+        "ts": "1476209572.001872"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(how to validate, and when)",
+        "ts": "1476209581.001873"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No, as was the case with the bootstrapping node question earlier, I'm almost never referring to the low-level how-do-we-code-it issue. That's clear. What I'm asking is: how do you decide whether you should connect to say, at least, 3 orderers instead of 2?",
+        "ts": "1476209718.001874"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't the number of orderers static?",
+        "ts": "1476209755.001875"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No.",
+        "ts": "1476209759.001876"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "While the type of orderer (i.e. consensus) may be static, the orderer network's configuration is not. It may also be the case that you, as a connected peer, cannot deduce which policy applies just by counting the number of orderers in the network, which I guess is what you imply. Consider for example an orderer network where you added X more orderers, and a higher amount of faults can be tolerated, but the orderer network doesn't switch to these thresholds right away. The peers need to receive a signal from the ordering service that specifies exactly when the new ordering rule applies.",
+        "ts": "1476209780.001877"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see, like a consensus service re-configuration",
+        "ts": "1476209818.001878"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "get a consensus on the new view",
+        "ts": "1476209824.001879"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and then move to it, or something like that",
+        "ts": "1476209830.001880"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The point is that the network needs to have a concrete reference in time on when to switch to a new policy. (Given that the orderer reconfig is valid and passes all the checks.)",
+        "ts": "1476209896.001881"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; The orderer doesn't need to agree on its configuration with the peers, only with other orderers.",
+        "ts": "1476209905.001882"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So this hopefully addresses this statement as well.",
+        "ts": "1476209916.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I still don't understand why this needs to be written in the ledger",
+        "ts": "1476209948.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't there another way?",
+        "ts": "1476209976.001885"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how about something like- the configuration (orderers endpoints) is hashed and submitted in each block",
+        "ts": "1476210023.001886"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when a peer receives a block with an odd hash, it contacts the orderers and asks them \"what's up?\"",
+        "ts": "1476210057.001887"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I guess you can come up with several variations that could work, but what does this proposal bring that the original one doesn't?",
+        "ts": "1476210113.001888"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Insert a block that says \"config\/policy is now `foo`\", and assume this is the policy going forward until a new such block.",
+        "ts": "1476210142.001889"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How is appending a hash of `foo` in every block better? (Genuine question.)",
+        "ts": "1476210167.001890"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't it a race condition?",
+        "ts": "1476210236.001891"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "lets say the ordering service now went up from 4 to 10 instances",
+        "ts": "1476210256.001892"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How is it a race condition? Everything is ordered.",
+        "ts": "1476210265.001893"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i'm a peer and I get a signed block from 2 byzantine peers",
+        "ts": "1476210282.001894"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that block says, the configuration now is from 4 to 5 instances",
+        "ts": "1476210300.001895"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I believe that block is valid because 2&gt;1=f (out of 4) signed it",
+        "ts": "1476210335.001896"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and I reconfigure myself to the new (false) configuration",
+        "ts": "1476210356.001897"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You don't establish any connections to the new orderers (and don't receive anything from them) until you get the block that says \"hey we're switching to 10 nodes and this is your new `f`\" which is still sent by the network of 4 instances.",
+        "ts": "1476210438.001898"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I see",
+        "ts": "1476210458.001899"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "In your scenario, you imply that the new orderers can jump in and start shooting blocks right away.",
+        "ts": "1476210470.001900"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But that is not the case.",
+        "ts": "1476210475.001901"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm wait",
+        "ts": "1476210483.001902"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you said that *any* peer doesn't establish connections to the new orderers before *all* peers successfully received the \"checkpoint\" block saying \"from now on, we're the new view\" - doesn't that imply that byzantine peers would be able to slow down that move? (like, read from the socket really really slow)",
+        "ts": "1476210581.001903"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i'm just raising a concern of course, not saying this is inherently flawed. just making a point",
+        "ts": "1476210604.001904"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Where did I say \"all peers\"?",
+        "ts": "1476210618.001905"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you didn't but isn't that what is derived? or is it a majority of peers then?",
+        "ts": "1476210647.001906"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It's whatever the policy dictates. And the policy would probably say something along the lines of \"if X out of Y certs have signed this, I will accept it\".",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476210773.000000"
+        },
+        "ts": "1476210768.001907"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, how did you (in plural) decide to bootstrap then? an \"admin\" entity is creating the genesis block and sending it to the orderers?",
+        "ts": "1476210931.001909"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct. A bootstrap admin entity collects the relevant info (among other stuff, what's relevant for this conversation: orderer certs, orderer addresses, and consensus config), creates it a genesis block that the orderers receive, inspect, and launch with (if they approve what they see in there).",
+        "ts": "1476211310.001910",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "got it, thanks. but what did you mean in \"change sets are welcome\"?",
+        "ts": "1476211375.001911"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's not coded yet?",
+        "ts": "1476211388.001912"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "We welcome code contributions?",
+        "ts": "1476211403.001913"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "lol yeah I mean- I thought people are assigned to it, and all",
+        "ts": "1476211423.001914"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Folks are assigned to it, and in fact we just completed the writing of the feature file that (hopefully) has everyone on the same page (see the Hangout link above). Some pieces are coded already, but we're definitely not all done.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476211585.000000"
+        },
+        "ts": "1476211509.001915"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the link to the feature file is in the hangout?",
+        "ts": "1476211613.001917"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The Hangout is where we are (or rather: were) still chatting about the feature file. Jeff is posting the feature file now.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476211672.000000"
+        },
+        "ts": "1476211638.001918"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok thanks",
+        "ts": "1476211700.001920"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0KN2SSKE> <@U0S5KF44D> <@U0PB67X4K> <@U0XQ35CDD> <@U0UGH3X7X> <@U0XPR4NP4> <@U1KDAMDJ7> Here is a shot at the feature file for bootstrap",
+        "ts": "1476211735.001921"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UKTPMG8|jeffgarratt> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jeffgarratt\/F2N3JHRJN\/bootstrap.feature|bootstrap.feature>",
+        "file": {
+            "id": "F2N3JHRJN",
+            "created": 1476211743,
+            "timestamp": 1476211743,
+            "name": "bootstrap.feature",
+            "title": "bootstrap.feature",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0UKTPMG8",
+            "editable": true,
+            "size": 3525,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2N3JHRJN\/bootstrap.feature?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2N3JHRJN\/download\/bootstrap.feature?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jeffgarratt\/F2N3JHRJN\/bootstrap.feature",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2N3JHRJN-814b0b6fae",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/jeffgarratt\/F2N3JHRJN\/bootstrap.feature\/edit",
+            "preview": "#\r\n# Test Bootstrap function\r\n#\r\n# Tags that can be used and will affect test internals:\r\n#  @doNotDecompose will NOT decompose the named compose_yaml after scenario ends.  Useful for setting up environment and reviewing after scenario.\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>#<\/pre><\/div>\n<div><pre># Test Bootstrap function<\/pre><\/div>\n<div><pre>#<\/pre><\/div>\n<div><pre># Tags that can be used and will affect test internals:<\/pre><\/div>\n<div><pre>#  @doNotDecompose will NOT decompose the named compose_yaml after scenario ends.  Useful for setting up environment and reviewing after scenario.<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 66,
+            "lines_more": 61,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0UKTPMG8",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UKTPMG8|jeffgarratt>",
+        "bot_id": null,
+        "ts": "1476211743.001922"
+    },
+    {
+        "user": "U0W7D64LC",
+        "text": "<@U0W7D64LC|markparz> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476212242.001923"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "just so we don't lose all comments when slack scrolls off in a few hours,  can we put the feature file in a gerrit change set and comment there ? <@U0UKTPMG8>  ?",
+        "ts": "1476213223.001924"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0UGH3X7X> sure thing",
+        "ts": "1476216631.001925"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "we can comment on Jira also",
+        "ts": "1476216644.001926"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "OK, I have a question: how many invokes or how much time does it take for a peer to \"catch\" up with it's query values after it is out of sync and it is needed in order to reach consensus?  \n\nIn other words, is the following behave scenario valid? (I thought it was, but vp2 isn't \"catching\" back up when I expect it to)",
+        "ts": "1476224909.001927"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1B5DPRLG|lhaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/lhaskins\/F2N5JNDL7\/-.txt|Untitled>",
+        "file": {
+            "id": "F2N5JNDL7",
+            "created": 1476225084,
+            "timestamp": 1476225084,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1B5DPRLG",
+            "editable": true,
+            "size": 4925,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2N5JNDL7\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2N5JNDL7\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/lhaskins\/F2N5JNDL7\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2N5JNDL7-26b4627af9",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/lhaskins\/F2N5JNDL7\/-.txt\/edit",
+            "preview": " Scenario: Peers catch up only when necessary\r\n    Given we compose \"docker-compose-4-consensus-upgrade.yml\"\r\n    And I register with CA supplying username \"binhn\" and secret \"7avZQLwcUe9q\" on peers:\r\n                                 | vp0  |\r\n    And I use the following credentials for querying peers:\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre> Scenario: Peers catch up only when necessary<\/pre><\/div>\n<div><pre>    Given we compose &quot;docker-compose-4-consensus-upgrade.yml&quot;<\/pre><\/div>\n<div><pre>    And I register with CA supplying username &quot;binhn&quot; and secret &quot;7avZQLwcUe9q&quot; on peers:<\/pre><\/div>\n<div><pre>                                 | vp0  |<\/pre><\/div>\n<div><pre>    And I use the following credentials for querying peers:<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 91,
+            "lines_more": 86,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1B5DPRLG",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1B5DPRLG|lhaskins>",
+        "bot_id": null,
+        "ts": "1476225087.001928"
+    },
+    {
+        "user": "U1WAADD4N",
+        "text": "<@U1WAADD4N|akihikot> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476254115.001929"
+    }
+]

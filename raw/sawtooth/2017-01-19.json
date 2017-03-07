@@ -1,0 +1,120 @@
+[
+    {
+        "user": "U3TKE8X3M",
+        "text": "<@U3TKE8X3M|bjorn> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484836832.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "<@U24M29R4G>: good questions",
+        "ts": "1484839910.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "let me take a crack at them",
+        "ts": "1484839939.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "as you probably know, PoET is based on performing a fair leader election by running trusted code in SGX enclaves on participating nodes. Once the prior block is committed, the race for the right to claim the new block begins. Validator nodes all generate their own wait timers at the start of this process.",
+        "ts": "1484840057.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "Wait timers are random times to wait for each validator generated from an exponential random distribution with identical seed values (which are calculated from data from the previous block)",
+        "ts": "1484840129.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "The process of calculating these inputs is deterministic across all validators. The only thing that differs is the random wait time that is produced.",
+        "ts": "1484840175.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "Out of all the validators, one validator will naturally have the lowest wait time. Once its timer expires (again, via trusted attestable execution inside the SGX enclave), it publishes a wait certificate demonstrating proof of all of this and publishes the block out to the network.",
+        "ts": "1484840247.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "initial_wait_time deals with blockchain startup. If you look at the function that deterministically calculates the local mean \u2014 WaitTimer.compute_local_mean(), you will see that for a certain number of blocks ( &lt; fixed_duration_blocks) a fixed formula is used to calculate local mean. After fixed_duration_blocks is reached, the local mean shifts to become a driven by the population estimate of the network. Again, this is based on data on the block chain and will be deterministic for all validators working off the same block.",
+        "ts": "1484840487.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "you can see how this works in WaitTimer.population_estimate()",
+        "ts": "1484840530.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "The target wait time is the desired inter-block duration that you\u2019d like the network to converge on. I believe we use 30 seconds as the default. As the population of the network grows, the local mean is modified so that the exponential random distribution is centered around the target wait time.",
+        "ts": "1484840675.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0Y4ZF0QM",
+        "text": "The certificate history is used as a source of the estimated size of the network based on the diversity of block claimants",
+        "ts": "1484840743.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "<@U24M29R4G> also some example settings here: <https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/validator\/etc\/txnvalidator.js.example#L20>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/sawtooth-core",
+                "title_link": "https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/validator\/etc\/txnvalidator.js.example#L20",
+                "text": "sawtooth-core - Core repository for Sawtooth Lake Distributed ledger",
+                "fallback": "GitHub: hyperledger\/sawtooth-core",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/validator\/etc\/txnvalidator.js.example#L20",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484855216.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "the difference between initial and target times is because the validators haven't had a chance to estimate the size of the network until a few blocks go by.",
+        "ts": "1484855266.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "also noteworthy for the near term is that all nodes on a network need to use the same settings.",
+        "ts": "1484855319.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "If validators A and B have different initial or target times they won't agree with each other.",
+        "ts": "1484855353.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "In coming versions these kinds of settings will be implicit on joining the network and won't be left to individual validator configuration.",
+        "ts": "1484855396.000285"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<@U0Y4ZF0QM>  and <@U0VKPD6A2> thanks for taking time for the detailed explanation on this. it makes sense now. I will try to dig into the code again with your new insights..helps a lot..",
+        "ts": "1484868042.000286"
+    }
+]

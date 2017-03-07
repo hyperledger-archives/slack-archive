@@ -1,0 +1,794 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Hi <@U0UGH3X7X> <@U0XPR4NP4> <@U0XQ35CDD>, shall we start a discussion on how to integrate the MSP into the orderers. I think, it is a good time now. After the discussion I expect I can give you a way to sign messages with the default identity and have support for access control at chain creation and once a chain is created. Please, let me know :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481618847.000000"
+        },
+        "ts": "1481618732.000575"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "Hi..Does ordering service uses PBFT?",
+        "ts": "1481631377.000577"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U12AHQ3NK> in v0.6 or in \"master\"?",
+        "ts": "1481632331.000578"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "in v0.6 we have PBFT but also have a noops orderer (as I remember it is a 1 node orderer which orders by the time of requests)\nin \"master\" we have solo, kafka, and sbft (that is Work In Progress)",
+        "ts": "1481632456.000579"
+    },
+    {
+        "user": "U2W7U5UA3",
+        "text": "<@U2W7U5UA3|pd93> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481635360.000580"
+    },
+    {
+        "user": "U3EQM2RPZ",
+        "text": "<@U3EQM2RPZ|karlkay> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481638068.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, <@U0XQ35CDD> <@U0Y14MWA2> how the validity of a block is verified? May you give me a pointer to the code?",
+        "ts": "1481639064.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "What do you subsume under validity of a block",
+        "ts": "1481639099.000583"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Endosrment policy validation \/ vscc or sth else?",
+        "ts": "1481639168.000584"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that it is signed but enough orderers, I guess",
+        "ts": "1481639300.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> Since blocks aren't signed yet, they aren't verified.",
+        "ts": "1481639429.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We'll create a policy with a name like `BlockValidator` or something like that, which can be applied to the signatures over a block to check for validity.",
+        "ts": "1481639460.000587"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I ask, because for gossip I should provide a VerifyBlock method",
+        "ts": "1481639530.000588"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but the implementation will mostly come from you guys, I was thinking this morning",
+        "ts": "1481639552.000589"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "<@U1AU8DRQR> master",
+        "ts": "1481639564.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay, I will wait then. If help is needed let me know",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481639862.000000"
+        },
+        "ts": "1481639568.000591"
+    },
+    {
+        "user": "U3DB4L15G",
+        "text": "<@U3DB4L15G|svergara> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481639870.000593"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> Yeah, I think this should be pretty simple for you, we'll encode a policy in the chain config block, you'll just pass the signature set into the policy and it will return nil or an error to let you know if the block is valid.",
+        "ts": "1481641404.000594"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "do you mean that different chains might have different block policies?",
+        "ts": "1481641451.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I wouldn't expect for them to out of the gate,  but I would certainly plan to allow that.  Especially once you consider that there's no reason a peer couldn't subscribe to multiple ordering services.",
+        "ts": "1481641502.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "got it, let's start anyway from the simple scenario :slightly_smiling_face:",
+        "ts": "1481641534.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> <@U0N1D1UAE> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3253\/> This removes the queuing entirely from broadcast, I'll open another story and remove the windowing from Deliver as well",
+        "ts": "1481643635.000598",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "After some additional thought, I also realized where the idea of the queues and windowing came from.  In 0.5\/0.6 we were sharing a common gRPC stream between components, which meant that blocking on a gRPC call could cause the stream to fill up, and starve other components, (and lead to deadlocks).  Since we have the clearer separation of concerns in v1, this should no longer be an issue.",
+        "ts": "1481643823.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0ZR63HLK> signatures in sbft can be found in checkpoint.go",
+        "ts": "1481645516.000600"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and from there you could try \"find all references\" if your ide supports it",
+        "ts": "1481645544.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "aha, great",
+        "ts": "1481645693.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I can have a look at that",
+        "ts": "1481645705.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "do we expect that sbft, kafka, etc will have the same way to validate a block?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481645749.000000"
+        },
+        "ts": "1481645741.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "they will have a different one",
+        "ts": "1481645760.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but conceptually the idea should be that peer calls a sth like consensus.verifyBlock funciton",
+        "ts": "1481645788.000607"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which needs to be implemented by every consensus implementation",
+        "ts": "1481645800.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "some will have one signature to verify",
+        "ts": "1481645808.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> We have a generic mechanism for this",
+        "ts": "1481645809.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "some f+1",
+        "ts": "1481645810.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "some 2f+1",
+        "ts": "1481645815.000612"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which one?",
+        "ts": "1481645830.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We have signature policies, where you can require \"N out of {set of signatures}\"",
+        "ts": "1481645853.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For the CFT case, N is 1, for the BFT case, N can be set to f+1 or 2f+1",
+        "ts": "1481645869.000615"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "how is this different from what I mentioned? :slightly_smiling_face:",
+        "ts": "1481645883.000616"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I mean simply that from a consumer's point of view, they simply get the block validation policy, and evaluate it",
+        "ts": "1481645905.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They should not need to worry about the implementation",
+        "ts": "1481645915.000618"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, to validate a block, I need to know the channel it refers to and then I can apply the policy to the block, correct?",
+        "ts": "1481645915.000619"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "The block itself does not tell me to which channel it belongs to, correct?",
+        "ts": "1481645928.000620"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The block will tell you which channel it belongs to",
+        "ts": "1481645937.000621"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you seem to be simplifying implementation of the policy for a consensus implementaiton",
+        "ts": "1481645942.000622"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that is fine",
+        "ts": "1481645944.000623"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because all blocks are non-empty",
+        "ts": "1481645945.000624"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but is still a different implementation",
+        "ts": "1481645949.000625"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And all transactions contain a chainID",
+        "ts": "1481645951.000626"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm asking because gossip needs that",
+        "ts": "1481645978.000627"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, you may simply open up the first transaction and check its chainID, there is a utility method for this in `protos\/utils` I believe",
+        "ts": "1481645981.000628"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "does this policy-oriented implementation account for threshold sigs?",
+        "ts": "1481645998.000629"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "great",
+        "ts": "1481646000.000630"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> This is a better question for <@U0ZR63HLK> \/ <@U1BC5A0F9> but, my understanding is that it should be adaptable,  The `Policy` is also an extensible type, today the types are `oneof { SignaturePolicy }` but, we can add other policy types as well.",
+        "ts": "1481646083.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for my understanding Jason's policy framework is generic enough to handle also threshold sigs",
+        "ts": "1481646129.000632"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I like it :slightly_smiling_face:",
+        "ts": "1481646130.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I do not see threshold coming for v1 but certainly sth that might be possible down the road",
+        "ts": "1481646140.000634"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Jason, we need to \"sit down\" and open a set of issues for merging sbft with common",
+        "ts": "1481646162.000635"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the code is about to be ready for this...",
+        "ts": "1481646179.000636"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "by the way I am not a fan of the name sbft",
+        "ts": "1481646197.000637"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is really spbft",
+        "ts": "1481646208.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if s is to be kept at all",
+        "ts": "1481646220.000639"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway I could use a walk through common to understand all the merge points",
+        "ts": "1481646292.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> Yes, would be happy to do this, would like to get the full flow of solo\/kafka working first, so that we don't have to communicate changes.  I think we are close though.",
+        "ts": "1481647004.000641"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0XPR4NP4> <@U0XQ35CDD> Guys I apologize for any misunderstanding, I don\u2019t believe I said that removing explicit flow control would improve performance, only that it would make things simpler. Also I am confused about  <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3253\/> if applied to the current master branch it will not affect the Kafka orderer. Am I supposed to try this against on of Kostas\u2019 private branches ? If so which one?",
+        "ts": "1481650788.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "inutively performance cannot be worse",
+        "ts": "1481650891.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and likely would be better",
+        "ts": "1481650904.000644"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so Byz HTTP\/2 sender messing up with flow control is ruled out?",
+        "ts": "1481650929.000645"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So testing this properly will need some cherry-picking.",
+        "ts": "1481651141.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N1D1UAE> Simpler with no performance penalty is still a win in my book, and yes, you'll need to wait to test 3253 and Kafka or apply them both manually",
+        "ts": "1481651160.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But we can make it straightforward. Let me finish my rebasing this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3207\/>",
+        "ts": "1481651184.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Then you checkout 3207 and cherry-pick 3253 on top of it.",
+        "ts": "1481651198.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For what it's worth, I'm halfway through removing windowing from the deliver code and it is a very significant complexity reduction, with reduced locking as well, which (by intuition only) should improve performance.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1481651304.000000"
+        },
+        "ts": "1481651227.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But I can always do this myself and push to a private repo. In fact, that's what I'll do.",
+        "ts": "1481651277.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'll need an hour or so.",
+        "ts": "1481651280.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'll post the link here.",
+        "ts": "1481651290.000653"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0Y14MWA2> So far no one has answered Kostas\u2019 question (about whether Go grpc guarantees to reject windowing violations)",
+        "ts": "1481651299.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0XQ35CDD> Thanks",
+        "ts": "1481651310.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "For reference: <https:\/\/github.com\/grpc\/grpc-go\/issues\/1020>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "gRPC server behavior when the client doesn&#39;t respect WINDOW_UPDATE \u00b7 Issue #1020 \u00b7 grpc\/grpc-go \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/grpc\/grpc-go\/issues\/1020",
+                "text": "Does the server close the connection in such cases, as it should? Background: [0] <https:\/\/http2.github.io\/http2-spec\/#rfc.section.5.2.1> [1] <https:\/\/www.imperva.com\/docs\/Imperva_HII_HTTP2.pdf> (secti...",
+                "fallback": "GitHub: gRPC server behavior when the client doesn't respect WINDOW_UPDATE \u00b7 Issue #1020 \u00b7 grpc\/grpc-go",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/14876848?v=3&s=400",
+                "from_url": "https:\/\/github.com\/grpc\/grpc-go\/issues\/1020",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481651388.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok I am watching that one now",
+        "ts": "1481651621.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so if RFC is respected then a GRPC send is (may be) blocking at sender?",
+        "ts": "1481652396.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes. We see that in the latency chart from yesterday. The sender is throttled by the ability of the receiver to process the data.",
+        "edited": {
+            "user": "U0N1D1UAE",
+            "ts": "1481652528.000000"
+        },
+        "ts": "1481652451.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "thks",
+        "ts": "1481652863.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "RFC spirit seems to contain Byz sender",
+        "ts": "1481652900.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but lets wait for the answer",
+        "ts": "1481652908.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/www.imperva.com\/docs\/Imperva_HII_HTTP2.pdf#IMPERVA_HII_HTTP2_report_0816_V1-4.1.indd%3A.21665%3A691> is very interesting",
+        "ts": "1481653923.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i wonder how grpc stands with that \"slow read\" attack",
+        "ts": "1481653954.000667"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "We got a response here: <https:\/\/github.com\/grpc\/grpc-go\/issues\/1020>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481661564.000000"
+        },
+        "ts": "1481661557.000668"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It does take care of it. Besides the links that Menghan included, also check this: <https:\/\/github.com\/grpc\/grpc-go\/blob\/master\/transport\/control.go#L158>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481661666.000000"
+        },
+        "ts": "1481661660.000671"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "thanks Kostas",
+        "ts": "1481662352.000674",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if any maintainers here I have this <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3273\/>",
+        "ts": "1481662371.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I don\u2019t dare review this <@U0Y14MWA2> \u2026 <@U0XPR4NP4> you around ? :slightly_smiling_face:",
+        "ts": "1481662739.000676"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or <@U1AU8DRQR> ?",
+        "ts": "1481662750.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0ULK2JPP> why? :slightly_smiling_face: there is a nice test! :slightly_smiling_face:",
+        "ts": "1481662876.000678"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok, if you put it that way\u2026 let me look :slightly_smiling_face:",
+        "ts": "1481662908.000679"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "inspired by \"real world\", live testing  trace",
+        "ts": "1481662912.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it's amazing how much interleaving can be produced by a non deterministic test",
+        "ts": "1481662941.000681"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the trace interleaving was such that it delays all connections to primary who starts alone and then complains about itself - but this leads to a deadlock",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1481663032.000000"
+        },
+        "ts": "1481662984.000682"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> I can try to take a look in a few, currently running down a different bug",
+        "ts": "1481663003.000683"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so much fun testing this stuff",
+        "ts": "1481663012.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks Jason",
+        "ts": "1481663014.000685"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019ll look but won\u2019t touch then :slightly_smiling_face:",
+        "ts": "1481663027.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Y14MWA2> has made it sound fun :slightly_smiling_face:",
+        "ts": "1481663047.000688"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what can I do - you all ran away from this",
+        "ts": "1481663063.000689"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "leaving me alone",
+        "ts": "1481663065.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with notable exception of <@U1AU8DRQR>",
+        "ts": "1481663079.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so I need to make it sound like fun so somebody joins back",
+        "ts": "1481663091.000692"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I will review everything- but only tomorrow :P as 10 PM here",
+        "ts": "1481663137.000693"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but it is really fun",
+        "ts": "1481663151.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`so I need to make it sound like fun so somebody joins back` \u2026 one of these days I hope !",
+        "ts": "1481663280.000695",
+        "reactions": [
+            {
+                "name": "eyes",
+                "users": [
+                    "U0Y14MWA2"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U112NNFV4",
+        "text": "<@U112NNFV4|joshhus> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481666409.000696"
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "Hello, is SBFT Simplified BFT? ... Google reveals a \"Scalable\" BFT already in the literature. HL general indicates that SPFBT is being discussed. Thanks.",
+        "ts": "1481666525.000697"
+    },
+    {
+        "user": "U312TN2CS",
+        "text": "<@U312TN2CS|nage> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481666851.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U112NNFV4> yes sbft is simplified pbft",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1481667487.000000"
+        },
+        "ts": "1481667455.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it may change name to simplepbft spbft or sth else",
+        "ts": "1481667470.000700"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sbft is not yet carved in the stone",
+        "ts": "1481667475.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I have another one <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3277\/>",
+        "ts": "1481667493.000703"
+    },
+    {
+        "user": "U3DMRHFJ4",
+        "text": "<@U3DMRHFJ4|jeno.gocho> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481671653.000704"
+    }
+]

@@ -1,0 +1,183 @@
+[
+    {
+        "user": "U3GBDEXG8",
+        "text": "<@U3GBDEXG8|hashed_corey> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485115720.002492"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I am again having the same issue when trying to start my fabric network.  I would really appreciate some help.  I'm also fairly new to docker containers so that may be part of my issue.   The membersrvc processes starts up find but my peer node fails to start each time with the below output.  I've also tried to increase the delay before launching my peer node unto 40 seconds to no avail.",
+        "ts": "1485144215.002495"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "vp0_1         | 03:59:37.092 [crypto] Debugf -&gt; DEBU 028 [validator.mytest_vp0] Storing TCA certificate for [mytest_vp0]...\nvp0_1         | 03:59:37.093 [crypto] Debug -&gt; DEBU 029 [validator.mytest_vp0]  Getting ECA client...\nvp0_1         | 03:59:37.093 [crypto] Debugf -&gt; DEBU 02a [validator.mytest_vp0] Dial to addr:[membersrvc:7054], with serverName:[tlsca]...\nvp0_1         | 03:59:37.094 [crypto] Debug -&gt; DEBU 02b [validator.mytest_vp0]  TLS disabled...\nvp0_1         | 03:59:37.094 [crypto] Debug -&gt; DEBU 02c [validator.mytest_vp0]  Getting ECA client...done\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 02d [validator.mytest_vp0] Failed invoking CreateCertficatePair [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set].\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 02e [validator.mytest_vp0] Failed getting enrollment certificate [id=mytest_vp0]: [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set]\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 02f [validator.mytest_vp0] Failed retrieving enrollment data [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set].\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 030 [validator.mytest_vp0] Failed registering node crypto engine [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set].\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 031 [validator.mytest_vp0] Failed registering peer [mytest_vp0]: [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set]\nvp0_1         | 03:59:37.120 [crypto] Errorf -&gt; ERRO 032 [validator.mytest_vp0] Failed registering [mytest_vp0]: [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set]\nvp0_1         | 03:59:37.120 [crypto] RegisterValidator -&gt; ERRO 033 Failed registering validator [mytest_vp0] with name [mytest_vp0] [rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set].\nvp0_1         | Error: rpc error: code = 2 desc = Identity lookup error: sql: no rows in result set\nvp0_1         | Usage:",
+        "ts": "1485144230.002496"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "My docker-compose.yml file is below:",
+        "ts": "1485144285.002497"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "membersrvc:\n   image: hyperledger\/fabric-membersrvc\n   ports:\n     - \"7054:7054\"\n   command: membersrvc\nvp0:\n   image: hyperledger\/fabric-peer\n   ports:\n     - \"8050:7050\"\n     - \"7051:7051\"\n     - \"7053:7053\"\n   environment:\n     - CORE_PEER_ADDRESSAUTODETECT=true\n     - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n     - CORE_LOGGING_LEVEL=DEBUG\n     - CORE_PEER_ID=vp0\n     - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n     - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n     - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n     - CORE_SECURITY_ENABLED=true\n     - CORE_SECURITY_ENROLLID=mytest_vp0\n     - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n   links:\n     - membersrvc\n   command: sh -c \"sleep 40; peer node start --peer-chaincodedev\"",
+        "ts": "1485144286.002498"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U34TJFSCB> what you are trying to do ? can you please explain about setup?",
+        "ts": "1485144529.002499"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I am just trying to start a fabric network with a single node and member services",
+        "ts": "1485144558.002500"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I'm using docker-compose up to start my peer and membersrvc  containers",
+        "ts": "1485144607.002501"
+    },
+    {
+        "type": "message",
+        "user": "U1FEUAG9E",
+        "text": "May be try this  <https:\/\/hub.docker.com\/r\/ibmblockchain\/fabric-peer\/> , it's simpler.  And you have pre-defined docker-compose.yml files for 4X1 and 1X Blockchain Network.",
+        "ts": "1485145140.002502"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I have also tried those.  At one point those docker-compose files worked for me but they too now give me the same error using both the 4x1 and 1x blockchain network",
+        "ts": "1485145220.002503"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "A search on the web led me to one comment saying that I should add a delay in my docker-compose.yml file before starting my peer node.  I have done this but it too is resulting in the same problem.",
+        "ts": "1485145316.002504"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "command: sh -c \"sleep 10; peer node start\"",
+        "ts": "1485145320.002505"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I've increased this sleep time unto 40 but to no avail.",
+        "ts": "1485145354.002506"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U34TJFSCB> run following command and tell the output\n\ndocker ps -s",
+        "ts": "1485145426.002507"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "$ docker ps -s\nCONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES               SIZE",
+        "ts": "1485145535.002508"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "nothing is listed",
+        "ts": "1485145541.002509"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "so you have not run docker-compose up command yet",
+        "ts": "1485145557.002510"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "please run docker-compose up then run above mentioned command",
+        "ts": "1485145571.002511"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "fd1f0cb187e8        hyperledger\/fabric-membersrvc   \"membersrvc\"        10 minutes ago      Up 51 seconds       0.0.0.0:7054-&gt;7054\/tcp   tmp_membersrvc_1    23 kB (virtual 1.42 GB)",
+        "ts": "1485145673.002512"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "run following commands:-\n\ndocker exec -it tmp_membersrvc_1  rm -rf \/var\/hyperledger\/production\n\ndocker commit fd1f0cb187e8 hyperledger\/fabric-membersrvc",
+        "ts": "1485145733.002513"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "after then stop existing docker-compose",
+        "ts": "1485145764.002514"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "again restart using docker-compose up",
+        "ts": "1485145773.002515"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "your problem will be resolved",
+        "ts": "1485145780.002516"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "Just to be clear is it :",
+        "ts": "1485145786.002517"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "docker exec -0t tmp_membersrvc_1 rm -rf \/var\/hyperledger\/production",
+        "ts": "1485145810.002518"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "exec -it** not 0t",
+        "ts": "1485145831.002519"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "That was a typo.  There is a line wrap so I couldn't tell if that was two separate commands.  Sorry, I'll run that.",
+        "ts": "1485145847.002520"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "both two are separate commands",
+        "ts": "1485145903.002521"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I'm restarting with docker-compose up but I got the same problem",
+        "ts": "1485145965.002522"
+    },
+    {
+        "type": "message",
+        "user": "U3SCKQB4P",
+        "text": "shaggy_kp can you share your docker-compose. yml file ?",
+        "ts": "1485148381.002523"
+    }
+]

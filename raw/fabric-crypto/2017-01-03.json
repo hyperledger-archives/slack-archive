@@ -1,0 +1,75 @@
+[
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "hi, I found the crypto in fabric is always using same hashAlgorithm for Digest, HMAC and ECDSA, which means we have one primitive security level used by all different Symmetric and Asymmetric primitives, which is definitely a bad practice in cryptography.",
+        "ts": "1483492682.000915"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "for example the sdk spec decide to use secp256r1\/secp384r1 which by specification, should use SHA2-256 and SHA2-384, We shouldn't randomly choose a SHA3-256 for secp384r1  in this case. Same thing apply to HMAC-SHA3, which is actually a common misusing wrap when SHA3(Keccak) can be used directly for MAC without implement HMAC.",
+        "ts": "1483492982.000916"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "This also introduce troubles when we don't have such \"customizable(unstandardized)\" ECDSA implementations in other platforms like python and nodejs.",
+        "ts": "1483493247.000917"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "In Fabric 1.0 , we are taking care of these scenario by virtue of implementing BCCSP.",
+        "ts": "1483497024.000918"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "<@U221LL03Z>  thanks for pointing out, but AFAIK, CryptoSigner is still accepting a flexible digest as input, which means signing function doesn't enforce an entropy required from secp256r1 for example",
+        "ts": "1483499229.000919"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "My concern about this flexibility is it may introduce complexity and potential flaw while implementing.",
+        "ts": "1483499380.000920"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "Hope we can make it more clear in spec, that which kind of ciphersuites are valid.",
+        "ts": "1483499507.000921"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "like in fabric-cop, it showing a better model, having such suites defined: prime256v1 as `ecdsa-with-SHA256`, secp384r1 as `ecdsa-with-SHA384` and secp521r1 as `ecdsa-with-SHA512`",
+        "ts": "1483499831.000922"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yeah. Cipher suites represent capability that we offer and we need to make sure , it is contextual. So , the clearer boundaries are , the better off we are.",
+        "ts": "1483500079.000923"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "agree",
+        "ts": "1483500181.000924"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "a quick question, are we still going to keep SHA2 family as specified in RFC5480 for ecdsa in cop?",
+        "ts": "1483500585.000925"
+    },
+    {
+        "user": "U3HN4GFA9",
+        "text": "<@U3HN4GFA9|tzipih> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483503786.000926"
+    }
+]

@@ -1,0 +1,184 @@
+[
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Hi, I'm trying to deploy and invoke a chaincode (HFC in vagrant &amp; docker-compose setup)..I'm getting below error for deploy --any idea ?",
+        "ts": "1475750436.000193"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "vagrant@hyperledger-devenv:v0.1.0-fc09672:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node$ node .\/test\/unit\/app.js\n$DEPLOY_MODE: dev\nenrolling user admin ...\ndeploying chaincode; please wait ...\nFailed to deploy chaincode: request={\"chaincodeName\":\"mycc11\",\"fcn\":\"init\",\"args\":[],\"attrs\":[\"role\"],\"chaincodePath\":\"\/opt\/gopath\/src\/ReferenceData01\"}, error=%k { error: { [Error: {\"created\":\"@1475750373.414884251\",\"description\":\"EOF\",\"file\":\"..\/src\/core\/lib\/iomgr\/tcp_posix.c\",\"file_line\":235,\"grpc_status\":14}] code: 14, metadata: { _internal_repr: {} } },\n  msg: 'Error: {\"created\":\"@1475750373.414884251\",\"description\":\"EOF\",\"file\":\"..\/src\/core\/lib\/iomgr\/tcp_posix.c\",\"file_line\":235,\"grpc_status\":14}' }",
+        "ts": "1475750441.000194"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U13Q594J2> - FYI - I solved my issue - a few noob mistakes on my end - sorry for wasting your time yesterday...",
+        "ts": "1475759824.000195"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U2CC1NDT2> Good to know you have solved the problem :slightly_smiling_face:",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1475760198.000000"
+        },
+        "ts": "1475760075.000196"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U1F3CQ2HX> Please letme know if my understanding is correct\n1. From the log I assume you are deploying chaincode in dev-mode\n2. Chaincode is placed inside the folder \"\/opt\/gopath\/src\/ReferenceData01\" or `\/opt\/gopath\/src\/ReferenceData01\/src\/&lt;chaincode&gt;`\n\nAlso , a couple of questions\n1. are you starting the peer in dev-mode too ? \n2. Can you share the peer debug logs which might give some clue on what is going wrong",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1475760429.000000"
+        },
+        "ts": "1475760379.000198"
+    },
+    {
+        "user": "U1L2C9F3R",
+        "text": "<@U1L2C9F3R|cdaughtr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475762488.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0P1VU0QG",
+        "text": "Quick question (hopefully): can the hfc version 0.6.2 (latest release as of today) consume custom chaincode events yet or is it for a future release (as per the <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/sdk\/node\/test\/unit\/event-tests.js> sample)? \nIt seems that I am able to generate an event from the chaincode (as it appears ok within the block within the chaincodeEvents array) but my node app that is attempting to consume it can NOT actually detect it.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/sdk\/node\/test\/unit\/event-tests.js",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/sdk\/node\/test\/unit\/event-tests.js",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0P1VU0QG",
+            "ts": "1475762910.000000"
+        },
+        "ts": "1475762816.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U0P1VU0QG> yes, the event support should be in npm version 0.6.2. <@U0KQ9QKH6> would be able to help more with event issues.",
+        "ts": "1475763177.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0P1VU0QG",
+        "text": "A ok, thanks <@U0Z81GL6S>, let me try a bit more troubleshooting before asking for help: I guess this is the right channel anyway for these kind of questions?",
+        "ts": "1475764157.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0P1VU0QG",
+        "text": "OK, great, I got round it\u2026other people may hit the same issue: the sample code in event-tests.js use this regex for eventName:\n`var regid = eh.registerChaincodeEvent(chainCodeID, \"^evtsender$\", function(event) {`\nwhich didn\u2019t work for me",
+        "ts": "1475764730.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0P1VU0QG",
+        "text": "but this worked ok:\n`var regid = eh.registerChaincodeEvent(chainCodeID, \"evtsender\", function(event) {`",
+        "ts": "1475764756.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0P1VU0QG",
+        "text": "My bad\u2026the event-test.js in master is using this `eventNameFilter: RegExp;` as opposed to the v0.6 branch which was defined that way: `eventname: string;`",
+        "ts": "1475765682.000209"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "<@U13Q594J2> here are details -\n1. yes, running in dev mode\n2. its placed in \"\/opt\/gopath\/src\/ReferenceData01\"",
+        "ts": "1475765742.000210"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U1F3CQ2HX> just wanted to confirm if you are not missing the step `CORE_CHAINCODE_ID_NAME=mycc11 CORE_PEER_ADDRESS=0.0.0.0:7051 .\/&lt;chaincode2&gt;`",
+        "ts": "1475766143.000211"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Yes I did this step from a another vagrant terminal with correct peer address",
+        "ts": "1475766204.000212"
+    },
+    {
+        "user": "U0Z6VMEER",
+        "text": "<@U0Z6VMEER|beauson45> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475786041.000213"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "thanks <@U13Q594J2> for providing your test app for TLS",
+        "ts": "1475787300.000214"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "we followed your instructions and indeed were able to run your TLS enabled app",
+        "ts": "1475787338.000215"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "at the same time node sdk unit tests still cannot establish tls connection (v0.6)",
+        "ts": "1475787373.000216"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "we have tried to figure out if you made any significant changes in your app to make it work and nothing we have tried so far works",
+        "ts": "1475787411.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1599\/>",
+        "ts": "1475788342.000218"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U1AASP2SJ> There  are some patches available with unit tests with tls on , <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1303\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1305\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1307\/>",
+        "ts": "1475789835.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U1AASP2SJ> <@U13Q594J2> FYI that the three change sets above will also be merged into the v0.6 branch as soon as they are merged into master. so please stay tuned for that branch. thanks.",
+        "ts": "1475804772.000220"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "All, I published the v0.6 node.js SDK\u2019s generated API doc to <https:\/\/jimthematrix.github.io\/modules\/_src_hfc_.html> as a temporary location until we figure out a more appropriate location to host it. Feel free to share that in the meanwhile.",
+        "ts": "1475813342.000221",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z81GL6S"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

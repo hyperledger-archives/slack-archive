@@ -1,0 +1,638 @@
+[
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "regarding the above discussion about when to \"cut\" a block: if this is the only reason to introduce some non-modular addon to the kafka system, then we should not do blocks. after all, the block in blockchain is an artefact of bitcoin's protocol. \nkafka uses a stream or sequence of messages, and logically that is what we need. fundamentally there is no need for blocks other than to keep a superficial similarity with the PoW consensus.",
+        "ts": "1477035141.002478"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Well, and on top of that, Kafka thrives performance-wise when it's dealing with small messages (in the single kB range -- not that it's bad otherwise, it'll probably still outperform whatever custom mechanism out there).",
+        "ts": "1477055482.002479"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But then the model between the two cases (CFT and BFT) becomes considerably different. In the BFT case we deal with blocks\/batches on purpose, for performance reasons.",
+        "ts": "1477055582.002480"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "If I start a peer directly in the vagrant dev env vm, where is it\u2019s state saved?",
+        "ts": "1477057036.002481"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1KDAMDJ7> `\/var\/hyperledger\/production`. This is also shown in the `core.yaml` file.",
+        "ts": "1477057174.002482"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "thanks",
+        "ts": "1477057237.002483"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XPR4NP4> <@U0XQ35CDD> stupid question: what\u2019s the future work on pbft like? isn\u2019t that orthogonal to v1.0 architecture, other than maybe refactoring it to comply to the new orderer interface, which is just two methods: broadcast() and deliver()",
+        "ts": "1477058655.002484"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i know part of it is adopting gossip",
+        "ts": "1477058723.002485"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U13TWBRBL> That's correct.  <@U0XR6J961> has actually produced a sort of next gen pbft called sbft (simple bft) which we intend to use for v1",
+        "ts": "1477058726.002486"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "right?",
+        "ts": "1477058728.002487"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ah ok",
+        "ts": "1477058736.002488"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hardening it is a lower priority item than getting the end to end flow solid via Kafka, so although it may be an experimental option, I would not expect for sbft to be 'production ready' anytime soon",
+        "ts": "1477058800.002489"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Gossip I think is orthogonal to pbft\/sbft, those will still rely on point to point links.  Gossip is intended to help the peer network scale",
+        "ts": "1477058854.002490"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "Gossip is intended to help the peer network scale, meaning \u201ccommitters\u201d right? the consenters won\u2019t be using gossip?",
+        "ts": "1477058968.002491"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Referring to committers, yes.  In the terminology that seems to be used most frequently, 'peers' are anything which has a copy of the validated \/ evaluated ledger.  'orderers' are the nodes which provide the ordering service.  The ordering network runs some form of consensus.  The peers may also choose to run some consensus on the validated ledger via the gossip network.  So, we try not to use the word 'consenter' as this is an ambiguous term.",
+        "ts": "1477059109.002492"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok, fair enough, so the consensus network\/cloud won\u2019t be using gossip?",
+        "ts": "1477059248.002493"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct.",
+        "ts": "1477059255.002494"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and the reason is? (just curious)",
+        "ts": "1477059281.002495"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I think the question should be reversed: why would it have to use gossip? For one, the cardinality of the orderer set is much smaller than the peer set.",
+        "ts": "1477059342.002496"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "interesting, i thought the opposite was true: the size of the consensus network (in terms of # of nodes) should be much larger compared to # of peers",
+        "ts": "1477059469.002497"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i understand that peer nodes number is open ended",
+        "ts": "1477059499.002498"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is nothing which prevents an ordering network from using gossip, but for pbft\/sbft the integrity of the point to point link between nodes is critical to the design\/security of the protocol.  For other ordering networks like Kafka, they seem to have chosen point to point as well, which makes sense, because gossip is great for large numbers of nodes, but bad for latency.",
+        "ts": "1477059533.002499"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would expect the ordering network to have comparatively few nodes to the peer network",
+        "ts": "1477059576.002500"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I can see no reason why would you want the number of nodes participating in the orderer network being larger than the peer network.",
+        "ts": "1477059584.002501"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The ordering network runs nearly zero business logic, it simply orders transactions.  It must, to allow for ACL management and a few other things process a very minimal 'configuration transaction' periodically, but this should be low overhead and rare.",
+        "ts": "1477059632.002502"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XPR4NP4> thanks for that on latency, makes sense",
+        "ts": "1477059639.002503"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is the peer network which actually maintains the complicated world state, generates and evaluates proposals, etc.  The peer network should need larger numbers in order to effectively scale.",
+        "ts": "1477059683.002504"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "A better way to put it: there is zero relationship between the size of the orderer set and the peer set.",
+        "ts": "1477059701.002505"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XQ35CDD> <@U0XPR4NP4> if i were to set up a network, i want the consensus cloud to be as large as i can afford so as to maximize the cost of collusion",
+        "ts": "1477059726.002506"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No, you want the nodes of the consensus network to be picked in such a way that the possibilities for collusion are minimized.",
+        "ts": "1477059776.002507",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok",
+        "ts": "1477059803.002508"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> <@U0XQ35CDD>  - for the comms between the orderers and the peers, would it make sense to use the same gossip protocol that may be used between peers?   Or do we still go with a point to point link for peers to orderers  (and then in the future for peers which can't contact ordering nodes directly rely on the peer gossip protocol)?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477060133.000000"
+        },
+        "ts": "1477060092.002509"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The latter is what I have in mind.",
+        "ts": "1477060126.002511"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I assumed as much and I think everyone is on the same page there but just wanted to check",
+        "ts": "1477060182.002513"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That was also my assumption.  I would think for gossip to be effective, both sides need to be able initiate connections, but I would expect in most cases, a network link initiated from the ordering service would not be able to contact a peer directly",
+        "ts": "1477060276.002514"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't it basically a question of scalability + network conditions? If you have a lot of peers (1000) and only a small amount of orderers (i.e BFT) and maybe lots of network hiccups (bad WAN lines), I think gossip can be used even for consenters &lt;---&gt; peers.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477060835.000000"
+        },
+        "ts": "1477060421.002515"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF> - I would assume that you will ALWAYS need some number of peers to be directly connected to the ordering service.  We could then use gossip for those peers to \"re-broadcast\" to nodes which cannot directly reach the ordering service.   As I think I once stated, I thought that one of the assumptions for atomic broadcast was that you actually rebroadcast to other peers you know about the first time you see a message.  I know we are not there yet, but that's how I would see gossip playing in terms of relaying",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477060862.000000"
+        },
+        "ts": "1477060836.002517"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I assume you're saying this only because the consenters don't keep the state, and sending via gossip isn't \"atomic broadcast\"",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477061283.000000"
+        },
+        "ts": "1477060900.002519"
+    },
+    {
+        "user": "U13P6TLER",
+        "text": "<@U13P6TLER|ozzyatwork> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477066805.002523"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I always like to go back to 'ordering as a service'.  In this case, I would assume that the peer admin has a peer network on some LAN\/VPN behind firewalls and other access control to keep random people from being able to attack it.  Then, the peer admin punches an outgoing hole in the peer network firewall to the ordering service, so that the peers can connect to it.  It doesn't seem realistic to me to expect the ordering service to be able to connect to the peers in this scenario, in which case the point to point style connections to the orderer with gossip among the peers makes much more sense to me.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477069377.000000"
+        },
+        "ts": "1477069350.002524"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, empirically speaking, if you embed our gossip component in an orderer, it's only a matter of time until the probability-based gossip phase will make the peer connect to the orderer, and then the orderer can gossip to it because the gRPC stream is bidi.",
+        "ts": "1477069475.002526"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "our communication layer considers a remote peer \"responsive\" if you are connected to it or it is connected to you",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477070442.000000"
+        },
+        "ts": "1477069516.002527"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I am just not sure what the advantage to gossip is in this scenario?  How is this better than having the a peer probabilistically determine whether it connects point to point to the ordering service, then disseminates via gossip?",
+        "ts": "1477070446.002529"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, hmmm... I actually really like this idea you just proposed",
+        "ts": "1477070522.002530"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, isn't that dangerous?",
+        "ts": "1477070564.002531"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I assume your \"direct connection to the orderer\" code is the one that ensures atomic broadcast, right?",
+        "ts": "1477070605.002532"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not following",
+        "ts": "1477070646.002533"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what if we're really unlucky, and only 1 peer connected directly (bad coin tosses)? that means everything goes through him",
+        "ts": "1477070650.002534"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "lets say you have a PBFT orderer",
+        "ts": "1477070666.002535"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay",
+        "ts": "1477070676.002536"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and 10 peers and 9 of them said \"I'll connect via gossip\" and only 1 of them connected directly",
+        "ts": "1477070698.002537"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when the PBFT sends a transaction, it ensures that 1 peer got it, right? atomic broadcast",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477070757.000000"
+        },
+        "ts": "1477070745.002538"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, I think you may be misunderstanding atomic broadcast",
+        "ts": "1477070762.002540"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ignore PBFT, because it doesn't really matter.  For an atomic broadcast service, clients can connect in and call `Broadcast` to cause a message to enter the service for ordering.  Other (or the same) clients may call `Deliver` with a specified offset, and receive a stream of ordered messages (in our case, in blocks) starting from that offset, and continuing as they are produced.  The contract from the ordering service, is that everyone gets the same `Deliver` messages, in the same order, regardless of which ordering node the client connected to.",
+        "ts": "1477070916.002541"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, in this case, if you have 10 peers, an 9 of them decide to gossip, and only 1 of them decides to connect to the ordering service, if that one has a problem, or decides not to forward things, after some period of time, the 9 would recompute their 'do I connect' logic, and connect to the ordering service with the offset of the first block they don't have, and pull down the stream of blocks, and everything would be fine.",
+        "ts": "1477070989.002542"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The only real 'danger' would be if the ordering service prunes after some period of time, but given a sufficiently long pruning window, and sufficiently frequent recomputation of 'do I connect' at the peer side, this should be fine.",
+        "ts": "1477071031.002543"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"after some period of time\" - I thought consenters don't keep the ledger inside, how can you be sure that the consensus service kept the parts that were not delivered?",
+        "ts": "1477071068.002544"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and, how can the other peers even \"know\" they were supposed to get blocks?",
+        "ts": "1477071082.002545"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Out of the gate, the ordering service will likely retain the ledger indefinitely.",
+        "ts": "1477071093.002546"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh...I didn't know that.",
+        "ts": "1477071110.002547"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Eventually, pruning will need to happen, but I would expect for the pruning interval to be weeks or months",
+        "ts": "1477071115.002548"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sufficiently long, that the peer network should notice the problem and correct it.",
+        "ts": "1477071150.002549"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok, then all is good. I thought only Kafka has that capability (because it comes with it) and that PBFT won't have the ledger",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477071180.000000"
+        },
+        "ts": "1477071164.002550"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, PBFT will definitely have a ledger, and allow seeking",
+        "ts": "1477071178.002551"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We considered having some rule for \"once it's been delivered, it's okay to prune\"",
+        "ts": "1477071188.002553"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But that gets very tricky, because that depends on how many faults you want to tolerate at the peer side",
+        "ts": "1477071202.002554"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And then the orderers must consense about who has delivered what",
+        "ts": "1477071218.002555"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "At the end of the day 'retain it for a long time' is much simpler, and I think much more practical",
+        "ts": "1477071233.002556"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok so what about my other question:\n```\nand, how can the other peers even \"know\" they were supposed to get blocks?\n```",
+        "ts": "1477071244.002557"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's a valid question, and one that you could try to solve probabilistically, but  I think the simple answer would be, if I were a peer admin, I would want to ensure that at least one of my peers is connected to the ordering network at all times.",
+        "ts": "1477071477.002558"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In fact, as you design the gossip network, I wonder if specifying the ability to select 'mandatory peers' would be a good idea",
+        "ts": "1477071523.002559"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If I administer 10 peers, on a network of 1000 peers.  I want to make sure that each peer is connected to 10 other peers, including 2 of my 10.  For instance.",
+        "ts": "1477071556.002560"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I also think that \"privileged peers\" that are always connected to the ordering service and \"peripheral peers\" that are connected via gossip is the way to go",
+        "ts": "1477071587.002561"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i.e it can be passed in the configuration",
+        "ts": "1477071606.002562"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, you're saying that you're trying to minimize the hop count, right? I think what's needed is actually the opposite-  that peers that are connected directly to the ordering service don't pick to disseminate to peers that announce that they are also connected to the ordering service, that way they only forward to peripheral peers. It's actually really easy to incorporate into the existing code :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477071813.000000"
+        },
+        "ts": "1477071639.002563"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, more, that I want to make sure that my peers have up to date information.  And the only way to be sure of this is to ask the orderer.  So, I want to make sure I can ask someone I trust (ie one of my peers) if I missed anything.",
+        "ts": "1477071825.002566"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Ok, I got it.",
+        "ts": "1477071898.002567"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It makes less sense for a large network, but in the 10 node network you describe, I would want to make sure one of my peers is privileged",
+        "ts": "1477071901.002568"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what makes less sense? I'd say in a 10 node network, make them all connect to the orderer...",
+        "ts": "1477071941.002569"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "by the way, I did some thinking about multi-channel support and wrote something in <#C2HHHJCSU|fabric-gossip-dev> , you're more than welcome to take a look and comment if you have the time.",
+        "ts": "1477071993.002570"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The larger the network, the more I can 'trust it', because there are so many more interests at stake, and therefore it's much harder to censor information to my peers.  In a 10 node network, as you point out, if only 1 peer ends up connecting to the ordering service, and decides to not tell, then we have a problem. [Edit: That is why requiring one of my peers talk to the orderer directly makes less sense in a large network]",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477072081.000000"
+        },
+        "ts": "1477072011.002571",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, thanks, so many channels, hard to keep up",
+        "ts": "1477072032.002572"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And agreed, in a 10 peer network, everyone should simply connect to ordering",
+        "ts": "1477072113.002574"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "and who asked yacov to create <#C2HHHJCSU|fabric-gossip-dev> ?  hmmm ? :innocent:",
+        "ts": "1477072161.002575",
+        "reactions": [
+            {
+                "name": "upside_down_face",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XR6J961> <@U0PB67X4K> <@U0XPR4NP4> <@U0ZJZBJLF> this is somewhat related to discussions above but from slightly different angle. the application would need to make contact with the consensus cloud on the broadcast side (just like peers on the deliver side), for trustworthiness purposes it\u2019d also want to connect to more than one consensus node, preferably f+1. is that accurate?",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1477076230.000000"
+        },
+        "ts": "1477076178.002576"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "if so, does it make sense for each org\/enterprise to set up a proxy node to the consensus cloud which will communicate to f+1 consensus nodes and leaves the applications shielded from these concerns?",
+        "ts": "1477076196.002577"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "question originated from <https:\/\/jira.hyperledger.org\/browse\/FAB-476>",
+        "ts": "1477076217.002578"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think you need to be aware of multiple ordering nodes from an availability perspective but don't necessarily need to be connected to a specific number of them.  You of course maintain a list a round robin between them as well.  I think you would want to keep track of whether or not your transactions made it through though - for example if you used one ordering node and detected that some number of transactions were never processed you would want to switch to another node ",
+        "ts": "1477076488.002580"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Well that's my opinion.  I like the idea of round robin approach tho",
+        "ts": "1477076536.002581"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "yes, a lot of logic like this sounds like middleware instead of having each application do that",
+        "ts": "1477076548.002582"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "such logic (round robin, rotating list) can be built into a proxy node that serves all apps against a consensus cloud for that org\/enterprise",
+        "ts": "1477076599.002583"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "(I had the same round-robin idea in my discussion in FAB-476)",
+        "ts": "1477076630.002584"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess it would depend on how many apps an enterprise had.  ",
+        "ts": "1477076713.002585"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With respect to the byzantine attacks, as you point it, our primary concern is censorship, either in not forwarding transactions for ordering, or in not delivering blocks as they are created.  Both of these should be pretty detectable from the client side.  If a peer has not received a block in some amount of time from the consensus service, or if it learns that it's behind relative to other peers, it should try another ordering node.  If a client submits trans to be broadcast and after some period of time, some percentage of them were never processed, it should switch nodes as well.",
+        "ts": "1477077034.002586"
+    }
+]

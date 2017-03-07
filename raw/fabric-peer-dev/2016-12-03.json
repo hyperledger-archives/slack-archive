@@ -1,0 +1,708 @@
+[
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> we could do that \u2026 but chaincode dev does not have to return that error unless the interface returns ChaincodeError (in which case we\u2019ll break the interface again)",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480768477.000000"
+        },
+        "ts": "1480768451.001284"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess I was looking at it from the perspective that a chaincode developer could have the option of returning either a plain old `error` or they could return a `ChaincodeError` if they so desired",
+        "ts": "1480772722.001286"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess I am not sure what generic types of errors we would expect developers to return from chaincode so perhaps I am a bit confused?",
+        "ts": "1480772826.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "moreever, instead of having a `ChaincodeError` type, we could theoretically have a `FabricError` type - and then various parts of the system could gradually start to return more detailed errors if they wanted but we'd also be compatible with anything that returned or expected a Go `error`",
+        "ts": "1480772929.001288"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that was my thinking",
+        "ts": "1480772933.001289"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Right, let me think...",
+        "ts": "1480774107.001290"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "when the endorser system executest a chaincode, the following can happen (1) no error, happy path (2) error from chaincode on biz logic (bad input, invalid user etc) (3) error from fabric (say chaincode not found) (4) infratructure errors inside the chaincode (say resource not found or something unexpected)",
+        "ts": "1480774304.001291"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "1 and 2 should be endorsed (even if its a biz logic error, we want to endorse it and save the failed (but valid otherwise) tx on the ledger",
+        "ts": "1480774398.001292"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "3) should not be endorsed",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480774429.000000"
+        },
+        "ts": "1480774420.001293"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(4) really is upto chaincode\u2026 only the chaincode exec really knows if this error is something that\u2019s \u201cwell understood\u201d and can be endorsed or something unexpected which should be bailed out",
+        "ts": "1480774486.001295"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so bottom line, the endorser system needs to know how to deal with the result from the chaincode",
+        "ts": "1480774510.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as you say, we can take the generic approach that if a plain \u201cerr\u201d never endorse or if ChaincodeErr, look in it to see what should be done (if code &gt;= 500 then chancode indicates \u201cdon\u2019t endorse\u201d)",
+        "ts": "1480774575.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or we can change the interface to do a Response return \u2026. to keep it simple. The other thing about a single Response is that is language friendly\u2026 Java can return 1 arg too",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480774830.000000"
+        },
+        "ts": "1480774659.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(gosh I hate it when I have to type so much\u2026 makes me feel I\u2019m babbling :slightly_smiling_face: \u2026 sorry for the length)",
+        "ts": "1480774703.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0PB67X4K> what we would have to do in the interface impl is to return the status as alternative method I mentioned\n```func (ce *ChaincodeError) Error() string {\n    return ce.status + \u201c \u2014 \u201c +ce.message\n}```",
+        "ts": "1480778941.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "Also if we returned something else as an impl of Error interface (as opposed to mixin type), we would have to type cast to call specific functions from our object",
+        "ts": "1480779123.001303"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - sorry - missed your alternative",
+        "ts": "1480779213.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT - <@U0ULK2JPP>  <@U0KN2SSKE>  - I am a bit confused as to what we are trying to do here.  \n\n`Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) `   - this is the method by users in their user-defined chaincode",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480779412.000000"
+        },
+        "ts": "1480779282.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so are we trying to give chaincode developers a set of error \/ status codes to choose from?   I guess I am not quite understanding the purpose unless you are saying that we would distinguish between some pre-determined status codes returned by users in their chaincode",
+        "ts": "1480779400.001306"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "right, we are trying to enable a chaincode to return `status-code`, like http",
+        "ts": "1480779435.001308"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So are you going to specify a list for users to choose from?   from an end-user perspective, what difference does it make in having a code come back versus just the error message?  Not like we can populate the status code ourselves - users would have to do this",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480779548.000000"
+        },
+        "ts": "1480779532.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "yes, we would follow http status codes",
+        "ts": "1480779624.001311"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "a subset to be exact",
+        "ts": "1480779642.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "to me status-code is more a means to achieve the following - \u201cI got an error when attempting to call the chaincode\u2026 how can I determine if I should proceed to endorse the proposal  or throw it away\u201d. \u2026 some indication from the chaincode (if the error happened during executing the chaincode) would be necessary. Status code could be used to do that (anything &gt;= 500 is \u201cdon\u2019t endorse\u201d)",
+        "ts": "1480779733.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Why make it more complex then return` []byte` for endorsement and `error` for no endorsement",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480779836.000000"
+        },
+        "ts": "1480779793.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`[]byte( \u201cyou don\u2019t have 100 in your account\u201d), nil`",
+        "ts": "1480779851.001316"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "?",
+        "ts": "1480779853.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we can do that, but the app logic becomes heavy",
+        "ts": "1480779911.001318"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no - that's not what I mean",
+        "ts": "1480779923.001319"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "we can use []byte to achieve the purpose, but it is clunky\/hacky",
+        "ts": "1480779923.001320"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1480779927.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Oh I see\u2026 you are saying `if []bytes != nil, endorse else don\u2019t` ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480780066.000000"
+        },
+        "ts": "1480780051.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am thoroughly confused here honestly.  So let's take <@U0ULK2JPP> example.  \n\n1) The proposal is to transfer 100 from A to B.   \n2) In their chaincode function, they discover that A has less than $100\n3) they return `nil,errors.New(\"insufficient balance\")`",
+        "ts": "1480780068.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ESCC sees that error is populated and does not sign it",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480780111.000000"
+        },
+        "ts": "1480780101.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1480780124.001327"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or if they DO want to sign that",
+        "ts": "1480780140.001328"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So unless the idea here is to give a more uniform format for customers to decide their OWN status codes and logic to couple chaincode and custom ESCC, I see no value",
+        "ts": "1480780164.001329"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "1) The proposal is to transfer 100 from A to B.   \n2) In their chaincode function, they discover that A has less than $100\n3) they return `[]byte(\u201cthis transfer will not take place\u201d), errors.New(\"insufficient balance\")`",
+        "ts": "1480780201.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "why return anything other than an error?",
+        "ts": "1480780235.001331"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess the better question is where \/ how do you see this \"status code\" being used?",
+        "ts": "1480780312.001332"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cuz I'm still not seeing it",
+        "ts": "1480780320.001333"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok\u2026 suggest let\u2019s ignore status code for the time being",
+        "ts": "1480780355.001334"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "the escc needs to decide whether to endorse or not \u2014 given a status-code to carry the semantics of the chaincode would allow the escc to make the decision \u2014 as i said, []byte would do but hacky",
+        "ts": "1480780366.001335"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but why would the decision not have been made in the chaincode in the first place?",
+        "ts": "1480780401.001336"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I mean I'm fine if we are trying to enable users to write cleaner switch statements with their own custom status code (int32 is nice for this), but I really kinda struggle with it.",
+        "ts": "1480780555.001337"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and I guess if people want to use the default ESCC we tell them to use status=200 or some reserved value?",
+        "ts": "1480780645.001338"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "good question \u2014 i was thinking that some errors (like murali\u2019s example) still need to be endorsed (business reasons), so it isn\u2019t error=no endorse;  business might want to endorse even in case of errors",
+        "ts": "1480780691.001339"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "just added flexibility in our chaincode interface model",
+        "ts": "1480780731.001340"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well I can live with it, but it's another change which is going to result in changing code in a bunch of places and also going to make it harder to move chaincode from v0.6 to v1.0",
+        "ts": "1480780844.001341"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":disappointed:",
+        "ts": "1480780871.001342"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":disappointed: I know\u2026 we were debating that",
+        "ts": "1480780873.001343"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1480780875.001344"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "two faces with one thought",
+        "ts": "1480780881.001345"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but here\u2019s the deal Gari\u2026 `func Invoke(stub)  Response` does present a nice interface\u2026 once we have this we can stuff anthing into Response going forward",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480781031.000000"
+        },
+        "ts": "1480780964.001346"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "is args coming back?",
+        "ts": "1480780996.001347"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":wink:",
+        "ts": "1480781000.001348"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and maps nicely to `return one arg` with jave",
+        "ts": "1480781014.001349"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "oops, I hope not :slightly_smiling_face:",
+        "ts": "1480781022.001350"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "just kidding  :wink:",
+        "ts": "1480781028.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there",
+        "ts": "1480781034.001353"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let\u2019s simmer that for a bit .. end of day I just need to know how to distiguish various responses from chaincode in the endorser.",
+        "ts": "1480781116.001354"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I do have one more thing \u2026real quick",
+        "ts": "1480781128.001355"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so I got rid of DefaultChain from the chaincode framework and chainID has to flow top down everywhere",
+        "ts": "1480781165.001356"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the buck stops at `peer node start` now",
+        "ts": "1480781175.001357"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "without \u201cjoin\u201d I have to pass the  chainID during start so we can continue testing which waiting for join and bootstrap",
+        "ts": "1480781232.001358"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3A85GBT4\/pasted_image_at_2016_12_03_11_07_am.png|Pasted image at 2016-12-03, 11:07 AM> and commented: that\u2019s in peer\/node\/start.go",
+        "file": {
+            "id": "F3A85GBT4",
+            "created": 1480781270,
+            "timestamp": 1480781270,
+            "name": "Pasted image at 2016_12_03 11_07 AM.png",
+            "title": "Pasted image at 2016-12-03, 11:07 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 158673,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3A85GBT4\/pasted_image_at_2016_12_03_11_07_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3A85GBT4\/download\/pasted_image_at_2016_12_03_11_07_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 189,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 252,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 379,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 505,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A85GBT4-9d2bb76780\/pasted_image_at_2016_12_03_11_07_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 538,
+            "image_exif_rotation": 1,
+            "original_w": 1396,
+            "original_h": 734,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3A85GBT4\/pasted_image_at_2016_12_03_11_07_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3A85GBT4-4b98d06814",
+            "channels": [
+                "C27E2LGJY"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3AUCPHNK",
+                "created": 1480781270,
+                "timestamp": 1480781270,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "that\u2019s in peer\/node\/start.go",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1480781273.001359"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can we live with that ? this will present a simpler CR",
+        "ts": "1480781308.001360"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "oops",
+        "ts": "1480781352.001361"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3A66BSF5\/pasted_image_at_2016_12_03_11_09_am.png|Pasted image at 2016-12-03, 11:09 AM> and commented: forgot to copy after the save",
+        "file": {
+            "id": "F3A66BSF5",
+            "created": 1480781364,
+            "timestamp": 1480781364,
+            "name": "Pasted image at 2016_12_03 11_09 AM.png",
+            "title": "Pasted image at 2016-12-03, 11:09 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 161261,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3A66BSF5\/pasted_image_at_2016_12_03_11_09_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3A66BSF5\/download\/pasted_image_at_2016_12_03_11_09_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 181,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 242,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 363,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 483,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3A66BSF5-b711fad6cd\/pasted_image_at_2016_12_03_11_09_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 516,
+            "image_exif_rotation": 1,
+            "original_w": 1402,
+            "original_h": 706,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3A66BSF5\/pasted_image_at_2016_12_03_11_09_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3A66BSF5-cf7854afb1",
+            "channels": [
+                "C27E2LGJY"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc39HPSNE5",
+                "created": 1480781364,
+                "timestamp": 1480781364,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "forgot to copy after the save",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1480781366.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I don\u2019t want to pass `-C chainID` to `peer node start` as that\u2019s not correct.",
+        "ts": "1480781464.001363"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if we are doing something temporary till join comes in its better to do",
+        "ts": "1480781484.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```chainID := util.GetTestChainID()\n        registerChaincodeSupport(chainID, grpcServer)```",
+        "ts": "1480781533.001365"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I see what you are saying.  We are still missing an overall peer field \/ concept of a chain overall",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480781582.000000"
+        },
+        "ts": "1480781550.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ight",
+        "ts": "1480781555.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1480781558.001368"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "this takes us to the edge",
+        "ts": "1480781564.001369"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so when that does come in, it can be plugged into the system and it\u2019ll just slip in",
+        "ts": "1480781586.001371"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I am going to play with a \u201cjoin\u201d in my sandbox to see how the chain will be initialized",
+        "ts": "1480781623.001372"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and - I think - will be able to do multiple chains once that chain initialization code is in place",
+        "ts": "1480781666.001373"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(just in my sandbox \u2026 my goal is to test the endorser and chaincode framework\u2026 not config or gossip)",
+        "ts": "1480781699.001374"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but for the CR, its just \u201cremove DefaultChain and force trckle down of chainID\"",
+        "ts": "1480781741.001375"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the nice thing is that the trickle down is only on the endorsement side",
+        "ts": "1480781785.001376"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the committer picks up the chain ID from the block",
+        "ts": "1480781797.001377"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let me submit the CR (after testing etc) and you can take a look",
+        "ts": "1480781851.001378"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sounds good",
+        "ts": "1480782114.001379"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[December 3rd, 2016 4:32 PM] garisingh: hey folks - please check out <https:\/\/jira.hyperledger.org\/browse\/FAB-1255>\n\nGiven some of the oddities of how we are going to have to deal with identity and trust certificates and also that we want to make TLS a first class citizen, I thought it would make sense to create a standard \"secure GRPC server\".   Just started on it but should have basic functions working in a day or so.  I also want to add in some interceptors and metrics as well\n\nIf there are specific setting that you need to pass in (e.g. max message size, etc), please add them to the JIRA.\n\nOther option is to say this is a stupid idea :wink:",
+                "ts": "1480800756.004660",
+                "author_subname": "garisingh",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "hey folks - please check out <https:\/\/jira.hyperledger.org\/browse\/FAB-1255>\n\nGiven some of the oddities of how we are going to have to deal with identity and trust certificates and also that we want to make TLS a first class citizen, I thought it would make sense to create a standard \"secure GRPC server\".   Just started on it but should have basic functions working in a day or so.  I also want to add in some interceptors and metrics as well\n\nIf there are specific setting that you need to pass in (e.g. max message size, etc), please add them to the JIRA.\n\nOther option is to say this is a stupid idea :wink:",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/garisingh",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-10\/78323915894_521dc680194c08b166e0_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1480800756004660",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1480800776.001380"
+    }
+]

@@ -1,0 +1,219 @@
+[
+    {
+        "user": "U2M4L4XEY",
+        "text": "<@U2M4L4XEY|phyrex> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476097361.001797"
+    },
+    {
+        "user": "U1W210996",
+        "text": "<@U1W210996|zemtsov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476105536.001798"
+    },
+    {
+        "user": "U2MCH9EEB",
+        "text": "<@U2MCH9EEB|crazybit> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476106658.001799"
+    },
+    {
+        "user": "U2DHRR4TE",
+        "text": "<@U2DHRR4TE|tom.appleyard> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476110630.001800"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Quick question about PBFT - would anyone be able to explain on what grounds the validating leader is changed? (i.e. is it every block, after a certain number of TXs etc.)\n\nFollowing from this how is the new leader chosen?\n\nI'm told this happens through an election of some kind - what kicks this off, what decides how votes are cast?",
+        "ts": "1476110668.001801"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> There are a number of conditions which can cause a change in leadership, but in general they can be boiled down to 'not allowing the network to make progress'",
+        "ts": "1476110768.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, for instance if the primary is refusing to order a message from another replica, or the primary is skipping sequence numbers, etc., this would be grounds for the other replicas to issue view changes, to cause leadership to change",
+        "ts": "1476110821.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Leadership changes in a round-robin fashion, you can compute the leader as the `view % N` where `N` is the number of replicas in the network.",
+        "ts": "1476110854.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Essentially, if the new leader does its job correctly, then it will stay the leader, otherwise the rest of the network will send view-changes to move on to the next",
+        "ts": "1476110897.001805"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right cool - thanks!\n\nanother quick question - when an node that is out of date wants to get up to date it as I understand it, it gets deltas\/blocks\/a snapshot - how does it decide which to get? Can it measure it's out-of-dateness?",
+        "ts": "1476110995.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, it sounds like you are referring to the 0.5\/0.6 release.  In this case, there is a configuration variable you can see in the `peer\/core.yaml` `statetranfser.maxdeltas`.  If the peer's block height is within that variable number of blocks of the network block height, then it will attempt to transfer via state deltas.  If it is further out of date than that, then it will attempt to recover via the state snapshot.  Note that the number of state deltas retained by a peer (to send to others) is controlled in that same file by `ledger.state.deltaHistorySize`, and you should be sure to keep `maxdeltas &lt; deltaHistorySize`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1476111270.000000"
+        },
+        "ts": "1476111213.001807"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "brill - thanks! :slightly_smiling_face:",
+        "ts": "1476111329.001810",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: I just watched the demo video for gossip, nice. Can you provide a few more details on the bootstrap peer? Who will maintain\/own this one in a network?",
+        "ts": "1476114037.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Is there any overlap with the bootstrap server presented in FAB-359?",
+        "ts": "1476114063.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And should we maybe make it so that every peer that joins the network has to announce themselves via a transaction on the ledger (I believe <@U0UKTPMG8> goes one step ahead and says that this transactions needs to be endorsed), so that this bootstrap peer is no longer needed?",
+        "ts": "1476114133.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> My impression from the video was that all peers are capable of being bootstrapping peers, but that one\/some must be selected for initial config, <@U0ZJZBJLF> please correct me if I am wrong",
+        "ts": "1476115842.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "^ exactly",
+        "ts": "1476115874.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can have any number of them as your bootstrap peers",
+        "ts": "1476115885.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "about 359- I dunno if there is overlap, generally- the gossip component doesn't have any \"reference\" of roles of nodes in fabric.",
+        "ts": "1476115993.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "our discovery API simply lets you somehow \"know\" about all the nodes in the network and the metadata that these nodes publish, you can leverage the metadata ([]bytes) to determine the role of the specific node in the world",
+        "ts": "1476116057.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Understood. I figured that was an option, just wasn't sure if there were other assumptions here I wasn't aware of. Thanks. ",
+        "ts": "1476117035.001819"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And the address of this bootstrapping peer (or peers) that is to be put into the config file is acquired how? ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476117100.000000"
+        },
+        "ts": "1476117085.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - endorsement seems pretty meaningless (other than its the normal course of checking to make sure that a proposal meets seem type of criteria) when it comes to things like \"membership\" (for lack of a better term).   Endorsement is not equivalent to \"approval\"  - meaning if a peer endorses a proposal to add another peer, what does that actually mean?  I would think that there still needs to be some type of out of band process which actually collected a bunch of signatures which would actually be part of the proposal.  Endorsement would check the fact that the proposal actually had enough signatures (for example)",
+        "ts": "1476117166.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the same holds true for orderers as well.  maybe this was obvious to people but it seems we sometimes forget that actual approval to add anything happens out of band unless we plan on introducing some type of interactive \/ workflow flow (meaning there can be some type of intervention before automatically endorsing)\n\nI do see this mentioned in some of <@U0XPR4NP4> 's comments",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1476117309.000000"
+        },
+        "ts": "1476117256.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(not picking on you BTW)",
+        "ts": "1476117318.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the address is to be acquired in any manner you want, i guess. It can be like fabric 0.5 in the core.yaml file, or any other way (dns? multicast? I don't know)",
+        "ts": "1476117993.001827"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Gari- I think there is *some* overlapping between endorsements and membership though- which peers can be endorsers of a chaincode",
+        "ts": "1476118073.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed - I just wanted to say that endorsement is not the same as approval (well at least by default).",
+        "ts": "1476118213.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K>  `...actual approval to add anything happens out of band \u2026` this is specifically for things like adding a peer correct ?",
+        "ts": "1476118330.001830"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ie, not a general statement for typical proposal flows",
+        "ts": "1476118347.001831"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "correct.  but I think people sometimes get confused with endorsement and signature-based workflow \/ approval.  That's not to say some could not implement chaincode which actually did some type of real approval (e.g. check for some entry, etc), but they are not equivalent",
+        "ts": "1476118616.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0PB67X4K>: Yeah, I was fuzzy on this and didn't quite get it when I heard it - hence the parenthesis and the reference to Jeff. Thanks for clarifying.",
+        "ts": "1476139924.001833"
+    }
+]

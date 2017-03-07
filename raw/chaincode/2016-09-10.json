@@ -1,0 +1,187 @@
+[
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "While I was deploying one of my chaincode app using rest api: ```{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"deploy\",\n  \"params\": {\n    \"type\": 1,\n    \"chaincodeID\": {\n      \"name\":\"safety_device\",\n      \"path\": \"<http:\/\/github.com\/rajeshsubhankar\/chaincode-apps\/safety_device\/|github.com\/rajeshsubhankar\/chaincode-apps\/safety_device\/>\"\n    },\n    \"ctorMsg\": {\n      \"function\": \"init\",\n      \"args\": [\n        \"Rajesh\"\n      ]\n    },\n    \"secureContext\": \"jim\"\n  },\n  \"id\": 0\n}``` I got the response as ```{\n  \"jsonrpc\": \"2.0\",\n  \"result\": {\n    \"status\": \"OK\",\n    \"message\": \"safety_device\"\n  },\n  \"id\": 0\n}``` But my peer logs says ```vp0_1          | 16:32:14.855 [rest] processChaincodeDeploy -&gt; INFO 039 Successfully deployed chainCode: safety_device\nvp0_1          | 16:32:14.855 [rest] ProcessChaincode -&gt; INFO 03a REST successfully deploy chaincode: {\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"safety_device\"},\"id\":0}\nvp2_1          | 16:32:15.847 [chaincode] Launch -&gt; ERRO 022 sending init failed(handler not found for chaincode safety_device)\nvp1_1          | 16:32:15.848 [chaincode] Launch -&gt; ERRO 022 sending init failed(handler not found for chaincode safety_device)\nvp3_1          | 16:32:15.851 [chaincode] Launch -&gt; ERRO 022 sending init failed(handler not found for chaincode safety_device)\nvp0_1          | 16:32:15.857 [chaincode] Launch -&gt; ERRO 03b sending init failed(handler not found for chaincode safety_device)``` Anyone knows any workaround ?",
+        "ts": "1473525767.000196"
+    },
+    {
+        "user": "U2A78JPA7",
+        "text": "<@U2A78JPA7|adeelqureshi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473526715.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U269P9D8W> what response did you get to the deploy ?",
+        "ts": "1473526785.000198"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "<@U0ULK2JPP> ```{\n  \"jsonrpc\": \"2.0\",\n  \"result\": {\n    \"status\": \"OK\",\n    \"message\": \"safety_device\"\n  },\n  \"id\": 0\n}```",
+        "ts": "1473526836.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right\u2026 you did mention that",
+        "ts": "1473526894.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "how did you start your peers ?",
+        "ts": "1473526900.000201"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "```membersrvc0:\n  extends:\n    file: compose-defaults.yml\n    service: membersrvc\n\nvp0:\n  extends:\n    file: docker-compose-4-consensus-base.yml\n    service: vpBase\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  environment:\n    - CORE_PEER_ID=vp0\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc0\n  ports:\n    - 7050:7050\n\nvp1:\n  extends:\n    file: docker-compose-4-consensus-base.yml\n    service: vpBase\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  environment:\n    - CORE_PEER_ID=vp1\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n    - CORE_SECURITY_ENROLLID=test_vp1\n    - CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy\n  links:\n    - membersrvc0\n    - vp0\n  ports:\n    - 6050:7050\n\nvp2:\n  extends:\n    file: docker-compose-4-consensus-base.yml\n    service: vpBase\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  environment:\n    - CORE_PEER_ID=vp2\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n    - CORE_SECURITY_ENROLLID=test_vp2\n    - CORE_SECURITY_ENROLLSECRET=vQelbRvja7cJ\n  links:\n    - membersrvc0\n    - vp0\n  ports:\n    - 5050:7050\n\nvp3:\n  extends:\n    file: docker-compose-4-consensus-base.yml\n    service: vpBase\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  environment:\n    - CORE_PEER_ID=vp3\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n    - CORE_SECURITY_ENROLLID=test_vp3\n    - CORE_SECURITY_ENROLLSECRET=9LKqKH5peurL\n  links:\n    - membersrvc0\n    - vp0\n  ports:\n    - 4050:7050```",
+        "ts": "1473526930.000202"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "With flag `--peer-chaincodedev`",
+        "ts": "1473526994.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then you are expected to run the chaincode yourself - 4 instances of them pointing to the addresses of the 4 peers",
+        "ts": "1473527049.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you can do that of course",
+        "ts": "1473527060.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "althought I don\u2019t see the above parameter used in the compose files above\u2026 ?",
+        "ts": "1473527104.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what does docker-compose-4-consensus-base.yml look like ?",
+        "ts": "1473527129.000207"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "my compose-default.yaml file contains above flag",
+        "ts": "1473527145.000208"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "docker-compose-4-consensus-base.yml: ```vpBase:\n  extends:\n    file: compose-defaults.yml\n    service: vp\n  environment:\n    - CORE_SECURITY_ENABLED=true\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc0:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc0:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc0:7054\n    #- CORE_PEER_PKI_TLS_ROOTCERT_FILE=.\/bddtests\/tlsca.cert\n    # TODO: Currently required due to issue reading obbca configuration location\n    - CORE_PBFT_GENERAL_N=4\n    # The checkpoint interval in sequence numbers\n    - CORE_PBFT_GENERAL_K=2\n\nvpBatch:\n  extends:\n    service: vpBase\n  environment:\n    - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=noops\n    - CORE_PBFT_GENERAL_TIMEOUT_REQUEST=10s\n    - CORE_PBFT_GENERAL_MODE=batch\n    # TODO: This is used for testing as to assure deployment goes through to block\n    - CORE_PBFT_GENERAL_BATCHSIZE=1```",
+        "ts": "1473527191.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and the compose-defaults.yml please",
+        "ts": "1473527212.000210"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "compose-default.yml: ```vp:\n  image: hyperledger\/fabric-peer\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    #- CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375>\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    # TODO:  This is currently required due to BUG in variant logic based upon log level.\n    #- CORE_LOGGING_LEVEL=DEBUG\n  # Script will wait until membersrvc is up (if it exists) before starting\n  # $$GOPATH (double dollar) required to prevent docker-compose doing its own\n  # substitution before the value gets to the container\n  #command: sh -c \"exec $$GOPATH\/src\/github.com\/hyperledger\/fabric\/bddtests\/scripts\/start-peer.sh\"\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"\n\n  # Use these options if coverage desired for peers\n  #image: hyperledger\/fabric-peer-coverage\n  #command: .\/peer.test --test.coverprofile=coverage.cov node start\nmembersrvc:\n   image: hyperledger\/fabric-membersrvc\n   command: membersrvc```",
+        "ts": "1473527223.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so after start up and before issuing \u201cdeploy\u201d you need to start 4 instances of the chaincode yourself",
+        "ts": "1473527391.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "1) docker inspect &lt;vp0\u2019s container id&gt;",
+        "ts": "1473527409.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "2) get the ip address of vp0 - something like 172.17.0.2 (example)",
+        "ts": "1473527441.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "3) start the chaincode as `CORE_PEER_ADDRESS=&lt;vp0s ip&gt;:7051 CORE_CHAINCODE_ID_NAME=safety_device .\/&lt;chaincodeexec&gt;`",
+        "ts": "1473527532.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and likewise for the other 3 vps",
+        "ts": "1473527548.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you should hopefully see the chaincodes started and registered with the respective peers",
+        "ts": "1473527570.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then send the deploy to vp0 as before \u2026 you should see all the chaincodes initialized",
+        "ts": "1473527614.000219"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "OK. Let me try. Just to clarify, starting the chaincode require because of `peer-chaincodedev` flag ?",
+        "ts": "1473527813.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "correct",
+        "ts": "1473527992.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "otherwise the chaincodes will be started  by the peer when you do the \u201cdeploy\"",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1473528050.000000"
+        },
+        "ts": "1473528024.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the \u201cdeploy\u201d does two things (1) if not in `\u2014peer-chaincodedev` mode, start the chaincodes and (2) send init to the chaincodes",
+        "ts": "1473528097.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so in `\u2014peer-chaincodedev` mode you still have to do the \u201cdeploy\u201d for (2)",
+        "ts": "1473528125.000225"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "got it. Thanks",
+        "ts": "1473528161.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure",
+        "ts": "1473528167.000227"
+    }
+]

@@ -1,0 +1,757 @@
+[
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1AU8DRQR> what would you think if I managed to add a layer into the REST API to revert it to the old syntax? (without changing the Chaincode internal [][]byte format)",
+        "ts": "1471418277.001724"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "that would be the best think I could imagine to happen to the REST API :slightly_smiling_face:",
+        "ts": "1471418486.001725"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT>: I had discussions with the others how to modify it to make it look like it was before. But we did not come to an agreement.",
+        "ts": "1471418546.001726"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what is your idea, how would you do it?",
+        "ts": "1471418553.001727"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it's not quite working yet... but I added another \"ChaincodeSpec\"-like proto which is the same as the old one",
+        "ts": "1471418594.001728"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "then in rest_api.go ProcessChaincode() I convert from one ChaincodeSpec to the other (e.g. copying function into the args and base64 encoding them all)",
+        "ts": "1471418635.001729"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it could also be fixed by using some interface structure inside the go code when unmarshalling JSON. that structure must have []string args instead of [][]byte. and then one has to convert from that structure to ChaincodeInput",
+        "ts": "1471418684.001730"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "(I realize now this is the same that you said)",
+        "ts": "1471418713.001731"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": ":slightly_smiling_face:",
+        "ts": "1471418737.001732"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay then, we should do this",
+        "ts": "1471418865.001733"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it is not clear whether we shuld use a new proto or just something defined inside our go source",
+        "ts": "1471418893.001734"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I made a new proto, it made all the JSON unmarshalling easy",
+        "ts": "1471418915.001735"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "currently REST seems happy with the \"deploy\" but then the container fails behind the scenes",
+        "ts": "1471418943.001736"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "07:19:49.141 [chaincode] processStream -&gt; ERRO 02f Got error: Expecting integer value for asset holding\n07:19:49.141 [chaincode] Launch -&gt; ERRO 030 sending init failed(Error initializing container 77b0a96347f912468417493de63799e40c21842b987785b30f3cf81a6116020b60f4a88380964704e35a5e32518fea93d11da773aa0b2292f674708d38328360: Expecting integer value for asset holding)",
+        "ts": "1471418946.001737"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "that looks like it's come from the example02 code itself",
+        "ts": "1471419011.001738"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "weird",
+        "ts": "1471419012.001739"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it got the right number of args (4) but couldn't Atoi() them",
+        "ts": "1471419126.001740"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "isnt it the hash inside chaincode xample 04?",
+        "ts": "1471419249.001741"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "be back in 30 minutes",
+        "ts": "1471419312.001742"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'm just trying to deploy example02",
+        "ts": "1471419375.001743"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "looks like example02 is receiving the base64 args",
+        "ts": "1471419656.001744"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "e.g. arg1 == MTAw when it should be 100",
+        "ts": "1471419708.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "hgabor: I made sure to spread maven around this time, if there are any other issues lmk",
+        "ts": "1471419831.001746"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0UHG4VP1> thanks and okay ",
+        "ts": "1471419863.001747"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT>: could you show some code in Gerrit? ",
+        "ts": "1471419887.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I was going to try to upgrade docker today but I decided to stop messing with stuff when people are trying to work :slightly_smiling_face:",
+        "ts": "1471419895.001749"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1AU8DRQR> sure, just let me figure out how :slightly_smiling_face:",
+        "ts": "1471420536.001750"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1AU8DRQR> here we go <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/531\/>",
+        "ts": "1471421058.001751"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1471421771.001752"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "All, I think that `master` is broken.",
+        "ts": "1471421782.001753"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U11MANG9G>: is it related to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/533\/> ?",
+        "ts": "1471421878.001754"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes. We are on it... and if we can't fix it soon, at a last-resort, we'll revert items as needed. Just a heads-up.",
+        "ts": "1471421920.001755"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "AFAICT, it's a combination of two changesets that worked separately. Just letting you know as you might see other failures that are not related to stuff you are working on.",
+        "ts": "1471421974.001756"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "does 533 not fix the issue?",
+        "ts": "1471421975.001757"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The build for 533 is running as we 'type'",
+        "ts": "1471422013.001758"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "ok, fair enough :slightly_smiling_face:",
+        "ts": "1471422020.001759"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The failure is in the BDDs, I'm staying up until we get it sorted.",
+        "ts": "1471422044.001760"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(that is, it takes time for a SUCCESS\/FAILURE to pop-up)",
+        "ts": "1471422067.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Those BVTs are so long",
+        "ts": "1471422114.001762"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "well I hope <@U1M7K67EV>'s fix works, he has been working to speed up all of the tests (which is what led to this)",
+        "ts": "1471422138.001763"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Same here <@U1LES78TT>. We are in touch and we'll work it out, one way or another.\nI\/we can always revert back to a stable `master`. Let's give it a round (or two) of testing...",
+        "ts": "1471422414.001764"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[For the \"interested readers\" out there:  <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/421>]",
+        "ts": "1471422601.001765"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT>: I am back and checking your Gerrit changeset.",
+        "ts": "1471422668.001766"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT> gerrit says it does not exist",
+        "ts": "1471422874.001767"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1AU8DRQR>: I think it is published as draft",
+        "ts": "1471423104.001768"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this is the link: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/531\/> but Gerrit says 'Code review - error'",
+        "ts": "1471423996.001769"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "<@U0XR6J961>, <@U0ULK2JPP> :  I just submitted the stream flow control change I told last week. Can somebody review it?",
+        "ts": "1471425880.001770"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/535\/>",
+        "ts": "1471425902.001771"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I will have a look (in an hour)",
+        "ts": "1471426212.001772"
+    },
+    {
+        "type": "message",
+        "user": "U0YP7KFGQ",
+        "text": "I opened JIRA issue for it as well: <https:\/\/jira.hyperledger.org\/browse\/FAB-38>",
+        "ts": "1471426640.001773"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0UHG4VP1>: <@U11MANG9G> tried to revert a commit and we got an internal server error",
+        "ts": "1471429018.001774"
+    },
+    {
+        "user": "U0PB67X4K",
+        "text": "<@U0PB67X4K|garisingh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1471431304.001775"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when I submit a gerrit review, the Signed-Off by is now automatically generated (in the commit message)?",
+        "ts": "1471442581.001776"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no",
+        "ts": "1471442593.001777"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "git commit -s -m \"Some commit message\"",
+        "ts": "1471442603.001778"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "that -s does it",
+        "ts": "1471442606.001779"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ZJZBJLF>",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1471442619.000000"
+        },
+        "ts": "1471442612.001780"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks!",
+        "ts": "1471442619.001782"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I somehow thought the git review adds that",
+        "ts": "1471442641.001783"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no, that is added locally and manually and with git",
+        "ts": "1471442660.001784"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe git-review does something similar but I do not know that tool",
+        "ts": "1471442673.001785"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0YP7KFGQ>: sure, will review",
+        "ts": "1471442697.001786"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this commit needs to be reverted: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/421> <@U1M7K67EV> created a fix but as I know (from <@U11MANG9G> ) it did not work. but we were unable to revert it, we got an internal server error.",
+        "ts": "1471442831.001787"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "sorry for repeating myself again and again but in the morning, <@U11MANG9G> informed me that master fails the tests",
+        "ts": "1471442867.001788"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: worst case, I would image someone could do a \u201cgit revert &amp;&amp; git push\u201d and treat it as a new change set",
+        "ts": "1471443849.001789"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF>: I will do that, you are right - I missed again the trivial solution. :slightly_smiling_face: But it would be good to have a working revert button. :slightly_smiling_face:",
+        "ts": "1471443945.001790"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/553\/> <@U1M7K67EV> <@U11MANG9G>",
+        "ts": "1471444745.001791"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "How can i re-trigger jenkins build in gerrit?  reply with \"recheck\"?",
+        "ts": "1471453146.001792"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "try with reverify",
+        "ts": "1471453197.001793"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "thanks",
+        "ts": "1471453248.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I don\u2019t think we have those comment triggers set up",
+        "ts": "1471460038.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "oh, I guess we do",
+        "ts": "1471460073.001796"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Sorry all for the chaos I caused, I hope it didn't cause too much stress for those involved.",
+        "ts": "1471478040.001797"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1M7K67EV> come on, we are in this business because we like the stress.",
+        "ts": "1471480637.001798"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "touche :slightly_smiling_face:",
+        "ts": "1471480681.001799"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "It could have been worse, it could have been a production box",
+        "ts": "1471480698.001800"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I don't think it was your thing per-se. We have to fix FAB-5 and make sure that our builds a `lot more` deterministic.",
+        "ts": "1471480713.001801"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If not 100%...",
+        "ts": "1471480723.001802"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Let's put it this way, I tend to be more permissive in your attempts to improve and shorter the build-time, because the benefits are huge. We wait so much for builds, and need much shorter cycles.",
+        "ts": "1471480792.001803",
+        "reactions": [
+            {
+                "name": "relieved",
+                "users": [
+                    "U1M7K67EV"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "At the same time, it's difficult to make the right call, late at night, when 3 build triggers give us 3 different results... but I guess the way to Mordor is full of ...  and pain :wink:",
+        "ts": "1471480910.001804"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That said, I'm not sure I want to be Frodo :wink:",
+        "ts": "1471480935.001805"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "What is the long pole in the build?",
+        "ts": "1471481091.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Last night it looked like Geg behave tests were ~18 minutes IIRC",
+        "ts": "1471481129.001807"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Unit tests  are taking around ~25-30 mins and functional tests (behave) ~18 mins",
+        "ts": "1471483175.001808"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is there any reason to not have two jobs?",
+        "ts": "1471483452.001809"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I guess it would only save ~18 minutes overall",
+        "ts": "1471483473.001810"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ramesh: it was something in the upgraded docker image that caused the hang. I\u2019ve reverted to the previous image.",
+        "ts": "1471484456.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>: wondering if you can sort out something for me",
+        "ts": "1471484631.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins: I will try",
+        "ts": "1471484641.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am noticing that certain bug reports have my old <mailto:ghaskins@novell.com|ghaskins@novell.com> address attached to them somehow",
+        "ts": "1471484654.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure where that is coming from",
+        "ts": "1471484658.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "example?",
+        "ts": "1471484663.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/319\/>",
+        "ts": "1471484668.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note in the reviewer list: there is \u201cGreg Haskins\u201d and \u201cGregory Haskins\"",
+        "ts": "1471484682.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its the Gregory one that seems to be attached to my old email",
+        "ts": "1471484695.001819"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "when was the last time that you used that address with this project? ever?",
+        "ts": "1471484718.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, never",
+        "ts": "1471484724.001821"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its been almost 5 years since I worked tere",
+        "ts": "1471484734.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there",
+        "ts": "1471484735.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "did you ever use it on any other LF project?",
+        "ts": "1471484741.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am assuming it is some vestige of my LFID",
+        "ts": "1471484753.001825"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "your former LFID?",
+        "ts": "1471484770.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im sure I did, I did a ton of kernel work with that address",
+        "ts": "1471484772.001827"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure, remember how I had that problem logging in and you helped me straighten it out",
+        "ts": "1471484805.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am assuming some how the email got attached\/merged\/whatever",
+        "ts": "1471484821.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I just dont know where that is even coming from",
+        "ts": "1471484847.001830"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "interesting.",
+        "ts": "1471484861.001831"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Maybe Patrick explicitly added that reviewer list",
+        "ts": "1471484885.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I suspect the hackfest was\u2026 three weeks 22 hours ago? :slightly_smiling_face:",
+        "ts": "1471484914.001833"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "LOL :wink:",
+        "ts": "1471484921.001834"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "A pseudo-random guess, I'd guess.",
+        "ts": "1471484932.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "seems reasonable, though I wasnt able to attend that",
+        "ts": "1471484945.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "oh, hmm. My next guess is you have it associated with an openID (github? facebook?) and you logged in with it",
+        "ts": "1471484975.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its got to be something like that",
+        "ts": "1471484986.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me look at my LFID setup",
+        "ts": "1471484993.001839"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1AU8DRQR> oops sorry... didn't realise drafts weren't publicly viewable... now I'm wondering what the point of drafts are",
+        "ts": "1471485054.001840"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I guess I should have added you as a reviewer to let you see it",
+        "ts": "1471485148.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "bgorman: I think if you add other people they can see it.",
+        "ts": "1471485445.001842"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U0UHG4VP1> are you able to view <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/531\/> now?",
+        "ts": "1471485524.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "bgorman: yes I am",
+        "ts": "1471485584.001844"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "cool, thanks. Mystery solved :slightly_smiling_face:",
+        "ts": "1471485593.001845",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Most pending changes on Gerrit will need rebased to the tip of master",
+        "ts": "1471496608.001846"
+    }
+]

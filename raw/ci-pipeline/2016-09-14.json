@@ -1,0 +1,506 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So it seems we could use tags, but not via review\/approval",
+        "ts": "1473855517.000854"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ultimately what I would like to see is some way to incorporate multilateral voting into pushing a new baseimage release",
+        "ts": "1473855731.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Each release should also be tagged, so I was thinking that could kill two birds with one stone",
+        "ts": "1473855759.000856"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "But perhaps there is a different workflow to consider",
+        "ts": "1473855773.000857"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Here's an idea.  We could do something in the filesystem itself",
+        "ts": "1473855839.000858"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "A certain kind of update to this file (after going through voting) would trigger a CI pipeline that tags the release and initiates the builder processes",
+        "ts": "1473855959.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> playing around with this",
+        "ts": "1473869710.000860"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/job\/test-multi\/>",
+        "ts": "1473869720.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "goal is to have one multi-config that can do all three docker arch builds",
+        "ts": "1473869737.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(of course, I can only test x86 atm)",
+        "ts": "1473869746.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but one thing that is interesting, its using master node for the top-level but then properly delegating to the (one and only) x86 axis",
+        "ts": "1473869783.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do you think I should also constrain the top-level build to a label?",
+        "ts": "1473869800.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or is this fine?",
+        "ts": "1473869802.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "It's fine",
+        "ts": "1473872536.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "You could constrain it but we need a static node to park the job on, which would be master",
+        "ts": "1473872574.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats what I figured",
+        "ts": "1473873147.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems the only reason to constrain is when the job has specific requirements of the worker",
+        "ts": "1473873169.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(e.g. VMX, or x86)",
+        "ts": "1473873179.000871"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "please don't use matrix jobs!",
+        "ts": "1473873212.000872"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "use the ability of JJB to build a matrix for you instead",
+        "ts": "1473873223.000873"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "matrix jobs have a sever stability problem inside of jenkins",
+        "ts": "1473873235.000874"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "s\/sever\/severe\/",
+        "ts": "1473873241.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1BLNM9DE> i assume by matrix job you mean a jenkins multi-config?",
+        "ts": "1473873824.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ultimately, i am open to whatever you guys recommend",
+        "ts": "1473873846.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we are going to need 4 basic types of build: vagrant (x86), docker-x86, docker-z, docker-p",
+        "ts": "1473873871.000878"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "matrix job type of which the multi-config job step type is a variant",
+        "ts": "1473873876.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and two classes of build",
+        "ts": "1473873877.000880"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "all of that can be done via JJB",
+        "ts": "1473873886.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "release (artifacts pushed to public repo) and patch verify",
+        "ts": "1473873899.000882"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "you'll end up with a specific job for each combination",
+        "ts": "1473873900.000883"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "but which looks horrible in the Jenkins UI but it's a lot better for jenkins",
+        "ts": "1473873921.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont care how those are expressed (too much, though I do hate DRY violations)",
+        "ts": "1473873928.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the patch verify job trigger should be straight forward gerrit integration",
+        "ts": "1473873965.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the release push job is a subset of merge trigger",
+        "ts": "1473873975.000887"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "we strongly recommend against using the jenkins matrix facilities since they're not well supported, and if you ever get to the point where you have a lot of jobs running in your system they cause jenkins to have extreme management issues",
+        "ts": "1473873983.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(only certain merges will result in a release)",
+        "ts": "1473873987.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok\u2026thats fine",
+        "ts": "1473873999.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "like I said, my requirements are more high-level",
+        "ts": "1473874007.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont care how we enact them into jenkins very much",
+        "ts": "1473874015.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, whatever best practices etc, i am open to them",
+        "ts": "1473874033.000893"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "just trying to save you from having to re-architect later ;)",
+        "ts": "1473874035.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty",
+        "ts": "1473874039.000895"
+    },
+    {
+        "type": "message",
+        "user": "U1BLNM9DE",
+        "text": "it's taken ODL ~3 months to do a transition off of matrix jobs after we finally figured out how bad they really were when we got to ~1750 jobs in the system",
+        "ts": "1473874079.000896"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2BN620SW\/-.pl|Untitled> and commented: <@U0KM61BCP> build from the baseimages generated by the pipeline (and some currently unpublished patches to fabric)",
+        "file": {
+            "id": "F2BN620SW",
+            "created": 1473877075,
+            "timestamp": 1473877075,
+            "name": "-.pl",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "perl",
+            "pretty_type": "Perl",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 795,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2BN620SW\/-.pl?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2BN620SW\/download\/-.pl?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2BN620SW\/-.pl",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2BN620SW-09933655fb",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2BN620SW\/-.pl\/edit",
+            "preview": "$ vagrant ssh\r\nWelcome to Ubuntu 14.04.5 LTS (GNU\/Linux 4.4.0-36-generic x86_64)\r\n\r\n * Documentation:  https:\/\/help.ubuntu.com\/\r\n\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>$ <span class=\"cm-meta\">vagrant<\/span> <span class=\"cm-meta\">ssh<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-meta\">Welcome<\/span> <span class=\"cm-meta\">to<\/span> <span class=\"cm-meta\">Ubuntu<\/span> <span class=\"cm-number\">14.04<\/span><span class=\"cm-number\">.5<\/span> <span class=\"cm-meta\">LTS<\/span> (<span class=\"cm-meta\">GNU<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-meta\">Linux<\/span> <span class=\"cm-number\">4.4<\/span><span class=\"cm-number\">.0<\/span><span class=\"cm-operator\">-<\/span><span class=\"cm-number\">36<\/span><span class=\"cm-operator\">-<\/span><span class=\"cm-meta\">generic<\/span> <span class=\"cm-meta\">x86_64<\/span>)<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre> <span class=\"cm-operator\">*<\/span> <span class=\"cm-meta\">Documentation<\/span><span class=\"cm-operator\">:<\/span>  <span class=\"cm-meta\">https<\/span>:<span class=\"cm-operator\">\/<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-meta\">help<\/span><span class=\"cm-operator\">.<\/span><span class=\"cm-meta\">ubuntu<\/span><span class=\"cm-operator\">.<\/span><span class=\"cm-meta\">com<\/span><span class=\"cm-operator\">\/<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 21,
+            "lines_more": 16,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2BMP1AUE",
+                "created": 1473877075,
+                "timestamp": 1473877075,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "<@U0KM61BCP> build from the baseimages generated by the pipeline (and some currently unpublished patches to fabric)",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1473877076.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> from my perspective, we are ready to start considering a few things: 1) a formal repo for \u201cfabric-baseimage\u201d and 2) pushing these images to the real namespace\u2026.",
+        "ts": "1473877139.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im thinking any pipeline generated images, we can bump the version to 0.1.0 or something",
+        "ts": "1473877161.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that way, if we need an emergency patch to the current manually generated ones, we can still push v0.0.12, etc",
+        "ts": "1473877184.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thoughts?",
+        "ts": "1473877187.000901"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "also, how do you want to go about all of this?  e.g. I could make a HIP for \u201cfabric-baseimage\u201d etc",
+        "ts": "1473877218.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or, since its just breaking out existing logic, we could just ask for a vote on fabric-maintainers or something",
+        "ts": "1473877243.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(im not saying we are quite ready to go live with this either, just saying, time to plan ahead",
+        "ts": "1473877262.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "suggest the latter <@U0KPFAZNF> let's just get maintainers to agree- we could discuss on tsc if needed, don't think a hip needed",
+        "ts": "1473877621.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, ill put together a message to the fabric ML",
+        "ts": "1473877711.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to start the dialog",
+        "ts": "1473877715.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and link it to <#C28CXQXD5|fabric-maintainers>",
+        "ts": "1473877734.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF> <https:\/\/jenkins.hyperledger.org\/sandbox\/computer\/hyp-power-1\/> is coming up right now. Please be aware that unlike the other slaves, this is shared across two jenkins installs. please tread lightly :slightly_smiling_face:",
+        "ts": "1473888946.000909"
+    },
+    {
+        "type": "message",
+        "user": "U12V3D2P2",
+        "text": "<@U0UHG4VP1> if it helps, I have one more Power node we can use",
+        "ts": "1473891561.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U12V3D2P2> I think 1 is OK for now, as I think using the node on production jenkins is predicated on <@U0KPFAZNF> getting it working on \/sandbox\/ . if <@U0KPFAZNF> advises otherwise, you and I can work out getting the other node online.",
+        "ts": "1473891708.000911"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U12V3D2P2> once Power is critical path for all commits, we should bring on another node, for certain",
+        "ts": "1473891730.000912"
+    },
+    {
+        "type": "message",
+        "user": "U12V3D2P2",
+        "text": "Ok",
+        "ts": "1473891794.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think that plan sounds reasonable.  ",
+        "ts": "1473894082.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "My baseimage builds can take 30+ minutes though so it will consume a bit of cycles, especially over the next few days as I work out the kinks",
+        "ts": "1473894138.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "but we can reuse those forever, right?",
+        "ts": "1473894167.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Also: we have a site license for Nexus Pro, which we could configure as a docker pass-through proxy. Keep that in mind for later (like, middle October)",
+        "ts": "1473894220.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, yeah once published they are used over and over",
+        "ts": "1473894742.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but they take about 30+ minutes to compile and ill probably have to iterate multiple times to get the process smoothed out",
+        "ts": "1473894768.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "after that, it should die down",
+        "ts": "1473894773.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure.",
+        "ts": "1473894784.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill try to get most of the iterations done via the x86 infrastructure",
+        "ts": "1473894808.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(we are mostly there at this point",
+        "ts": "1473894818.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "biggest \u201ctodo\u201d is the trigger stuff",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1473894846.000000"
+        },
+        "ts": "1473894835.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can work most of that out against x86",
+        "ts": "1473894853.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the nexus stuff could be cool\u2026we might be able to build a more intelligent pipeline with it",
+        "ts": "1473894903.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. do true release promotion",
+        "ts": "1473894920.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "without it, id probably have to build once to verify, and rebuild it again to publish, which is a waste",
+        "ts": "1473894950.000929"
+    }
+]

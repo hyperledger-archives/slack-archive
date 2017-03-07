@@ -1,0 +1,826 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1KDAMDJ7> thx",
+        "ts": "1485347606.001638"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I am about to move sbft's proto files into protos\/common or somewhere to there - any objection? :slightly_smiling_face:",
+        "ts": "1485347642.001639"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as discussed on DM - let's move to protos\/sbft",
+        "ts": "1485348519.001640"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "`protos\/orderer\/sbft` likely a better home.",
+        "ts": "1485355205.001641"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "+1",
+        "ts": "1485355692.001642"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay I will move them to there",
+        "ts": "1485357160.001643"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> <@U0XQ35CDD> can you pls remind me what are the committers doing in blockcutter",
+        "ts": "1485372132.001644"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> For normal transactions (peer ones) they are no-op",
+        "ts": "1485372164.001645"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For configuration transactions, and some internal bookkeeping transactions, they modify the state of the orderer (by creating new channels, modifying who is allowed to read\/write to a channel, etc.)",
+        "ts": "1485372194.001646"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so what are they - transactions?",
+        "ts": "1485372210.001647"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "configuration transactions?",
+        "ts": "1485372225.001648"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what I was afraid a bit from just materialized in blockcutter support bloating sbft code by 20-25%",
+        "ts": "1485372460.001649"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and the code is not \"simple\" as it used to be",
+        "ts": "1485372484.001650"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway",
+        "ts": "1485372581.001651"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if committers are configuration transactions - they should be called as such",
+        "ts": "1485372593.001652"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "furthermore we discussed the name Ordered - and I really think that MUST change",
+        "ts": "1485372620.001653"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I agree the name ordered should change",
+        "ts": "1485372821.001654"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And that the interface as a whole could probably use some renaming",
+        "ts": "1485372836.001655"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We should probably not be returning no-op committers",
+        "ts": "1485372850.001656"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Instead, we should only return committers for transactions which modify orderer state",
+        "ts": "1485372864.001657"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is definitely going to complicate the sbft code, I see no real way around this.",
+        "ts": "1485372884.001658"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "SBFT gets away today under the assumption that the orderer maintains no state",
+        "ts": "1485372894.001659"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But this is not true.  The orderer maintains state, but it does not frequently modify it.",
+        "ts": "1485372916.001660"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You could set the state at genesis, and leave it that way forever, and then things would be fine",
+        "ts": "1485372933.001661"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, if we want to do things like access control, with a dynamic set of authorized credentials, then we have to introduce the notion of state",
+        "ts": "1485372965.001662"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that is all fine - there is a need for orderers to interpret some transactions",
+        "ts": "1485372978.001663"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that said that are quite a few changes needed here to maintain the attribute \"simple\"",
+        "ts": "1485373005.001664"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My loose thought, was that block cutter needs to return whether or not a batch modifies orderer state.",
+        "ts": "1485373035.001665"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because if it does, this state must be committed before the blockcutter (probably more appropriately called batchcutter) processes any new transactions",
+        "ts": "1485373067.001666"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Because the state change might make some future transactions valid or invalid, that change must commit first)",
+        "ts": "1485373106.001667"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not sure now what are you referring to",
+        "ts": "1485373135.001668"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Imagine the current orderer state is, \"Allow transactions from A and B\"",
+        "ts": "1485373159.001669"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You are operating with a batch size of 1, and see the following flow of transactions\n\ntx from A\nreconfiguration tx says \"Allow transactions from B and C\"\ntx from A\ntx from C\n\nThe correct resulting block series looks like:\n\n[tx.A, tx.Reconf, tx.C]",
+        "ts": "1485373235.001670"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A consensus implementation which tries to pipeline too much around the state modifying reconfig transaction could end up with:\n\n[tx.A, tx.Reconf, tx.A]\n\nIf the reconfiguration commits after the third block has been cut",
+        "ts": "1485373292.001671"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not really",
+        "ts": "1485373302.001672"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok let's start slowly",
+        "ts": "1485373312.001673"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "1) s bft does not have pipelining",
+        "ts": "1485373318.001674"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Are we certain? Does the primary prepare batches ahead of time? Or only once it has an available sequence number?",
+        "ts": "1485373353.001675"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "2) pipelining can be done for all none-config tx",
+        "ts": "1485373354.001676"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we are certain",
+        "ts": "1485373359.001677"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay",
+        "ts": "1485373363.001678"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is built that way",
+        "ts": "1485373364.001679"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "intenionally",
+        "ts": "1485373370.001680"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I agree, for non-config txs, pipeline can (and should) be done",
+        "ts": "1485373372.001681"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with pipelining pending",
+        "ts": "1485373377.001682"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1485373379.001683"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now",
+        "ts": "1485373379.001684"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "pipelining should be done whenever there are no config tx for throughput this is way future work",
+        "ts": "1485373401.001685"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "3) pipielining can be also done with config tx",
+        "ts": "1485373412.001686"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is called speculative execution",
+        "ts": "1485373418.001687"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "where the orderer would change the state *speculatively* upon processing pre-prepare of a config transaction with pieplining on",
+        "ts": "1485373456.001688"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is more involved but was proposed in literature",
+        "ts": "1485373482.001689"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am talking now here more about the complexity of blockcutter",
+        "ts": "1485373493.001690"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "given that *current* sbft did not have pipelining anyway",
+        "ts": "1485373506.001691"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "+300 lines of code on 1200 lines code base blows my mind",
+        "ts": "1485373522.001692"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but I guess I will have to try to wrap my head around it",
+        "ts": "1485373543.001693"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and there the naming does not help",
+        "ts": "1485373551.001694"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for one thing",
+        "ts": "1485373555.001695"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so back to that",
+        "ts": "1485373612.001696"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "filter.committers could be filter.configTX?",
+        "ts": "1485373621.001697"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and Ordered could be ValidateAndAppend?",
+        "ts": "1485373655.001698"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it should actually just be Validate",
+        "ts": "1485374569.001699"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am not in love with `Validate`, but it is orders of magnitude better than `Ordered` (sorry for inflicting that name on the world)",
+        "ts": "1485375167.001700"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And I hesitate to simply call it configtx, because that has a very specific implication, there are other sorts of transactions which can modify orderer state or must be otherwise handled specially",
+        "ts": "1485375200.001701"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so I see two things re Ordered",
+        "ts": "1485375371.001702"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "one is the SBFT Ordered which basically is now a System API call",
+        "ts": "1485375391.001703"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that should be Validate in absence of better name",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1485375416.000000"
+        },
+        "ts": "1485375395.001704"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I would leave BC.Ordered naming to you but strongly suggest renaming",
+        "ts": "1485375437.001706"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "re configtx and committers, let's just understand what committers are",
+        "ts": "1485375458.001707"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "shall we call them systemtx?",
+        "ts": "1485375469.001708"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "like in filter.systemtx",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1485375501.000000"
+        },
+        "ts": "1485375483.001709"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds reasonable",
+        "ts": "1485375946.001711"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "SystemTransactions or SystemTX?",
+        "ts": "1485375965.001712"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`SystemTx` would be my preference, We use `ConfigTx` in some places of the code",
+        "ts": "1485376097.001713"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With respect to `blockcutter.Ordered` I'm inclined to completely rename this, I don't think `blockcutter` is a good name, I would now think something like `batchcutter.ProposeInclusion` or something like that, though I don't even really care for that",
+        "ts": "1485376185.001714"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Cannot rename due to errors: C:\\gocode\\src\\<http:\/\/github.com|github.com>\\hyperledger\\fabric\\examples\\chaincode\\go\\asset_management_interactive\\app1\\app1.go:35:17: PeerClient not declared by package pb\nC:\\gocode\\src\\<http:\/\/github.com|github.com>\\hyperledger\\fabric\\examples\\chaincode\\go\\asset_management_interactive\\app1\\a",
+        "ts": "1485376278.001715"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I was trying to rename Committers but this came up...",
+        "ts": "1485376311.001716"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "The problem I have with BC is that it tries to do many things at once",
+        "ts": "1485376360.001717"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is: 1) validation of msgs, e.g., signature checks, 2) sizing the batch\/block, 3) filtering out system tx, 4) appends\/includes tx to the current batch",
+        "ts": "1485376406.001718"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "these are all valid things to do",
+        "ts": "1485376419.001719"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but together make BC a bit convoluted",
+        "ts": "1485376430.001720"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "esp. with Ordered() and Cut() calls",
+        "ts": "1485376437.001721"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We can certainly split this into multiple pieces if that is useful",
+        "ts": "1485376590.001722"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The interface makes the implementation of solo trivial",
+        "ts": "1485376603.001723"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And I think it is fairly straightforward in Kafka as well.  I did my best to make it usable by SBFT, but maybe it needs to be broken into pieces",
+        "ts": "1485376621.001724"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it's just that I never saw the need for things like this to bring 200 fresh lines of code to SBFT",
+        "ts": "1485376665.001725"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway - we have it merged now so let's work with what we have",
+        "ts": "1485376678.001726"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "btw, any hint on that strange renaming issue",
+        "ts": "1485376696.001727"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am not sure why an app would stop renaming at the orderer level",
+        "ts": "1485376719.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure, I am not a big IDE fan, I stick to hacking in vim (so typically just do such things manually)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1485377097.000000"
+        },
+        "ts": "1485377080.001729"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "would do it that way but the thing is all over the place",
+        "ts": "1485377207.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no this Committer is impossible to rename",
+        "ts": "1485378583.001732"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i will rename it in sbft scope only",
+        "ts": "1485378603.001733"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> <@U1AU8DRQR> <@U0XQ35CDD> <@U0KN2SSKE> I would kindly ask that future sbft merges wait for my code review",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1485379402.000000"
+        },
+        "ts": "1485379392.001734"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "thanks in advance",
+        "ts": "1485379408.001736"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> given two blocks at number 25 and 54",
+        "ts": "1485380507.001737"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but without blocks in between",
+        "ts": "1485380526.001738"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "is there are a way to found out, from Committers in 25 and Committers in 54,",
+        "ts": "1485380552.001739"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "were there Committers in blocks 26-53",
+        "ts": "1485380561.001740"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "?",
+        "ts": "1485380562.001741"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in other words, do Committers have sequential numbers?",
+        "ts": "1485380674.001742"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1485380996.001743"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is a `LastConfigurationIndex` field in the block metadata, which indicates the block number of the last configuration transaction",
+        "ts": "1485381058.001744"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It by default is only signed per orderer",
+        "ts": "1485381070.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But you could add as many signatures as you like",
+        "ts": "1485381080.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so committers = configuration tx? :slightly_smiling_face:",
+        "ts": "1485381082.001747"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, from the outside world, this is largely correct",
+        "ts": "1485381092.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Internally, we play so odd games with translating tx types",
+        "ts": "1485381102.001749"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I mean, LastConfigurationIndex counts committers, right?",
+        "ts": "1485381116.001750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`LastConfigurationIndex` is the the last block number which had a committer, for normal chains.  there are some edge cases (that I'm hoping will go away) to make the 'ordering system chain' more like the rest, but, that is WIP",
+        "ts": "1485381196.001751"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so, you see why I am asking",
+        "ts": "1485381225.001752"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "because orderers have this state independent from ordinary txs",
+        "ts": "1485381243.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and configuration txs should be rare",
+        "ts": "1485381253.001754"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this immensely simplifies state transfer at (sbft) orderers",
+        "ts": "1485381269.001755"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which means if I have a gap from 26-53, I could look at LastConfigIndex(54)",
+        "ts": "1485381299.001756"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and if LastConfigIndex(54) &lt;=25",
+        "ts": "1485381305.001757"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am good to proceed with the ordering without filling in the gap",
+        "ts": "1485381319.001758"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "agree?",
+        "ts": "1485381324.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and also if X := LastConfigIndex(54)&gt;25 then the orderer should just fetch block X",
+        "ts": "1485381386.001760"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and repeat that while LastConfigIndex(X)&gt;25",
+        "ts": "1485381410.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I absolutely understand",
+        "ts": "1485382404.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And agree",
+        "ts": "1485382411.001763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would note however, that I would vote to never `Deliver` a block unless the orderer has already processed all previous blocks",
+        "ts": "1485382476.001764"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "orderer might not deliver but we call Deliver from sbft process",
+        "ts": "1485382502.001765"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "because fill in the gap should be independent from sbft",
+        "ts": "1485382517.001766"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, agreed",
+        "ts": "1485382525.001767"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if there is xyzbft it would face the similar problem",
+        "ts": "1485382528.001768"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and would have to re-solve it",
+        "ts": "1485382534.001769"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so the idea is to solve it at the current sbft backend level",
+        "ts": "1485382546.001770"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not within simplebft itself",
+        "ts": "1485382555.001771"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as a thread separate from main simplebft thread",
+        "ts": "1485382583.001772"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Makes sense",
+        "ts": "1485382855.001773"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what was 200 lines?",
+        "ts": "1485390328.001774"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> new way of batching",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1485391401.000000"
+        },
+        "ts": "1485391320.001775"
+    }
+]

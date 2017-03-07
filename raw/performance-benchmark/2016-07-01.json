@@ -1,0 +1,213 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: set outstanding to a larger number than batchsize",
+        "ts": "1467364208.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i suggest batchsize=200, outstanding=400",
+        "ts": "1467364228.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so looking at the profile, 30% of the time seems to be spent in the GC",
+        "ts": "1467368957.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and also quite some time in malloc (may be affected by gc)",
+        "ts": "1467368989.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then a lot of protobufs functions",
+        "ts": "1467369001.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so if we want to reach 10k tps or so, we need to really engineer the systems to marshal as few times as possible, and we need to control our use of temporaries",
+        "ts": "1467369071.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: On my laptop, in vagrant with 8GB RAM, 4 cpus",
+        "ts": "1467380899.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "f=0, n=2, batchsize=1000, outstanding=1500 yields tps=2200",
+        "ts": "1467380909.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "f=1, n=4, batchsize=1000, outstanding=1500 yields tps=1400",
+        "ts": "1467380921.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you submit transactions?",
+        "ts": "1467380948.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i used batchsize=100, outstanding=200",
+        "ts": "1467380961.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've been using SOAPUI",
+        "ts": "1467380973.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how come i get 3000 and you get 2200?",
+        "ts": "1467380977.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i'm running bare",
+        "ts": "1467380988.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "100 Threads, each submitting 1000 requests each to a single peer",
+        "ts": "1467380989.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no vagrant",
+        "ts": "1467380991.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Could certainly be related",
+        "ts": "1467380996.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i used 10 threads",
+        "ts": "1467381009.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I can try reducing the number of threads",
+        "ts": "1467381019.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1467381023.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that should reduce the scheduling problems",
+        "ts": "1467381035.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is that with short circuit?",
+        "ts": "1467381043.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1467381046.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hum hum",
+        "ts": "1467381344.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe it is just the inefficiency introduced inside of vagrant, though I thought you never run in vagrant, and things like the unit tests always ran appreciably faster in my laptop's vagrant",
+        "ts": "1467381866.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea odd",
+        "ts": "1467382145.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How are you driving load? I'm seeing SOAPUI use up an unreasonable amount of CPU",
+        "ts": "1467384998.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm using my rest-bench",
+        "ts": "1467385438.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`.\/rest-bench -request '{\"method\": \"invoke\", \"jsonrpc\": \"2.0\", \"ID\": \"hi\", \"params\": {\"chaincodeID\":{\"name\":\"a5389f7dfb9efae379900a41db1503fea2199fe400272b61ac5fe7bd0c6b97cf10ce3aa8dd00cd7626ce02f18accc7e5f2059dae6eb0786838042958352b89fb\"}, \"type\":1, \"ctorMsg\":{\"function\": \"invoke\", \"args\": [\"a\", \"b\", \"1\"]}}}' -url http:\/\/0:5001\/chaincode -parallel 10`",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1467385469.000000"
+        },
+        "ts": "1467385463.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is that somewhere I can grab?",
+        "ts": "1467385514.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1467386207.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/rest-bench>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/rest-bench",
+                "title_link": "https:\/\/github.com\/corecode\/rest-bench",
+                "text": "Contribute to rest-bench development by creating an account on GitHub.",
+                "fallback": "GitHub: corecode\/rest-bench",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/rest-bench",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467386237.000359"
+    }
+]

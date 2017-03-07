@@ -1,0 +1,1262 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0KPFAZNF>: i'm looking at how to change Makefile to use actual dependencies instead of dummy targets",
+        "ts": "1463142343.001154"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would be awesome, thanks",
+        "ts": "1463142356.001155"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was also trying to see if something could be done with prereqs\u2026like if .baseimage-dummy depended on .\/scripts\/provision\/* or something like that",
+        "ts": "1463142431.001156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so one thing is that `go install -v` will only print something if the sources change",
+        "ts": "1463142436.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe we should transition to `go install` instead of `go build`",
+        "ts": "1463142462.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that implies using the go install path, instead of `..\/peer\/peer`",
+        "ts": "1463142481.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i was thinking that too, it offers to be faster",
+        "ts": "1463142493.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "way faster",
+        "ts": "1463142499.001161"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on that front, another thing we could think about doing is for the peer-image\/ca-image targets, right now we inject the full $GOPATH and then build the peer",
+        "ts": "1463142525.001162"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now building the peer image - can't we just copy in the binary and the configs?",
+        "ts": "1463142525.001163"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes!",
+        "ts": "1463142530.001164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats where I was just going with that",
+        "ts": "1463142534.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rather than pull in the full source and do a build, we should just go-install the binary and inject that",
+        "ts": "1463142557.001166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and configs",
+        "ts": "1463142567.001167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1463142570.001168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "however...",
+        "ts": "1463142586.001169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "does the code read the full .yaml tree at runtime?",
+        "ts": "1463142592.001170"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or just core.yaml?",
+        "ts": "1463142600.001171"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea that needs to be cleaned up as well",
+        "ts": "1463142615.001172"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but will deploy work?",
+        "ts": "1463142641.001173"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. do we need the full source in the peer image?",
+        "ts": "1463142652.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "technically the chaincode needs a subset",
+        "ts": "1463142667.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea but that's silly in the first place that we need to distribute the chaincode",
+        "ts": "1463142685.001176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least the shim, possibly some other stuff like PB",
+        "ts": "1463142685.001177"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "defeats the purpose of deploying code",
+        "ts": "1463142691.001178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure what you mean",
+        "ts": "1463142708.001179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, i am not against the fabric code being injected, its the go-build _every_ time that kills us",
+        "ts": "1463142764.001180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, the biggest win would be, still copy $GOPATH, but inject a peer\/ca binary built from go-install",
+        "ts": "1463142783.001181"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think if we move the business of creating the peer\/ca images out from the unit tests and into the makefile, we can optimize this fairly easily",
+        "ts": "1463142826.001182"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, given that there is some peace on the consensus front, i can look into tooling",
+        "ts": "1463142827.001183"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where i have a personal need (make takes 1h on my laptop)",
+        "ts": "1463142840.001184"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i've been doing tooling for other large projects for a long time",
+        "ts": "1463142855.001185"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would be awesome, thanks",
+        "ts": "1463142861.001186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is the 1h after a clean?",
+        "ts": "1463142878.001187"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463142885.001188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is that building the baseimage too?",
+        "ts": "1463142891.001189"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463142902.001190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mean the :unknown-0.0.9 thing",
+        "ts": "1463142907.001191"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1463142910.001192"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that gets fetched",
+        "ts": "1463142913.001193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh wow, thats an awfully long time for not building the base",
+        "ts": "1463142929.001194"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i know",
+        "ts": "1463142936.001195"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "any idea where the bulk is spent?",
+        "ts": "1463142939.001196"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "slow CPU :simple_smile:",
+        "ts": "1463142946.001197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah",
+        "ts": "1463142949.001198"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so first thing that is odd is that REST deploy doesn't ship the source",
+        "ts": "1463142972.001199"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you can only deploy code that is either available at the peer you're sending the deploy to",
+        "ts": "1463142999.001200"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or which the peer can fetch",
+        "ts": "1463143008.001201"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does that make sense at all?",
+        "ts": "1463143018.001202"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for now we can just copy the current codebase in",
+        "ts": "1463143029.001203"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it doesn't seem right",
+        "ts": "1463143034.001204"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, theres two things going on here I think",
+        "ts": "1463143044.001205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#1, we need some substrate to support the chaincode\u2026minimally shim and protobuf, probably others",
+        "ts": "1463143067.001206"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we solve this with a heavy hand and just copy the entire $GOPATH",
+        "ts": "1463143079.001207"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#2, the deploy method currently only supports accessible URL or local fs path",
+        "ts": "1463143107.001208"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "often times local-fs path and $GOPATH overlap, but they dont technically need to per se",
+        "ts": "1463143139.001209"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one of the things I was trying to tackle with chaintool would be chaincode packaging",
+        "ts": "1463143161.001210"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. bundle it up and send it in with the deploy payload",
+        "ts": "1463143171.001211"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would get rid of the #2 stuff, but we still need to think about the ABI that the chaincode needs to compile",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1463143201.000000"
+        },
+        "ts": "1463143191.001212"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have to get kids to school, bbiab",
+        "ts": "1463143207.001214"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so why do we even ship the code and don't ship binaries?  probably because we want to support a heterogeneous network",
+        "ts": "1463143286.001215"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It's also likely more space efficient to send code, but most importantly it's that certain use cases will require code attestation ",
+        "ts": "1463145868.001216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "But heterogeneity is a good point too",
+        "ts": "1463145926.001217"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "code attestation vs binary attestation...",
+        "ts": "1463145968.001218"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "independent, the code should be sent, and not be expected to be present",
+        "ts": "1463145994.001219"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and probably the code should be self-contained and use vendored dependencies",
+        "ts": "1463146011.001220"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or different nodes may fetch different code (dependencies)",
+        "ts": "1463146022.001221"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Assuming you can product deterministic binaries I suppose you have a point",
+        "ts": "1463146022.001222"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. the build must happen on a dockerized go build that cannot access the internet",
+        "ts": "1463146061.001223"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think shipping a multi-binary is better",
+        "ts": "1463146075.001224"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe <@U0PB67X4K> has an opinion",
+        "ts": "1463146103.001225"
+    },
+    {
+        "user": "U0PB67X4K",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0PB67X4K|garisingh> has joined the channel",
+        "ts": "1463146109.001226"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think a production environment will not want to allow fetching",
+        "ts": "1463146529.001227"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is what I was going for with the \u201cplatforms\u201d concept in chaintool",
+        "ts": "1463146539.001228"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> <@U0KPFAZNF>  - you guys are hitting the nail on the head here in terms of issues of \"code \/ binary\" attestation when it comes to chaincode.  The question is a bit easier if you are only concerned about the peer \/ environment you manage, but more complicated if you want to know what everyone else is actually running",
+        "ts": "1463146553.001229"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. platform: { \u201corg.hyperledger.chaincode.golang\u201d, 1 } meant a certain ABI in terms of available libraries, etc",
+        "ts": "1463146586.001230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anything not part of the platform could be added to the bundle shipped with the app",
+        "ts": "1463146599.001231"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "see this: <https:\/\/github.com\/ghaskins\/chaintool#chaintool-package>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1463146653.000000"
+        },
+        "ts": "1463146649.001232"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the idea was that we have some properties here, like the chaincode sha and platform designation",
+        "ts": "1463146680.001235"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the source-bundle + sha provides the source attestation and the platform defines the compatiblity",
+        "ts": "1463146713.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I liken the chaintool platform concept like java 1.6, vs 1.7 vs 1.8",
+        "ts": "1463146780.001237"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it denotes compatibility with the environment the code will run in",
+        "ts": "1463146797.001238"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I had a few ideas:\n\n1) Have a trusted Docker registry as part of the network.  So rather than compiling code and building images on the fly, actually require that there be a signed Docker image deployed to a secure trusted registry.  We can likely leverage a lot of the existing enrollment crypto \/ certs as part of this or create some new material that's part of the network\n\n2) Require that the Docker daemon be in \"content trust\" mode or at least set that flag when starting containers\n\n3) For things like the SHIM code, we should actually move to a model where we used shared libraries (prebuilt) rather than compiling it in from source.",
+        "ts": "1463146808.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if we move to other languages like Java, we can do better - e.g. signed JARs, etc",
+        "ts": "1463146836.001240"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont think you need a specific language to do that, I captured signatures in the CAR concept which is language neutral",
+        "ts": "1463146878.001241"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should also have a very minimal base chaincode container image - e.g. no compiler. etc",
+        "ts": "1463146884.001242",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so you could have signed golang code too, for instance",
+        "ts": "1463146888.001243"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "true",
+        "ts": "1463146894.001244"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but I would leverage the language specific ways under the covers where possible",
+        "ts": "1463146915.001245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i havent implemented the digitial signatures feature in chaintool yet, but the metadata is already there",
+        "ts": "1463146918.001246"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "chaincode base image should be basically as close to just having the chaincode executable as possible",
+        "ts": "1463146962.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "id be wary to base the chaincode itself on docker, its too big and too external I think",
+        "ts": "1463146973.001248"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am fine if the platform concept is in docker, though",
+        "ts": "1463146986.001249"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure",
+        "ts": "1463147000.001250"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance platform: { \u201corg.hyperledger.chaincode.golang\u201d, 1 } could be a docker container with specific versions of the shim\/protobuf libraries",
+        "ts": "1463147011.001251"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there are many different levels of attestation that we can try to provide",
+        "ts": "1463147017.001252"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and the network can agree how strict they want to be",
+        "ts": "1463147038.001253"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but its the source itself that is the first-class item on the chain",
+        "ts": "1463147042.001254"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "regarding your minimal chaincode environment, yes",
+        "ts": "1463147182.001255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if the source is the first-class item, then the compiler needs to be a defined version as well, no?",
+        "ts": "1463147216.001256"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and assuming we stick with the source-based deployment (I think we should), it might even be the kind of thing where you would want two (related) containers",
+        "ts": "1463147220.001257"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one for build, one for runtime",
+        "ts": "1463147226.001258"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed - trusted, common build container would be the way to go IMHO",
+        "ts": "1463147244.001259"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "build would be a superset of runtime with the compilers, etc neeeded",
+        "ts": "1463147246.001260"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is this better than binary?",
+        "ts": "1463147266.001261"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "running native binary rather than in Docker?",
+        "ts": "1463147285.001262"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, putting the binary into the chain instead of the source",
+        "ts": "1463147298.001263"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - I think we should be allowed to put the binary there as well.  again - could be network policy",
+        "ts": "1463147330.001264"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "size, heterogeneity, and ability\/ease to attest are the three leading arguments I can think of",
+        "ts": "1463147333.001265"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "easy to hash and sign any binary though as well as source",
+        "ts": "1463147356.001266"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you can produce something like an llvm binary deterministically, than some of that falls away, but I suspect it would still be quite a bit larger than source",
+        "ts": "1463147373.001267"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and still harder to review, even if the binary is deterministic",
+        "ts": "1463147385.001268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well this all points towards not using arbitrary code",
+        "ts": "1463147415.001269"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and instead using a limited (scripting) language",
+        "ts": "1463147424.001270"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that train has left the station long ago",
+        "ts": "1463147433.001271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bingo, but then you are back to implicit source deployment again",
+        "ts": "1463147448.001272"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, then your peer version is the point",
+        "ts": "1463147468.001273"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in any case... my question was: why doesn't REST `deploy` take the source?",
+        "ts": "1463147508.001274"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my take is, HL is a framework, people may take that framework and restrict\/augment the available platforms that can be supported in their own network",
+        "ts": "1463147523.001275"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh right, back to that",
+        "ts": "1463147531.001276"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, im tryign to add that, heh",
+        "ts": "1463147537.001277"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its a good idea",
+        "ts": "1463147540.001278"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it should be the whole source",
+        "ts": "1463147555.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and be built in a container that has no network access",
+        "ts": "1463147562.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes!",
+        "ts": "1463147567.001281"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on both counts",
+        "ts": "1463147569.001282"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/ghaskins\/chaintool#typical-workflow>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1463147576.000000"
+        },
+        "ts": "1463147571.001283"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was going for [source] -&gt; chaintool package -&gt; [.car] -&gt; deploy -&gt; build in an isolated container",
+        "ts": "1463147609.001286"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "via the rest payload, though the peer support is not in place yet",
+        "ts": "1463147623.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but fully agree",
+        "ts": "1463147632.001288"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in that model, the dev uses the \u201cbuild\u201d subcommand to test their code, but the \u201cpackage\u201d command just packages the source, and the peer re-runs the build in an isolated container",
+        "ts": "1463147679.001289"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(right now, we allow go-get to pull in deps though, but thats a maturity thing",
+        "ts": "1463147705.001290"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "until we can define what the platform abi is and lock it down",
+        "ts": "1463147720.001291"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, in that example02 example below, the payload is 2315 bytes that would be (probably base64 encoded) within the REST parameters",
+        "ts": "1463147765.001292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(though you can also use the current url\/fs-path model too if desired",
+        "ts": "1463147792.001293"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bbiab",
+        "ts": "1463147821.001294"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "Hey <@U0KPFAZNF> - I\u2019m reviewing PR 1440 and wanted to ask a few questions. Mainly about \"move .\/devenv\/baseimage to .\/baseimage to reflect that it encompases more than the development environment\u201d\nIt seems like the base image is trying to be four things\n1. Vagrant dev env\n2. Chaincode dev env\n3. Chaincode production env\n4. Peer production env\nAm I totally off base or is that the direction?",
+        "ts": "1463163555.001295"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure about the distinction between 2&amp;3, but otherwise i think thats right",
+        "ts": "1463163593.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i guess you could say vagrant, chaincode env, fabric (peer, ca, etc)",
+        "ts": "1463163647.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "2 is me working on writing a chaincode. 3 is how the chaincode is deployed once the peer is in production",
+        "ts": "1463163651.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "It seems for 1 and 2 people want Ubuntu where as for 3 and 4, people want Alpine or something small",
+        "ts": "1463163682.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, i see where you are going with it",
+        "ts": "1463163707.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see a difference in chaincode-compilation vs chaincode-execution, for sure",
+        "ts": "1463163724.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "today, i dont know if anyone uses docker for developing chaincode, per se, but I can see how that might be useful eventually",
+        "ts": "1463163748.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "so I\u2019m trying to work out how we support both. seems like it may be two different images",
+        "ts": "1463163831.001303"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "And once we have Java chaincode, there may be a third image",
+        "ts": "1463163843.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think you are right to point out that at some point, certain docker envs will want\/need to be lightweight as possible",
+        "ts": "1463163843.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "will probably take more work to get to the point that it can be non ubuntu, but I think we can get there eventually",
+        "ts": "1463163877.001306"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "are you thinking non-ubuntu for the baseimage everywhere?",
+        "ts": "1463164004.001307"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U0TFEHX8E>:  what do you think constitutes chaincode dev environment? In my mind, it would be some sort of IDE, that can deploy to the network?",
+        "ts": "1463164208.001308"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I think thats what Ethereum is doing with Solidity?",
+        "ts": "1463164227.001309"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "i.e. for java shim, maybe an eclipse PDE..",
+        "ts": "1463164279.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "If I\u2019m working on a complex chaincode and it\u2019s failing, I may wish to actually run the docker container that was deployed. I\u2019ve seen others do this to debug. At this point, they\u2019re looking for tools like vi, vim, nano, etc. in the container",
+        "ts": "1463164295.001311"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "hmm. good point, debugging the contract is a thing now too..",
+        "ts": "1463164324.001312"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "thats kinda scary actually... how do you recover from a bug that you found when contract was in production, executing.. since blockchain only allows append.. another contract I guess...",
+        "ts": "1463164398.001313"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "that has to have access to the same world state..",
+        "ts": "1463164431.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "that\u2019s being worked on as part of the \u201cupgrade\u201d concept",
+        "ts": "1463164634.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0KPFAZNF>: so my point is that the baseimage still seems tied to dev, thus maybe why it should live in the devenv folder? In production I may still wish to deploy chaincode using the golang:1.6 image.",
+        "ts": "1463164716.001316"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "some sort of way to redeploy same contract (i.e. different executable under same name?)",
+        "ts": "1463164718.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U10Q62R8X>: The issue is at <https:\/\/github.com\/hyperledger\/fabric\/issues\/1133>. <@U0ULK2JPP> may have more details written down somewhere else or a public branch",
+        "edited": {
+            "user": "U0TFEHX8E",
+            "ts": "1463164818.000000"
+        },
+        "ts": "1463164814.001318"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0TFEHX8E>: i see your point",
+        "ts": "1463164826.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ultimately its not a huge deal, i can see both arguments",
+        "ts": "1463164882.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(today it isnt just dev-env, but perhaps eventually it will be)",
+        "ts": "1463164895.001323"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we can leave it under dev-env if you prefer",
+        "ts": "1463164907.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i guess what bothered me about leaving it is it seemed wrong to have the new auto provisioner reach into .\/devenv\/.. to do its work",
+        "ts": "1463164947.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but its not a huge deal",
+        "ts": "1463164977.001326"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on the image side point, I do wonder how much that will matter given that docker is pretty good about storage efficiency",
+        "ts": "1463165050.001327"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. whether the image is 50M or 500M, it will scale by the delta of each chaincode, not the 50\/500",
+        "ts": "1463165095.001328"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it will impact the inital download, though",
+        "ts": "1463165118.001329"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "agreed on size. I think it\u2019s more a perspective of less stuff = better because there\u2019s less complexity\/risk in my container?",
+        "ts": "1463165181.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, that is certainly true",
+        "ts": "1463165193.001331"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you might need go, jvm, chaintool, whatever to build it, but once its built, none of that stuff should matter much",
+        "ts": "1463165230.001332"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you just want the bare minimum so that \"docker run -it chaincode-image chaincode-binary\u201d can do its thing",
+        "ts": "1463165269.001333"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "I need to understand the new auto provisioner. Is this in your PR?",
+        "ts": "1463165278.001334"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, last patch",
+        "ts": "1463165285.001335"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "basically, it just says \u201cif I cant find the baseimage with docker-pull, build it\"",
+        "ts": "1463165299.001336"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wanted to un-gate people from dockerhub publication",
+        "ts": "1463165333.001337"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "particularly important for multi-arch, but could be used, for instance, for someone testing baseimage changes",
+        "ts": "1463165378.001338"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "even within an $arch that is supported",
+        "ts": "1463165403.001339"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it throws a big WARNING to the log when this happens, though",
+        "ts": "1463165427.001340"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "I see. but in production, if I changed the chaincode docker file in core.yaml to something other than the base image, that would never run, correct?",
+        "ts": "1463165428.001341"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "correct, this only happens via the makefile plumbing",
+        "ts": "1463165454.001342"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "in 'C-speak', you want to statically link all your libraries into your executable, so you can move it anywhere.. not sure yet what that means in GO, but once compiled.. not sure you need much of an OS anyway",
+        "ts": "1463165454.001343"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you say \u201cmake\u201d with a target that needs a baseimage, and the baseimage cannot be found, it will try to compile it locally",
+        "ts": "1463165471.001344"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U10Q62R8X>: yah, for go that is probably largely true\u2026there might be some ABI linkage to some .sos (rocksdb comes to mind)",
+        "ts": "1463165515.001345"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "that makes sense. It still seems like a dev mode thing to me. Not sure I understand \"bothered me about leaving it is it seemed wrong to have the new auto provisioner reach into .\/devenv\/.. to do its work\"",
+        "ts": "1463165516.001346"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0TFEHX8E>: what I meant was this part:",
+        "ts": "1463165533.001347"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/multi-arch-substrate-v1\/scripts\/provision\/docker.sh#L64>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "ghaskins\/hyperledger-fabric",
+                "title_link": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/multi-arch-substrate-v1\/scripts\/provision\/docker.sh#L64",
+                "text": "hyperledger-fabric - Blockchain fabric code",
+                "fallback": "GitHub: ghaskins\/hyperledger-fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/multi-arch-substrate-v1\/scripts\/provision\/docker.sh#L64",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1463165569.001348"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seemed \u201cwrong\u201d for the docker auto-provisioner to reach into .\/devenv\/baseimage to do the make (I equate \u201cdevenv\u201d with vagrant)",
+        "ts": "1463165618.001350"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but like I said, its a minor niggle",
+        "ts": "1463165628.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "ah, understood. thanks",
+        "ts": "1463165671.001352"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Reviewing that made me realize there is a missing error check, I just annotated the PR",
+        "ts": "1463165995.001353"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill let you finish the review as is, but that should get fixed before merging",
+        "ts": "1463166021.001354"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "what about instead of a \/baseimage folder, we have a \/images\/baseimage folder and then we could expand in the future if we want?",
+        "ts": "1463166461.001355"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i like that",
+        "ts": "1463166472.001356"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill make a v2 with that change, the error-check fix, and whatever else you find\u2026let me know when you are done with reviewing v1 so I can incorporate all feedback",
+        "ts": "1463166538.001357"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do you like .\/images\/base better?",
+        "ts": "1463166563.001358"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or stick with baseimages",
+        "ts": "1463166569.001359"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "agreed, \/images\/base sounds better",
+        "ts": "1463166667.001360"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1463166673.001361"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "done with review. That was my only comment. I added a comment to the PR with a summary of our discussion",
+        "ts": "1463167078.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, sounds good, thank you",
+        "ts": "1463167100.001363"
+    },
+    {
+        "user": "U13TWBRBL",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U13TWBRBL|jzhang> has joined the channel",
+        "ts": "1463170864.001364"
+    }
+]

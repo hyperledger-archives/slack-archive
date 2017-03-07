@@ -1,0 +1,793 @@
+[
+    {
+        "user": "U2AS0GVSP",
+        "text": "<@U2AS0GVSP|jackkleeman> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476275995.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> this CouchDB connector is HUGE",
+        "ts": "1476288802.000037"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I can't wait to try it out",
+        "ts": "1476288809.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm still not clear on the ideas of 'blockchain ledger' vs stata database. What's what and how are those related. I'm afraid I looked at the proposal and I'm still confused. May be a very simple example will illustrate the concepts and the thinking behind",
+        "ts": "1476289242.000039"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "also what this all means for the scalability of a high-volume transaction architecture in real world",
+        "ts": "1476289535.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "nosql engine is a great fit for my use case (I keep getting JSON documents, no need to edit or delete old ones)",
+        "ts": "1476289582.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "\u2018blockchain ledger\u2019 is the actual blocks\u2026immutable source of truth.  in v1 architecture since the transaction result data is embedded  in the block transactions, we could technically go without a state database.  But queries to the \u2018blockchain ledger\u2019 would not be efficient (simulation queries or external queries), and therefore we benefit from a side \u2018state database\u2019 with latest key values\u2026 think of it as a key-based index into the blockchain ledger",
+        "ts": "1476290499.000042"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "aha",
+        "ts": "1476290596.000043"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I've modeled a data layer on top of the event logs in the ethereum transactions",
+        "ts": "1476290629.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "scalability\/performance not fully understood until empirical testing is done\u2026 in theory an external document database would be slower than an embedded key\/value database.  but the database is likely not the bottleneck in v1 architecture.  and if it is, CouchDB could potentially be sharded across a cluster.",
+        "ts": "1476290629.000045"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "they allow indexed topics",
+        "ts": "1476290634.000046"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "which are implemented as a bloom filter",
+        "ts": "1476290640.000047"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so technically you can query the chain by looking at the indexed topics (that are part of the transaction protocol and hence part of the transaction itself)",
+        "ts": "1476290664.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "got it",
+        "ts": "1476290693.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, there is talk of having a config option\u2026 the index could point you to the block transactions themselves to get the data, or the index could contain the actual values for faster lookup.",
+        "ts": "1476290783.000050"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well if you can \"extend\" the protocol itself to record fields, you pick the ones that you use to query (i.e index keys in SQL) and then you use those to collect the relevant transactions and once you do that you get the other stuff",
+        "ts": "1476290889.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "may be hard to implement an advanced DSL though",
+        "ts": "1476290900.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "also I'm not sure how encryption will play into this",
+        "ts": "1476290958.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "because most enterprise clients will actually require encryption of ALL transaction content",
+        "ts": "1476290981.000054"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so I'm not sure how scanning\/querying encrypted headers will work : ))",
+        "ts": "1476290998.000055"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right and right\u2026 we think CouchDB provides decent capability such that the fields don\u2019t have to identified before-hand\u2026 indexes can be created afterwards depending on the query requirements.",
+        "ts": "1476291051.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "right - I also thought that what I did with ethereum in the past was more of a hack",
+        "ts": "1476291078.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "eventually something like CouchDB will be HUGE because the key ingredient that's missing from ANY blockchain is a decent structured data engine and the ability to query that",
+        "ts": "1476291135.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "all the other aspects are coming together more or less",
+        "ts": "1476291144.000059"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and let's not forget that the data model is where it's at for most real-life applications ; ))",
+        "ts": "1476291158.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, there is a balance of blockchain \u2018pureness\u2019 and solving business application requirements",
+        "ts": "1476291219.000061"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well I've also thought of building a read-only frontend cache (in sql or elastic)",
+        "ts": "1476291285.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but if you are not reading straight from the chain you are defeating the purpose of using a blockchain : ))",
+        "ts": "1476291301.000063"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "right, some projects have done that, the idea here is give them 80% of what they need out of the box",
+        "ts": "1476291317.000064"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it's not a defensible solution",
+        "ts": "1476291340.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well we're using the blockchain in our platform but ... we can't read from it so we read from our SQL database : )))",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1476291366.000000"
+        },
+        "ts": "1476291358.000066"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "would be interested if you could write up a short summary of your project and how queryable database helps",
+        "ts": "1476291418.000068"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "(doesn\u2019t have to be right here right now)",
+        "ts": "1476291429.000069"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "my solution is very straight forward I want to keep track of a product with a UNIQUE serial number that travels from a manufacturer through a distributor to a final seller",
+        "ts": "1476291473.000070"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but in real life it's more complicated than that - because there are additional business meta data such as \"business steps\", \"location\", \"datetime\", etc...",
+        "ts": "1476291504.000071"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "which are a good fit for a SQL model",
+        "ts": "1476291516.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ok, so the transaction history query across time feature will really help you",
+        "ts": "1476291538.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "what exactly is that feature ?",
+        "ts": "1476291563.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "assuming we \u2018index' the actual transactions into the state database (in addition to the latest key values), then you can do queries as mentioned in the charts:",
+        "ts": "1476291678.000075"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1KFCPFQA|dave.enyeart> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/dave.enyeart\/F2NFLQCJY\/pasted_image_at_2016_10_12_01_01_pm.png|Pasted image at 2016-10-12, 1:01 PM>",
+        "file": {
+            "id": "F2NFLQCJY",
+            "created": 1476291689,
+            "timestamp": 1476291689,
+            "name": "Pasted image at 2016_10_12 01_01 PM.png",
+            "title": "Pasted image at 2016-10-12, 1:01 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1KFCPFQA",
+            "editable": false,
+            "size": 11652,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2NFLQCJY\/pasted_image_at_2016_10_12_01_01_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2NFLQCJY\/download\/pasted_image_at_2016_10_12_01_01_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2NFLQCJY-7dadae2ad1\/pasted_image_at_2016_10_12_01_01_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2NFLQCJY-7dadae2ad1\/pasted_image_at_2016_10_12_01_01_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2NFLQCJY-7dadae2ad1\/pasted_image_at_2016_10_12_01_01_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 342,
+            "thumb_360_h": 163,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2NFLQCJY-7dadae2ad1\/pasted_image_at_2016_10_12_01_01_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 342,
+            "original_h": 163,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/dave.enyeart\/F2NFLQCJY\/pasted_image_at_2016_10_12_01_01_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2NFLQCJY-b78ab6f168",
+            "channels": [
+                "C2GFRAE7P"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1KFCPFQA",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1KFCPFQA|dave.enyeart>",
+        "bot_id": null,
+        "ts": "1476291692.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that will return all the transactions for \u201cmarble1\u201d or serial number \u201cxyz\"",
+        "ts": "1476291728.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "just so I understand - this snipper is from the CouchDB connector ?",
+        "ts": "1476293434.000078"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm not very familiar with the marble example",
+        "ts": "1476293445.000079"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that is a vanilla CouchDB query example, not specific to our plugin, showing that you can query the JSON transaction data",
+        "ts": "1476293510.000080"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "aha",
+        "ts": "1476293529.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "let me check out the sample app you provided with the CouchDB stuff you put up",
+        "ts": "1476293600.000082"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm sort of new to the CouchDB so I need to digest the query model there ...",
+        "ts": "1476293624.000083"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "you can watch the video to see the scenario play out",
+        "ts": "1476293639.000084"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "demo video was posted yesterday",
+        "ts": "1476293648.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "new to CouchDB 2.0 is this sql-like ad hoc query capability: <http:\/\/docs.couchdb.org\/en\/2.0.0\/api\/database\/find.html>",
+        "ts": "1476293703.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "just pushed a changeset to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1401>\nThe primary changes include:\n- Provided a blocking iterator over ledger. The Next() call to iterator blocks for the next block to get available\n- Removed the VerifyChain function from ledger, as this is more of a utility on top of ledger",
+        "ts": "1476296335.000087"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> the CouchDB video won't play for me",
+        "ts": "1476299535.000088"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I tried downloading but it's close to 500MBs",
+        "ts": "1476299541.000089"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "may be bigger compression for better streaming?",
+        "ts": "1476299559.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "sorry, i thought you could stream directly from the playbacks channel without download",
+        "ts": "1476299577.000091"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it's stuck at Loading ... for me",
+        "ts": "1476299635.000092"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ok, for me, if I click the play button on the video in the playbacks channel it starts playing immediately. are you using slack client or web?",
+        "ts": "1476299780.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "web",
+        "ts": "1476299790.000094"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "i\u2019d suggest try slack client, better experience overall",
+        "ts": "1476299804.000095"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "if still no luck, let me know and i can compress further, but the code walkthrough became unreadable when i tried that last time",
+        "ts": "1476299886.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "just tried the desktop app",
+        "ts": "1476300011.000097"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "the video started playing but it's choppy ...",
+        "ts": "1476300021.000098"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm at around 100k\/s connection",
+        "ts": "1476300026.000099"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "hmm",
+        "ts": "1476300061.000100"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "actually going well fullscreen",
+        "ts": "1476300066.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ok, where in the world is Martin? :slightly_smiling_face:",
+        "ts": "1476300080.000102"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "haha",
+        "ts": "1476300085.000103"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "actually my country is in the top 10 countries in the world for internet speed",
+        "ts": "1476300109.000104"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "however, I'm in this forrest house with shitty wireless access point + wifi in the house",
+        "ts": "1476300134.000105"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and the country is ....",
+        "ts": "1476300145.000106"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "top secret",
+        "ts": "1476300155.000107"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "Bulgaria!",
+        "ts": "1476300172.000108"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "excellent :slightly_smiling_face:  will try to figure out a better video compression next time",
+        "ts": "1476300217.000109"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "awesome video but do explain one thing for me which I'm missing",
+        "ts": "1476300353.000110"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "where is the state db actually located?",
+        "ts": "1476300372.000111"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "in ethereum there's this contract storage (which is part of the chain)",
+        "ts": "1476300405.000112"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "state db is local (dedicated) to the peer.  if you don\u2019t know, there is already a world state db embedded in peer in 0.5 using RocksDB.  so this is the same general idea, except if we use couchdb it would be a separate process rather than embedded",
+        "ts": "1476300485.000113"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so in the embedded world state db",
+        "ts": "1476300526.000114"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "if I change a variable then all peers will replicate the change ?",
+        "ts": "1476300538.000115"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "well, the other way around, if the peers reach agreement, they will all make the change independently to their blockchain and state db (rather than db replication)",
+        "ts": "1476300672.000116"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok I'm following",
+        "ts": "1476300700.000117"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and with the couchDB situation",
+        "ts": "1476300709.000118"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "that would be running as a separate thread\/process ?",
+        "ts": "1476300722.000119"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "yes, each peer controls their own data still, its just that couchdb is in a separate process rather than embedded",
+        "ts": "1476300761.000120"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "would that be a problem because someone can hijack the process and write to CouchDB WITHOUT going through the blockchain process ?",
+        "ts": "1476300791.000121"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "we do need to lockdown couchdb access so that it cant happen, for example require the peer cert to login, with no option for external login",
+        "ts": "1476300839.000122"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I think this needs to be thought out",
+        "ts": "1476300873.000123"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "because I can probably corrupt memory space, etc...",
+        "ts": "1476300883.000124"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "if you or any other security experts are reading, we could use your help thinking that out",
+        "ts": "1476300884.000125"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "without even login in",
+        "ts": "1476300887.000126"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm not a security expert but I've done enough buffer overflow exploits and hacking to know that things could be \"abused\" : ))",
+        "ts": "1476300929.000127"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "if CouchDB is still a KEY\/VALUE DB - why can't we run that embedded as it is right now with RocksDB ?",
+        "ts": "1476300968.000128"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "couldn\u2019t peer memory space be corrupted in similar way?",
+        "ts": "1476300993.000129"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well sure - on a local level",
+        "ts": "1476301016.000130"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but the peers should refuse the change",
+        "ts": "1476301021.000131"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "or flag it as illegitimate",
+        "ts": "1476301031.000132"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "couchdb is not embeddable, if somebody could figure out how to embed couchdb, yes that would be ideal",
+        "ts": "1476301046.000133"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "we expect some updates to couchdb would be needed",
+        "ts": "1476301078.000134"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and here embeddable would mean to be running in memory only ?",
+        "ts": "1476301079.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "running in memory and persisting to disk",
+        "ts": "1476301104.000136"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "SQLlight ?",
+        "ts": "1476301139.000137"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "lol",
+        "ts": "1476301140.000138"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that requires upfront schema right",
+        "ts": "1476301162.000139"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "true",
+        "ts": "1476301177.000140"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<https:\/\/unqlite.org>",
+        "attachments": [
+            {
+                "title": "UnQLite - An Embeddable NoSQL Database Engine",
+                "title_link": "https:\/\/unqlite.org",
+                "text": "UnQLite - An Embeddable Database Engine - <http:\/\/unqlite.org\/>",
+                "fallback": "UnQLite - An Embeddable NoSQL Database Engine",
+                "from_url": "https:\/\/unqlite.org",
+                "service_icon": "https:\/\/unqlite.org\/favicon.ico",
+                "service_name": "unqlite.org",
+                "id": 1
+            }
+        ],
+        "ts": "1476301209.000141"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "if there is a better option for embeddable queryable nosql data store i\u2019m open to ideas",
+        "ts": "1476301217.000143"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ok will look",
+        "ts": "1476301233.000144"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "never used that",
+        "ts": "1476301238.000145"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "just googling for embeddable nosql engine",
+        "ts": "1476301244.000146"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "need to step away for now",
+        "ts": "1476301261.000147"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "awesome thanks!",
+        "ts": "1476301267.000148"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "keep up the great thinking and let us know what you come up with",
+        "ts": "1476301294.000149"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "will do",
+        "ts": "1476301314.000150"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so <https:\/\/github.com\/symisc\/unqlite> actually doesn't look bad on first sight",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1476301835.000000"
+        },
+        "ts": "1476301829.000151"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```Serverless, NoSQL database engine.\nTransactional (ACID) database.\nZero configuration.\nSingle database file, does not use temporary files.\nCross-platform file format.\nUnQLite is a Self-Contained C library without dependency.\nStandard Key\/Value store.\nDocument store (JSON) database via Jx9.\nSupport cursors for linear records traversal.\nPluggable run-time interchangeable storage engine.\nSupport for on-disk as well in-memory databases.\nBuilt with a powerful disk storage engine which support O(1) lookup.\nThread safe and full reentrant.\nSimple, Clean and easy to use API.\nSupport Terabyte sized databases.\nBSD licensed product.\nAmalgamation: All C source code for UnQLite and Jx9 are combined into a single source file.```",
+        "ts": "1476301838.000154"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "home page has more info than github though: <https:\/\/unqlite.org>",
+        "ts": "1476301976.000155"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it's using Jx9 which is an embeddable scripting engine: <http:\/\/jx9.symisc.net>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1476302093.000000"
+        },
+        "ts": "1476302088.000156"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so that looks like a good fit - I'd be curious to hear other experts in this channel weigh in",
+        "ts": "1476302162.000159"
+    },
+    {
+        "user": "U0KM61BCP",
+        "text": "<@U0KM61BCP|cbf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476303833.000160"
+    },
+    {
+        "user": "U2NNF5FS6",
+        "text": "<@U2NNF5FS6|pospi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476325258.000161"
+    }
+]

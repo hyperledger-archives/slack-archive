@@ -1,0 +1,229 @@
+[
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Hi, small question :slightly_smiling_face:\nIn order to build a Go application that will interact with a fabric network through Grpc, what is the best option?\n\n1- Connect to a peer via the DevOps Grpc API, and let this peer handle membership things for us\nOR\n2- Use the SDK approach by calling \"ProcessTransaction\" directly from the client to any validating peer (Peer API), and manage ECA, TCAs, ACAs by ourselves\n(see <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Client-SDK-Specification>)\n\nIf the (2) option is the preferred one, is there any existing Go package I can use (kind of Go SDK)?\nIt would be great, but it's quite hard to navigate in the list of Fabric packages without any synopsis... (<https:\/\/godoc.org\/github.com\/hyperledger\/fabric>)\n\nI guess the interesting part is in the core\/crypto package? This is what the DevOpsServer seems to use in fabric\/core\/devops.go\nThank you very much for your help :thumbsup:",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Client-SDK-Specification",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Client-SDK-Specification",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1470215561.000318"
+    },
+    {
+        "user": "U1W2MRUCF",
+        "text": "<@U1W2MRUCF|elias-b9lab> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1470222187.000320"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "hi <@U1MNES6NR>, I\u2019d recommend you to see this sample app: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/asset_management\/app\/app_internal.go>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/asset_management\/app\/app_internal.go",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/asset_management\/app\/app_internal.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1470230509.000321"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Hm thanks <@U17BRDHPG>, that seems to be pretty interesting. So in this case the (2) option is preferred, right?",
+        "ts": "1470231585.000323"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U1MNES6NR>, you wouldn\u2019t be directly interacting with eca neither tca, client node and validator nodes will do it internally",
+        "ts": "1470231900.000324"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "all those nodes (client, peer and validators) are indeed in core\/crypto",
+        "ts": "1470232014.000325"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "So, if I'm understanding properly.\nThe application uses core\/crypto to create a local \"client node\" that will then handle the internal things for us, and then we would use core\/crypto to send the transaction to the network?",
+        "ts": "1470232102.000326"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U1MNES6NR>  yes, by instantiating a client node you will be able to deploy and invoke chaincodes, but that wouldn\u2019t help in that you\u2019re trying to accomplish, that\u2019s interact by grpc to a running fabric, right?",
+        "ts": "1470232777.000327"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Yes, absolutely!",
+        "ts": "1470232813.000328"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "In such a case, I\u2019ll take a look at how rest api are being exposed and try to figure out that: <https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/core\/rest>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/core\/rest",
+                "text": "Read-only historic repo. Current development is at <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> . pull requests not accepted",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/core\/rest",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1470232859.000329"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Thanks a lot.\nI've already looked at the rest_api.go (huge) file, and it looks like this is using core.DevOps structure that itself calls core\/crypto package in some strange ways. I'm certainly missing some important things.",
+        "edited": {
+            "user": "U1MNES6NR",
+            "ts": "1470233028.000000"
+        },
+        "ts": "1470233000.000331"
+    },
+    {
+        "user": "U0P32UGJ1",
+        "text": "<@U0P32UGJ1|agafoor> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1470233159.000333"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U1MNES6NR>: I\u2019m not talking seriously when I say this \u201cwe can create a grpc from the swagger spec\u201d :stuck_out_tongue:",
+        "ts": "1470233216.000334",
+        "reactions": [
+            {
+                "name": "scream",
+                "users": [
+                    "U1MNES6NR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U1MNES6NR>, I think when interacting though grpc option1 would be simpler, have you seen start.go file?",
+        "ts": "1470234569.000335"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Oh yes, I was searching on GitHub but it's not up to date :wink: You mean peer\/node\/start.go, right?\nHm yes, but I don't see where is the interesting part in it :confused:",
+        "ts": "1470235482.000336"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "from lines 173 to 195\u2026, you\u2019ll find that devops grpc server will be available and also is there when rest api is exposed",
+        "ts": "1470235571.000337"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "my advise would be to use it at least you have a very specific constraint that prevent you to have a node client for the user that will deploy and invoke transactions",
+        "ts": "1470235667.000338"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "your app could have some users (client nodes) in fabric and handle its hundred of users itself  (as when using a DBMS)",
+        "ts": "1470235756.000339"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Thank you very much :slightly_smiling_face:\nThe basic goal behind all of this is to be able to differentiate users at the chaincode level with application instances that should not be trusted.\nBut as long as the DevOps node API is not deprecated and a node can act on behalf of several users (applications), I'll use  this API.\n\nTo sum up, in my case 1 user = 1 application instance",
+        "ts": "1470236069.000340"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "<@U1MNES6NR>, I\u2019m not sure I\u2019m following you\u2026  the app you\u2019re willing to develop that will interact with the fabric using grpc will handle lot of users and also you will have many app instances?",
+        "ts": "1470236930.000341"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "not really. Just consider that one instance of the application *is* a user that would directly communicate with the fabric",
+        "ts": "1470237058.000342",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U17BRDHPG"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "But yeah, I'm using the DevOps API right now, just wondered how to have more access to ECert and TCert from the application.\nThis seems to be a undiscovered area, I'll do some experiments I guess! :wink:",
+        "edited": {
+            "user": "U1MNES6NR",
+            "ts": "1470237289.000000"
+        },
+        "ts": "1470237269.000343"
+    },
+    {
+        "type": "message",
+        "user": "U17BRDHPG",
+        "text": "actually nodes interact with eca and tca by grpc :wink:",
+        "ts": "1470237327.000345",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U1MNES6NR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U1NBM7NHH",
+        "text": "<@U1NBM7NHH|louisw> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1470243425.000346"
+    }
+]

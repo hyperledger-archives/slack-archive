@@ -1,0 +1,368 @@
+[
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "because the results from `query` requests keep unchanged for a long time, although jmeter had been running for minutes",
+        "ts": "1466406027.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you have logs?",
+        "ts": "1466406189.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "debug logs",
+        "ts": "1466406195.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i just replaced the O(n) + reflect request store with a bit better performance",
+        "ts": "1466431040.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i think we should use a better data structure",
+        "ts": "1466431050.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sorting a slice is just plain awful",
+        "ts": "1466431057.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with 100 entries, it takes avg 2ms to do an add, test, remove",
+        "ts": "1466431084.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, for 100 entries",
+        "ts": "1466431095.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for 1000 entries it takes 215ms",
+        "ts": "1466431123.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this sorting is expensive",
+        "ts": "1466431134.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I've thought the same for the `requeststore` thing I added, I know the performance must just be awful",
+        "ts": "1466431214.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As the slice sorting is being done via `reflect.DeepEqual` additionally",
+        "ts": "1466431230.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "people already complained :slightly_smiling_face:",
+        "ts": "1466431300.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we have to keep it sorted?",
+        "ts": "1466431342.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can't we sort it just when we need to?",
+        "ts": "1466431350.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We can",
+        "ts": "1466431357.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I thought it might be cheaper to try to keep it ordered than to order it before each access",
+        "ts": "1466431397.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we have to keep them ordered?",
+        "ts": "1466431437.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The behave tests tend to get upset if we do not, as they look for the last transaction they submitted to be committed as a signal that all have been committed.  Additionally, it's the intuitive behavior.",
+        "ts": "1466431567.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well",
+        "ts": "1466431625.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And prevents a request from getting starved.  Say if we go on map hash order, you could end up maintaining a huge queue of requests, and the requests which happen to land near the end of map iteration will constantly stay at the back of the queue and effectively never execute.",
+        "ts": "1466431625.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i see",
+        "ts": "1466431641.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then a simple sequence would do",
+        "ts": "1466431650.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not ordered by time",
+        "ts": "1466431661.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just appended",
+        "ts": "1466431665.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I thought ordered by time would be ideal, but it's not strictly necessary.",
+        "ts": "1466431740.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1466431745.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me see what i can do",
+        "ts": "1466431751.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Really, I think we we used a better datastructure, like a tree, we could store by time efficiently",
+        "ts": "1466431757.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because this quadratic behavior is not good at all",
+        "ts": "1466431761.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we could",
+        "ts": "1466431772.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or, even if we did insertion ordering on a linked list",
+        "ts": "1466431778.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466431783.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's what i was going for",
+        "ts": "1466431787.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Would definitely be an improvement, I'm the first to admit that PR opted for 'clear correctness' in the face of terrible performance",
+        "ts": "1466431859.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1466432004.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i see quite an overlap with the complainer reqstore stuff :slightly_smiling_face:",
+        "ts": "1466432033.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, definitely so, in retrospect it might have been better to remove complaints, but not the complainer reqstore and re-use that.  Sadly sometimes it takes nearly reimplementing something to understand the decisions made in it.",
+        "ts": "1466432532.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep",
+        "ts": "1466433016.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "see executor :slightly_smiling_face:",
+        "ts": "1466433019.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yey",
+        "ts": "1466433065.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "O(1) restored",
+        "ts": "1466433069.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i made a blunder with my broadcast",
+        "ts": "1466433264.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we will queue and not drop messages as long as grpc does",
+        "ts": "1466433281.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "plus grpc message reordering (unless they use a queueing mutex)",
+        "ts": "1466433315.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1924>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "preview: Pbft performance reqstore by corecode \u00b7 Pull Request #1924 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1924",
+                "text": "Description Motivation and Context Fixes # How Has This Been Tested? Checklist: [] I have added a Signed-off-by [] Either no new documentation is required by this change, OR I ...",
+                "fallback": "GitHub: preview: Pbft performance reqstore by corecode \u00b7 Pull Request #1924 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1924",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466433386.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm about to walk to the train",
+        "ts": "1466433410.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks <@U0XR6J961>, appreciate the fix",
+        "ts": "1466433707.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1466433794.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "finally something not distributed :slightly_smiling_face:",
+        "ts": "1466433808.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I'm looking at `broadcast.go` and as best as I can tell, the message queue channels aren't ever read or written to? I think maybe this is what you were referring to on the scrum call today?",
+        "ts": "1466438379.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i didn't remove the channels?",
+        "ts": "1466438510.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1466438512.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think I'm seeing symptoms of arbitrary message ordering which is breaking busywork, currently putting together a changeset which doesn't spawn all the goroutines and utilizes those channels",
+        "ts": "1466438916.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1927> <@U0XR6J961> <@U0XQ35CDD> <@U0UGH3X7X> a pretty simple changeset if you guys could quickly review",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Resend view change requests periodically if quorum is not achieved by jyellick \u00b7 Pull Request #1927 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1927",
+                "text": "Description This changeset introduces a new timer which is started after sending a view change message, and stopped when a quorum of view change messages is received. The timeout is configurable ...",
+                "fallback": "GitHub: Resend view change requests periodically if quorum is not achieved by jyellick \u00b7 Pull Request #1927 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1927",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466439325.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>, I don't imagine you're around?",
+        "ts": "1466445811.000325"
+    }
+]

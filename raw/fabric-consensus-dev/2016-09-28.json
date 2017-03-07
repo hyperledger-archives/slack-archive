@@ -1,0 +1,1213 @@
+[
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0XPR4NP4> , this \"orderer\" component\/service, is this the same as consensus service? ie., those nodes that run a distributed atomic broadcast \/ consensus protocol?",
+        "ts": "1475047836.001146"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "if yes: every implementation of this will have to come with a \"stub\" library to be run by the other peers that receive the output from the consensus service; this component is specific to the choice (whether solo or pbft, say) and will know how to parse these special tx that contain re-configuration info; so that it can update its list of N signing node keys, say.",
+        "ts": "1475047971.001147"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think that whole new design is way complicated and not layered properly anymore",
+        "ts": "1475055191.001156",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it started out as a quest to layer components and isolate them",
+        "ts": "1475055205.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and now, during implementation phase, we're again adding requirements last minute",
+        "ts": "1475055231.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "channels only makes sense as a (de)multiplex part right at ordering ingress\/egress.  everything inside should treat all of these as blobs, no matter which channel they came in.",
+        "ts": "1475055300.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "given that we have all these requirements replicating the work of a fabric peer, i'd say throw away the design and integrate the consensus service back into the fabric peer",
+        "ts": "1475055489.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this time with better abstraction",
+        "ts": "1475055501.001161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we save on the raw ledger on consensus side, raw ledger on fabric peer side, we only have a validated ledger, we don't have to validate signatures in the orderer, because the peer already does so, and reconfiguration is just a headache once and not twice",
+        "ts": "1475055610.001162"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and retain the submitting peer so that you don't have to propagate the configuration change to all clients (sdk) as well",
+        "ts": "1475055654.001163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i don't know what these channels are supposed to be.  are they sidechains?",
+        "ts": "1475055724.001164"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Effectively, yes.",
+        "ts": "1475055761.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but they're not being hooked into the main chain?",
+        "ts": "1475055786.001166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and they're also not designed from first principles",
+        "ts": "1475055799.001167"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "once again, maybe we need to go back and define the purpose of the ordering service and basic features it needs to support - aka first principles",
+        "ts": "1475056854.001168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1475056876.001169"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because right now it looks like the ordering service is its own blockchain, and then there is a second blockchain that interprets the first one",
+        "ts": "1475056920.001170"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "What is the ordering service?\nWhat features does it need to support?\nHow do \"clients\" interact with it?\netc\n\nRIGHT - and I do not like that part one bit",
+        "ts": "1475056949.001171"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but they're not in the same process, yet they need to share a lot of configuration",
+        "ts": "1475056950.001172"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "personally I don't think that they need to have this tight coupling of sharing",
+        "ts": "1475056973.001173"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it may be better to follow what everybody else seems to be doing, which is combine app+consensus+storage in one process",
+        "ts": "1475057012.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think that the ordering service needs to provide \"meta information\" for its \"clients\" to use and those clients can decide what they want to do with that information",
+        "ts": "1475057019.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "look at reliable delivery, for example",
+        "ts": "1475057046.001176"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "actually, more people are moving away from that - Tendermint, Axoni, etc",
+        "ts": "1475057053.001177"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "as a client submitting something to bft, i need to connect to at least f+1 consensus nodes",
+        "ts": "1475057101.001178"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1475057113.001179"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i need to know the whole set of consensus nodes (which can change)",
+        "ts": "1475057117.001180"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1475057123.001181"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so how do i do this?",
+        "ts": "1475057127.001182"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can't go and ask one bootstrap node \"what other nodes are there?\"",
+        "ts": "1475057142.001183"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BTW - that's exactly what we do today  :disappointed:",
+        "ts": "1475057206.001184"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in the current fabric",
+        "ts": "1475057214.001185"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep",
+        "ts": "1475057251.001186"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i know",
+        "ts": "1475057254.001187"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0PB67X4K>: i just talked with <@U0Y14MWA2>",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1475068730.000000"
+        },
+        "ts": "1475068720.001188"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it seems to me that the ordering service is really *the* blockchain implementation",
+        "ts": "1475068750.001190"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the fabric peer is an application server that uses this blockchain",
+        "ts": "1475068765.001191"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think that is important to realize",
+        "ts": "1475069963.001192"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> Completely agree with that assessment",
+        "ts": "1475072410.001193"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ordering service builds a blockchain, peer network runs application logic which uses the blockchain in some interesting way.  It so happens they may also choose to write this application logic output into another blockchain structure (the validated chain), but as we've pointed out before, that's not strictly necessary and is really only a tool to help with auditing",
+        "ts": "1475072862.001194"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Assuming there's agreement that the orderer network configuration should be on the chain, and that the users of the orderer network should read this data to know how to validate what is returned from the ordering service.  How do we specifically convey this information (ie, what datastructure)?  The three options I see:\n\n1. Use some orderer specific crafted data structure, modifying the peer to understand this new type\n2. Define a new fabric transaction type, and embed some orderer specific data structure, modifying the peer to understand this new type\n3. Utilize the existing fabric transaction type, modifying the orderer to understand this existing type",
+        "ts": "1475073827.001195"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As I see the pros\/cons\n\n1. The type will be minimally complex, will require no knowledge of the fabric introduced into the orderer, but will push complexity into the peer and any tools which want to consume the chain, concepts like versioning and signatures would need to be re-invented\n2. The type will be nearly minimally complex, will require very limited knowledge of the fabric introduced into the orderer, complexity is pushed into the peer, but it's more obvious for tools as the type is at least defined, concepts like versioning and signatures would need to be re-invented\n3. The type is very complex, requires some implementation specific  knowledge of the fabric introduced into the orderer, but complexity is very low at the peer and simple for tools operating on the chain, the format is already well thought out to be cryptographically correct, supports versioning, already has a signature scheme",
+        "ts": "1475074335.001196"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also open to opinions that my assumptions are entirely invalid.  Or other options I failed to include.\n\n<@U0XV1HDL3> <@U0XR6J961> <@U0Y14MWA2> <@U0PB67X4K> <@U0UKTPMG8> <@U1KDAMDJ7> <@U0UGH3X7X> <@U1BC5A0F9> <@U0XQ35CDD> ^^^",
+        "ts": "1475074673.001197"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi, for either option i would say that such transactions would need to be authenticated (through signatures coming from a threshold of orderers or some ordering service administrator), no?",
+        "ts": "1475074954.001198"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The ordering service should never deliver an invalid configuration transaction, so I actually think it's okay to punt on this for now.",
+        "ts": "1475075008.001199"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That is if such ordering service messages have to do with changes in the configuration of the orderers, including adding\/deleting members, the transactions that cause this to happen should be authenticated as an ordering service policy imposes, no?",
+        "ts": "1475075028.001200"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ultimately though, the ordering service will need to be able to authenticate a valid reconfiguration transaction, which would require signature validation.  The key distinction being if the peer sees a reconfiguration transaction on the raw chain, it knows the consensus service agrees with it.  If the consensus service sees a reconfiguration transaction, it can simply discard it, for now (aside from genesis).",
+        "ts": "1475075076.001201"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, I think you have it absolutely correct <@U1BC5A0F9> the signature scheme is for the orderers to validate it, not the peers.",
+        "ts": "1475075112.001202"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Let me rephrase the justification of why signatures may be needed.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475075158.000000"
+        },
+        "ts": "1475075134.001203"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "To my understanding there should be some entity or entities that are authorized to reconfigure the network.",
+        "ts": "1475075202.001205"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That is either an ordering service admin, or the orderers jointly. Now in the first case, the first one who submits a transaction to the orderers needs to be authenticated. No? Meaning that orderers should not accept such transactions if they come from anyone.",
+        "ts": "1475075293.001206"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Or i should ask, how would you see the reconfiguration taking place?",
+        "ts": "1475075347.001207"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "is it the case that the admin reconfigures all peers that a change CHANGE should take place, and each orderer tries to submit a transaction that reflects that CHANGE",
+        "ts": "1475075380.001208"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "then if CHANGE is in the queue of tasks to be done by the other orderers then they all agree. Is this how it would be done?",
+        "ts": "1475075413.001209"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Orderers must all start with the same configuration, or they cannot form a network.  This configuration is encoded as a transaction and embedded in the genesis block, and because this configuration was manually propagated by an administrator to each orderer, no signature check is really needed.  If the administrator wanted to be malicious, they could change keys etc.  Eventually, a live orderer network will need to be able to reconfigure, and in this case, yes, there must be some way to validate that the instruction is valid according to whatever policy the orderer service wants.  I would think a threshold of signatures from whatever entities control the network.  However, since we don't need to support reconfiguration out of the gate, we can simply have a policy of \"no new reconfiguration transaction is valid\", in order to simply get the network up and running.  This prevents a malicious peer from forcing a reconfiguration of the network.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1475075457.000000"
+        },
+        "ts": "1475075416.001210"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Aha, ok",
+        "ts": "1475075471.001212"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "then agreed :slightly_smiling_face:",
+        "ts": "1475075477.001213"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But then why would you need the options 1-3?",
+        "ts": "1475075515.001214"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Is it only to say \"how would we express this static configuration\"?",
+        "ts": "1475075537.001215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct.  Today it would be to express static configuration, however, because we anticipate dynamic configuration in the future, I thought we should pick or design the datastructure in anticipation of that",
+        "ts": "1475075596.001216"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It seems odd and arbitrary to have different datastructures for initial (static) and later dynamic configuration specification",
+        "ts": "1475075619.001217"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Ah then, for dynamic reconf you would need authenticated messages no?",
+        "ts": "1475075623.001218"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1475075627.001219"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, i would just add that for (1) and (2) one would need to do a lot of the work already done on (3)",
+        "ts": "1475075703.001220"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, the thing that I like about (3) is exactly that we don't have to do that work.  The thing I do not like about (3) is that it pulls in a lot of other fabric artifacts, like the MVCC+Postimage data model",
+        "ts": "1475075752.001221"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Also addition and\/or removal of CAs of the endorsement network (if this is still valid statement) would need to be communicated ot the orderers, and changes to the orderer config would need to be understood by the committers no?",
+        "ts": "1475075759.001222"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "aha",
+        "ts": "1475075772.001223"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I was not including those in this scope, but maybe it makes sense to.",
+        "ts": "1475075835.001224"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The feeling I am getting is that maybe we need to modify our transaction definition, to allow transactions without the strict MVCC+Postimage data model, so that we can retain the signature validation, versioning, crypto correctness, etc., but not have to pull all of the fabric pieces in",
+        "ts": "1475075910.001225"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "for the ESCC and VSCC of the ordering service",
+        "ts": "1475075914.001226"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "cant it be something that requires only one signature, e.g., client signature?",
+        "ts": "1475075929.001227"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "client in this case would be the admin",
+        "ts": "1475075938.001228"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Today the ordering service has no *SCC, because that would be pulling in pieces of the fabric we were hoping not to",
+        "ts": "1475075952.001229"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and move all the execution to the vscc side?",
+        "ts": "1475075956.001230"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "would it make sense to run a client only?",
+        "ts": "1475075999.001231"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "on the ordering service (admin side)",
+        "ts": "1475076013.001232"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that talks to the endorser nodes of the blockchain the ones that endorse system transactions",
+        "ts": "1475076040.001233"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "understand the issue",
+        "ts": "1475076054.001234"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "However, i do see, that even if you dont want to call it vscc, there has to be some small piece of code that would parse the tx-s meant for the ordering service, and which would decide if these tx-s are valid or not",
+        "ts": "1475076216.001235"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "updates of certificates of the admin, or of orderer certificate validity are all operations that need to take place at the same logical time for all orderers no?",
+        "ts": "1475076272.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, that is the thing, it all looks very much like VSCC and assorted other *SCC tasks.  Same logical time yes, but that is easy since they are doing consensus",
+        "ts": "1475076294.001237"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So if you have some sort of super light weight VSCC that would still work right, and no ESCC",
+        "ts": "1475076335.001238"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "specifically for these transactions (the only ones processed by orderers)",
+        "ts": "1475076387.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1475076524.001240"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Do you think it would be possible to modify the transaction type so that it it preserves the aspects you are concerned about without pulling in the fabric details?",
+        "ts": "1475076641.001241"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "could be yes",
+        "ts": "1475076781.001242"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "seems we're doing everything twice",
+        "ts": "1475076833.001243"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if the orderer was part of the peer, would you just look at some system table for consensus?",
+        "ts": "1475076879.001244"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't quite understand the difference between (1) and (2)",
+        "ts": "1475076911.001245"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I too am concerned we are doing everything twice.",
+        "ts": "1475077042.001246"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The difference between (1) and (2) is basically that the fabric defines a `Transaction` which basically has two fields: `type int` and `contents []byte` (names might be wrong, but this is the idea)",
+        "ts": "1475077089.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Today, the fabric only supports `type = 0` but it is there if we ever wanted to support a radically different transaction type",
+        "ts": "1475077109.001248"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, we could define a new `type = 1` with a different payload which is not the `endorsed proposal`",
+        "ts": "1475077133.001249"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So (1) would be, we define a new data type which is not a type of `Transaction`, and (2) would be we define a new `Transaction` type.  They are extremely similar, just whether we reuse the exiting envelope",
+        "ts": "1475077196.001250"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, but a consensus-admin-endorsed consensus configuration setting",
+        "ts": "1475077204.001251"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which has a transparent part: peers (addresses, certificates), byz F, and it has an opaque part which is specific to the consensus implementation",
+        "ts": "1475077276.001252"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1475077296.001253"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "seems fine",
+        "ts": "1475077324.001254"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the correctness of this is authenticated towards the peer because consensus signed off on it",
+        "ts": "1475077349.001255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i just talked with <@U0Y14MWA2> about state transfer in sbft",
+        "ts": "1475077369.001256"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and how it probably can be implemented via consensus client",
+        "ts": "1475077389.001257"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UKTPMG8> Really believes that the peer network is going to want to see endorsements from its endorsers on the orderer reconfiguration.  I think that's not realistic, but, be aware that there is support for this.",
+        "ts": "1475077393.001258"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Additional note: for enforcing access control over different channels, e.g., adding or removing listeners on a specific channel, orderers would still need to process some form of transactions that the fabric undersrtands no?",
+        "ts": "1475077393.001259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. connect to other atomicbroadcast server to retrieve missing blocks",
+        "ts": "1475077408.001260"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Agreed",
+        "ts": "1475077430.001261"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That would have been my first instnct",
+        "ts": "1475077437.001262"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "instinct*",
+        "ts": "1475077440.001263"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: then just add their signatures into the multisig",
+        "ts": "1475077440.001264"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I still don't have a literal data structure and ingress method for reconfiguration.  Maybe you can just answer some questions....\n\n1. Does reconfiguration come in as a broadcast message?",
+        "ts": "1475077543.001265"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i gotta run, so i'll revisit this later",
+        "ts": "1475077565.001266"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess in the model yes",
+        "ts": "1475077594.001267"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "when we share it with the peer",
+        "ts": "1475077600.001268"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, understand you need to run.  Please think on this.  I will try to think on what you've said as well and we can pick this up tomorrow?",
+        "ts": "1475077662.001269"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> I have been doing my best to push channels out of my head, but yes, there will need to be some mechanism for reconfiguring them.  I don't know whether we should bulid support for channels into the atomicbroadcast api, or whether we should simply create a new service which wraps it and handles those details.  Channels is a sudden piece of significant additional complexity at the ordering side",
+        "ts": "1475077925.001270"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Indeed :slightly_smiling_face:",
+        "ts": "1475077968.001271"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am inclined to avoiding state transfer in sbft",
+        "ts": "1475079161.001272"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "We do not need it as there is no state that cannot br tetrivef from a single block",
+        "ts": "1475079205.001273"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I should not drive and slack... Leads to typos",
+        "ts": "1475079247.001274",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Catching up boils down to obtaining a weak checkpoint certificate and picking up view number and sequence number from there",
+        "ts": "1475079538.001275"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "From that point on filling in the gap can be done lazily, in the background",
+        "ts": "1475079621.001276"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Sort of a 'lazy state transfer'",
+        "ts": "1475079656.001277"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZJZBJLF|yacovm> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2H5ABA58\/-.go|Untitled>",
+        "file": {
+            "id": "F2H5ABA58",
+            "created": 1475083058,
+            "timestamp": 1475083058,
+            "name": "-.go",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "go",
+            "pretty_type": "Go",
+            "user": "U0ZJZBJLF",
+            "editable": true,
+            "size": 1536,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2H5ABA58\/-.go?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2H5ABA58\/download\/-.go?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2H5ABA58\/-.go",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2H5ABA58-3db3ea85c8",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2H5ABA58\/-.go\/edit",
+            "preview": "16:44:45 --- FAIL: TestClassicBackToBackStateTransfer (60.20s)\r\n16:44:45 2016\/09\/28 16:44:45 Halting timer\r\n16:44:45 panic: Test network took more than 60 seconds to resolve requests, this usually indicates a hang [recovered]\r\n16:44:45 \tpanic: Test network took more than 60 seconds to resolve requests, this usually indicates a hang\r\n16:44:45 \r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> <span class=\"cm-operator\">---<\/span> <span class=\"cm-variable\">FAIL<\/span>: <span class=\"cm-variable\">TestClassicBackToBackStateTransfer<\/span> (<span class=\"cm-number\">60.20<\/span><span class=\"cm-variable\">s<\/span>)<\/pre><\/div>\n<div><pre><span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> <span class=\"cm-number\">2016<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-number\">0<\/span><span class=\"cm-number\">9<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-number\">28<\/span> <span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> <span class=\"cm-variable\">Halting<\/span> <span class=\"cm-variable\">timer<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> <span class=\"cm-atom\">panic<\/span>: <span class=\"cm-variable\">Test<\/span> <span class=\"cm-variable\">network<\/span> <span class=\"cm-variable\">took<\/span> <span class=\"cm-variable\">more<\/span> <span class=\"cm-variable\">than<\/span> <span class=\"cm-number\">60<\/span> <span class=\"cm-variable\">seconds<\/span> <span class=\"cm-variable\">to<\/span> <span class=\"cm-variable\">resolve<\/span> <span class=\"cm-variable\">requests<\/span>, <span class=\"cm-variable\">this<\/span> <span class=\"cm-variable\">usually<\/span> <span class=\"cm-variable\">indicates<\/span> <span class=\"cm-variable\">a<\/span> <span class=\"cm-variable\">hang<\/span> [<span class=\"cm-variable\">recovered<\/span>]<\/pre><\/div>\n<div><pre><span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> \t<span class=\"cm-atom\">panic<\/span>: <span class=\"cm-variable\">Test<\/span> <span class=\"cm-variable\">network<\/span> <span class=\"cm-variable\">took<\/span> <span class=\"cm-variable\">more<\/span> <span class=\"cm-variable\">than<\/span> <span class=\"cm-number\">60<\/span> <span class=\"cm-variable\">seconds<\/span> <span class=\"cm-variable\">to<\/span> <span class=\"cm-variable\">resolve<\/span> <span class=\"cm-variable\">requests<\/span>, <span class=\"cm-variable\">this<\/span> <span class=\"cm-variable\">usually<\/span> <span class=\"cm-variable\">indicates<\/span> <span class=\"cm-variable\">a<\/span> <span class=\"cm-variable\">hang<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-number\">16<\/span>:<span class=\"cm-number\">44<\/span>:<span class=\"cm-number\">45<\/span> <\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 24,
+            "lines_more": 19,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ZJZBJLF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZJZBJLF|yacovm>",
+        "bot_id": null,
+        "ts": "1475083059.001278"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In case someone from zurich wants to take a look at it",
+        "ts": "1475083129.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> This code path should be dying in v1, hopefully not worth looking at, we can add a `t.Skip` if it is causing problems",
+        "ts": "1475088700.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok. It failed my build so I was just playing a concerned fabric citizen",
+        "ts": "1475089165.001281"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0XPR4NP4>: let me disregard \"channels\" for now, only look at what is in Next-Consensus-Arch doc: different chaincodes. \nThere can be a \"system chaincode\" that interprets such reconfig transactions. Yes they need to be somehow signed or otherwise conform to the endorsement policy of that system chaincode.\nThis is not the first system that has this, I invite everyone to look at those that did it before: \nZookeeper (<https:\/\/zookeeper.apache.org\/doc\/trunk\/zookeeperReconfig.html>) with a paper here (<https:\/\/www.usenix.org\/system\/files\/conference\/atc12\/atc12-final74.pdf>) , not security-conscious, but otherwise similar.\nOr BFT-SMaRT (<http:\/\/www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf|www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf> and  <http:\/\/bft-smart.github.io\/library\/>) in BFT-land.",
+        "ts": "1475091042.001282"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "BTW, the adapter that \"receives\" ordered tx at the peers outside consensus will also need to understand dynamic consenter node changes, otherwise, how could it trust this output? (= know which consenter nodes to trust). This should not be exposed to the peer because it is really specific to the impl. of consenters.",
+        "ts": "1475091178.001283",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "(And here is a 10-year old PhD thesis, in which I was a bit involved, where reconfiguration is also described: <https:\/\/www.ideals.illinois.edu\/handle\/2142\/11121>  then click on PDF, see Chapter 5.)",
+        "ts": "1475091468.001285"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "```\nBTW, the adapter that \"receives\" ordered tx at the peers outside consensus will also need to understand dynamic consenter node changes, otherwise, how could it trust this output? (= know which consenter nodes to trust). This should not be exposed to the peer because it is really specific to the impl. of consenters.\n```\n\nSo the question is whether or not this info needs to be written to the raw ledger on the peer side.  If it does, I am fine with that - but it should look like just another raw ledger \"block\" \/ whatever we call it.   The \"adapter\" should receive the update, not process any more delivers until it reconfigures itself and updates the raw ledger with this new info.  That's why I think that the config info should be delivered in a batch by itself",
+        "ts": "1475092135.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this way you know the point in time when the new config went into effect but basically the peer does not care anything about it",
+        "ts": "1475092177.001288"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Just following along out of interest and don\u2019t want to distract, but is the idea that all changes to the list of trusted peers by a single peer is logged for eternity in the blockchain and all other peers can inspect those selections? If so, it\u2019s an interesting approach, differing from Ripple, where their equivalent (the Unique Node List) is a private matter.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1475092456.000000"
+        },
+        "ts": "1475092331.001289"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BGFAHC7> - I think what is in that config would depend on the ordering service implementation.  For example, with a PBFT-based ordering service, if we want to provide some type of BFT broadcast, each peer would need to connect to at least f+1 ordering nodes to make sure it was getting the correct info.  So to do that, it needs to get this info from somewhere.  Initially, this would likely be a bootstrap config, but if the ordering service adds additional nodes, then f+1 might be different and the peers would need to know that",
+        "ts": "1475092528.001291"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Interesting\u2026 just to share some other ideas from Ripple, the bootstrap stage happens via round-robin DNS:\n```host <http:\/\/r.ripple.com|r.ripple.com>\n<http:\/\/r.ripple.com|r.ripple.com> has address 169.53.155.44\n<http:\/\/r.ripple.com|r.ripple.com> has address 54.186.248.91\n<http:\/\/r.ripple.com|r.ripple.com> has address 174.37.225.50\n<http:\/\/r.ripple.com|r.ripple.com> has address 54.86.175.122\n<http:\/\/r.ripple.com|r.ripple.com> has address 169.55.164.22\n<http:\/\/r.ripple.com|r.ripple.com> has address 54.186.73.52\n<http:\/\/r.ripple.com|r.ripple.com> has address 54.84.21.230\n<http:\/\/r.ripple.com|r.ripple.com> has address 184.173.45.44```\nand the protocol has means for a peer to share the peers it knows about.\n<https:\/\/github.com\/ripple\/rippled\/blob\/906ef761bab95f80b0a7e0cab3b4c594b226cf57\/src\/ripple\/proto\/ripple.proto#L220-L255>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1475092728.000000"
+        },
+        "ts": "1475092705.001292"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Co-incidentally, the very same problem is being addressed concurrently:\n<https:\/\/github.com\/ripple\/rippled\/pull\/1842>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1475092826.000000"
+        },
+        "ts": "1475092818.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we can do that as well - but the question is how can you trust that a single peer provides you with the right list?   :wink:",
+        "ts": "1475092819.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "bwahahaha",
+        "ts": "1475092837.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but I hear ya",
+        "ts": "1475092841.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I don't think we need to solve world hunger the first time around",
+        "ts": "1475092858.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "with permissioned networks honestly there is a level of trust",
+        "ts": "1475092875.001303"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, the Ripple approach initially used the Anonymous Diffie Hellman cipher in openssl to stop sybil attacks, but I don\u2019t think I\u2019ve got the stomach to go into the detail of all that :slightly_smiling_face:",
+        "ts": "1475092933.001304",
+        "reactions": [
+            {
+                "name": "joy",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I like the idea of making public which peers trust which peers, and cementing it though. Makes for a very transparent system.",
+        "ts": "1475093021.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how can you have a sybil attack? we have the membership service that everyone subscribes to",
+        "ts": "1475093035.001306"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "How do you know the membership service is who you think it is? :slightly_smiling_face:",
+        "ts": "1475093066.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's a CA",
+        "ts": "1475093072.001308"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the same way your browser trusts verisign",
+        "ts": "1475093086.001309"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Just one?",
+        "ts": "1475093087.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "browsers work in the same way don't they? they have pre-installed certificates",
+        "ts": "1475093109.001311"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and you have a chain of trust from some \"important CA\" down to other smaller CAs",
+        "ts": "1475093123.001312"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The point, I guess, is if you have just one certificate sitting in one place, then that could be a SPOF. But I was really more interested in following along the consensus discussion :slightly_smiling_face:",
+        "ts": "1475093170.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "consensus or membership?",
+        "ts": "1475093280.001314"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, the dynamic nature of the peers\u2019 trusts involved in consensus.",
+        "ts": "1475093333.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but why is that? if you have a membership service (you do, in HL) that gives peers signed public\/private key pairs that can't be forged, you can't impersonate a peer and you can't also spoof a peer that isn't registered. \nWhere does the trust of the peers come to play here?",
+        "ts": "1475093427.001316"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I trust peer A when it says C and D are in the list, when it's B and E. ",
+        "ts": "1475093479.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in the list of what?",
+        "ts": "1475093494.001318"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, say I\u2019m Bank A, and Bank B has started doing something shady, and I want to stop them doing shady stuff on our shared network as soon as possible.",
+        "ts": "1475093510.001319"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "In the list of orderers.",
+        "ts": "1475093524.001320"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, you mean membership information about roles of entities?",
+        "ts": "1475093539.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "who's a conensus peer and who's not?",
+        "ts": "1475093552.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Basically this list: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1475092819001297>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1475092819001297",
+                "fallback": "[September 28th, 2016 1:00 PM] garisingh: we can do that as well - but the question is how can you trust that a single peer provides you with the right list?   :wink:",
+                "ts": "1475092819.001297",
+                "author_subname": "garisingh",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "we can do that as well - but the question is how can you trust that a single peer provides you with the right list?   :wink:",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/garisingh",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-10\/78323915894_521dc680194c08b166e0_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1475093607.001323"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't think about it for too long but I'd go the following approach:\nYou have a consensus service which consists of membership set S_0.\nA peer comes and asks to join.\nThe peers of S_0 run a consensus algorithm that results in the \"next\" membership set S_1. \nAnd in induction, for S_i, etc. etc.\nif the consensus is byzantine tolerant, you've solved the problem. \nThe only problem with that is bootstrapping which needs to be addressed in another way",
+        "ts": "1475093708.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh that's what Gari said (the bootstrapping)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1475093741.000000"
+        },
+        "ts": "1475093725.001326"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I guess the fun question occurs when a peer only wants to trust a subset of the other peers. That\u2019s the problem that Ripple and Stellar tried to solve on a public network, but maybe that doesn\u2019t apply here...",
+        "ts": "1475093823.001328"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I honestly don't see the big problem but then again I am fine with relaxing our assumptions and being practical. (As you have pointed out we have a CA in here already.) Bake that bootstrap list in the peers, and ship a new binary\/genesis block when this list needs to be updated. (For any *new* nodes that want to join, and when the original bootstrap set has zero overlap with the new one.)",
+        "ts": "1475093953.001329",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think that hyperledger is \"complicated\" enough as it is without having to tackle bootstrapping trust issues",
+        "ts": "1475094029.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It's not like these entities transacting on the network meet once in 2016 and never ever again talk to each other, or have lost the ability to coordinate manually if need be.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1475094221.000000"
+        },
+        "ts": "1475094089.001331",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "they probably won't meet until 2017  :wink:",
+        "ts": "1475094917.001333"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "maybe around March?",
+        "ts": "1475094923.001334",
+        "reactions": [
+            {
+                "name": "simple_smile",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Can a user have more than one Transaction Certificate active at the same time?",
+        "ts": "1475095610.001335"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0PB67X4K> yes - once we have the consensus reconfiguration the membership change will be written to raw ledger",
+        "ts": "1475103813.001336"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "As for the initial consensus service discovery - I always imagined a genesis block in which initial set of consenters (and other bootstrap) info is written",
+        "ts": "1475103900.001337"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this genesis block has a hash",
+        "ts": "1475103906.001338"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which is the identifier of the blockchain instance",
+        "ts": "1475103920.001339"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so nodes join a specific blockchain by downloading (from anywhere) a genesis block and comparing its hash to the blockchain identifier",
+        "ts": "1475104022.001340"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BGFAHC7>:  Yes.  You can request transaction certificates in batches.  You can choose to use a different one for every transaction or you could keep a few in flight.  Of course they will expire at some point as well",
+        "ts": "1475109430.001341"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "seems most like Kafka's architecture, producer,consumer,broker all distributed separate",
+        "ts": "1475118891.001342"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right but keep in mind that we are working on a different set of trust assumptions here. For instance in Kafka, as long as one of the brokers you are connected to is up and running, you're good to go, even if the other brokers in your config have died. (That one broker will let you know of the new broker set.) This won't fly in the BFT case.",
+        "ts": "1475119328.001343"
+    }
+]

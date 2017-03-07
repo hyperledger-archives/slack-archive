@@ -1,0 +1,280 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I agree with <@U0XPR4NP4>  and had assume that this was going to be the case",
+        "ts": "1481789986.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "We need to have the concept of a peer admin in any case",
+        "ts": "1481790009.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but to start with, let's just get JoinChannel API working on the peer  :wink:",
+        "ts": "1481790069.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't understand something. I understood from Jason that in the future, you could have different orderers for different channels.\nThe JoinChannel message is signed by the ordering service, right? But how could you support then the verification of the message if the local MSP couldn't verify the message because it doesn't have the certificates (i.e: it's a new ordering service and a new channel), and the channel MSP is not yet initialized?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481791082.000000"
+        },
+        "ts": "1481791050.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF>  - as I understand it (or perhaps as I think it should be):\n\n1) JoinChannel is an API exposed by peers and the \"owner\/admin\" of the peer must explicitly call this API in order for their peer to join a channel   (we'll of course need some type of access control here and that was my admin comment above)\n\n2) One of the input parameters for JoinChannel API is the \"genesis block \/ latest config block\".  This of course is actually signed by the ordering service (I supposed technically one of the ordering nodes)\n\n3) Within that genesis \/ config block is all the information needed to technically verify \/ validate it as well as the information on how to connect as well as all the members\n\n4) So technically the public certificate of the orderer node which signed the config block is actually within the config block which means technically the peer would have all the info needed to validate \/ verify the config block\n\nBut this is all technical in nature - meaning it's not like it actually checks to make sure that the orderer was the orderer I expected, etc.    \n\nThe expectation is that the admin of the peer would actually inspect the config block before calling the JoinChannel API (we actually plan to provide a tool for this as well).\n\nNow of course you could say have an optional API (or an optional parameter for this API) where you could specify the public keys that you expect to be in the config (which you'd have to obtain out of band the same way you got the genesis block in the first place)",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1481794378.000000"
+        },
+        "ts": "1481794236.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But, how can a peer verify the certificate of the ordering service that signed the config block?",
+        "ts": "1481795194.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it just \"believes\" it, and doesn't verify it, no?",
+        "ts": "1481795598.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well either you would have to go obtain the certificate(s) from the ordering service, load them into your peer and then call JoinChannel OR you inspect the block, make sure the certificates which are in the block are the ones you expect (which would be the same thing basically as obtaining them out of band) and then call JoinChannel.",
+        "ts": "1481796144.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not sure what you mean by \"verify\"?",
+        "ts": "1481796165.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "verify- how do I trust the certificate of the ordering service?",
+        "ts": "1481796183.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it needs to be signed by a CA, etc etc",
+        "ts": "1481796191.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so all of that information is actually in the config block which you can inspect before calling JoinChannel.",
+        "ts": "1481796236.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "aha, got it.  thanks.",
+        "ts": "1481796246.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's an odd chicken and egg problem",
+        "ts": "1481796266.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we actually have an even more serious problem , will update a JIRA issue soon and will tag you and binh",
+        "ts": "1481796282.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think I'll go on vacation now  :wink:",
+        "ts": "1481796302.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "just kidding - will look out for it",
+        "ts": "1481796311.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-1394> <@U0PB67X4K>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481801893.000000"
+        },
+        "ts": "1481798495.000835"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K> , <@U0XPR4NP4>: by validation of the genesis config block, do you mean that the membership service related configuration correctness is checked by the peer admin correct? That is, a peer admin is able to check that the chain configuration (read policies, write policies) is as agreed with the rest of admin apps(?)",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481806514.000000"
+        },
+        "ts": "1481806506.000837"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Also <@U0PB67X4K>, <@U0XPR4NP4>, <@U0KN2SSKE> we were discussing internally the reconfiguration of MSP components, and it seems to us that allowing for external configuration of reconfig policies, would kind of contradict the modularity of these components.",
+        "ts": "1481806589.000839"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Plus it adds complexity at config time.",
+        "ts": "1481806645.000840"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "We discussed this with <@U26T99AQ4>, <@U0ZR63HLK> and we think we have a proposal for this without modifying the existing code a lot.",
+        "ts": "1481806734.000841"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But, in the long term we may want to consider having a reconfig policy defined as an interface for modular components to be able to define their own policies without being forced to use the policy framework of fabric. No matter how i like it personally, it may be not covering needs of external components: since we dont know yet what policies may be in place for reconfiguration, it may be too bold to ask them all to leverage a single policy framework, no? Asking opinion from <@U0KN2SSKE>, <@U0XPR4NP4> here.",
+        "ts": "1481806911.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1BC5A0F9> <@U0KN2SSKE> <@U0PB67X4K> <@U0XPR4NP4> just to restate the original problem <@U0KN2SSKE> started with  -   join command ACL  (\u201ccan this guy issue Join\u201d) cannot use MSP tied to a chain (there\u2019s no chain). One way to solve the problem is to specify (admin?) identity at the time of *peer* bootstrap mechanism so only those guys can issue join. After the chain is created of course the GB for that chain will control the ACLs for that chain \u2026 from <@U0PB67X4K> above `The expectation is that the admin of the peer would actually inspect the config block before calling the JoinChannel API (we actually plan to provide a tool for this as well).`...",
+        "ts": "1481811383.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^^ assumes the recent comments have genesis int that question <@U0KN2SSKE> started with :slightly_smiling_face:",
+        "ts": "1481811452.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "We are going with bootstrap config to tell peer its admins, and only these can do admin stuff on that peer.  The specification of admins is the same as that of orderer.  Each peer may have different admins \u2014 just want to get this working for now.  Rooms for improvements are in our future :slightly_smiling_face:",
+        "ts": "1481813047.000845"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ZR63HLK> i have a question on the implementation of software-manager bccsp in core\/crypto\/bccsp\/sw\/impl.go: for importKey, the code supports public key imports from x.509 PEM encoded, and PKIX DER encoded. I\u2019m writing the equivalent of this in node.js SDK and was wondering if it\u2019s going to be a reasonable limitation if we only support PEM encoding x.509 certs, and add others later post v1.0?",
+        "ts": "1481813499.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U13TWBRBL>, it is definitely fine",
+        "ts": "1481813550.000847",
+        "reactions": [
+            {
+                "name": "ok_hand",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0KN2SSKE>, <@U0ULK2JPP> it is fine if the peer's admin is listed at peer setup time. It can also be the peer's local msp admin. adding <@U26T99AQ4>  in the discussion",
+        "ts": "1481813698.000848"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I think anything works as long as the peer can use the local MSP to authenticate the proposal containing the arguments to CSCC to join a chain",
+        "ts": "1481814130.000849"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U13TWBRBL> may you have a look at this change-set for SKI generation? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3323\/>",
+        "ts": "1481816119.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I have finalized how this has to be generated to be aligned with the PKCS11\/HSM world",
+        "ts": "1481816147.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U13TWBRBL>, may you have a look at this change-set: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2983\/>",
+        "ts": "1481817985.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "It is related to ECDSA malleability.",
+        "ts": "1481817998.000853"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the sdk should generate ECDSA signatures of specific form in such a way to avoid malleability attacks",
+        "ts": "1481818027.000854"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ZR63HLK> yeah thanks for letting me know these changesets, i\u2019ll make sure to use them as reference for the SDK side of the implementation",
+        "ts": "1481818099.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "in particular, if you modify the sdk to have this special ECDSA signature, the fabric will not be affected and then when my change-set will be merged, everything will continue to work :slightly_smiling_face:",
+        "ts": "1481818162.000856"
+    },
+    {
+        "user": "U3EHYEF89",
+        "text": "<@U3EHYEF89|d.baranov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481818341.000857"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ZR63HLK> another question i had regarding your bccsp impl.go was that it seems to always assumes DER encoding for private keys, are you planning to support PEM encoded private keys as well?",
+        "ts": "1481823515.000858"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "@DER to PEM encoding is simple. PEM puts some block around DER.",
+        "ts": "1481835328.000859"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "or vice versa , you can get PEM to DER.",
+        "ts": "1481835368.000860"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "PEM is simply messaging structure.",
+        "ts": "1481835391.000861"
+    }
+]

@@ -1,0 +1,572 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0YMACQSW> <@U0ZJZBJLF> <@U1AU8DRQR> <@U0XPR4NP4> I was discussing with <@U1AU8DRQR> how do we get to the following feature",
+        "ts": "1476346474.002021"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if the network is synchronous and there are no further updates - then the state is eventually the same at all correct consenters",
+        "ts": "1476346524.002022"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the question is how do we get there in a simple and efficient way",
+        "ts": "1476346548.002023"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "consenters?",
+        "ts": "1476346553.002024"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or peers?",
+        "ts": "1476346557.002025"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "consenters",
+        "ts": "1476346564.002026"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "state = raw ledger height",
+        "ts": "1476346573.002027"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but, isn't that dependant on the type of consenter?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476346605.000000"
+        },
+        "ts": "1476346597.002028"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what's a type of the consenter?",
+        "ts": "1476346613.002030"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "for example- is it kafka, or is it SOLO, or pbft or whatever?",
+        "ts": "1476346635.002031"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ah",
+        "ts": "1476346640.002032"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok",
+        "ts": "1476346641.002033"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we are discussing a variant of pbft",
+        "ts": "1476346650.002034"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sbft?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476346674.000000"
+        },
+        "ts": "1476346667.002035"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we are in the bft world (in this simpleBFT which tends to be simplified PBFT that we are developing)",
+        "ts": "1476346671.002036"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes sBFT",
+        "ts": "1476346673.002037"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you're discussing a scenario in which p&lt;f nodes are falling behind?",
+        "ts": "1476346717.002039"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "p \\le f - yes",
+        "ts": "1476346727.002040"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\\leq, yeah",
+        "ts": "1476346735.002041"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok, so",
+        "ts": "1476346739.002042"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the idea is we do this in a simplest way possible but not simpler",
+        "ts": "1476346759.002043"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so one idea is to have consenters periodically say hello to other consenters and ask them about their latest provable raw ledger batch  height",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1476346816.000000"
+        },
+        "ts": "1476346800.002044"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "proof comes from the signatures that we now have in sBFT so just assume we have it",
+        "ts": "1476346833.002046"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the question is - and this goes for you gossip folks out there <@U0YMACQSW> <@U0ZJZBJLF> <@U0YM41HA5> and others",
+        "ts": "1476346875.002047"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "1) shall this be pull based or push based and why?",
+        "ts": "1476346890.002048"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "2) to how many other consenters should a consenter do such pull\/push",
+        "ts": "1476346916.002049"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't understand why this is needed- let's assume a consenter peer has failed and came up again and is D blocks behind and it re-connects to all the rest of the nodes.\nIt'll get a transaction\/block\/whatever, right? Won't it see that the sequence number on that block is much higher than its own and will figure it out by itself?",
+        "ts": "1476346951.002050"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so if you get partitioned (not crashed) and then get reconnected again - your last seqno was 5 but others are at seqno 100",
+        "ts": "1476347014.002051"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there are no further requests",
+        "ts": "1476347019.002052"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "how do you get to seqno=100",
+        "ts": "1476347027.002053"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "is the problem",
+        "ts": "1476347036.002054"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i see",
+        "ts": "1476347040.002055"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that needs to be solved in a very lightweight manner :slightly_smiling_face:",
+        "ts": "1476347047.002056"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so - my take is - do a periodic pull-based hello to anywhere between 1 to log(N) consenters",
+        "ts": "1476347081.002057"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well I personally think that the best thing to employ here is a combination of what you suggested and what I talked about- if X time has passed and no new requests, ask all peers for their height",
+        "ts": "1476347086.002058"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "where consenters are chosen randomly",
+        "ts": "1476347096.002059"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Why log(N)? we're talking about consenters",
+        "ts": "1476347098.002060"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "they're not many",
+        "ts": "1476347100.002061"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "probably 1 is just goof enough",
+        "ts": "1476347104.002062"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(well we will get there :)",
+        "ts": "1476347112.002063"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but 1 is ok to start with",
+        "ts": "1476347118.002064"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but it should be random",
+        "ts": "1476347122.002065"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so periodic pull from one random consenter",
+        "ts": "1476347135.002066"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or periodic push to - how many consenters?",
+        "ts": "1476347145.002067"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think it *should* be pull from a consenter that detected a period of inactivity",
+        "ts": "1476347172.002068"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But I don't understand why you need to ask log(N). What scale are you talking about here?",
+        "ts": "1476347206.002069"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought RSM doesn't scale well to lots of nodes",
+        "ts": "1476347231.002070"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "eventually, say later on in 2017,  I want we run this sBFT with 100 consenters",
+        "ts": "1476347246.002071"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "well - define \"doesn't scale\" :slightly_smiling_face:",
+        "ts": "1476347259.002072"
+    },
+    {
+        "type": "message",
+        "user": "U0YM41HA5",
+        "text": "In such a case I'd go for periodic (or even based) pull from a random set of neighbors (log(N) seems to be a reasonable choice",
+        "ts": "1476347264.002073"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok, so we have consensus on pull",
+        "ts": "1476347282.002074"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for smallnetworks pull from random single consenter is ok",
+        "ts": "1476347297.002075"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for larger we may want to pull from more, eventually?",
+        "ts": "1476347307.002076"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah of course it should be pull, think of it- it's much more efficient because you know you are inactive, VS \"all other nodes try and see are *everyone* ok\"",
+        "ts": "1476347320.002077"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes I thought so - just a) sanity checking, b) informing you guys of our discussions",
+        "ts": "1476347348.002078"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "does sBFT work in decent performance with 100 nodes?",
+        "ts": "1476347369.002079"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it does not work yet period",
+        "ts": "1476347377.002080"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Marko, I think that when we get to 100 nodes of *consenters* we'll have a much bigger problem with the scale of the peers :wink:",
+        "ts": "1476347406.002081"
+    },
+    {
+        "type": "message",
+        "user": "U0YM41HA5",
+        "text": "I'd go for the general case of log(N) from the beginning, to make it ready for future scalability.",
+        "ts": "1476347409.002082"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think it's better to have something custom like Max(Log(N) , 10)",
+        "ts": "1476347444.002083"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but some other protocols I know of work with trhoughputs of say 500 bitcoin like tx per second with 100 nodes over geographically distant location with 100Mbps netwokring, where one could through more bandwidth and have linear scalability",
+        "ts": "1476347459.002084"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but stability will be the challenge",
+        "ts": "1476347474.002085"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway",
+        "ts": "1476347496.002086"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there are strong reasons to suspect that decent performance is achievable with 100 nodes",
+        "ts": "1476347514.002087"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "more to come on that soon",
+        "ts": "1476347527.002088"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm not much of an expert but I've never heard of like- ZooKeeper clusters with 100 nodes",
+        "ts": "1476347567.002089"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So what's the trick with sBFT?",
+        "ts": "1476347575.002090"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I have deja-voo now, I think I asked you this when you were visiting Haifa",
+        "ts": "1476347595.002091"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we are conducting some experiments incl Zoookeeper",
+        "ts": "1476347698.002092"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we should have shareable results soon",
+        "ts": "1476347707.002093"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "cool that'd be interesting to see",
+        "ts": "1476347717.002094"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we can go even much better than that in common case without issues we discuss here - depending on how much latency we want to trade in",
+        "ts": "1476347756.002095"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as Chain and Ring patterns have nice features such as",
+        "ts": "1476347774.002096"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "- throughput is the best it can be (in a network with homogenous bandwidth)",
+        "ts": "1476347793.002097"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "- nobody falls back behind by definition",
+        "ts": "1476347804.002098"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the only issue is latency",
+        "ts": "1476347810.002099"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but that may be not a huge issue - depending onthe use case",
+        "ts": "1476347824.002100"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but this is now for <#C113WK2A1|performance-benchmark>",
+        "ts": "1476347838.002101"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what is the benefit of having 100 consensus nodes, besides high availability and increasing `f`?",
+        "ts": "1476347955.002102"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I'd say psychology and \"fairness\"",
+        "ts": "1476348037.002103"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "\"every\" participant in the blockchain network gets to have a piece of control at the heart of the system",
+        "ts": "1476348070.002104"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm ok. Although isn't that a bit dangerous? as you introduce new participants, you also increase the chance of the system being stuck\/compromised due to participants being offline\/byzantine",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476348230.000000"
+        },
+        "ts": "1476348213.002105"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I\u2019m just wondering what should be a write throughput of ZK cluster w\/ 100 nodes? \/cc <@U0Y14MWA2> <@U0ZJZBJLF>",
+        "ts": "1476348528.002107"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1HFNJB50> I expect we will have a paper in 10 days on this.  Just a bit of patience pls - I will be posting the pointers here and <#C113WK2A1|performance-benchmark> once this is ready",
+        "ts": "1476348634.002108"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0Y14MWA2> looking forward for it :slightly_smiling_face:",
+        "ts": "1476348799.002109"
+    },
+    {
+        "user": "U2GR5RHQT",
+        "text": "<@U2GR5RHQT|zanejia> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476363992.002110"
+    },
+    {
+        "type": "message",
+        "user": "U0YMACQSW",
+        "text": "<@U0Y14MWA2> What state are currently kept in the consenters and when do we prune the transcations. Is this something that was agreed on?",
+        "ts": "1476371041.002111"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "guys, with <@U0Y14MWA2> and <@U0XPR4NP4> (thanks for their great help) I am still looking into an unidentified SBFT bug. it started with <https:\/\/jira.hyperledger.org\/browse\/FAB-624> but we will also have another one for it as there seem to be multiple missing parts and bugs.",
+        "ts": "1476371295.002112"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "In a specific test case, the primary node is restarted and it does not catch up to the others. We implemented a simple pull based update protocol for this, but using that it receives one additional batch that is not needed and the others don't have (duplicate).",
+        "ts": "1476371378.002113"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "I will be taking a look at TLS w\/ pinned self signed certificates over the next few days (see <https:\/\/jira.hyperledger.org\/browse\/FAB-708>)",
+        "ts": "1476381217.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For those who are interested, I've pushed out a first pass at a policy manager (which leverages the signature validation dsl) <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1721\/>",
+        "ts": "1476381427.002115"
+    },
+    {
+        "user": "U193ZSYK0",
+        "text": "<@U193ZSYK0|chanderg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476424924.002116"
+    }
+]

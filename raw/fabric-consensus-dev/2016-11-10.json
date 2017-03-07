@@ -1,0 +1,737 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KN2SSKE> <@U0XPR4NP4> <@U0XQ35CDD>  - so I think we need to make a call on terminology in terms of \"channels\" versus \"chains\".  It seems we use the term \"channels\" in discussions, etc but that within the implementation we are using the term \"chain\"  (e.g. chainID, getDefaultChain, etc).    We need to pick one",
+        "ts": "1478778441.003576"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "good morning. Where in the code (if it is already coded, I grep-ed the whole project and doesn't look like it is) can I find how the `JoinChannel` message looks like?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478778940.000000"
+        },
+        "ts": "1478778868.003577"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's hard to Join something which does not exist yet  :wink:",
+        "ts": "1478779186.003579"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "aka it's not coded up yet",
+        "ts": "1478779195.003580"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(at least as far as I know and last time I looked as well)",
+        "ts": "1478779229.003581"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[November 10th, 2016 7:06 AM] garisingh: Sorry for the wide blast here, but while I was reviewing stuff, thought I should send out a note on things which will make life easier for the maintainers and will help contributions be merged more quickly:\n\n1) Please make sure to reference a JIRA item in your commits - especially for new functionality\n\n2) Let's try to add a little more detail to some of the JIRA entries - one line entries \/ descriptions don't help us understand what contribution is trying to achieve\n\n3) When people make comments in gerrit, once you address them please mark them as done (by clicking in the comment and hitting done  :slightly_smiling_face:  )\n\n4) You'll notice that we push back a lot on lack of tests - please test locally and use a coverage tool to see where you stand\n\n5) Run linters, go import, etc to reduce CI failures",
+                "ts": "1478779599.000514",
+                "author_subname": "garisingh",
+                "channel_id": "C29512UHF",
+                "channel_name": "fabric-sdk-node-dev",
+                "is_msg_unfurl": true,
+                "text": "Sorry for the wide blast here, but while I was reviewing stuff, thought I should send out a note on things which will make life easier for the maintainers and will help contributions be merged more quickly:\n\n1) Please make sure to reference a JIRA item in your commits - especially for new functionality\n\n2) Let's try to add a little more detail to some of the JIRA entries - one line entries \/ descriptions don't help us understand what contribution is trying to achieve\n\n3) When people make comments in gerrit, once you address them please mark them as done (by clicking in the comment and hitting done  :slightly_smiling_face:  )\n\n4) You'll notice that we push back a lot on lack of tests - please test locally and use a coverage tool to see where you stand\n\n5) Run linters, go import, etc to reduce CI failures",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/garisingh",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-10\/78323915894_521dc680194c08b166e0_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-sdk-node-dev\/p1478779599000514",
+                "is_share": true,
+                "footer": "Posted in #fabric-sdk-node-dev"
+            }
+        ],
+        "ts": "1478779640.003582"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0PB67X4K>  any idea who's the person coding it? I have a requirement to ask",
+        "ts": "1478780561.003583"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Maybe <@U0ULK2JPP>  ?",
+        "ts": "1478780584.003584"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "would likely be Murali.",
+        "ts": "1478780748.003585"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok thanks. \n<@U0XPR4NP4>  I uploaded a new patch set, after discussing things related to the multi channel internally this morning. \nCould you please take a look, and hopefully remove the `-2`? :thinking_face: \n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2325\/12\/gossip\/api\/channel.go>",
+        "ts": "1478780952.003586"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0ZJZBJLF> join channel is a call to the configuration system chaincode cscc with the genesis block and a list of peers;  cscc also processes config changes coming in from gossip as a block  (configuration block) \u2014 i am working on cscc",
+        "ts": "1478782041.003587"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0PB67X4K> chain=channel+ledger+some participants",
+        "ts": "1478782183.003588"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "so from sdk, we create a chain, and internally we create a channel, add participants (peers), who create ledger to hold data on that channel",
+        "ts": "1478782283.003589"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - I get that - but in the messages sent to the ordering service \"channels\" are addressed by \"chainID\" and in reality on the orderer side a channel has participants\/ACLs.",
+        "ts": "1478782555.003590"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0KN2SSKE>  ok, then I need the following abilities in order to support multiChannel:\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2325\/12\/gossip\/api\/channel.go>",
+        "ts": "1478782827.003591"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I need a JoinChannel to be a concrete object, signed by the app, and I also need it to have a timestamp, and to be able to extract the list of peers certificates from it.\nwe're going to gossip this message around in the org, and I need the timestamp to know which JoinChannel message is newer than another",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478782911.000000"
+        },
+        "ts": "1478782863.003592"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "all: today I have some non-consensus related tasks to do but I will continue with making System\/Receiver be parts of some non-sbft common API to enable other orderers to use them ( <@U0Y14MWA2> <@U0XQ35CDD> <@U0XPR4NP4> etc.)",
+        "ts": "1478783083.003595"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt;  so I think we need to make a call on terminology in terms of \"channels\" versus \"chains\".  It seems we use the term \"channels\" in discussions, etc but that within the implementation we are using the term \"chain\"  (e.g. chainID, getDefaultChain, etc).    We need to pick one\n\n<@U0PB67X4K> Personally, my vote is we say 'chains' rather than channels.  I don't see any way we can ever get away from the word 'chain' in a blockchain implementation, and since channel &lt;-&gt; chain is one to one, I don't really see the advantage in introducing the new term.",
+        "ts": "1478786046.003596"
+    },
+    {
+        "user": "U31EJ5JK0",
+        "text": "<@U31EJ5JK0|k.sung> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478786221.003597"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; I uploaded a new patch set, after discussing things related to the multi channel internally this morning. \n\n<@U0ZJZBJLF> Removed the -2 and commented.",
+        "ts": "1478786333.003598",
+        "reactions": [
+            {
+                "name": "writing_hand",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0ZJZBJLF> i\u2019ll loook at channel.go since cscc will call it to pass info \u2014 meantime, take a look at the protos\/common where the genesis block comes in with 1 transaction of type CONFIGURATION.  The transaction has a ChainHeader which contains a timestamp",
+        "ts": "1478788701.003599"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course, I don't need you to look at the other file.",
+        "ts": "1478788729.003600"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so it's Payload--&gt;Header--&gt;ChainHeader--&gt;timestamp.\nSignatureHeader is the signature on the header? where are the actual bytes of the signature then?",
+        "ts": "1478788863.003601"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The actual signature bytes are in the `signature` field of the `Envelope`",
+        "ts": "1478788916.003602"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They are over the `payload`, which includes a `Header` which embeds a `ChainHeader` (which contains the chainID et al) and a `SignatureHeader` (which contains the identity, nonce, et al)",
+        "ts": "1478788953.003603"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The reason the `Header` was split into the `ChainHeader` and the `SignatureHeader` is because there are cases where a message wants to share a `ChainHeader` among several signatures, but needs a unique `SignatureHeader` per signature.",
+        "ts": "1478788992.003604"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so the configuration transaction is essentially going to be made to a single block (of 1 transaction), and this block is going to be passed to the peers, which would:\n1) Verify the signature over the envelope\n2) turn the payload bytes to Payload \n3) turn the data of the Payload to a Block and from there read the configuration?",
+        "ts": "1478789372.003605"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "that's how I'm building the block for bootstrap ... haven't done anything for signature verification yet",
+        "ts": "1478789467.003606"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't need the code to be written, all I need is for the right people to endorse my commit and promise that the capabilities I need for gossip multi channel support will be there",
+        "ts": "1478789508.003607"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; 3) turn the data of the Payload to a Block and from there read the configuration?\n\nNo.  The `Payload` contains `data` of type `ConfigurationEnvelope`, not an embedded block.",
+        "ts": "1478789721.003608"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/docs.google.com\/document\/d\/1qD2zOTxmPoss3Xop_pDdkSXHozIR4N27NEsymosW4Gk>\n\nPlease see the configuration section in the above",
+        "ts": "1478789738.003609"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Configuration blocks are blocks which only ever contain a single transaction, whose chain header type is `CONFIGURATION_TRANSACTION`",
+        "ts": "1478789775.003611"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I would also refer you to the static bootstrapper changeset as it provides a concrete example of how this looks like. ",
+        "ts": "1478789797.003612"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The semantics changed slightly after some feedback from <@U0KN2SSKE> so I would encourage you to look it the static bootstrapper in this pending CR <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2371\/>",
+        "ts": "1478789848.003613"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1478789872.003614"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/terjim7t4vhi5mqq4boqcqpytqe|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1478789889.003615"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) all right, I looked at the google doc <@U0XPR4NP4>  showed me, I assume at some point the configurationItem will have a list of peers of something like that? because it's not coded, right?\n2) in the gerrit item you linked- I'm supposed to look at the test, right?",
+        "ts": "1478793916.003616"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; at some point the configurationItem will have a list of peers of something like that\n\nThe configuration will have a list of peer orgs, never peers.\n\n&gt; in the gerrit item you linked- I'm supposed to look at the test, right?\n\nYou should look at `fabric\/orderer\/common\/bootstrap\/static\/static.go` to see an example of the actual configuration being encoded.",
+        "ts": "1478794018.003617"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "^ <@U0ZJZBJLF>",
+        "ts": "1478794043.003618"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this isn't what I understood from <@U0KN2SSKE> , I was under the impression that the JoinChannelMessage given to each peer will have the list of *all peers in the channel*",
+        "ts": "1478794082.003619"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "This is *critical* to implement the multi channel support in the current proposed flow",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478794140.000000"
+        },
+        "ts": "1478794101.003620"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "at some point (hopefully soon) there will be a configurationItem whose value is a list of peer CA certs",
+        "edited": {
+            "user": "U0UGH3X7X",
+            "ts": "1478794226.000000"
+        },
+        "ts": "1478794113.003621"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ordering service uses that list to determine who can connect",
+        "ts": "1478794140.003623"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0UGH3X7X> , I understand that the ordering service only cares about the org",
+        "ts": "1478794159.003624"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but we were said that the peers themselves know each peer in the channel",
+        "ts": "1478794177.003625"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `JoinChannelMessage` may have the list of all peers, I am only speaking to the contents of the configuration transaction",
+        "ts": "1478794178.003626"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "correct",
+        "ts": "1478794194.003627"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Who is allowed to transact on the chain is a property of chain config.  Who is actively transacting and interested in the chain is not a property of the chain, this is a property of the peer network.  It does not belong in the chain config.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478794237.000000"
+        },
+        "ts": "1478794218.003628"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "configurationItem , not configurationID",
+        "ts": "1478794236.003630"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But binh said: \n```\njoin channel is a call to the configuration system chaincode cscc with the genesis block and a list of peers; \n```",
+        "ts": "1478794245.003632"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly",
+        "ts": "1478794257.003633"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With `the genesis block` what you see there, _and_ `a list of peers`",
+        "ts": "1478794276.003634"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The list of peers does not come from the genesis block.",
+        "ts": "1478794285.003635"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but a system chaincode produces a transaction... I'm confused now. isn't what's being produced is that configurationItem?",
+        "ts": "1478794304.003636"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To my knowledge, the application creates the configuration transaction for a new channel, submits it to ordering, and gets back the genesis block.  It then decides which peers are going to actually use the channel, and sends them each a `JoinChannel` with that genesis block, and the list of peers it has concluded should be on the channel.",
+        "ts": "1478794380.003637"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so the genesis block is the configuration?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478794388.000000"
+        },
+        "ts": "1478794383.003638"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1478794415.003640"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The genesis block is the first block in the chain, it embeds a single transaction of type `CONFIGURATION_TRANSACTION` and carries as its data a `ConfigurationEnvelope` which holds an arbitrary number of `SignedConfigurationItem`s (each of which embeds a `ConfigurationItem` which contains whatever configuration information, like peer orgs and policies)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478794453.000000"
+        },
+        "ts": "1478794418.003641"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see now, many thanks. This isn't good to me :disappointed:",
+        "ts": "1478794432.003642"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I need the peer list to be signed",
+        "ts": "1478794442.003643"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean, I want it to be signed",
+        "ts": "1478794446.003644"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why can the app not sign it?",
+        "ts": "1478794460.003647"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How did you know to trust the JoinChannel?",
+        "ts": "1478794468.003648"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I was under the impression that the app will sign it,",
+        "ts": "1478794469.003649"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I just need *someone* to do that, so I could leverage that signature",
+        "ts": "1478794486.003650"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "From what I've just heard, and, I have not been involved in these discussions.  My impression was that the app signs over the JoinChannel, which includes the peer list and the genesis block.  Whether it signs each, or both, or some other combination, I don't know.",
+        "ts": "1478794541.003651"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I only wish to stress that it is _not_ the configuration transaction which contains the peer list",
+        "ts": "1478794561.003652"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And therefore it is _not_ the genesis block which contains this information)",
+        "ts": "1478794574.003653"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "Application signs the list of peers, while GB (genesis block) contains info about org rather than peers",
+        "ts": "1478794645.003654",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4",
+                    "U0UGH3X7X"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1HFNJB50|c0rwin> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/c0rwin\/F310Z4666\/pasted_image_at_2016_11_10_11_18_am.png|Pasted image at 2016-11-10, 11:18 AM> and commented: When we draw a sequence on board it looked something like this:",
+        "file": {
+            "id": "F310Z4666",
+            "created": 1478794693,
+            "timestamp": 1478794693,
+            "name": "Pasted image at 2016_11_10 11_18 AM.png",
+            "title": "Pasted image at 2016-11-10, 11:18 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1HFNJB50",
+            "editable": false,
+            "size": 155476,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F310Z4666\/pasted_image_at_2016_11_10_11_18_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F310Z4666\/download\/pasted_image_at_2016_11_10_11_18_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 156,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 208,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 312,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 415,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F310Z4666-60c6710340\/pasted_image_at_2016_11_10_11_18_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 443,
+            "image_exif_rotation": 1,
+            "original_w": 1458,
+            "original_h": 631,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/c0rwin\/F310Z4666\/pasted_image_at_2016_11_10_11_18_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F310Z4666-262461150c",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc310Z5SD8",
+                "created": 1478794693,
+                "timestamp": 1478794693,
+                "user": "U1HFNJB50",
+                "is_intro": true,
+                "comment": "When we draw a sequence on board it looked something like this:",
+                "channel": ""
+            }
+        },
+        "user": "U1HFNJB50",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1HFNJB50|c0rwin>",
+        "bot_id": null,
+        "ts": "1478794697.003655"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "at very high level (w\/o deep details)",
+        "ts": "1478794748.003656"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks <@U1HFNJB50> that is how I envisioned it, but it's great to have a real flow diagram and confirmation",
+        "ts": "1478794802.003657"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "attach the diagram to the jira issue ?  before slack loses it for us",
+        "ts": "1478794881.003658"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1HFNJB50>  - so is there an implied step in this diagram where all the peers that belong to an organization connect to each other via the gossip layer?",
+        "ts": "1478795223.003659"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "diagram depicts joinChannel call per single peer, so I guess it doesn\u2019t include the logic where all org peers get connected together",
+        "ts": "1478795318.003660"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and follow-on - does that mean that basically the gossip layer then dynamically builds up the list of peers grouped by organization?",
+        "ts": "1478795354.003661"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0UGH3X7X> can you tell me the JIRA item, you\u2019d like me to attach the diagram?",
+        "ts": "1478795362.003662"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0PB67X4K> my answer would be - yes, while we can confirm that w\/ <@U0ZJZBJLF> also",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1478795434.000000"
+        },
+        "ts": "1478795426.003663"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4>  - do you imagine that the \"global\" channel (used to be called the system channel) would be used to distribute the list of organizations to all all peers which connect to the ordering service?   (not really a function of the ordering service but rather a use of the ordering service).  My assumption would be that provides the \"global\" list of organizations that are part of the overall network and then when specifying access control at the channel level you would reference these organizations.  Or did you imagine that organization info get duplicated for every chain (channel + ledger)?",
+        "ts": "1478795707.003665"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> So, I think ultimately, we will need a private orderer only chain for a number of reasons.  However, for simplicity's sake, I assumed every chain would have the full list of peer org certs in the config.",
+        "ts": "1478795802.003666"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that implies that the list of possible peer orgs is always out of band from the overall \"global\" network and that orgs are added at the \"chain\" level",
+        "ts": "1478795902.003667"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is why I like to work backwards - meaning if I had a config file on each peer, what would need to be in it  :wink:",
+        "ts": "1478795957.003668"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "then we figure out how to distribute it",
+        "ts": "1478795968.003669"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in any case, it seems that within the fabric we need am entity structure known as an organization.  we of course need that in the orderer as well.  and I think it is more than just the org certificate",
+        "ts": "1478796137.003670"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> I've always thought the notion of treating the 'system chain' specially was odd.  It's just a chain, and it has ACLs, which sounds like a channel to me.",
+        "ts": "1478796205.003671"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but I think that belongs mostly over in peer dev world",
+        "ts": "1478796210.003672"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1478796224.003673"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess we talk about a lot of conceptual entities which don't seem to exist really across the design  :wink:",
+        "ts": "1478796256.003674"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would actually propose, that the 'orderer chain' is not special either.  Instead, when creating a channel, I would specify the 'source chain' or some such thing, which is where the actual channel creation authorization policy is stored.  So, you could start up an ordering service, and consortium A comes over, and you fire up a 'Consortium A ordering chain' on top of the initial chain, and consortium B joins, and you can do the same.  That way you get instant multi-tenancy for free.",
+        "ts": "1478796313.003675"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We definitely did invent the term 'Peer Org' while trying to write the bootstrap bdd I think... seems like it probably should have originated in the design, but some of these things are hard to see until you flesh them out",
+        "ts": "1478796394.003676"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am not faulting anyone here",
+        "ts": "1478796844.003677"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and I believe designs evolve as you build.  Just saying we might need to catch our breath again and see what new things have emerged",
+        "ts": "1478796901.003678"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0PB67X4K> <@U0XPR4NP4> app may create a \u201csystem\u201d chain to orchestrate transactions, but that should be use-case specific, so i agree that we don\u2019t treat a channel any more specific than others",
+        "ts": "1478798051.003679",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U1HFNJB50>  i'd say add it to the issue <@U0ZJZBJLF> is using for his api work ( don't know the number offhand )",
+        "ts": "1478798859.003680",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            },
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U1HFNJB50"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U1NPSMCDS",
+        "text": "<@U1NPSMCDS|shinsa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478846881.003681"
+    }
+]

@@ -1,0 +1,180 @@
+[
+    {
+        "type": "message",
+        "user": "U1F5KATGX",
+        "text": "finally it started working . I have used gitbash to create key pair and also ensure that i created id_rsa folder. Am not sure why this is needed !!",
+        "ts": "1477292834.003192"
+    },
+    {
+        "type": "message",
+        "user": "U2AS0GVSP",
+        "text": "but I am deploying from local files, on ssh within the server",
+        "attachments": [
+            {
+                "fallback": "[October 23rd, 2016 10:53 AM] yacovm: so maybe the communication to it is slow or something?",
+                "ts": "1477216408.003181",
+                "author_subname": "yacovm",
+                "channel_id": "C0Y4PEU22",
+                "channel_name": "fabric",
+                "is_msg_unfurl": true,
+                "text": "so maybe the communication to it is slow or something?",
+                "author_name": "Yacov Manevich",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/yacovm",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-30\/85916865123_74ecb5d18535acea44aa_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric\/p1477216408003181",
+                "is_share": true,
+                "footer": "Posted in #fabric"
+            }
+        ],
+        "ts": "1477306118.003195"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "When using PBFT, would there be any issues with setting `CORE_PEER_DISCOVERY_ROOTNODE` for all peers to point to a peer with id `peer-0`? In other words `peer-0` also points to `peer-0`. I ask because all nodes seem to have error-free logs, except `peer-0`, which has:\n```12:05:11.193 [peer] HandleMessage -&gt; DEBU 1f3583 Handling Message of type: DISC_PEERS\n12:05:11.193 [peer] beforePeers -&gt; DEBU 1f3584 Received DISC_PEERS, grabbing peers message\n12:05:11.193 [peer] beforePeers -&gt; DEBU 1f3585 Received PeersMessage with Peers: peers:&lt;ID:&lt;name:\"peer-1\" &gt; address:\"10.0.0.23:7051\" type:VALIDATOR &gt; peers:&lt;ID:&lt;name:\"peer-3\" &gt; address:\"10.0.1.47:7051\" type:VALIDATOR &gt; peers:&lt;ID:&lt;name:\"peer-4\" &gt; address:\"10.0.0.24:7051\" type:VALIDATOR &gt; peers:&lt;ID:&lt;name:\"peer-0\" &gt; address:\"10.0.1.45:7051\" type:VALIDATOR &gt;\n12:05:11.194 [consensus\/handler] HandleMessage -&gt; DEBU 1f3586 Did not handle message of type DISC_GET_PEERS, passing on to next MessageHandler\n12:05:11.194 [peer] HandleMessage -&gt; DEBU 1f3587 Handling Message of type: DISC_GET_PEERS\n12:05:11.194 [peer] beforeGetPeers -&gt; DEBU 1f3588 Sending back DISC_PEERS\n12:05:11.195 [peer] SendMessage -&gt; DEBU 1f3589 Sending message to stream of type: DISC_PEERS\n12:05:11.584 [peer] SendMessage -&gt; DEBU 1f358a Sending message to stream of type: DISC_GET_PEERS\n12:05:11.585 [consensus\/handler] HandleMessage -&gt; DEBU 1f358b Did not handle message of type DISC_GET_PEERS, passing on to next MessageHandler\n12:05:11.585 [peer] HandleMessage -&gt; DEBU 1f358c Handling Message of type: DISC_GET_PEERS\n12:05:11.585 [peer] handleChat -&gt; ERRO 1f358d Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created```",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477310879.000000"
+        },
+        "ts": "1477310849.003197"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Can you get to beforeGetPeers in core\/peer\/peer.go?",
+        "ts": "1477311586.003200"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0ZJZBJLF> Is that a question for me? Not sure how I\u2019d check that\u2026 Basic question is can a peer handle `CORE_PEER_DISCOVERY_ROOTNODE` being set to its own id?",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477311819.000000"
+        },
+        "ts": "1477311805.003201"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Oh wait thats in handler",
+        "ts": "1477311809.003202"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll check when i get home if someone else won't",
+        "ts": "1477311863.003204"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But basically that error isn't fatal",
+        "ts": "1477311887.003205"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, I\u2019m also getting these from the other peers after I\u2019ve tried to deploy some chaincode:\n```12:39:36.101 [consensus\/pbft] sendViewChange -&gt; INFO 1cc729 Replica 0 sending view-change, v:1, h:0, |C|:1, |P|:0, |Q|:1\n12:39:36.102 [consensus\/util\/events] loop -&gt; DEBU 1cc72a Attempting to stop an unfired idle timer\n12:39:36.102 [consensus\/util\/events] loop -&gt; DEBU 1cc72b Stopping timer\n12:39:36.102 [consensus\/pbft] recvViewChange -&gt; INFO 1cc72c Replica 0 received view-change from replica 0, v:1, h:0, |C|:1, |P|:0, |Q|:1\n12:39:36.102 [consensus\/handler] Verify -&gt; DEBU 1cc72d Security is disabled\n12:39:36.103 [consensus\/pbft] recvViewChange -&gt; WARN 1cc72e Replica 0 already has a view change message for view 1 from replica 0```",
+        "ts": "1477312933.003206"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "And no docker images have been fired up anywhere\u2026",
+        "ts": "1477312962.003207"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCND1FY\/move_convergence_changeset_to_master.txt|move_convergence_changeset_to_master.txt> and commented: cheat sheet for bringing changesets from convergence to master <@U0KPFAZNF> <@U0UHG4VP1>",
+        "file": {
+            "id": "F2TCND1FY",
+            "created": 1477324156,
+            "timestamp": 1477324156,
+            "name": "move_convergence_changeset_to_master.txt",
+            "title": "move_convergence_changeset_to_master.txt",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ULK2JPP",
+            "editable": true,
+            "size": 1091,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCND1FY\/move_convergence_changeset_to_master.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCND1FY\/download\/move_convergence_changeset_to_master.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCND1FY\/move_convergence_changeset_to_master.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2TCND1FY-8157f21f73",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2TCND1FY\/move_convergence_changeset_to_master.txt\/edit",
+            "preview": "Cheat sheet for moving changes sets from convergence to master\n==============================================================\n\nExample changeset in convergence to be moved to master \n    - https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1633\/ ",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Cheat sheet for moving changes sets from convergence to master<\/pre><\/div>\n<div><pre>==============================================================<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Example changeset in convergence to be moved to master <\/pre><\/div>\n<div><pre>    - https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1633\/ <\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 23,
+            "lines_more": 18,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2TCYTVGF",
+                "created": 1477324156,
+                "timestamp": 1477324156,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "cheat sheet for bringing changesets from convergence to master <@U0KPFAZNF> <@U0UHG4VP1>",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1477324156.003208"
+    },
+    {
+        "user": "U2TB1TLUE",
+        "text": "<@U2TB1TLUE|taylant> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477325307.003210"
+    },
+    {
+        "user": "U1KDAMDJ7",
+        "text": "<@U1KDAMDJ7|sanchezl> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477328991.003212"
+    },
+    {
+        "user": "U2QQYUGKS",
+        "text": "<@U2QQYUGKS|jappwilson> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477332916.003213"
+    },
+    {
+        "type": "message",
+        "user": "U22H7GFGA",
+        "text": "Hi all, I am having a problem while returning the errors from chiancode invoke methods to CLI or NodeSDK. Can anyone help out with this ?",
+        "ts": "1477334609.003214"
+    },
+    {
+        "type": "message",
+        "user": "U22H7GFGA",
+        "text": "Is there anyway i can return errors from invoke function to NodeSDK in case of any errors",
+        "ts": "1477334668.003215"
+    }
+]

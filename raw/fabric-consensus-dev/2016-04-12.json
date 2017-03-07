@@ -1,0 +1,708 @@
+[
+    {
+        "user": "U0Z3BE0F5",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z3BE0F5|mcrafols> has joined the channel",
+        "ts": "1460446919.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: i think we need to make state transfer a bit more proactive - I created a test where i drop a set of commit messages to all but one correct replica (i.e. only that replica gets a commit certificate and executes), and then only that replica can keep on executing - everybody else is stuck",
+        "ts": "1460460900.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Could you elaborate a bit on that scenario?  The way I read it, is that you have a 4 replica network, somehow vp3 gets a commit certificate and executes, but vp0,1,2 for whatever reason don't, and do not execute.  You're saying the network then stalls? When vp0,1,2 have no execution at that sequence number, I would expect for progress to stop, and a view change timer to trigger, which would then get vp0,1,2 to recover.  I assume I'm missing something here?",
+        "ts": "1460468115.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me gist the test",
+        "ts": "1460468215.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/gist.github.com\/f9382b0bc860b2a071755a9a64b2953c>",
+        "ts": "1460468229.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vp3 is down (byzantine), vp1 operates normally, vp0 and vp2 operate \"normally*\"; they don't receive commits from anybody",
+        "ts": "1460468298.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is this for `TestReplicaCrash1` or `TestReplicaCrash2`?",
+        "ts": "1460469026.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "replicacrash2",
+        "ts": "1460469036.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i should have gisted just the section",
+        "ts": "1460469057.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sorry, was looking at `TestReplicaCrash1`, let me see...",
+        "ts": "1460469094.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Line 967\n\n```\n\t\tif filterMsg &amp;&amp; dst != -1 &amp;&amp; dst != 1 &amp;&amp; pm.GetCommit() != nil {\n```",
+        "ts": "1460469221.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That looks to me like it is filtering all commit messages? I suspect one of those dst filters should be different?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1460469307.000000"
+        },
+        "ts": "1460469246.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, wait, nevermind",
+        "ts": "1460469264.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Sorry, somehow read `-1` in both checks)",
+        "ts": "1460469429.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I still think this is a view change scenario",
+        "ts": "1460469436.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And my suspicion is that this test is exiting before the view change timer can fire",
+        "ts": "1460469463.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i see",
+        "ts": "1460469492.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In fact, I don't see how this could be fixed by state transfer, we've only had one execution, and we need at least f+1 same results to trust it.",
+        "ts": "1460469796.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1460469808.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so a view change should clear that up",
+        "ts": "1460469828.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1460469870.000189"
+    },
+    {
+        "user": "U0N25BLQH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N25BLQH|carmania> has joined the channel",
+        "ts": "1460472096.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: you around?",
+        "ts": "1460477549.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: the view change half solves it",
+        "ts": "1460477570.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: because the log rolls over at view change, there are no null requests included in the new-view message, so the view change timer expires",
+        "ts": "1460477638.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> I think I'm lost again.  The view change timer should be reset once the new-view message is processed.  I would not expect null requests from that scenario, shouldn't everyone reprocess that commit that was dropped, then the new requests that they already prepared, so there should be no gaps, and no null requests.  I'm not seeing why a timer should be expiring.",
+        "ts": "1460477956.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so far we've reset the timer only when a request executes",
+        "ts": "1460478543.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We might want to change that, but I would expect for requests to be executing after this view change? vp1 has 1 committed, and 2 outstanding, and the rest have 3 outstanding, so there should be an execution everywhere?",
+        "ts": "1460478678.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "If the timer expires before it receives a valid NEW-VIEW message for\nv + 1 or before it executes a request in the new view that it had not executed\npreviously, it starts the view change for view v + 2 but this time it will wait 2T\nbefore starting a view change for view v + 3.",
+        "ts": "1460478685.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so what happens is that vp1's new view timer expires (nothing executed, because it actually executed all previously), and vp0's timer expires because it has a request outstanding that nobody processed yet",
+        "ts": "1460478735.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds reasonable, but is that a problem? If your test is looking for executions?  Also, why didn't vp0 rebroadcast that request after the view change?",
+        "ts": "1460478846.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[I'd agree though, that it's bad if having no outstanding requests causes us to view-change indefinitely]",
+        "ts": "1460478885.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i'm looking at executions",
+        "ts": "1460479639.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we also don't have a rebroadcast",
+        "ts": "1460479656.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Look for `resubmitRequests` at the end of accepting a new view",
+        "ts": "1460479811.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's implemented in `pbft-core.go` and invoked in `viewchange.go` in `processNewView2`",
+        "ts": "1460479887.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, that only happens for requests that are at the new primary",
+        "ts": "1460479897.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I see",
+        "ts": "1460479942.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And this is not addressed by your complaints work?",
+        "ts": "1460479963.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not for pure pbft",
+        "ts": "1460479976.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Maybe a view change should trigger something in that path?)",
+        "ts": "1460479981.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But in pure pbft all replicas should receive all requests? So the primary should have that request in its store?",
+        "ts": "1460480033.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, we changed that :confused:",
+        "ts": "1460480047.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in any case, these are two separate issues",
+        "ts": "1460480059.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "even if there is no outstanding request, there are view changes",
+        "ts": "1460480079.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Agreed.  I'm having trouble parsing that comment:\n\n```\nIf the timer expires before it receives a valid NEW-VIEW message for\nv + 1 or before it executes a request in the new view that it had not executed\npreviously, it starts the view change ...\n```\n\nIt says \"or\",  but how could we execute a request in the new view before receiving a valid NEW-VIEW message?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1460480329.000000"
+        },
+        "ts": "1460480303.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i don't know",
+        "ts": "1460482477.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there is something weird with the mock test net",
+        "ts": "1460485361.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think I might know what it is",
+        "ts": "1460485543.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sorry, i'm struggling with slack",
+        "ts": "1460485559.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/gist.github.com\/f88cb52559f01789e5e192ea710ae852>",
+        "ts": "1460485568.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`\u001b[36m20:15:10.215 [consensus\/obcpbft] maybeSendCommit -&gt; DEBU 481\u001b[0m Replica 1 broadcasting commit for view=1\/seqNo=3`",
+        "ts": "1460485604.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The call to `makePBFTNetwork` creates a convenience slice, `pbftEndpoints` which the tests can refer to so that they're not constantly having to type assert",
+        "ts": "1460485606.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but:",
+        "ts": "1460485607.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But the network is still backed by the `endpoints` slice from the base mock implementation",
+        "ts": "1460485631.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So you need to replace the reference in both slices",
+        "ts": "1460485642.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`[36m20:15:10.697 [consensus\/obcpbft] recvCommit -&gt; DEBU 4f2\u001b[0m Replica 2 received commit from replica 1 for view=1\/seqNo=3`",
+        "ts": "1460485663.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it takes more than 400ms to deliver that message",
+        "ts": "1460485682.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "including a time where no activity happens:",
+        "ts": "1460485697.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah damn",
+        "ts": "1460485744.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wrong test",
+        "ts": "1460485747.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or wrong run",
+        "ts": "1460485750.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i ran it with -count 10",
+        "ts": "1460485767.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me check again, there was something with a timeout and late message delivery",
+        "ts": "1460485792.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, yeah, I really wish go did a better job making sure logs don't interleave, makes the output useless unless you run with `-v`, which is awful if the tests passes",
+        "ts": "1460485802.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i use -v",
+        "ts": "1460486019.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what happens without -v?",
+        "ts": "1460486026.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe i need to increase the timers",
+        "ts": "1460486136.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "seems my laptop is weak, and many tests = slower",
+        "ts": "1460486154.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Without `-v`  there's no indication of where the previous tests ended and where the new one begins",
+        "ts": "1460486194.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Do you use `-parallel 1`?",
+        "ts": "1460486199.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i've seen this before, long time of nothing, timer expires, later messages get delivered",
+        "ts": "1460486201.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, i thought the default was parallel 1",
+        "ts": "1460486224.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, usually when this happens, it's because that thread is stuck waiting for the pbft lock",
+        "ts": "1460486225.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Default is parallel $GOMAXPROCS I think",
+        "ts": "1460486240.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that would mean that somebody else is holding it...",
+        "ts": "1460486243.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh wow",
+        "ts": "1460486268.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does it separate the outputs then?",
+        "ts": "1460486274.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah, now it passed",
+        "ts": "1460486298.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "```\nvagrant@ubuntu-1404:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ go test -help 2&gt;&amp;1 | grep -A2 parallel\n\t-parallel n\n\t    Allow parallel execution of test functions that call t.Parallel.\n\t    The value of this flag is the maximum number of tests to run\n\t    simultaneously; by default, it is set to the value of GOMAXPROCS.\n\t    Note that -parallel only applies within a single test binary.\n\t    The 'go test' command may run tests for different packages\n\t    in parallel as well, according to the setting of the -p flag\n\t    (see 'go help build').\n```",
+        "ts": "1460486310.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1460486317.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "silly me, assumptions",
+        "ts": "1460486326.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, one bug down",
+        "ts": "1460486343.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how's your messaging rework going?",
+        "ts": "1460486357.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Trying to fix some of these bad decisions, like having handlers instantiate the plugin, and running into dependency cycles in the imports",
+        "ts": "1460486403.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great, thanks",
+        "ts": "1460486416.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Do have the fanin\/out stuff written plus accompanying test",
+        "ts": "1460486416.000265"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i ran into all of this",
+        "ts": "1460486429.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Need to talk with Jeff more, but he was tied up yesterday, and again today with visiting folks",
+        "ts": "1460486463.000267"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so main.go:peer will have a statement that will create a consensus plugin?",
+        "ts": "1460486480.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "happy to discuss with you too",
+        "ts": "1460486495.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, so I was going to have `peer.go`s `NewPeerWithHandler` function call into `controller.InitializeConsensus` with itself (`peerImpl`) as a parameter, which would instantiate the plugin.  Then `handler` would simply refer to the singleton instance in `controller` to route things.",
+        "ts": "1460486607.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The problem is, that `peerImpl` isn't actually what's required, it needs to be wrapped by `helper`, which in turn references the interfaces defined in `peer`, and causes this cycle, which I'm trying to break.",
+        "ts": "1460486645.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "One easy fix, would be to move the interfaces defined in `peer` out into some other package, which both could reference, but which reference neither, breaking the cycle",
+        "ts": "1460486682.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, this would be a moderately large (if trivial) changeset outside of the consensus package, so felt like I should consult with Jeff before stepping on his toes like that.",
+        "ts": "1460486734.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, peer is a mixture of multiple things",
+        "ts": "1460486735.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's the local peer operating, it is singletons for the local peer, and it is instances of connected peers",
+        "ts": "1460486782.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for inspiration, have a look at how tendermint does it - not saying we should do the same",
+        "ts": "1460486800.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they just do it entirely differently",
+        "ts": "1460486808.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but yea, large change, but necessary",
+        "ts": "1460486830.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what about having one module dealing with running a grpc endpoint, and maintaining a list of connected peers, and another module taking incoming messages from that first module, and distributing them to all registered handlers",
+        "ts": "1460486919.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and a third module (or maybe main.go) creating the switchboard, the grpc\/network facing side (taking switchboard as consumer), and the handlers (being registered\/passed to the switchboard)",
+        "ts": "1460487007.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just an idea",
+        "ts": "1460487014.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's getting late here, so concentration is waning",
+        "ts": "1460487023.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh yiss, tests are passing",
+        "ts": "1460487069.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so now i can start adding all the persistence stuff",
+        "ts": "1460487086.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we need more small modules - i think pbft would also benefit from this",
+        "ts": "1460487177.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there are a few things I really would like to see changed.  Right now, `peer` acts has this FSM code but consensus filters messages before they reach the FSM, but those filtering decisions need to be made based on the state of the FSM.  Plus, `peer` does too much together, it does the under the covers state transfer stuff, and the peerEndpoint stuff, which are such separate ideas.  It seems quite conceivable that we would want the peerEndpoint information available and none of the state transfer nonsense.",
+        "ts": "1460487185.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or at least well encapsulated interfaces",
+        "ts": "1460487194.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think each of these little modules, like say peerEndpoint, statetransfer, etc. should each be in their own encapsulated piece of code.  Then, depending on the type of deployment, you pick which ones you want to glue together.",
+        "ts": "1460487235.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "regarding \"what if another consensus wants to do something per new connection\": the tendermint code has an API for that as well:  `AddPeer`, `RemovePeer`, and messages coming in",
+        "ts": "1460487277.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's a bit different, because they implement gossip in the consensus",
+        "ts": "1460487288.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and they use a lot of goroutines, which means no thorough unit tests (at least I didn't see them) (because distributed system)",
+        "ts": "1460487326.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that could conceivably be an event",
+        "ts": "1460487341.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "peer attached\/detached",
+        "ts": "1460487350.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, if we were more event driven with that, it would also eliminate the polling pattern that had to be used for the whitelisting",
+        "ts": "1460487434.000294"
+    }
+]

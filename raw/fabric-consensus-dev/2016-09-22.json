@@ -1,0 +1,667 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i'm moving to state transfer, and i need to define an interface between sbft and system",
+        "ts": "1474544480.000873"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`GetBatch(uint64) (*Batch, err)` seems the first idea",
+        "ts": "1474544538.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "some of these batches don't exist",
+        "ts": "1474544568.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because of null requests",
+        "ts": "1474544575.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so hm",
+        "ts": "1474544577.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also presumably pruning",
+        "ts": "1474549622.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no pruning",
+        "ts": "1474549700.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm not going to implement pruning",
+        "ts": "1474549707.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am hoping we can finally nail down the actual block format today, I'm not certain how we can hope to support configuration on the chain until the block format is finalized",
+        "ts": "1474549822.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i still don't quite know how config changes should run through",
+        "ts": "1474549851.000882"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We discussed this some with Marko",
+        "ts": "1474549906.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The most obvious place is to do so during a view change, but I am wary of adding complexity to that process",
+        "ts": "1474549935.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean, how does it get communicated first?",
+        "ts": "1474549955.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Especially considering the scenario where f=1, n=6 -&gt; f=2, n=7)",
+        "ts": "1474549959.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Presumably a special transaction? Piggy backed on the normal Request mechanism",
+        "ts": "1474549973.000887"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so it is part of a batch?",
+        "ts": "1474549988.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would think so",
+        "ts": "1474549999.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the bluemix and z admin folks are looking for ways to monitor that a v0.5 or v0.6 pbft replica is not  participating ?  they have machine status (how long   up\/down) and chain height ...  can't really say check for replica chain height since there's always someone lagging ...  maybe monitor input rate versus block chain height increase ?",
+        "ts": "1474549999.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: so it gets delivered to the committers are well",
+        "ts": "1474550023.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "simon: Yes.  The committers need to know what the validity conditions are",
+        "ts": "1474550055.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Whether they are validating via signatures or via 2f+1 connections",
+        "ts": "1474550067.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They need to know that the old threshold is no longer valid for validation",
+        "ts": "1474550078.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so this needs to be a defined format that is shared between committers and consensus",
+        "ts": "1474550087.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I believe so",
+        "ts": "1474550093.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ok",
+        "ts": "1474550095.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I really like the idea of self validating chains, keeping the policy on the chain.  My only concern with this is if we must support many many chains, that this configuration could end up duplicated many many times",
+        "ts": "1474550182.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The alternative would be to keep some sort of side chain, and inject a special \"The configuration has changed\" event into all the chains to go look up the new configuration, but I'm not sure the complexity is worth the gain.",
+        "ts": "1474550227.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Things seem to be in flux as to whether we will be supporting 'channels' where the transactions for the subchain go through ordering, or whether we will simply provide an interface to allow the easy construction of side chains (point to point n out of n agreement, then pushing a transaction+signatures+salt hash onto the main chain when they want finality)",
+        "ts": "1474550322.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Marko was pushing the latter method, and I think it certainly makes the implementation more straightforward and probably more scalable",
+        "ts": "1474550405.000901"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In pretty much every other blockchain system, this is the solution for high throughput confidential stuff",
+        "ts": "1474550446.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> I'm not sure what the difference between machine status chain height and replica chain height.  If the chain height matches, and queries are not rejected due to 'inconsistent state', then the replica should be up to date",
+        "ts": "1474550773.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "sorry, not being clear,  they have 2 bits of info ... current machine status and chain height",
+        "ts": "1474550857.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i think the worry is ... given we see a replica lagging,  is that condition indicative of some issue ?",
+        "ts": "1474550956.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "PBFT allows (and arguably encourages) f nodes not to participate in the network",
+        "ts": "1474551464.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, lagging isn't really indicative of anything going wrong",
+        "ts": "1474551511.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "exactly",
+        "ts": "1474551526.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, if the lagging continues under low load, then it seems possible that there is something wrong with timeouts for state transfer",
+        "ts": "1474551542.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With the new default logging in place, this should be detectable (or, anytime statetransfer logs at warning or better)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1474551584.000000"
+        },
+        "ts": "1474551555.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "right ... so they might want to monitor logs in real time rather than monitor  chain height",
+        "ts": "1474551659.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Statetransfer warnings would probably be the best indication that something is going wrong",
+        "ts": "1474551783.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(They are just warnings, and do not necessarily indicate that the system will never recover)",
+        "ts": "1474551800.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "agreed ... just to flag someone to take a more in-depth look",
+        "ts": "1474551920.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "btw,  did the discussion get to detection of byzantine nodes yesterday ?",
+        "ts": "1474552000.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hey \\@channel, I understood that in the new architecture, the peers would gossip among themselves in order to create the same validated blocks (out of the raw blocks). \n1) Is that correct? \n2) How is this going to be done? How will the peers know who to chat with and how many, when to create the validated blocks, who to tell about this, etc? \n3) Is this going to be an autonomous effort or a group-effort? because... a group effort sounds a bit like a consensus type problem",
+        "ts": "1474552761.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> It did, with the simple answer of \"We can target specific scenarios, but a general solution is pretty much impossible\"",
+        "ts": "1474552791.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> \n1) The creation of the same block should be possible purely by having the same raw ledger, the gossip is confirmation thereof, depending on policy.  \n2) The (very loose) idea is that there will be a global peer membership list, hopefully embedded in the chain, but maybe not, and then each peer will pick a subset of all peers to gossip with, randomly selecting at each round to probabilistically beat byzantine nodes\n3) I'm not sure what this means.  Because the block generation can actually be done via the raw ledger, and it is only validation\/confirmation of the correctness, we get to eliminate the requirement of order, so it is at least a drastically simplified consensus problem",
+        "ts": "1474553009.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Thanks, I understand more clearly now <@U0XPR4NP4> . \n1) OK\n2) our gossip component can provide membership information, maybe we could use that? I think its better than storing membership in the chain because membership is something that changes pretty dynamically and some nodes are alive now and offline in the next hour, etc.\n3) your answer to (1) answers this, its autonomous because the validated block is only a function of the raw block, and input of peers isn't needed IIUC. I was concerned that it was something like: \"peer A tries to suggest to peers B, C, and D a certain validated block, and they can accept or reject, etc. etc. until they all reach the same result\"",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1474554716.000000"
+        },
+        "ts": "1474553345.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0ZJZBJLF>  -  re 3) the output from the \"consensus service\" defines the tip of a hash chain; a peer needs to receive this directly from the consensus service, or the consensus service has signed this. afterwards the construction of the chain is only about getting the right blocks, because the blocks form a hashchain, and this is unique given the tip. this holds for raw blocks as well as for validated blocks.  what you state as your concern should not arise.",
+        "ts": "1474556912.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2> told me that there will not be gossip?",
+        "ts": "1474557364.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XV1HDL3>  wait, I thought it also feeds the blocks to the peers doesn't it?",
+        "ts": "1474557874.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "No gossip for new blocks ",
+        "ts": "1474559077.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "For filling the gap we may still want to use p2p communication",
+        "ts": "1474559105.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If you call that gossip - then it is still a possible option",
+        "ts": "1474559131.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "To complement fill-in-the-gap from consensus",
+        "ts": "1474559149.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "dont understand \"no gossip for new blocks\" - how are these blocks disseminated? shouldnt there be a mechanism to inform 1000s of peers what the 10s (max) of consenters decided? i thought this was the goal of having that",
+        "ts": "1474559714.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah <@U0Y14MWA2> , how are the blocks going to get from the consensus to the peers if not via our gossip network?",
+        "ts": "1474561816.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in v1 via direct connection of peer to consensus",
+        "ts": "1474563756.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "every peer",
+        "ts": "1474563758.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "post v1 we may plug in gossip",
+        "ts": "1474563768.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(not my choice - I am just relaying)",
+        "ts": "1474563782.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I presume once gossip solution was ready we could try to bring it back for v1",
+        "ts": "1474563862.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but it is my own view",
+        "ts": "1474563871.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I hope there will be a view change then",
+        "ts": "1474563883.000939"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "in the current version of Fabric, is it possible to dynamically add new peers (vps\/nvps) into an already running network?",
+        "ts": "1474578661.000940"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "from my understanding this is not possible right now when PBFT consensus is used",
+        "ts": "1474578721.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "for v0.5, v0.6 of hyperledger fabric, the number of peers is statically set at startup",
+        "ts": "1474578818.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't think so, there is that parameter- N in the pbft config",
+        "ts": "1474578826.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in order for this to work, the file somehow needs to be reloaded and the PBFT module needs to be \"refreshed\"",
+        "ts": "1474578847.000944"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "which equals to restarting the network",
+        "ts": "1474578877.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "for the next architecture, we've broken things out into endorser\/orderer\/commiter components",
+        "ts": "1474578903.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so question on adding a peer becomes adding an endorser or adding a committer",
+        "ts": "1474579012.000947"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "but I assume that the Fabric GA will be capable of dynamically extending network with new peers",
+        "ts": "1474579061.000948"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "and now it's a question of editing yml files and restarting docker-compose",
+        "ts": "1474579087.000949"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "right?",
+        "ts": "1474579099.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "can't tell you about fabric GA since I'm not privy to IBM's plans",
+        "ts": "1474579237.000951"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "but that's the goal",
+        "ts": "1474579271.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "don't think restarting docker-compose is equivalent to dynamically adding peers",
+        "ts": "1474579296.000953"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "redoing docker-compose will reload yml files which will effectively launch new peers if these files were edited beforehand. But this means the network will be interrupted",
+        "ts": "1474579355.000954"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "that's my understanding of the current status",
+        "ts": "1474579369.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "there's discussion on boostrapping a new endorser\/committer so those can be added to a running network",
+        "ts": "1474579448.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "dynamically adding an orderer depends on the specific consensus protocol being used, how to notify the peers, when to checkpoint and so on ... longer term  discussion I think",
+        "ts": "1474579565.000957"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "so now it's safer to define the final number of peers before the network will be deployed",
+        "ts": "1474579631.000958"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "and then just assign a given peer to a new member of an existing business network which joined after the private blockchain service was already deployed",
+        "ts": "1474579713.000959"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "if for business reasons a new member will accept joining the network on a condition that it will receive VP capabilities",
+        "ts": "1474579751.000960"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "or any kind of capabilities that require direct participation in the maintenance of consensus",
+        "ts": "1474579771.000961"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "a contractual question, not a technical one",
+        "ts": "1474579787.000962"
+    },
+    {
+        "user": "U1S01QY6L",
+        "text": "<@U1S01QY6L|smartyalgo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474579928.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i'll let others chime in on this",
+        "ts": "1474579936.000964"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "thanks anyway :slightly_smiling_face:",
+        "ts": "1474579998.000965"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "otherwise, what is the current optimal number of peers that can be running in a network without impacting network and pbft-based consensus performance?",
+        "ts": "1474580038.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "turns out that for the existing code, the bottleneck is starting\/running the docker container for the chaincode",
+        "ts": "1474580129.000967"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "more discussion over on <#C113WK2A1|performance-benchmark> ... most people are running 4 peers+membersrvc  at this point but that's probably because we're all developers exploring how to do chaincode",
+        "ts": "1474580197.000968"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "in Vukolic's paper \"The Quest for Scalable Blockchain Fabric: Proof-of-Work vs. BFT Replication\" it is claimed that &gt;=20 nodes is optimal for BFT but this is not HL-specific.",
+        "ts": "1474580257.000969"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "thanks, I will pop-in there",
+        "ts": "1474580288.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is there a proof why?",
+        "ts": "1474580334.000971"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0Y14MWA2> ^^^",
+        "ts": "1474580487.000972"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i asked matanyahu since he's already here and i'm curious enough to ask, but too lazy to download the paper and read it.",
+        "ts": "1474581007.000973"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0ZJZBJLF> : \"However, having been invented in the context of replicating traditional appli-\ncations, such as databases, for fault-tolerance, BFT protocols were never really\ntested thoroughly for their scalability beyond, say, n = 10 or n = 20 nodes,\nin particular in the light of the fairly modest performance targets of many\nblockchain applications.\"",
+        "ts": "1474583834.000974"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "\"As we\nhave already discussed, the major challenge for BFT protocols that prevents\ntheir wider adoption in blockchain is their scalability in terms of the number of\nnodes. Stellar [44] is an ongoing effort aimed at removing unanimously accepted\nmembership lists from BFT protocols, while maintaining the other BFT advan-\ntages over PoW. Other approaches target the BFT scalability without changing membership assumptions. These include optimistic BFT protocols [52, 3] which\nfeature linear communication complexity in the \u201ccommon case\u201d and resort to ex-\npensive O(n 2 ) communication among nodes featured by classical protocols such\nas PBFT [10] only if the network and the process fault pattern are particularly\ninfavorable. However, even optimistic BFT have a resource and communication\noverhead when compared to crash-tolerant replication protocols (e.g., [37, 31,\n50]), which are better proven in practice and may serve as a baseline for BFT.\"",
+        "ts": "1474584012.000975"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1P1ZV6RF|matanyahu> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F2EV9EWRE\/selection_072.png|Selection_072.png> and commented: Node Scalability - as per Vukolic's paper",
+        "file": {
+            "id": "F2EV9EWRE",
+            "created": 1474584185,
+            "timestamp": 1474584185,
+            "name": "Selection_072.png",
+            "title": "Selection_072.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1P1ZV6RF",
+            "editable": false,
+            "size": 31592,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2EV9EWRE\/selection_072.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2EV9EWRE\/download\/selection_072.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2EV9EWRE-611b6f8949\/selection_072_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2EV9EWRE-611b6f8949\/selection_072_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2EV9EWRE-611b6f8949\/selection_072_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 237,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2EV9EWRE-611b6f8949\/selection_072_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 316,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2EV9EWRE-611b6f8949\/selection_072_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 552,
+            "original_h": 363,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F2EV9EWRE\/selection_072.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2EV9EWRE-975cb978db",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2ETTRYLB",
+                "created": 1474584185,
+                "timestamp": 1474584185,
+                "user": "U1P1ZV6RF",
+                "is_intro": true,
+                "comment": "Node Scalability - as per Vukolic's paper",
+                "channel": ""
+            }
+        },
+        "user": "U1P1ZV6RF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1P1ZV6RF|matanyahu>",
+        "bot_id": null,
+        "ts": "1474584187.000976"
+    }
+]

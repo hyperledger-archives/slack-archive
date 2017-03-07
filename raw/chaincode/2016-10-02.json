@@ -1,0 +1,272 @@
+[
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "Hi guys, anyone can help to take a look at this issue: <https:\/\/jira.hyperledger.org\/browse\/FAB-579>. I got error when run the chaincode test in my vagrant env.",
+        "ts": "1475403174.001142"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0NCW1DPX> I was also struggling to run these examples but it seems like they are now outdated and NOT compatible with the latest state of affairs",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1475403370.000000"
+        },
+        "ts": "1475403318.001143"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'd suggest you look at the nodeSDK examples",
+        "ts": "1475403329.001144"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/7678a9f444ae33c62bfa962a68b8af5afa25a595\/sdk\/node\/test\/unit\/asset-mgmt-with-roles.js>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1475403354.000000"
+        },
+        "ts": "1475403351.001145"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "I am trying to write the similar testing code to test my cc in golang.",
+        "edited": {
+            "user": "U0NCW1DPX",
+            "ts": "1475403457.000000"
+        },
+        "ts": "1475403443.001149"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I gave up on that path : )",
+        "ts": "1475403477.001151"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "anyway, thanks for your info, will try to get some clue from nodeSDK, maybe I can fix that.",
+        "ts": "1475403585.001152"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "thx <@U1CTBUNEN>",
+        "ts": "1475403596.001153"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well please let me know if you manage to fix it : ))",
+        "ts": "1475403612.001154"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "the place where the GO test blows up is at getLedger() method",
+        "ts": "1475403628.001155"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "sure",
+        "ts": "1475403642.001156"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "perhaps because of this\u2026.",
+        "ts": "1475404220.001157"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there\u2019s `testDBWrapper` at fabric\/core\/chaincode\/exectransaction_test.go",
+        "ts": "1475404300.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I don\u2019t know when that was introduced...",
+        "ts": "1475404312.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but <@U0NCW1DPX> perhaps do a `testDBWrapper.CleanDB(t)` using that ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1475404370.000000"
+        },
+        "ts": "1475404361.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "basically follow that pattern in the assetmanagement samples...",
+        "ts": "1475404397.001162"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ledger, err := ledger.GetLedger()",
+        "ts": "1475404529.001163"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "line 206",
+        "ts": "1475404531.001164"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U0ULK2JPP> the error is there is nil when run ledger.GetLedger() in test code, I guess there are something should be init before it.",
+        "ts": "1475407209.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right\u2026 did you try testDBWrapper.CleanDB(t) ?",
+        "ts": "1475407530.001166"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or testDBWrapper.CleanDB(nil)",
+        "ts": "1475407546.001167"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "not yet, will do it",
+        "ts": "1475407678.001168"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1475407820.001169"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U1CTBUNEN> looks like I can fix it, <@U0ULK2JPP> thx for your help. The root cause is the OpenchainDB is not started before getledger, will commit my patch.",
+        "edited": {
+            "user": "U0NCW1DPX",
+            "ts": "1475408839.000000"
+        },
+        "ts": "1475408569.001170"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0NCW1DPX> sure thing",
+        "ts": "1475409590.001172"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "The batch fix the chaincode test error is here : <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1399\/>. pls help to review.",
+        "ts": "1475411031.001174"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "don\u2019t you want to call  CleanDB so you can be uniform ?",
+        "ts": "1475411443.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "CleanDB will remove the entries be created in initClients. I think we need not clean the db in every testcases.",
+        "ts": "1475412351.001176"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "btw, the CleanDB is defined in TestDBWrapper, I think the test code depends on another one is not a good idea. After all we do not run tests under the asset_management_with_roles in our jenkins verification job. Can not avoid there is any broken changes in TestDBWrapper in the future. Anyway, you can add your review comments in the gerrit, thanks.",
+        "ts": "1475412855.001177"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0NCW1DPX> that's awesome. I can't stress enough how important it is to have working examples so that new folks can try things out",
+        "ts": "1475424875.001179"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "otherwise most people are \"well it looks great - I will come back when it works\"",
+        "ts": "1475424892.001180"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0NCW1DPX> its defined in `db_test_exports.go`\u2026 the impression I got was this was expressly meant for use in test cases \u2026 <@U0Z541B3P> what do you think ? Ok with whatever you and <@U0NCW1DPX> decide",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1475425384.000000"
+        },
+        "ts": "1475425327.001181"
+    },
+    {
+        "user": "U0Z541B3P",
+        "inviter": "U0ULK2JPP",
+        "text": "<@U0Z541B3P|manish-sethi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475425332.001182"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0NCW1DPX> so it looks like one can test the entire stack with a single GO file: you can start a peer, membersrvc and chaincode deployment all in a single file",
+        "ts": "1475425666.001184"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U1CTBUNEN> - \" I can't stress enough how important it is....\" you hit the nail on the head there bud...",
+        "ts": "1475427271.001186"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "one thing I don't understand with the asset_management_with_roles_test file is - how is the chaincode getting deployed in that file",
+        "ts": "1475427497.001187"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ULK2JPP> <@U0NCW1DPX> can anyone shed some light",
+        "ts": "1475427606.001188"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U1CTBUNEN>: i will try to move such start services things into util code for other cc tests once the patch has been merged",
+        "ts": "1475458377.001192"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "maybe we give some award to contributors such as free ticket to visit Great Wall in China, which will give them more motivation. :thinking_face:",
+        "ts": "1475458740.001194"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U1CTBUNEN> look at this: `go initAssetManagementChaincode()`",
+        "edited": {
+            "user": "U0NCW1DPX",
+            "ts": "1475459029.000000"
+        },
+        "ts": "1475459013.001195"
+    }
+]

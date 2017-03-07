@@ -1,0 +1,87 @@
+[
+    {
+        "user": "U2NDE1ZCK",
+        "text": "<@U2NDE1ZCK|jdockter> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480524694.000130"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "<@U0S5KF44D> <@U11MANG9G> ...question for you guys...and this might be way down the road but it came up in conversations yesterday during a workshop...with the 1.0 architecture around COP is it going to be possible at some point to plugin an LDAP directory as a COP to identify users and roles?  If so, could each peer connect to a different COP for their own users and roles?  Maybe this is all sideways but wanted to ask.",
+        "ts": "1480526420.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Good timing ... see <https:\/\/jira.hyperledger.org\/browse\/FAB-1144?jql=text%20~%20%22LDAP%22>",
+        "ts": "1480527721.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "comments welcome",
+        "ts": "1480527725.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yes, each COP would connect to a different LDAP and each peer is associated with a different COP.  Note that I said \"associated with\" rather than \"connects\" because we do not mandate use of COP and the peer never calls out to COP.  The SDKs (node, java, etc) call COP and then call the peer with creds that it got from COP, so a very loose coupling between fabric and COP ... really no coupling",
+        "ts": "1480527891.000134"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "Awesome, thanks for the info.  The link makes mention of a current DB...is there any type of design doc of what COP is made up of, ie what are the table structures, what data is being kept, etc?  Also, in current COP v1 google design doc it talks about intermediate COP servers...is this just in case the primary\/root COP server is down or is there some other use case around have two COP servers?",
+        "ts": "1480530348.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "Hi <@U0S5KF44D> I have question regarding registering new users with COP from the client SDK. From looking at the COP code, it seems that it is done through the '\/api\/v1\/cfssl\/register\u2019 endpoint. I am looking at the structure of the registration request and trying to understand how we enforce which users can register which other user roles. In the previous implementation we referred to as the \u201cdelegate roles\u201d and we could specify if a user could only register other client roles or client + other (vaildator or auditor for example). I am wondering if you could point me to the place in the code where that is implemented and how i can structure the COP registration request in order to register a new user that itself can register other roles? Thanks.",
+        "ts": "1480530691.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U2NDE1ZCK> COP is based on CFSSL.  CFSSL has a certificates table.  We have added a users table to the same DB and will be extending the schema of the certificates table to allow easy search by enrollment ID",
+        "ts": "1480537786.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "The purpose of an intermediate COP server is a security thing, not for HA or performance",
+        "ts": "1480537840.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "The root COP server is up only long enough for intermediate COP servers to enroll",
+        "ts": "1480537881.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "It is then taken offline and online when needed to reenroll an intermediate COP server",
+        "ts": "1480537912.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "The root private key is then more secure",
+        "ts": "1480537926.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0Z81GL6S> See fabric-cop\/cli\/server\/register.go",
+        "ts": "1480538086.000142"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "<@U0S5KF44D> thanks",
+        "ts": "1480541390.000143"
+    }
+]

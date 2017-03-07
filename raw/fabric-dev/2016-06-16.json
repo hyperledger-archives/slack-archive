@@ -1,0 +1,1031 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In the peer: we have the chaincode_support.go that sends a transaction to chaincode\/handler.go, and the chaincode\/handler.go sends transactions to the chaincode and receives replies from it, and notifies the chaincode_support.go's goroutine that invoked Execute. \nWhy is that? why doesn't the chaincode_support.go send the transaction itself to the chaincode?  after all- doesn't it effect throughput with all these goroutine channel handshakes?",
+        "ts": "1466069041.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1466069757.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "goroutines are very fast in communicating via channels",
+        "ts": "1466069778.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so it's built this way just because of \"design patterns\"?",
+        "ts": "1466069800.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have no idea",
+        "ts": "1466069818.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wondered the same",
+        "ts": "1466069821.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something about the FSM maybe?",
+        "ts": "1466069832.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No idea, I was asking just because of [1], if you search for \"2252 ns\/op\" some guy claims there that using channels isn't so fast as just using simply mutexes . \nI'm asking why isn't the threading model using the same Executor goroutine to send the message to the chaincode, and instead (what it does now) is: send a message to some goroutine, wait for the goroutine to send the message back to us. \n\nWas just wondering, that's all...\n[1] <http:\/\/bravenewgeek.com\/go-is-unapologetically-flawed-heres-why-we-use-it\/>",
+        "attachments": [
+            {
+                "service_name": "Brave New Geek",
+                "title": "Go Is Unapologetically Flawed, Here's Why We Use It",
+                "title_link": "http:\/\/bravenewgeek.com\/go-is-unapologetically-flawed-heres-why-we-use-it\/",
+                "text": "Go is decidedly polarizing. While many are touting their transition to Go, it has become equally fashionable to criticize\u00a0and mock\u00a0the language. As Bjarne Stroustrup so eloquently put it, \"There ar...",
+                "fallback": "Brave New Geek: Go Is Unapologetically Flawed, Here's Why We Use It",
+                "thumb_url": "http:\/\/bravenewgeek.com\/wp-content\/uploads\/2015\/05\/static-vs-dynamic-2.png",
+                "ts": 1432140376,
+                "from_url": "http:\/\/bravenewgeek.com\/go-is-unapologetically-flawed-heres-why-we-use-it\/",
+                "thumb_width": 817,
+                "thumb_height": 456,
+                "id": 1
+            }
+        ],
+        "ts": "1466070431.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea it is not as fast",
+        "ts": "1466070454.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know why",
+        "ts": "1466070493.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all i know is that we need to switch to a microservice multiple process architecture",
+        "ts": "1466070519.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we want to improve performance",
+        "ts": "1466070529.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You mean, separating between consenters, and committers and the new architecture doc?",
+        "ts": "1466070766.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1466070776.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean separating between REST frontend service, consensus service, ledger + chaincode service",
+        "ts": "1466070812.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1466070856.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the reason for that is that our performance right now is limited by the latency between chaincode and chaincode handler",
+        "ts": "1466070920.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course there is some inherent context switch and tcp latency",
+        "ts": "1466070942.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the bigger issue is the goroutine scheduler",
+        "ts": "1466070953.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if there are many runnable goroutines, the single chaincode handler goroutine waiting for the next message from the chaincode is very unlikely to be scheduled",
+        "ts": "1466070989.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which increases latency significantly",
+        "ts": "1466070999.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, there is a single one? not a handler per chaincode?",
+        "ts": "1466071021.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well it doesn't matter",
+        "ts": "1466071031.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you can only invoke one chaincode at a time",
+        "ts": "1466071039.000433"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "build\/bin\/peer network login jim -p 6avZQLwcUe9b",
+        "ts": "1466073333.000434"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "how to logout jim?",
+        "ts": "1466073347.000435"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": ":grin:",
+        "ts": "1466073379.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not, i think",
+        "ts": "1466073424.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "kiil -9?",
+        "ts": "1466078195.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Anyone here familiar with the code of the ledger bucket tree ?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1466078221.000000"
+        },
+        "ts": "1466078198.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XR6J961>: have you investigated LockOSThread <https:\/\/golang.org\/pkg\/runtime\/#LockOSThread> as a possible way to give priority to the chaincode handler goroutine?",
+        "ts": "1466080329.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0ZJZBJLF>: for the ledger bucket tree, <@U0Z541B3P> is the expert",
+        "ts": "1466080397.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0TFEHX8E>:  thanks! I opened an issue (1865) of a peer crash because of state transfer and I'd also like to patch it, but I'm not familiar with the code (and it's not really documented).",
+        "ts": "1466081309.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0ZJZBJLF>: There\u2019s high level documentation at <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md> in section 3.2.2.1.1 if you haven\u2019t seen it already",
+        "edited": {
+            "user": "U0TFEHX8E",
+            "ts": "1466081703.000000"
+        },
+        "ts": "1466081697.000444",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0ZJZBJLF>: I just looked at issue 1865.",
+        "ts": "1466081781.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "did you change the bucket tree configurations in core.yaml after inserting a few transactions?",
+        "ts": "1466081792.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't touch it, why?",
+        "ts": "1466081805.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "all nodes are spawned from the same yaml file, which is the core.yaml that you get when cloning the latest build",
+        "ts": "1466081843.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "OK, changing configuration could have been one of the potential cause of this error. SO, just wanted to rule that out",
+        "ts": "1466081914.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sure",
+        "ts": "1466081925.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "By the way- why does the system behave this way: I run 5000 transactions and get HTTP 200 for all of them, but after that, the chain size is still increasing (verifying with GET). Isn't it supposed to by synchronous and serial (meaning- the REST handler returns 200 only when the block has been written to the FS) ?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1466082318.000000"
+        },
+        "ts": "1466082253.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "No, its asynch. HTTP 200 is only for the acceptance of your transaction.",
+        "ts": "1466082865.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But the REST handler returns *after* the consensus handler accepted that transaction, right?",
+        "ts": "1466083068.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0TFEHX8E>: i have not.  will do right now",
+        "ts": "1466084439.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0TFEHX8E>: doesn't seem to help",
+        "ts": "1466085628.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oddly enough",
+        "ts": "1466085635.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": ":-1:",
+        "ts": "1466085644.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":confused:",
+        "ts": "1466085651.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "In Java the thread priority stuff never seemed to work that well. The only real solution was to create a separate process and set the OS process priority. Don\u2019t have as much experience with Go so can\u2019t say",
+        "ts": "1466085919.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1466086032.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/goroutine-latency>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/goroutine-latency",
+                "title_link": "https:\/\/github.com\/corecode\/goroutine-latency",
+                "text": "Contribute to goroutine-latency development by creating an account on GitHub.",
+                "fallback": "GitHub: corecode\/goroutine-latency",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/goroutine-latency",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466086080.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you want you can give it a spin",
+        "ts": "1466086087.000467"
+    },
+    {
+        "user": "U126PEMNH",
+        "type": "message",
+        "subtype": "channel_leave",
+        "text": "<@U126PEMNH|harshal> has left the channel",
+        "ts": "1466094195.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0KPFAZNF>: hi Greg, in your demo earlier I saw that when you deployed with the peer command you had a log message about the chaincode being deployed successfully, did I get that right?",
+        "ts": "1466095838.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0P2GSA8Z>: yes, but note that magic was done for me :wink:",
+        "ts": "1466096037.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ah!",
+        "ts": "1466096046.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "how did you get that??",
+        "ts": "1466096052.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I'm looking at <https:\/\/github.com\/hyperledger\/fabric\/issues\/763>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Inconsistent log messaging on obc-peer @INFO level when sending deploy command: \u00b7 Issue #763 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/763",
+                "text": "Steps to reproduce: Set logging level in openchain.yaml to peer: info crypto: info status: warning stop: info login: warning vm: warning chain...",
+                "fallback": "GitHub: Inconsistent log messaging on obc-peer @INFO level when sending deploy command: \u00b7 Issue #763 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/17179397?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/763",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466096091.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "and from what I can tell you only get that message if you use the REST api",
+        "ts": "1466096106.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "and I haven't seen it independently of the logging level",
+        "ts": "1466096138.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0P2GSA8Z>: in that particular demo, I was using the rest api",
+        "ts": "1466096568.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "under the hood, via a node\/cljs app",
+        "ts": "1466096580.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "oh!... sneaky :wink:",
+        "ts": "1466096591.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ok, that explains, I just wanted to make sure I wasn't missing anything",
+        "ts": "1466096614.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "the rest_api.go module does a lot more logging that the peer command",
+        "ts": "1466096641.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the client in question is here: <https:\/\/github.com\/ghaskins\/chaintool\/tree\/master\/examples\/example02\/client\/rest\/cljs>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1466096679.000000"
+        },
+        "ts": "1466096645.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "via: <https:\/\/github.com\/ghaskins\/chaintool\/blob\/master\/examples\/example02\/client\/rest\/cljs\/src\/example02\/rpc.cljs#L38>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1466096682.000000"
+        },
+        "ts": "1466096674.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yes, but somehow I thought you typed something like: .\/peer chaincode deploy -n mycc -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}'",
+        "ts": "1466096697.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sort of, it was just to that client :wink:",
+        "ts": "1466096712.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "ok, I just missed that",
+        "ts": "1466096722.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thakns",
+        "ts": "1466096723.000491"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJGFCLW\/-.sh|Untitled>",
+        "file": {
+            "id": "F1HJGFCLW",
+            "created": 1466096742,
+            "timestamp": 1466096742,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 125,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HJGFCLW\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HJGFCLW\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJGFCLW\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1HJGFCLW-2fa0617d06",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJGFCLW\/-.sh\/edit",
+            "preview": "$ node .\/out\/example02.js -n mycc -c deploy -a '{\"partyA\":{\"entity\":\"a\", \"value\":100}, \"partyB\":{\"entity\":\"b\", \"value\":100}}'",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-def\">$ node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> deploy <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;partyA&quot;:{&quot;entity&quot;:&quot;a&quot;, &quot;value&quot;:100}, &quot;partyB&quot;:{&quot;entity&quot;:&quot;b&quot;, &quot;value&quot;:100}}'<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 1,
+            "lines_more": 0,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YPYBVJM"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1466096742.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I see",
+        "ts": "1466096778.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it's similar enough that it fooled me :slightly_smiling_face:",
+        "ts": "1466096786.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, sorry, heh",
+        "ts": "1466096794.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "nah, it's ok",
+        "ts": "1466096800.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my intent was familiarity for comfort with existing example02, not confusion",
+        "ts": "1466096813.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I failed",
+        "ts": "1466096816.000498"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJMN9QQ\/-.sh|Untitled> and commented: Heres the entire command history from the live demo",
+        "file": {
+            "id": "F1HJMN9QQ",
+            "created": 1466096966,
+            "timestamp": 1466096966,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 604,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HJMN9QQ\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HJMN9QQ\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJMN9QQ\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1HJMN9QQ-38bcd4824e",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F1HJMN9QQ\/-.sh\/edit",
+            "preview": "   44  node .\/out\/example02.js -n mycc -c deploy -a '{\"partyA\":{\"entity\":\"a\", \"value\":100}, \"partyB\":{\"entity\":\"b\", \"value\":100}}'\r\n   45  node .\/out\/example02.js -n mycc -c check-balance -a '{\"id\":\"a\"}'\r\n   46  node .\/out\/example02.js -n mycc -c check-balance -a '{\"id\":\"b\"}'\r\n   47  node .\/out\/example02.js -n mycc -c make-payment -a '{\"partySrc\":\"a\", \"partyDst\":\"b\", \"amount\":10}'\r\n   48  node .\/out\/example02.js -n mycc -c check-balance -a '{\"id\":\"a\"}'\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>   <span class=\"cm-number\">44<\/span>  <span class=\"cm-builtin\">node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> deploy <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;partyA&quot;:{&quot;entity&quot;:&quot;a&quot;, &quot;value&quot;:100}, &quot;partyB&quot;:{&quot;entity&quot;:&quot;b&quot;, &quot;value&quot;:100}}'<\/span><\/pre><\/div>\n<div><pre>   <span class=\"cm-number\">45<\/span>  <span class=\"cm-builtin\">node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> check-balance <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;id&quot;:&quot;a&quot;}'<\/span><\/pre><\/div>\n<div><pre>   <span class=\"cm-number\">46<\/span>  <span class=\"cm-builtin\">node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> check-balance <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;id&quot;:&quot;b&quot;}'<\/span><\/pre><\/div>\n<div><pre>   <span class=\"cm-number\">47<\/span>  <span class=\"cm-builtin\">node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> make-payment <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;partySrc&quot;:&quot;a&quot;, &quot;partyDst&quot;:&quot;b&quot;, &quot;amount&quot;:10}'<\/span><\/pre><\/div>\n<div><pre>   <span class=\"cm-number\">48<\/span>  <span class=\"cm-builtin\">node<\/span> .\/out\/example02.js <span class=\"cm-attribute\">-n<\/span> mycc <span class=\"cm-attribute\">-c<\/span> check-balance <span class=\"cm-attribute\">-a<\/span> <span class=\"cm-string\">'{&quot;id&quot;:&quot;a&quot;}'<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 8,
+            "lines_more": 3,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YPYBVJM"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc1HHBCSCT",
+                "created": 1466096966,
+                "timestamp": 1466096966,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Heres the entire command history from the live demo",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1466096966.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "no worries, I don't blame you",
+        "ts": "1466097636.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it doesn't help that we have that freaking long shell prompt",
+        "ts": "1466097702.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, thats partially my fault",
+        "ts": "1466097733.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I did \u201cexport PS1=\u2018$ \u2018\u201c for the demo just for that reason",
+        "ts": "1466097751.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "otherwise, I was typing the commands over on the right, heh",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1466097777.000000"
+        },
+        "ts": "1466097769.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0KPFAZNF> one more question: when I do make peer it does a whole bunch of things - like creating docker images and whatnot - which I don't need when all I do is making a small change in the go code to try out (like adding a print for tracing!) - is there a make target I can use to just rebuild the go? something more like what I would get when doing go build the old way?",
+        "ts": "1466098613.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0P2GSA8Z>: I know it looks superfluous, but what you are seeing is twofold: 1) the system now does a fairly precise job of detecting what artifacts had their files change, and 2) we front-load the chaincode environments into the build rather than at runtime",
+        "ts": "1466101774.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, I had to then turn off part of the front loading in (2) because some of the platform\/golang wasnt ready for it",
+        "ts": "1466101815.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, an argument could be made to turn that off until its ready (though platform\/car does use it), but eventually I think thats closer to the model we need",
+        "ts": "1466101853.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you finding it really slow to build?  for me it was only a few seconds more",
+        "ts": "1466101865.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0KPFAZNF>: sorry, I had to work on something else for a while. I don't know how much more time this takes but it is definitely taking some significant amount of time.",
+        "ts": "1466108405.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0P2GSA8Z>: ok, some will be unavoidable but it can probably be improved upon from where it is now",
+        "ts": "1466108486.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I'm investigating the code, trying different things and every time I change one line in a go file it rebuilds all the docker stuff",
+        "ts": "1466108510.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its tough to balance between \u201calways do the right thing\u201d and \u201clet expert user decide whats right\"",
+        "ts": "1466108523.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I understand",
+        "ts": "1466108538.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, that was the intent as the system needs the src in the docker container to run, so if you change the src, it will rebuild the docker",
+        "ts": "1466108567.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "but if we could have some intermediary target that we could use and not advertize to the average user that would be nice",
+        "ts": "1466108570.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, we should be able to come up with something",
+        "ts": "1466108582.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "that's what I wanted to hear! :wink:",
+        "ts": "1466108609.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "longer term, i think it will be alleviated because we wont need the fabric.git src to build the chaincodes",
+        "ts": "1466108762.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but in the interim, we can find some kind of workaround so thats not as annoying",
+        "ts": "1466108782.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "yes",
+        "ts": "1466108815.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0TFEHX8E>: <@U0KN2SSKE> please give consideration to #1834\u2026.it probably should be expedited IMO",
+        "ts": "1466108883.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "will take a look now",
+        "ts": "1466108941.000524",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "done. was quick as I already reviewed a couple before. was just waiting for go-ahead from Ry",
+        "ts": "1466109101.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "well, if you have a moment you could look at <https:\/\/github.com\/hyperledger\/fabric\/issues\/763> :slightly_smiling_face:",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Inconsistent log messaging on obc-peer @INFO level when sending deploy command: \u00b7 Issue #763 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/763",
+                "text": "Steps to reproduce: Set logging level in openchain.yaml to peer: info crypto: info status: warning stop: info login: warning vm: warning chain...",
+                "fallback": "GitHub: Inconsistent log messaging on obc-peer @INFO level when sending deploy command: \u00b7 Issue #763 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/17179397?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/763",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466110091.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0P2GSA8Z> can't you use go-watch <https:\/\/www.npmjs.com\/package\/go-watch>",
+        "attachments": [
+            {
+                "service_name": "npm",
+                "title": "go-watch",
+                "title_link": "https:\/\/www.npmjs.com\/package\/go-watch",
+                "text": "Simple file watcher for golang (go) programs",
+                "fallback": "npm: go-watch",
+                "thumb_url": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/open-graph.png",
+                "from_url": "https:\/\/www.npmjs.com\/package\/go-watch",
+                "thumb_width": 1200,
+                "thumb_height": 630,
+                "service_icon": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/apple-touch-icon-57x57.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466118174.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I'm not sure that addresses my problem",
+        "ts": "1466118311.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "from what I understand this just triggers make automatically",
+        "ts": "1466118323.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "it doesn't make make faster",
+        "ts": "1466118335.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0N94UUA0",
+        "text": "is support for writing chaincode in JS available now or can chaincode only be written in golang ?",
+        "ts": "1466123211.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0N94UUA0> only in golang for now although work in progress for Java chaincode",
+        "ts": "1466124157.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP> <@U0KN2SSKE>  <@U0KPFAZNF> <@U0TFEHX8E> recent PR Travis failures due to port collision \u2026. I believe is due to ephemeral port choice (such as 41414). I\u2019m going to push a PR to move listening ports of my testcases to less than 30000.  The change will affect only the test cases and should be safe.",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1466124381.000000"
+        },
+        "ts": "1466124363.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Roger, will look for it",
+        "ts": "1466124400.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can I have your OK please ?",
+        "ts": "1466124406.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "great. thanks <@U0KPFAZNF>",
+        "ts": "1466124413.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I should have thought of this before\u2026 my apologies",
+        "ts": "1466124428.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0P2GSA8Z>: you could have it just go build rather than make",
+        "ts": "1466124744.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> this is a good point.  Go build even takes advantage of pkg caching if it already exists",
+        "ts": "1466124822.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "Well that's what I do :)",
+        "ts": "1466125415.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "But I wanted to play along and use make! ",
+        "ts": "1466125458.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF>: created PR <https:\/\/github.com\/hyperledger\/fabric\/pull\/1885>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "dont use high range ephemeral ports by muralisrini \u00b7 Pull Request #1885 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1885",
+                "text": "Description Tests were failing with port conflicts likely due to high ephemeral port selection. Motivation and Context Choosing lower order ports will lessen\/avoid port conflicts. Fixes #1884 ...",
+                "fallback": "GitHub: dont use high range ephemeral ports by muralisrini \u00b7 Pull Request #1885 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/14361488?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1885",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466127045.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks!",
+        "ts": "1466127052.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "seems reasonable\u2026will wait for CI pass to complete",
+        "ts": "1466127122.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure",
+        "ts": "1466127127.000549"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0PB67X4K>, <@U0KN2SSKE>, <@U0TFEHX8E>, <@U0KM61BCP>: just a quick one to gauge the appetite for merging 1799 ?",
+        "ts": "1466127517.000550"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1799>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Complete TCerts are no longer stored by TCA. by diaperwedger \u00b7 Pull Request #1799 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1799",
+                "text": "Relevant TCert data is stored in TCertificateSets table and TCerts are not being stored in Certificates table anymore Description TCertificateSets table is used to store relevant data (user enrol...",
+                "fallback": "GitHub: Complete TCerts are no longer stored by TCA. by diaperwedger \u00b7 Pull Request #1799 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/19418256?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1799",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466127527.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0N94UUA0",
+        "text": "<@U0ULK2JPP> Thanks !",
+        "ts": "1466129384.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U11MANG9G>: i merged 1799;  just 1 comment for next time that a pr should contain only what it says. This one contains many other unrelated commits, but I let it go",
+        "ts": "1466136162.000554"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Thank you <@U0KN2SSKE> - will make sure that the message will get through...",
+        "ts": "1466136294.000555"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "+ another thanks for approving this so close to the weekend !",
+        "ts": "1466136348.000558"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "latest master seems have compile error",
+        "ts": "1466141160.000559"
+    }
+]

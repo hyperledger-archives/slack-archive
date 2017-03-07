@@ -1,0 +1,192 @@
+[
+    {
+        "user": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XR6J961|simon> has joined the channel",
+        "ts": "1460122895.000002"
+    },
+    {
+        "user": "U0XPR4NP4",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XPR4NP4|jyellick> has joined the channel",
+        "ts": "1460122896.000003"
+    },
+    {
+        "user": "U0UGH3X7X",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0UGH3X7X|tuand> has joined the channel",
+        "ts": "1460122896.000004"
+    },
+    {
+        "user": "U0XQ35CDD",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XQ35CDD|kostas> has joined the channel",
+        "ts": "1460122896.000005"
+    },
+    {
+        "user": "U0Y14MWA2",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Y14MWA2|vukolic> has joined the channel",
+        "ts": "1460122896.000006"
+    },
+    {
+        "user": "U0XV1HDL3",
+        "inviter": "U0XR6J961",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XV1HDL3|cca> has joined the channel",
+        "ts": "1460122896.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<#C0XR102AJ> seems to be popular with a lot of people, so i think having an explicit fabric dev channel is better",
+        "ts": "1460122939.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "I'm working on #1000 - but i'm not quite sure which data needs to be persisted",
+        "ts": "1460123013.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the checkpoints for sure, but what about P and Q sets?",
+        "ts": "1460123037.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if I persist the P and Q sets, then i need to persist the requests as well",
+        "ts": "1460123063.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but I think ultimately we need to define in #351 which kind of crash fault tolerance we want",
+        "ts": "1460123147.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<!channel> it would be great if we could discuss and define what kind of crashes we want to be able to tolerate in what way?",
+        "ts": "1460123205.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for example - if &gt;f replicas crash around the same time (and there are f more byzantine replicas), how should the network deal with this?",
+        "ts": "1460123355.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess worst case the primary cannot get requests from proposed P and Q sets, and on view change, these proposed requests disappear?",
+        "ts": "1460123424.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in that case we only need to persist checkpoints",
+        "ts": "1460123440.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and possibly the last executed seqno",
+        "ts": "1460123472.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "thinking a bit more about it, I don't think we can ever tolerate more than f crashes",
+        "ts": "1460125025.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "without giving up correctness guarantees",
+        "ts": "1460125044.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or persisting all in-memory state, such as outstanding requests",
+        "ts": "1460125072.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think realistically we need to get away from the plain PBFT, and adapt ours to blockchain",
+        "ts": "1460125153.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. treat every block on the chain as a checkpoint, and have a way to retrieve committed requests back from the blockchain",
+        "ts": "1460125213.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we still need to persist the Pset, but that's more managable",
+        "ts": "1460125239.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "however, getting committed requests from the blockchain means that my complaints\/dedup work won't work, because there requests are ephemeral, and only transactions are committed, not requests (which carry a timestamp and signature)",
+        "ts": "1460125296.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is increasingly apparent to me that we cannot develop a silo solution, but we need to use a more holistic design",
+        "ts": "1460125357.000025"
+    },
+    {
+        "user": "U0Z541B3P",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z541B3P|manish-sethi> has joined the channel",
+        "ts": "1460128073.000026"
+    },
+    {
+        "user": "U0Y6AUDST",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Y6AUDST|rgupta1> has joined the channel",
+        "ts": "1460128332.000027"
+    },
+    {
+        "user": "U0Z68F4HE",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z68F4HE|toddsjsimmer> has joined the channel",
+        "ts": "1460134626.000028"
+    },
+    {
+        "user": "U0MM86C84",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0MM86C84|novusopt> has joined the channel",
+        "ts": "1460135168.000029"
+    },
+    {
+        "user": "U0Z6EEJ69",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z6EEJ69|keoja> has joined the channel",
+        "ts": "1460135352.000030"
+    }
+]

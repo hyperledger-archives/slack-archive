@@ -1,0 +1,1101 @@
+[
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U11CP8FF1> I'm not sure I'm fully understanding your question, but I believe a new Docker images is built each time you deploy chaincode.  Since chaincode (and hence the corresponding image) is identified by a hash code (at least in production mode) there is no updating of previously built images",
+        "ts": "1475737976.002255"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Right, that what I thought.  Suppose I frequently change the chaincode, say 3 times \/ per day, and service team needs the feature right away on the same day, I need to deploy 3 chaincode \/ day",
+        "ts": "1475738146.002257"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "And project last for 100 days. And there are 4 peers.",
+        "ts": "1475738176.002258"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "This means we need to have 3*100*4 = 1200 Docker images.",
+        "ts": "1475738209.002259"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "On docker images have 1Gbyte, so probably we need 1.2T byte disk. This is what I think the problem.",
+        "ts": "1475738299.002260"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "In stead of having 1200 images, I just want to have 4 latest image only.",
+        "ts": "1475738329.002261"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Note that I have no access to VMs which host peers.",
+        "ts": "1475738353.002262"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U11CP8FF1>  - chaincode lifecycle support will not be coming until v1.0 (by this I mean the ability to \"upgrade\" existing chaincode)",
+        "ts": "1475738904.002264"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Oh, I understood. That is sad news...  I'll over come somehow.",
+        "ts": "1475739065.002265"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Agree - it is sad news, but as it requires some fairly deep changes, we opted to push to the next major release.   Not that this is supported, but you could probably deal with this via interactions with the Docker endpoints on each host running chaincode - meaning you could build updated chaincode images outside of the fabric, leverage the same image name, push that to a private Docker registry, then pull from that registry on each host running chaincode, kill the existing containers and then when fabric recreates the container (since it would be gone) in theory you would be running the updated chaincode",
+        "ts": "1475739388.002266"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but that of course means you need to control \/ have access to all nodes running the peers \/ chaincode",
+        "ts": "1475739409.002267"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U0PB67X4K> When you say chaincode lifeycle management will be coming in v1.0, is there documentation anywhere describing thoughts on how this might be achieved?  Or is it just on a punch list of things that need to get done?",
+        "ts": "1475740189.002268"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U23S3DPFY>  - <https:\/\/jira.hyperledger.org\/browse\/FAB-22>   tracks the list of items related to chaincode management.   <@U0ULK2JPP> - is there a doc somewhere which describes the lifecycle design?",
+        "ts": "1475740923.002269"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "<@U21NTHK7C> <@U0KPFAZNF>  I will come back to you today after my meeting right now. I trying to deploy the java docker image. Maybe is different ... see you later . Thx guyz",
+        "ts": "1475741974.002270"
+    },
+    {
+        "user": "U2HQUFH6F",
+        "text": "<@U2HQUFH6F|sadanandu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475742509.002271"
+    },
+    {
+        "type": "message",
+        "user": "U2HQUFH6F",
+        "text": "Hi,\nI am trying to setup chaincode developer env by following <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/> . I am on a windows 7 machine and using vagrant vm i.e. using option. I am not able to start peer and facing some issue. I have also asked a question regarding this at <http:\/\/stackoverflow.com\/questions\/39865384\/is-my-hyperledger-peer-make-successful> . Can some one please help me out here?",
+        "attachments": [
+            {
+                "title": "Is my hyperledger peer make successful?",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/39865384\/is-my-hyperledger-peer-make-successful",
+                "text": "I am following <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/> and using Options 1 i.e. vagrant development environment.When I run make membersrvc &amp;&amp; membersrvc i ...",
+                "fallback": "Is my hyperledger peer make successful?",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/39865384\/is-my-hyperledger-peer-make-successful",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1475742520.002272"
+    },
+    {
+        "user": "U2L125QGL",
+        "text": "<@U2L125QGL|madhavi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475758530.002276"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U2L125QGL> as you were saying",
+        "ts": "1475758659.002277"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "you start 2 peers,  which consensus protocol did you set ? noop or pbft ?",
+        "ts": "1475758691.002278"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "pbft",
+        "ts": "1475758699.002279"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "what values for N and f in the pbft\/config.yaml file ?   pbft minimally should have 4 peers running",
+        "ts": "1475758776.002280"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "N  = 4 and f = 1",
+        "ts": "1475758830.002281"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ok,  try running with 4 peers vp0,vp1,vp2,vp3   ...",
+        "ts": "1475758937.002282"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "2 peers is not enough for pbft to get to a quorum",
+        "ts": "1475758968.002283"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "k thq",
+        "ts": "1475759006.002284"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "while running peers CORE_PEER_DISCOVERY_ROOTNODE need to define for all 4 peers?",
+        "ts": "1475759071.002285"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "suggest you look at some of the docker-compose yml files in the hyperledger\/fabric\/bddtests\/bdd-docker directory ... those show what config values should be set for a 4 peer environment",
+        "ts": "1475759227.002286"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "k <@U0UGH3X7X>  thq:slightly_smiling_face:",
+        "ts": "1475759291.002287"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "np ! good luck",
+        "ts": "1475759317.002288"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K> is there any interest in sharing my kubernetes config once I get it polished up?",
+        "ts": "1475761158.002289"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U2HQUFH6F> - I've replied to your question on stackoverflow... If you don't come right PM me - I'm also on Windows and it can be a little tricky...",
+        "edited": {
+            "user": "U2CC1NDT2",
+            "ts": "1475762307.000000"
+        },
+        "ts": "1475762224.002290"
+    },
+    {
+        "user": "U2GKD9S6M",
+        "text": "<@U2GKD9S6M|hnattila> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475762659.002293"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF>  - definitely - let's figure out the best way for us to keep either a folder (or repo) for various deployment configs -  kub, swarm, compose, etc",
+        "ts": "1475763681.002294",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K> are you guys deploying multi-node vps in bluemix against v0.6?",
+        "ts": "1475764155.002295"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF>  - not yet - bluemix production is still running multi-node v0.5 vps at this point.  we are running them in our test environment though.  we want to update to v0.6 nodes in early Nov",
+        "ts": "1475765319.002296"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im having trouble getting the vps to connect to one another, i am wondering if its my kubernetes setup or a problem in v0.6 in general",
+        "ts": "1475765361.002297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i would assume the former",
+        "ts": "1475765365.002298"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, my setup is similar to \u201cdocker-compose-3\u201d, which I presume works if run natively in compose",
+        "ts": "1475765396.002299"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was asking because I was curious if you knew compose-3 worked",
+        "ts": "1475765428.002300"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(against v0.6.0-preview in dockerhub, that is",
+        "ts": "1475765447.002301"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "I am trying to make the 0.6 working on Bluemix container. Peer starts, java chaincode deploys, but when querying, i got an error :",
+        "ts": "1475765849.002302"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "14:55:10.012 [dockercontroller] deployImage -&gt; ERRO 146 Error building images: Post <http:\/\/172.17.0.1:2375\/build?t=dev-vp0-05060fa11994a1a50012b4147b5abde282e54d518d7f0d907544e3b68366eae063836d0b0b66e5225516f22f02f07171e96552ae5c76c526c882236d59962ccd>: dial tcp 172.17.0.1:2375: i\/o timeout\nO14:55:10.012 [dockercontroller] deployImage -&gt; ERRO 147 Image Output:\n********************\n\n********************",
+        "ts": "1475765850.002303"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "my cmd is : cf ic run -p 7050\/tcp -m 2048 --name vp0 -it -e CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375> -e CORE_LOGGING_LEVEL=DEBUG -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true myhyperledger\/fabric-peer peer node start",
+        "ts": "1475765897.002304"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "then is cleaning, stopping and removing the java chaincode container inside",
+        "ts": "1475766647.002305"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "oO",
+        "ts": "1475766648.002306"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "then i tries again :",
+        "ts": "1475766697.002307"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "launchAndWaitForRegister failed Error starting container: Post <http:\/\/172.17.0.1:2375\/containers\/create?name=dev-vp0-05060fa11994a1a50012b4147b5abde282e54d518d7f0d907544e3b68366eae063836d0b0b66e5225516f22f02f07171e96552ae5c76c526c882236d59962ccd>: dial tcp 172.17.0.1:2375: i\/o timeout",
+        "ts": "1475766698.002308"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "<@U0PB67X4K>  <@U0KM61BCP> any idea of  this \"dial tcp 172.17.0.1:2375: i\/o timeout\" running on Bluemix IBM containers ?",
+        "ts": "1475766765.002309"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "Do I need to change for another ENDPOINT IP ?",
+        "ts": "1475766779.002310"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "Recently I\u2019ve switched to MacOS Sierra and starting to get this warning while building my code ```# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/mattn\/go-sqlite3|github.com\/hyperledger\/fabric\/vendor\/github.com\/mattn\/go-sqlite3>\nIn file included from ..\/..\/vendor\/github.com\/mattn\/go-sqlite3\/sqlite3-binding.c:2:\n..\/..\/vendor\/github.com\/mattn\/go-sqlite3\/code\/sqlite3-binding.c:16475:17: warning: 'OSAtomicCompareAndSwapPtrBarrier' is deprecated: first deprecated in macOS 10.12 - Use atomic_compare_exchange_strong() from &lt;stdatomic.h&gt; instead [-Wdeprecated-declarations]\n\/Applications\/Xcode.app\/Contents\/Developer\/Platforms\/MacOSX.platform\/Developer\/SDKs\/MacOSX10.12.sdk\/usr\/include\/libkern\/OSAtomicDeprecated.h:547:6: note: 'OSAtomicCompareAndSwapPtrBarrier' has been explicitly marked deprecated here\nFAIL    <http:\/\/github.com\/hyperledger\/fabric\/gossip\/state|github.com\/hyperledger\/fabric\/gossip\/state> [build failed]\n```\nHas anyone seen it? Is there known solution for that?",
+        "ts": "1475767309.002311"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "Additionally I\u2019m getting this error, which I\u2019m not sure how to solve: ```# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb|github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb>\n..\/..\/vendor\/github.com\/tecbot\/gorocksdb\/backup.go:4:11: fatal error: 'rocksdb\/c.h' file not found\n #include \"rocksdb\/c.h\"\n          ^\n1 error generated.\n```",
+        "ts": "1475767353.002312"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "^^^ any help will be greatly appreciated.",
+        "ts": "1475767383.002313"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1HFNJB50> havent tried sierra yet, but I do know the build in general",
+        "ts": "1475767431.002314"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "first question: are you building in vagrant devenv, or somewhere else (like native on sierra)",
+        "ts": "1475767444.002315"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "he's building on native",
+        "ts": "1475767457.002316"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok\u2026I cant speak to the sqlite issue, but the rocksdb issue sounds like you either dont have rocksdb installed, or you dont have CGO envvars set properly",
+        "ts": "1475767496.002317"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "GO_CFLAGS=\"-I\/usr\/local\/Cellar\/rocksdb\/4.9\/include\" CGO_LDFLAGS=\"-L\/usr\/local\/Cellar\/rocksdb\/4.9\/lib -L\/usr\/local\/Cellar\/snappy\/1.1.3\/lib  -lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy\"",
+        "ts": "1475767508.002318"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "this works for me",
+        "ts": "1475767512.002319"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "on Mac",
+        "ts": "1475767514.002320"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty <@U1CTBUNEN>, that looks good",
+        "ts": "1475767533.002321"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1HFNJB50> that rocksdb\/c.h thing usually comes up when your envvars arent set right",
+        "ts": "1475767557.002322"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I would start there, <@U1CTBUNEN> provides a good base set",
+        "ts": "1475767565.002323"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "of course, YMMV on the actual paths",
+        "ts": "1475767579.002324"
+    },
+    {
+        "user": "U1H7F590E",
+        "text": "<@U1H7F590E|agunde> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475767619.002325"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0KPFAZNF>, <@U1CTBUNEN> thanks, I\u2019ve changed flags or env on my laptop, while I guess upgrade might have messed something",
+        "ts": "1475767644.002326"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I will take a look on your suggestions and check them later",
+        "ts": "1475767661.002327"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, you might need to brew-update, or whatever you are using to install rocksdb",
+        "ts": "1475767675.002328"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you cant sort it out, just post back",
+        "ts": "1475767705.002329"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0KPFAZNF> that was the first thing I did",
+        "ts": "1475767707.002330"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and let us know about the sqlite thing if it persists",
+        "ts": "1475767715.002331"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "apparently w\/ no success though",
+        "ts": "1475767716.002332"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ultimately it seems like your -L flag isnt right, so start there",
+        "ts": "1475767735.002333"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "sure, I need to go, but will give it a try latter",
+        "ts": "1475767735.002334"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, your -I",
+        "ts": "1475767743.002335"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": ":slightly_smiling_face: yeah, got it",
+        "ts": "1475767755.002336"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "thanks again",
+        "ts": "1475767757.002337"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "np",
+        "ts": "1475767759.002338"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I have a question about data modeling",
+        "ts": "1475767932.002339"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "my current application would require something like 5-6 SQL tables if built on a regular web stack",
+        "ts": "1475767965.002340"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "Hum ... private IP on IBM Bluemix Containers is different : Private IP: 172.32.0.15",
+        "ts": "1475767979.002341"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so I'm wondering if I should use native GO structs with embedded lists or use shim.Tables with PKs and FKs and do pseudo SQL Joins in code ?",
+        "ts": "1475768007.002342"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "any suggestions in terms of what would be easier for READ\/WRITE ?",
+        "ts": "1475768021.002343"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "my data comes in JSON",
+        "ts": "1475768030.002344"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and I will only need to add new entries - I won't have to EDIT old ones",
+        "ts": "1475768042.002345"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "I have a question, i  run the fabric-peer using  docker toolbox in win7, but i can't deploy the chaincode, the error is :\n[dockercontroller] Start -&gt; ERRO 13d start-could not recreate container Post <http:\/\/unix.sock\/containers\/create?name=dev-vp6-b706a57c2d57f079939065f2f34160535e25febd395c3b45>: dial unix \/var\/run\/docker.sock: connect: no such fil\ne or directory",
+        "ts": "1475768535.002346"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we really need a FAQ section somewhere with common problems and their solutions :sweat:",
+        "ts": "1475768599.002347"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "niubwang, you docker needs to be set up according to the dev env, are you using the vagrant image?",
+        "ts": "1475768656.002348"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "i am not using the vagrant",
+        "ts": "1475768686.002349"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "change the file accordingly: `\/etc\/init\/docker.conf:\tDOCKER_OPTS=\"-H <tcp:\/\/0.0.0.0:2375> -H unix:\/\/\/var\/run\/docker.sock\"`",
+        "ts": "1475768738.002350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and then restart docker",
+        "ts": "1475768746.002351"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ZJZBJLF> yeah documentation is practically non-existing : ))",
+        "ts": "1475768767.002352"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "\"\/etc\/init\/docker.conf\"  on windows?",
+        "ts": "1475768786.002353"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "... you're using docker on windows?",
+        "ts": "1475768806.002354"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "yes..",
+        "ts": "1475768812.002355"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh then you need the docker to listen to that port",
+        "ts": "1475768821.002356"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "how about that",
+        "ts": "1475768843.002357"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```ubuntu@ip-172-31-23-34:~\/work\/src\/github.com\/hyperledger\/fabric\/membersrvc$ go build\n# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb|github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb>\ncould not determine kind of name for C.rocksdb_options_set_expanded_compaction_factor\ncould not determine kind of name for C.rocksdb_options_set_max_grandparent_overlap_factor\ncould not determine kind of name for C.rocksdb_options_set_source_compaction_factor\n```",
+        "ts": "1475768846.002358"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I've no idea what to do and how to do that on windows, I consider docker + windows something inherently unholy :slightly_smiling_face:",
+        "ts": "1475768855.002359"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "thanks yacovm,    but i really can't find the way to set the docker_opts on windows",
+        "ts": "1475769100.002361"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "anyone can help me ? does the fabric-peer can deploy chaincode using docker toolbox on widows 7?",
+        "ts": "1475769163.002362"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Why not simply use the vagrant image?",
+        "ts": "1475769188.002363"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Just curious",
+        "ts": "1475769192.002364"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "i think it is  complex to use the vagrant",
+        "ts": "1475769473.002365"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "<@U0UGH3X7X>  hi,  do you know the fabric-peer can deploy chaincode using docker toolbox on windows7? not the vagrant",
+        "ts": "1475769920.002366"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "\\",
+        "ts": "1475769921.002367"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "when i do this, it can't create the chaincode container",
+        "ts": "1475769984.002368"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2FR6FUJV> can you provide more details on \"i think it is  complex to use the vagrant\"",
+        "ts": "1475772819.002373"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in my mind, it is precisely the opposite",
+        "ts": "1475772828.002374"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cd devenv &amp;&amp; vagrant up",
+        "ts": "1475772836.002375"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "done",
+        "ts": "1475772837.002376"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the challenge is typically when someone has limitations for VMX\/vbox, but i\u2019ve never heard that it was too complex",
+        "ts": "1475772866.002377"
+    },
+    {
+        "user": "U2L9F7VL1",
+        "text": "<@U2L9F7VL1|adrianhopebailie> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475773863.002378"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt|Untitled> and commented: Any help with best strategy to try to debug what is wrong here would be appreciated",
+        "file": {
+            "id": "F2L81MJP5",
+            "created": 1475775163,
+            "timestamp": 1475775163,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 1743,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L81MJP5-b54fd53d06",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt\/edit",
+            "preview": "$ docker-compose -f docker-compose-4-consensus-noops.yml up\r\nStarting bdddocker_membersrvc0_1\r\nStarting bdddocker_vp0_1\r\nStarting bdddocker_vp3_1\r\nStarting bdddocker_vp1_1\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>$ docker-compose -f docker-compose-4-consensus-noops.yml up<\/pre><\/div>\n<div><pre>Starting bdddocker_membersrvc0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp3_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp1_1<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 27,
+            "lines_more": 22,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 2,
+            "initial_comment": {
+                "id": "Fc2L9Q1WSH",
+                "created": 1475775163,
+                "timestamp": 1475775163,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Any help with best strategy to try to debug what is wrong here would be appreciated",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1475775163.002379"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "To be clear: this is running against a private build with ubuntu updated to 16.04, not something we have committed",
+        "ts": "1475775186.002380"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I am at a loss\u2026the docker images themselves seem ok",
+        "ts": "1475775197.002381"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. I can manually launch membersrvc and peer via \u201cdocker run\u201d incantations",
+        "ts": "1475775212.002382"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but when its composed, it seems that the peer cannot see the CA",
+        "ts": "1475775223.002383"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I did confirm basic things, like the CA really is running at the specified $IP, etc",
+        "ts": "1475775268.002384"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U2FR6FUJV> sorry, I'm using vagrant on win7",
+        "ts": "1475777177.002385"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0YR44350|mrshah> shared a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt|Untitled> and commented: Any help with best strategy to try to debug what is wrong here would be appreciated",
+        "file": {
+            "id": "F2L81MJP5",
+            "created": 1475775163,
+            "timestamp": 1475775163,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 1743,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L81MJP5-b54fd53d06",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt\/edit",
+            "preview": "$ docker-compose -f docker-compose-4-consensus-noops.yml up\r\nStarting bdddocker_membersrvc0_1\r\nStarting bdddocker_vp0_1\r\nStarting bdddocker_vp3_1\r\nStarting bdddocker_vp1_1\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>$ docker-compose -f docker-compose-4-consensus-noops.yml up<\/pre><\/div>\n<div><pre>Starting bdddocker_membersrvc0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp3_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp1_1<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 27,
+            "lines_more": 22,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 2,
+            "initial_comment": {
+                "id": "Fc2L9Q1WSH",
+                "created": 1475775163,
+                "timestamp": 1475775163,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Any help with best strategy to try to debug what is wrong here would be appreciated",
+                "channel": ""
+            }
+        },
+        "user": "U0YR44350",
+        "upload": false,
+        "display_as_bot": false,
+        "username": "<@U0YR44350|mrshah>",
+        "bot_id": null,
+        "ts": "1475777590.002386"
+    },
+    {
+        "type": "message",
+        "subtype": "file_comment",
+        "text": "<@U0YR44350|mrshah> commented on <@U0KPFAZNF|ghaskins>\u2019s file <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt|Untitled>: <@U0KPFAZNF> I saw exactly the same thing.. worked for me after a machine reboot",
+        "file": {
+            "id": "F2L81MJP5",
+            "created": 1475775163,
+            "timestamp": 1475775163,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 1743,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81MJP5\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L81MJP5-b54fd53d06",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2L81MJP5\/-.txt\/edit",
+            "preview": "$ docker-compose -f docker-compose-4-consensus-noops.yml up\r\nStarting bdddocker_membersrvc0_1\r\nStarting bdddocker_vp0_1\r\nStarting bdddocker_vp3_1\r\nStarting bdddocker_vp1_1\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>$ docker-compose -f docker-compose-4-consensus-noops.yml up<\/pre><\/div>\n<div><pre>Starting bdddocker_membersrvc0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp0_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp3_1<\/pre><\/div>\n<div><pre>Starting bdddocker_vp1_1<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 27,
+            "lines_more": 22,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 2,
+            "initial_comment": {
+                "id": "Fc2L9Q1WSH",
+                "created": 1475775163,
+                "timestamp": 1475775163,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Any help with best strategy to try to debug what is wrong here would be appreciated",
+                "channel": ""
+            }
+        },
+        "comment": {
+            "id": "Fc2LAHES2D",
+            "created": 1475777591,
+            "timestamp": 1475777591,
+            "user": "U0YR44350",
+            "is_intro": false,
+            "comment": "<@U0KPFAZNF> I saw exactly the same thing.. worked for me after a machine reboot",
+            "channel": ""
+        },
+        "is_intro": false,
+        "ts": "1475777591.002387"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0YR44350> ty for the info, but this was a clean install",
+        "ts": "1475777748.002388"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and its consistent\u2026.it seems there is something in the 16.04 setup that is breaking this",
+        "ts": "1475777770.002389"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is really bizarre\u2026i think its the wait-for script that is broken",
+        "ts": "1475777938.002390"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe there is a utility it is using that isnt installed",
+        "ts": "1475777949.002391"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF> - is this both Vagrant and the Docker images using Ubuntu 16.04",
+        "ts": "1475777950.002392"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K> yeah, full rebuild of both with my prerelease v0.2.0 baseimage",
+        "ts": "1475777970.002393"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i bet the wait for script is calling something that isnt installed on 16.04 by default",
+        "ts": "1475777983.002394"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because I can netcat the CA while the compose runs and they are talking to each other",
+        "ts": "1475777998.002395"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its netcat",
+        "ts": "1475778136.002396"
+    },
+    {
+        "type": "message",
+        "user": "U0YR44350",
+        "text": "<@U0KPFAZNF> I spent a lot of time today trying to figure this out. Initially everything started fine, suddenly I ended up in this issue and it would never start. Spent a lot of time investigating -&gt; finally a reboot and it worked.\n\nI will stay tuned if you find something, while I try to look into it too",
+        "ts": "1475778329.002397"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0YR44350> ok, but I think its likely unrelated",
+        "ts": "1475778364.002398"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im upgrading the core platform, i think thats what broke it in my case",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1475778386.000000"
+        },
+        "ts": "1475778380.002399"
+    },
+    {
+        "type": "message",
+        "user": "U0YR44350",
+        "text": "no problem",
+        "ts": "1475778427.002401"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0YR44350> that said, if you are seeing flakiness, we want to know about it",
+        "ts": "1475778727.002402"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so let us know if that pops up again",
+        "ts": "1475778733.002403"
+    },
+    {
+        "type": "message",
+        "user": "U0YR44350",
+        "text": "sure, will do",
+        "ts": "1475778737.002404"
+    },
+    {
+        "type": "message",
+        "user": "U0YR44350",
+        "text": "I was trying it on `Ubuntu 16.04.1 LTS` and I saw exactly the same issue where peers couldn't reach the membersrvc. So I added a debug container in docker-compose by running bash and linking it to membersrvc. I couldn't telnet or nc -z  to membersrvc on port 7054 from the debug container.\n\nI will let you know if it happens again and other debug info that I find",
+        "ts": "1475779084.002405"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> <@U0YR44350> don\u2019t want to mislead but this error could be relevant and something you are running into here ? <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/1652\/console>",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1475781814.000000"
+        },
+        "ts": "1475781800.002406"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0YR44350> ah, out of curiosity, did you mean up updated the images like fabric-membersrvc to use 16.04?",
+        "ts": "1475785234.002408"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or just that you were executing on 16.04?",
+        "ts": "1475785243.002409"
+    },
+    {
+        "type": "message",
+        "user": "U0YR44350",
+        "text": "<@U0KPFAZNF> I was just executing on 16.04 and pulled the images on hyperledger\/fabric",
+        "ts": "1475785523.002410"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see, I dont suspect it was the same problem",
+        "ts": "1475785657.002411"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this particular problem I was chasing was specific to 16.04 within the fabric images",
+        "ts": "1475785679.002412"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1491\/>",
+        "ts": "1475785711.002413"
+    },
+    {
+        "user": "U2KL18VPU",
+        "text": "<@U2KL18VPU|vigneswaran.r> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475815117.002417"
+    },
+    {
+        "user": "U2KHL8R0T",
+        "text": "<@U2KHL8R0T|sahitya.pavurala> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475815606.002419"
+    },
+    {
+        "user": "U2LGFBFNJ",
+        "text": "<@U2LGFBFNJ|jmahhh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475818084.002420"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "Hi.. I was trying to deploy a chaincode in one peer and its deployed and in the other peer its is showing --sending init failed(handler not found for chaincode example01)",
+        "ts": "1475821099.002421"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "??",
+        "ts": "1475823487.002422"
+    }
+]

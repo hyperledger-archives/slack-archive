@@ -1,0 +1,374 @@
+[
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "guys, on v0.6",
+        "ts": "1480415090.004462"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "[consensus\/pbft] recvViewChange -&gt; WARN e845 Replica 2 already has a view change message for view 1 from replica 1\n [consensus\/pbft] recvViewChange -&gt; WARN 15af5 Replica 1 already has a view change message for view 1 from replica 1",
+        "ts": "1480415095.004463"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "what cause this warning",
+        "ts": "1480415140.004464"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "how will this diSappear",
+        "ts": "1480415167.004465"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "is that a fatal problem if a replica has multiple view changes from another? <@U0Y14MWA2>",
+        "ts": "1480415463.004466"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I don't think",
+        "ts": "1480415468.004467"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is not a problem",
+        "ts": "1480415509.004468"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in principle view change msgs need to be retransmitted",
+        "ts": "1480415517.004469"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> may remember more of the actual implementation",
+        "ts": "1480415532.004470"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "looking at <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2673\/> .....\n\n(and I probably missed this somewhere in a doc)\n\ncouple things I am wondering about:\n\n1) Generally speaking, DeliverResponse sends a Block and I believe that currently nether Solo nor Kafka orderer \"sign\" this block\n\n2) Block contains a metadata field - is this where the \"proof\" for the Block is supposed to go - i.e. is this where the signature info would actually go?\n\n3) In the case of the CFT-based orderers, my assumption is that you'd only need one signature from the \"shim\" which \"delivers\" the message.  Correct?\n\n4) Specific to 2673, for SBFT is the \"proof\" actually multiple signatures (e.g. 2f+1 SBFT nodes)?\n\nOr I am just totally off here?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480422449.000000"
+        },
+        "ts": "1480422129.004471"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "2) I think yes. if it should not be there then it could be accepted as a temporary solution at least (as we have no better place yet)\n3) in 2673 I only store multiple signatures (as you said, and I also store some kind of header which is sbft internal) - but yes it can be called \"the proof\"",
+        "ts": "1480422787.004473"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I think I picked up the \"proof\" term from something <@U0XPR4NP4> used to say  :wink: )",
+        "ts": "1480423093.004474"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah and rawledger code also uses that term",
+        "ts": "1480423835.004475"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U12452RAP> When a replica believes the view should change, but has not received a new view message, it periodically (once a second) resends its view change message (because it might have been lost due to network failure).  The warnings you see are benign and should probably be at a lower log level.",
+        "ts": "1480428901.004476"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "1) Correct, though this is in plan to add\n2) Yes, and potentially some other info, for instance the gossip folks would like an attestation of the latest config block there\n3) Yes\n4) We technically only need f+1, though in reality we will likely have 2f+1 so will likely just include all",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1480429067.000000"
+        },
+        "ts": "1480429021.004477"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And yes, <@U0PB67X4K> is right, originally, we had a single byte field for 'proof', but, metadata was more generic and could be a superset of proof",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1480429123.000000"
+        },
+        "ts": "1480429109.004480"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "thanks <@U0XPR4NP4>  - so don't we have a \"minor\" issue with SBFT as it is currently implemented in that what gets passed around is a \"batch\" and not a \"block\" - meaning the current SBFT signatures are not actually on the Block itself?   (I think that's what your comment was getting at for 2673?)",
+        "ts": "1480429343.004482"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct, sbft needs to be converted wholesale to the common data structures",
+        "ts": "1480429380.004483"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "e.g SBFT batch -&gt; cb.Block?",
+        "ts": "1480429404.004484"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They're quite similar to the sbft structures, so I don't think this is an impossible task, but it will obviously be invasive",
+        "ts": "1480429405.004485"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1480429407.004486"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool.  just trying to keep up  :wink:",
+        "ts": "1480429422.004487"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0UGH3X7X>, <@U0PB67X4K>, <@U0XPR4NP4>  a few more changesets were submitted here to simplify the config files",
+        "ts": "1480429972.004488"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2677\/>",
+        "ts": "1480429989.004489"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Also a more visual representation of the peer init config schema is included in the attachment:",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1480430043.000000"
+        },
+        "ts": "1480430012.004490"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1BC5A0F9|elli> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/elli\/F38A7EPFE\/msp-config-diagram.ppt|MSP-config-diagram.ppt>",
+        "file": {
+            "id": "F38A7EPFE",
+            "created": 1480430024,
+            "timestamp": 1480430024,
+            "name": "MSP-config-diagram.ppt",
+            "title": "MSP-config-diagram.ppt",
+            "mimetype": "application\/vnd.ms-powerpoint",
+            "filetype": "ppt",
+            "pretty_type": "PowerPoint Presentation",
+            "user": "U1BC5A0F9",
+            "editable": false,
+            "size": 138240,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F38A7EPFE\/msp-config-diagram.ppt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F38A7EPFE\/download\/msp-config-diagram.ppt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/elli\/F38A7EPFE\/msp-config-diagram.ppt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F38A7EPFE-48b626ce31",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1BC5A0F9",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1BC5A0F9|elli>",
+        "bot_id": null,
+        "ts": "1480430024.004491"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> <@U1AU8DRQR>  - shall we approve 2673 and then do another changeset to retrofit with the common structures?  trying to stay within the spirit of incremental changes  :wink:",
+        "ts": "1480430205.004493"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> You can see that is my opinion (per the +2)",
+        "ts": "1480430243.004494"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh",
+        "ts": "1480430249.004495"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you were a step ahead of me  :wink:",
+        "ts": "1480430290.004496"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we are currently debugging sbft witk <@U0Y14MWA2> - as far as the network tests begin to work (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2515\/>) I will try to use the common structures in sbft",
+        "ts": "1480430319.004497"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and there are dozens of other things to do, solo and kafka are several miles ahead of sbft",
+        "ts": "1480430346.004498"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "in the usage of common structures and functionalities",
+        "ts": "1480430360.004499"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no worries",
+        "ts": "1480430365.004500"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "e.g. cutter, manager and I don't remember :smile:",
+        "ts": "1480430398.004501"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "of course they are more advanced - since we are building a spaceship and not a bicycle\/car",
+        "ts": "1480430435.004502"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": ":wink:",
+        "ts": "1480430441.004503"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XPR4NP4> promised that he will take a photo of the blackboard next time if he draws a diagram about the (planned) system",
+        "ts": "1480430456.004504"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, will do.  Very close to having an end to end flow of multi-chain including chain creation, so trying to stay heads down on the code but will be sure to document when finished.",
+        "ts": "1480430558.004505"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2809\/> I just rebased it",
+        "ts": "1480430712.004506"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "pls +2 it again",
+        "ts": "1480431325.004507"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR>  - will do",
+        "ts": "1480431408.004508"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XPR4NP4> one more please",
+        "ts": "1480431532.004509"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> Done",
+        "ts": "1480431794.004510"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "thx",
+        "ts": "1480431825.004511"
+    },
+    {
+        "user": "U37F5PG64",
+        "text": "<@U37F5PG64|anton> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480432030.004512"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0XPR4NP4>: when can the resend terminate?",
+        "ts": "1480432585.004513"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U12452RAP>: When\/if the network eventually switches to a new view that is equal to or higher than the one the complaining peer asks for.",
+        "ts": "1480438781.004514"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If the rest of the network operates just fine in an \"earlier\" view, that other peer will be resending forever.",
+        "ts": "1480438865.004515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U12452RAP> See <https:\/\/jira.hyperledger.org\/browse\/FAB-707> for a more thorough discussion",
+        "ts": "1480444572.004516"
+    },
+    {
+        "user": "U38JCNW5V",
+        "text": "<@U38JCNW5V|divyank-sk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480445473.004517"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "thanks <@U0XPR4NP4> <@U0XQ35CDD> ",
+        "ts": "1480467987.004518"
+    },
+    {
+        "user": "U38H8MS11",
+        "text": "<@U38H8MS11|lovesh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480488241.004519"
+    }
+]

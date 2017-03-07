@@ -1,0 +1,475 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/551\/> some easy-to-review changeset",
+        "ts": "1471504719.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Hi <@U1AU8DRQR> , I am trying to rebase your changes from  <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/> into mine, and its pending review at <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/415\/>",
+        "ts": "1471505081.001848"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do you do it locally?",
+        "ts": "1471505125.001849"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "As part of this change, I am removing the duplicated chaincode.proto file inside the java-shim.",
+        "ts": "1471505132.001850"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "When looking at your change @ c-317, the chaincode.proto is slightly different.",
+        "ts": "1471505179.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/17\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto>",
+        "ts": "1471505185.001852"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/17\/protos\/chaincode.proto>",
+        "ts": "1471505200.001853"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "`message ChaincodeInput {\n    repeated bytes args  = 1;\n}`",
+        "ts": "1471505212.001854"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "the file under java shim has `repeated bytes args  = 2;`",
+        "ts": "1471505306.001855"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Is there a specific reason ?",
+        "ts": "1471505335.001856"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "When I am trying to build with `repeated bytes args  = 1;`, the java layer parses the message payload to get an empty argsList. However it works fine if I leave the field number to 2.",
+        "ts": "1471505458.001857"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U1AU8DRQR>: Yes, I am doing it locally to update my gerrit request",
+        "ts": "1471505556.001858"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Since it cant be merged as it is.",
+        "ts": "1471505582.001859"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the two files should be the same. I left them with \"= 2\" but Sheehan corrected it. But it seems that she forgot to correct the java one",
+        "ts": "1471505617.001860"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "hmm... I wonder if I'm going to fall afoul of that Java stuff with my REST changes (I regenerated the protos)",
+        "ts": "1471505855.001861"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT>: how would you?",
+        "ts": "1471505888.001862"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "regenerating the protos changes that 2 to a 1",
+        "ts": "1471505908.001863"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I didn't see any Java code get updated either",
+        "ts": "1471505918.001864"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I dont think that if the only field is args and one has changed the field number from 2 to 1 then that would induce any code change",
+        "ts": "1471505974.001865"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "that is not what <@U0YNFB22X> is describing",
+        "ts": "1471506144.001866"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'll find out soon enough though.... whenever these tests pass\/fail .... \/yawn",
+        "ts": "1471506173.001867"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U1LES78TT>, In the current master branch, chaincode.proto is duplicated. Also you might want to remove the generated java class Chaincode.java",
+        "ts": "1471506556.001868"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "really? crap\n\n$ find . -name chaincode.proto\n.\/core\/chaincode\/shim\/chaincode.proto\n.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto\n.\/protos\/chaincode.proto\n.\/sdk\/node\/lib\/protos\/chaincode.proto",
+        "ts": "1471506625.001869"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "In current gradle build, the build doesn't detect a change in proto file, and regenerate the .java files from .proto. I am modifying this in the change 415, to force copy .proto file and regenerate the .java files",
+        "edited": {
+            "user": "U0YNFB22X",
+            "ts": "1471506753.000000"
+        },
+        "ts": "1471506661.001870"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "`.\/protos\/chaincode.proto` and `.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto` should be same",
+        "ts": "1471506681.001871"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "if you change `.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto`, remove these these files Chaincode.java, ChaincodeSupportGrpc.java and Chaincodeevent.java",
+        "ts": "1471506734.001872"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I might just leave all that alone... I changed the protos purely for the rest interface's benefit, it should have no impact on Java",
+        "ts": "1471506750.001873"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "just a sidenote: I suggested to remove all the generated files (java and go). this way we could have build steps to: 1) distribute the protos to all directories where they are needed (copy from \/protos to java\/protos) 2) generate sources",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1471506867.000000"
+        },
+        "ts": "1471506855.001875"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "I agree with <@U1AU8DRQR>, we should remove generated files.",
+        "ts": "1471507179.001877"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the others said that those files were added because the initial build system was unable to generate them",
+        "ts": "1471507251.001878"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but as I know make is",
+        "ts": "1471507258.001879"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and we could use gradle instead of make :stuck_out_tongue:",
+        "ts": "1471507268.001880"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "make can copy files as needed :stuck_out_tongue:",
+        "ts": "1471507468.001881"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "b: a\n  cp a b",
+        "ts": "1471507501.001882"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes I know but it is generally considered hard to write good Makefiles",
+        "ts": "1471508359.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U1AU8DRQR>: Now I know why it didn't work. chaincode.pb.go was not generated again after changing the field number",
+        "ts": "1471508429.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": ":relaxed:",
+        "ts": "1471508456.001885"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "as I remember, Sheehan submitted a patch for that",
+        "ts": "1471508459.001886"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "isnt it merged?",
+        "ts": "1471508464.001887"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Its not merged <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/501\/>",
+        "ts": "1471508493.001888"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay I will try to take care of that",
+        "ts": "1471508716.001889"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "to merge it",
+        "ts": "1471508719.001890"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/406\/console> - locally, the commit works, no error in the unit tests...",
+        "ts": "1471514795.001891"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U1AU8DRQR>: Looks like a transient error not being able to download jar, you might want to retrigger the jenkins job",
+        "ts": "1471517034.001892"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes, thanks :slightly_smiling_face: I retrigger it",
+        "ts": "1471517174.001893"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "REST API related question:\nas you know, REST API needs base64 strings as arguments since <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/> got reviewed and merged\nBut the users do not know about this (no docs tell them).\nTo solve this ASAP: we have to\n1) merge those docs <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/499\/>\n2) workaround rest api to use string as it used to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/531\/>\n<@U0TFEHX8E> <@U0KM61BCP> <@U0XR6J961> <@U0ULK2JPP>",
+        "ts": "1471518561.001894"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel>: <http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/2016-August\/000248.html>",
+        "ts": "1471523420.001895"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1AU8DRQR>: 531 needs to be rebased before it can be merged. 499 should be changed to reflect 531.",
+        "ts": "1471523971.001896"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "531 breaks some tests, I am working on it",
+        "ts": "1471524604.001897"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP>",
+        "ts": "1471524614.001898"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "how about release notes rather than mailing lists?",
+        "ts": "1471524921.001899"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":wink:",
+        "ts": "1471524922.001900"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "or let's tag things before we break them  :wink:",
+        "ts": "1471524938.001901"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'll be honest - as someone who simply wants to use this stuff, I don't want to follow mailing lists",
+        "ts": "1471524965.001902"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(well if I was someone who simply wanted to use the stuff  :wink: )",
+        "ts": "1471524986.001903"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should probably just keep people who really want to build apps today on the v0.5 preview",
+        "ts": "1471525022.001904"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K>: I think tags+release notes is a good idea. on the other side, we should have the mailing list + something that announces new mails here",
+        "ts": "1471526450.001905"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1471526530.001906"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "then we actually need to be doing releases - this would be my preference, TBH rather than once a quarter we should be cutting stable releases frequently and getting into a groove",
+        "ts": "1471527293.001907"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "however, summertime, is challenging though to get decisions made",
+        "ts": "1471527326.001908"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KM61BCP> - sure.  so I guess in the short term, if we make breaking changes in master, people will be at risk of their applications breaking - which is probably OK given that it is master and then are living on the edge.  But then that means we need a way to point people to the \"stable\" releases and at this point the only \"stable\" release is v0.5",
+        "ts": "1471527531.001909"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "maybe this is not the right place for this, but I also notice that a lot of people who simply want to build chaincode and apps are struggling trying to get environments running.  They really should not ever have to build \/ compile anything.  We need a way to point them to using the correct Docker images.  Just my not-so-humble opinion",
+        "ts": "1471527604.001910"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(or course they can all just go use our BMX service too  :wink: )",
+        "ts": "1471527619.001911"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0PB67X4K>: agreed, and I am working on a chaincode development image that people can just use",
+        "ts": "1471527908.001912"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "and I think we want to be more formally embracing chaintool <@U0KPFAZNF>",
+        "ts": "1471527938.001913",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF",
+                    "U1AU8DRQR",
+                    "U12452RAP"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I do not think I can endorse any <@U0KPFAZNF>   created work.   haha  - just kidding",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1471528141.000000"
+        },
+        "ts": "1471528126.001914"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "doh!",
+        "ts": "1471528138.001915"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I need to entertain myself sometimes - sorry)",
+        "ts": "1471528156.001917"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1471528161.001918"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": ":smile:",
+        "ts": "1471528168.001919"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U0KM61BCP>: About the dev image, do u mean vm or Docker? For the latter, would like to offer a hand :slightly_smiling_face:",
+        "ts": "1471531439.001920"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> <@U11HH3P7Y> FYI, <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/571\/>",
+        "ts": "1471576489.001921"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i started to tackle some of the shortcomings with versioning\u2026though its still WIP for now",
+        "ts": "1471576506.001922"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but wanted to get your thoughts",
+        "ts": "1471576511.001923"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I marked it with a -1 so its not going to get merged by accident",
+        "ts": "1471576548.001924"
+    }
+]

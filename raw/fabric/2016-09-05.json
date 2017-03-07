@@ -1,0 +1,214 @@
+[
+    {
+        "user": "U2891BNAG",
+        "text": "<@U2891BNAG|rvaughan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473072799.000013"
+    },
+    {
+        "user": "U269P9D8W",
+        "text": "<@U269P9D8W|rajeshsubhankar> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473079939.000015"
+    },
+    {
+        "user": "U0N4P17ND",
+        "text": "<@U0N4P17ND|oiakovlev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473080309.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Hi. What are recommended sys requirements for running fabric peer node? membership service? \nI realize that it depends on the whole network setup, probably chaincode we are going to run etc.. but some starting point? or on what env IBM did their tests?",
+        "ts": "1473080810.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0X3PTHN0",
+        "text": "We\u2019d appreciate any feedback on the work we\u2019ve been doing developing Apache Brooklyn blueprints to deploy and manage Fabric. This has been written up here - <https:\/\/developer.ibm.com\/blockchain\/2016\/08\/03\/running-hyperledger-fabric-on-ibm-blue-box-with-cloudsoft-amp\/>",
+        "ts": "1473080979.000018"
+    },
+    {
+        "user": "U1PJ4UKGX",
+        "text": "<@U1PJ4UKGX|sarahmills> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473081046.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0X3PTHN0",
+        "text": "While we\u2019ve focused on targeting IBM Blue Box taking advantage of underlying private network that connects clusters around the world there is nothing to stop you using other clouds\/infra",
+        "ts": "1473081085.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0X3PTHN0",
+        "text": "The author of this post <@U196R0LA2> is best person to talk to as he has led this work and demoed it at DockerCon and most recently CNCF sponsored Software Circus event",
+        "ts": "1473081164.000021"
+    },
+    {
+        "user": "U28AB65TP",
+        "text": "<@U28AB65TP|viking1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473081338.000022"
+    },
+    {
+        "user": "U28AW4KCP",
+        "text": "<@U28AW4KCP|vriffier> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473083795.000023"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "Can I start my peers using docker-compose inside vagrant env ? While I am doing so, it is actually pulling  fabric-peer from <http:\/\/docker.io\/hyperledger\/fabric-peer|docker.io\/hyperledger\/fabric-peer>  . It should use my local version of fabric-peer.",
+        "ts": "1473096102.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "if you make it before, it will use",
+        "ts": "1473096708.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "`docker images` - lists your images, if related image is not present, it will try to pull it",
+        "ts": "1473096737.000028"
+    },
+    {
+        "user": "U27EARHCN",
+        "text": "<@U27EARHCN|miro> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473100256.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel> I created <#C28CXQXD5|fabric-maintainers> which is open to anyone, but intended for discussion and coordination amongst the fabric-related project maintainers",
+        "ts": "1473101643.000030",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> can you share those \"undocumented\" limits with us?",
+        "ts": "1473112637.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U268EB76W> - sure.  It is really when you start to combine things like Linux, bridge interfaces, overlay networks, Docker and Swarm that things get interesting.  Here's a few examples:\n\n1) The Linux kernel has a hard-coded limit of 1024 virtual interfaces per bridge interface.  This is of course sort-of known if you know Linux networking and you can work around it by creating multiple bridge interfaces.   But - now let's say you want to use Docker's built-in overlay network driver AND the containers needs to connect to external networks.  This results in a bridge network network being created automatically and overlay networks can only use this bridge network.  End result:   as far as we can tell, using the Docker overlay driver results in a limit of 1023 containers per host\n\n2) Docker Swarm calls RefreshNetwork as part of every CreateContainer call.  The larger the number of containers on the overlay network, the more expensive this call becomes and the longer it takes to start each container.  (FYI - looks like there is a fix for this in the current master branch for Swarm and we'll take a look at that)\n\n3) There are a number of other setting which we have learned about via trial and error as well:\n\n- parameters like `net.ipv4.neigh.default.gc_thresh1`, `net.ipv4.neigh.default.gc_thresh2`,`net.ipv4.neigh.default.gc_thresh3` need to be set much higher than the defaults in order to avoid arp table overruns\n\n- parameters like `vm.dirty_ratio` and `vm.dirty_background_ratio` need to be properly set to lower values when you have a lot of containers which write to disk else Ubuntu will hang due to task timeouts\n\nThe reality is that there really is no documentation \/ documented best practices of trying to run things like Swarm at massive scale when you need things like overlay networks, have stageful containers, etc.",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1473115263.000000"
+        },
+        "ts": "1473114572.000033",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0YR44350",
+                    "U268EB76W",
+                    "U1M7K67EV"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "And just in case you don't know what we do \/ try to do, one part of my job is to own the Bluemix Blockchain Service where we run  4 peer + CA PBFT networks for our customers.  We run this in a shared environment using Docker Swarm for the peers and CAs and another Docker Swarm to run the chaincode.   So we try to run as many containers per host as we can (well that was the hope).  Right now we have about 6500 containers running peers and CAs across 8 host systems",
+        "ts": "1473114946.000034",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0YR44350",
+                    "U268EB76W",
+                    "U1P1ZV6RF"
+                ],
+                "count": 3
+            },
+            {
+                "name": "sunglasses",
+                "users": [
+                    "U0YR44350"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on the prior version of our service, we didn't use overlay networks (but that caused us other issues) and we had about 15000 containers running peer and CAs across 32 VMs",
+        "ts": "1473115116.000035"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "Cool dude! I get it all and then some :slightly_smiling_face: Thx for sharing this. For the last several months I've been using Bluemix IBM Blockchain (your baby) for my technical education sessions teaching engineers how to develop chaincode, build Hyperledger Fabric, and soon how to architect for real-world blockchain\/chaincode applications. This helps confirm some of my suspicions. Personally, I advise clients against swarm unless they have use cases that suit it, otherwise, I have found other proprietary ways to get around  the scaling, discovery, and inter\/intra-container communication issues. Did you read the PR from Verizon stating they successfully cranked an IoT infrastructure running 40,000 docker containers? It was to be their platform for competing in the IoT space.",
+        "ts": "1473117220.000038"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "<@U0PB67X4K> why are you on v0.4.1 and not 0.5.0? When will you upgrade, 0.6?",
+        "ts": "1473117380.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "funny thing - we had our own versioning system for the BMX service - but it is actually running v0.5-developer-preview",
+        "ts": "1473118476.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(it is hidden somewhere in the release notes for the service)",
+        "ts": "1473118494.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we'll wait for the official release of 0.6 to be cut before we put it out in the service.  we also need to figure out how to best deal with incompatible versions \/ documentation.  But we'll figure it out",
+        "ts": "1473118555.000042"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "Ah...I missed that one. Now I can clone 0.5 and use it as a reference for what is deployed in BMX, while I continue eating the bleeding-edge? Or do you take the open source version and add code specific and proprietary to IBM?",
+        "ts": "1473118910.000043"
+    },
+    {
+        "user": "U0NLP5909",
+        "text": "<@U0NLP5909|hanhzf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473138729.000045"
+    },
+    {
+        "type": "message",
+        "user": "U1Z6V101X",
+        "text": "Hi, since I installed the latest version of fabric, I can find transactionresults in nonhasdata is it normal ? how can I test the result of transaction ? t hanks",
+        "ts": "1473140594.000046"
+    }
+]

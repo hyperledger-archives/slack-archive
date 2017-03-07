@@ -1,0 +1,313 @@
+[
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "I just saw in the docs that fabric leaves user authentication to application layer. In that case, I assume that the user authorization as well is outside the fabric's responsibilities. Does that mean chaincode should not use the user role while validating a data change?",
+        "edited": {
+            "user": "U1K5R1CP9",
+            "ts": "1475050716.000000"
+        },
+        "ts": "1475049231.001723"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "But I see the user roles in the memsrvc yaml file. So wondering how does fabric utilize the role information when it doesn't authenticate every user request?",
+        "ts": "1475050856.001725"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1K5R1CP9> - \"application layer\" includes chaincode.  The fabric does a basic level of authentication \/ authorization whens security is enabled in that it checks for valid signatures and checks that certificates were issued by membership services.  It also provides primitives for accessing the credentials (aka certificate) of the caller from within chaincode but it is up to the chaincode developer to create access control rules\n\nRight now the \"roles\" provided by the fabric via membership services are only used in 2 ways:\n- when a peer starts up as a validator there is a check to see that it was the right role\n- when registering new users there is metadata which specifies which roles (if any) a user can register users as",
+        "ts": "1475052833.001726"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "When a client applciation sends a REST invoke request after succesful login, the REST request itself is not carrying any identity info except for the securityContext attribute in the json data. How is the request authenitcated?",
+        "ts": "1475053564.001727",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U24JMTPRQ"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "Where can we find the roadmap of Blockchain service in Bluemix ? I just saw the v0.6.0 has being tagged to \"developer-preview\", does this mean that this will be deployed soon on Bluemix ? Thanks",
+        "ts": "1475053675.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1K5R1CP9> - this is exactly why we want to move the REST interface out of the fabric peer itself and run it outside.  Basically, think of the current REST interface as providing an interface to a \"wallet\" service provided by the peer",
+        "ts": "1475053720.001729"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "The protocol still remain HTTP ? is swagger UI that will be moved out ?",
+        "attachments": [
+            {
+                "fallback": "[September 28th, 2016 11:08 AM] garisingh: <@U1K5R1CP9> - this is exactly why we want to move the REST interface out of the fabric peer itself and run it outside.  Basically, think of the current REST interface as providing an interface to a \"wallet\" service provided by the peer",
+                "ts": "1475053720.001729",
+                "author_subname": "garisingh",
+                "channel_id": "C0Y4PEU22",
+                "channel_name": "fabric",
+                "is_msg_unfurl": true,
+                "text": "<@U1K5R1CP9> - this is exactly why we want to move the REST interface out of the fabric peer itself and run it outside.  Basically, think of the current REST interface as providing an interface to a \"wallet\" service provided by the peer",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/garisingh",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-10\/78323915894_521dc680194c08b166e0_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric\/p1475053720001729",
+                "is_share": true,
+                "footer": "Posted in #fabric"
+            }
+        ],
+        "ts": "1475053842.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0N4D2T61> - we typically try to update the BMX services to the latest release of the fabric  within 3-4 weeks of the \"final\" release of a major version.  There are still a few bugs in v0.6 which we are tracking to fix",
+        "ts": "1475053849.001732"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "<@U0PB67X4K> - do you mean the request through hfc will carry identity info?",
+        "ts": "1475053934.001734"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0N4D2T61>  - pulling the REST interface outside the peer is slated for the v1.0 timeframe.  Nothing will change for v0.5 \/ v0.6 .   The reality is that there are 2 interfaces to the fabric today - one is REST (but as mentioned above this really ends up with a given peer acting as a client to the fabric on your behalf) and the other is GRPC (which you can interact with using the NodeSDK)",
+        "ts": "1475053947.001735"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1K5R1CP9>  - hfc uses the native GRPC API which actually includes signing each transaction with the proper transaction certificate based on the user you choose to use",
+        "ts": "1475054004.001736"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "So the request will carry a txn request signed using transaction certs. Does that help chaincode to extract user info from txn certs?",
+        "edited": {
+            "user": "U1K5R1CP9",
+            "ts": "1475054211.000000"
+        },
+        "ts": "1475054190.001737"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yes - and BTW - this is still the case when you use REST as well - basically the peer on which you invoke the REST API will sign transactions with the certs for the user specified in secureContext",
+        "ts": "1475054315.001739"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there are methods within chaincode to extract the caller information",
+        "ts": "1475054329.001740"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "Peer will sign in case of REST and nodeSdk\/hfc  will sign in case of GRPC?",
+        "ts": "1475054420.001741"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "With REST, the peer signs with the certificates of the user specified in secureContext (and uses the GRPC API to submit the transaction as well)",
+        "ts": "1475054486.001742"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "With GRPC directly, you actually have better control of the enrollment material for the users.  In the case of REST, the enrollment material for the users you \"login\" are stored with the peer",
+        "ts": "1475054530.001743"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "So in case of using node\/hfc also, the signing actually happens at peer only, right? Or is it that signing is already done when the request reaches the peer?",
+        "ts": "1475054634.001744"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "when i am making a grpc call to membersrvc for registering a user i am getting this error \nUNIMPLEMENTED: unknown service protos.ECAA\nwhat am i doing wrong?",
+        "ts": "1475054663.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1K5R1CP9> - with REST signing happens at the peer.  With GRPC signing happens at the client prior to submitting to the peer",
+        "ts": "1475054699.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U22RH7VGT>  - how are you calling membership services?",
+        "ts": "1475054728.001747"
+    },
+    {
+        "type": "message",
+        "user": "U1K5R1CP9",
+        "text": "<@U0PB67X4K> - Thanks !",
+        "ts": "1475054738.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure thing",
+        "ts": "1475054746.001749"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "i have created a grpc client using the ca.procto file in the memberservice package",
+        "ts": "1475054786.001750"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what language are you using?",
+        "ts": "1475055012.001751"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "java",
+        "ts": "1475055028.001752"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "for creating the client",
+        "ts": "1475055089.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I have not looked at how Java generates GRPC stubs, but somehow there is a naming mismatch between the client and the server here",
+        "ts": "1475055767.001754"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "ok thanks i will try to figure that out",
+        "ts": "1475055861.001755"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "any tips on how to go about testing chaincode written in go",
+        "ts": "1475075629.001758"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "is my only option \n1. deploying a node locally\n2. deploying the chaincode\n3. invoking commands\n4. monitoring the states",
+        "ts": "1475075692.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U251ZDKJ5> for _development_ of chaincode, use the \u2014peer-chaincodedev flag when starting the peer, and you can run the chaincode yourself. This makes for a much easier dev-test-debug-repeat cycle as you don\u2019t have to torture yourself searching for, and ssh\u2019ing into the docker container running your chaincode.",
+        "ts": "1475082846.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "for use in a POC, you probably want the network mode, which starts with deploying the chaincode with the SDK.",
+        "ts": "1475082883.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so yes, what you describe is correct, but for the iterative development process, \u2014peer-chaincodedev mode is easiest to attach a debugger etc",
+        "ts": "1475082941.001763"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/>",
+        "ts": "1475082988.001764"
+    },
+    {
+        "user": "U231ZGXDG",
+        "text": "<@U231ZGXDG|shukla> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475084300.001766"
+    },
+    {
+        "user": "U2H5JKN94",
+        "text": "<@U2H5JKN94|nbutters> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475086215.001767"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "thanks! so i was able to use option 2 and I was able to register the chaincode. How do I start making calls to it?",
+        "ts": "1475097140.001769"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "everytime I try to \"peer chaincode deploy -n mycc -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}\u2019 \"",
+        "ts": "1475097276.001770"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "it says peer not found",
+        "ts": "1475097283.001771"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U251ZDKJ5> you need to set an environment variable that identifies the peer endpoint.  so your deployment request would like something like:\n```\nCORE_PEER_ADDRESS=172.17.0.1:7051 peer chaincode deploy -l golang -n mycc -c '{\"Function\": \"init\", \"Args\": [\"a\",\"100\",\"b\",\"200\"]}'\n```",
+        "ts": "1475098946.001772"
+    },
+    {
+        "user": "U2GS98SR4",
+        "text": "<@U2GS98SR4|hippyyao> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475112332.001776"
+    },
+    {
+        "user": "U2HB9CE1Y",
+        "text": "<@U2HB9CE1Y|sukhoi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475113060.001777"
+    },
+    {
+        "type": "message",
+        "user": "U2C55KE65",
+        "text": "when i run docker-compose up ,i get this message:\nvp0_1         | 04:10:09.990 [peer] handleChat -&gt; ERRO 02e Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: transition canceled with error: Error Verifying signature for received HelloMessage: Invalid peer id. It is empty.,\nwhat can i do?",
+        "ts": "1475122294.001779"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0PB67X4K>  hi i tried a lot but not able to figure out same error is popping up again and again can you suggest some one who might have implemented grpc client through java and might help figuring me out the mistake i might be doing?",
+        "ts": "1475126353.001781"
+    }
+]

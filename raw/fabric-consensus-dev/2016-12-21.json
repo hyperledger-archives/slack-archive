@@ -1,0 +1,492 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this one would profit from no-review-delay <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3457\/>",
+        "ts": "1482312822.000943"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> ok I see that shines some light, a few follow up questions:\n\n&gt;there is no longer a single point of authority in the form of membership services.\n&gt;individual user rights within an organization for a particular chaincode are all still managed as you indicated\n\nDoes this mean everyone has their own CA?\n\nIf there's no central authority can any CA verify any transactions (i.e. one organisation's CA verifying signatures of another). Who should I ask about this?\n\n&gt;Each organization will have some sort of administrator who deploys peers, and instructs them to participate in a given chain.\n\nJust to check, when you say 'instructs them to participate in a given chain' what this means is that it subscribes the endorsers to particular channels on the consensus service (in order to get transactions for said chain)?\n\n&gt;So, when a chain is created (or reconfigured) the participating orgs need to agree on policies for chaincode deployment...\n&gt;...Because this consortium created that policy, it inherently knows what the endorsement requirements are.\n\nFrom what I understand about how the transactions now work the process is like this:\n\n1. Client Submitter submits transaction proposal to endorsers\n2. Endorsers send yes\/no responses back to Client Submitter\n3. Client Submitter (if the endorsement policy is met) sends transaction to committers or (if it is not) discards the transaction.\n4. Committers verify that the endorsers who endorsed the transaction actually did\n5. Committers update the relevant ledgers with the outcome of the transaction\n\nAs such, how does a client submitter know what the endorsement policy of a particular transaction would be? Are client submitters owned by organisations?\n\nDoes sending transactions to the committers work in the same way as sending them to endorsers \u2013 the client submitters is responsible for knowing which ones to send it to and sending it to them?\n\n&gt;endorsers can be reported (via whatever mechanism is appropriate) to the consortium\n\nWould I be correct then in thinking that 'where' and 'who' the endorsers are is just tracked by some system \u2013 it doesn't really matter what (and indeed you can not do it). The point is that this system isn't part of the Hyperledger Fabric, it would just work with it.\n\nExpanding this a bit, I would I be correct in thinking that when you add new organisations to the network this 'system' would be informed of new peers joining and as such would update the others telling them who and where the new ones are as well as what role they perform?",
+        "ts": "1482323292.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hey, anyone home?",
+        "ts": "1482324484.000945"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "<@U0PB67X4K> can you help with some of these questions toda?",
+        "ts": "1482326831.000946"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "(lot of people are out for the holidays now)",
+        "ts": "1482326849.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sbft quorum size optimization here <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3459\/>",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1482328462.000000"
+        },
+        "ts": "1482328448.000948"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Also, <@U0XPR4NP4> regarding the 'ordering service' you mentionned, I'm not finding any references to it here:\n\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md>\n\nAm I looking at an out of date document?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1482330515.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE> \n\n&gt; Does this mean everyone has their own CA?\n\nIn general, every organization has its own CA, it's not a requirement, but in the interest of decentralized authority, this is a feature.\n\n&gt; If there's no central authority can any CA verify any transactions (i.e. one organisation's CA verifying signatures of another). Who should I ask about this?\n\nNo, the chain configuration contains a list of all the MSP definitions (membership service providers) for the chain.  This means that anyone with a copy of the chain configuration (which is itself a subset of 'the chain') can verify the signatures of any of the transactors on the chain.  The chain config also embeds policies such as \"All three of orgs A, B, and C must agree before adding a new MSP to the chain\".\n\n&gt; Just to check, when you say 'instructs them to participate in a given chain' what this means is that it subscribes the endorsers to particular channels on the consensus service (in order to get transactions for said chain)?\n\nThere is a `JoinChain`  RPC that the peer supports which takes a genesis block for a chain and causes that peer to then retrieve a copy of that chain, and to process updates and endorsements, etc.  It doesn't explicitly require contact with the ordering service (it could also catch up and get updates through gossip) but it might.\n\n&gt; 1. Client Submitter submits transaction proposal to endorsers\n&gt; 2. Endorsers send yes\/no responses back to Client Submitter\n&gt; 3. Client Submitter (if the endorsement policy is met) sends transaction to committers or (if it is not) discards the transaction.\n&gt; 4. Committers verify that the endorsers who endorsed the transaction actually did\n&gt; 5. Committers update the relevant ledgers with the outcome of the transaction\n\nBroad strokes, correct, but in 3, the client sends the transaction to the ordering service for ordering, then eventually the committer gets a batch (which is really just a block which potentially contains some invalid transactions),  Then 4 and 5 happen.\n\n&gt; As such, how does a client submitter know what the endorsement policy of a particular transaction would be? Are client submitters owned by organisations?\n\nThe 'client' which builds the transaction is generally 'the application'.  The application deployed the chaincode, so the application knows the endorsement requirements, so the client knows these requirements.\n\n&gt; Does sending transactions to the committers work in the same way as sending them to endorsers \u2013 the client submitters is responsible for knowing which ones to send it to and sending it to them?\n\nAs I mentioned, the client never sends the transaction directly to the committers, the client sends the transaction to ordering, and the committers eventually receive the ordered transaction (assuming it was well formed).\n\n&gt; Would I be correct then in thinking that 'where' and 'who' the endorsers are is just tracked by some system \u2013 it doesn't really matter what (and indeed you can not do it). The point is that this system isn't part of the Hyperledger Fabric, it would just work with it.\n\nCorrect.  Eventually there may be a standard or recommended way to do this, but nothing like that is targeted for v1.",
+        "ts": "1482331529.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Expanding this a bit, I would I be correct in thinking that when you add new organisations to the network this 'system' would be informed of new peers joining and as such would update the others telling them who and where the new ones are as well as what role they perform?\n\nIt's important never to conflate \"peer\" (the process) and \"peer organization\" (one of the entities participating in the blockchain).  When a peer organization joins, this requires updating the chain configuration, which is propagated through the chain, and everyone knows.  Joining an individual peer has no such requirement.\n\n&gt;  regarding the 'ordering service' you mentionned, I'm not finding any references to it here:\n\n\"Ordering service\" is synonymous with \"consensus service\", but because of differing interpretations of the word \"consensus\" we decided to clarify more explicitly what the service was providing with a new term that did not carry any baggage.",
+        "ts": "1482331530.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Am I looking at an out of date document?\n\nConceptually it is still mostly correct, but the terminology and some details have changed, we need to bring this document up to speed.",
+        "ts": "1482331572.000954"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(There is a changeset out there by <@U0Y14MWA2> that brings it up to date BTW.)",
+        "ts": "1482331615.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should probably merge it and then I can update with my mostly grammatical \/ syntactical edits.",
+        "ts": "1482332801.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we also need to get rid of the version in the v0.6 branch",
+        "ts": "1482332885.000957"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4>\n\n&gt;the client sends the transaction to the ordering service for ordering\n\nWould I be able to have some more details on this step then? Which nodes are involved in the ordering service, who is in charge of running them (as in which organisation on the network)? how do they agree on the order?\n\n&gt;The 'client' which builds the transaction is generally 'the application'. The application deployed the chaincode, so the application knows the endorsement requirements, so the client knows these requirements.\n\nwhen we say 'client', I take it we are talking about an hfc node app?\nWith this in mind, what would happen if you wanted another instance of this hfc app (say for load balancing) which would not have deployed the chaincode, how would it know the endorsement policy (or would it be supplied with it for all chaincodes it can handle at setup)?\n\n&gt;membership service providers\n\nWhat is an MSP vs. a membersrvc from v0.6?\n\n&gt;anyone with a copy of the chain configuration (which is itself a subset of 'the chain') can verify the signatures of any of the transactors on the chain\n\nBecuase they would know who to contact about verifying someone from a speicific organisation?\n\n<@U0XQ35CDD> where would I be able to find this changeset?",
+        "ts": "1482332885.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3411\/>",
+        "ts": "1482332898.000959"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "thanks!",
+        "ts": "1482332916.000960",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we need just one more +2 to merge that",
+        "ts": "1482332928.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and make it more readable",
+        "ts": "1482332932.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(by the virtue of merging and mirroring to github)",
+        "ts": "1482332960.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1AU8DRQR>: The `sbft` package leaves behind a `main` binary (in `sbft\/main\/`) _every time_ the unit tests are run. (This is most likely related to the way the files are structured inside your `main` folder, where there are `xxx_test` files w\/o the associated `xxx` files.) Can you look into it when you get a chance?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1482334202.000000"
+        },
+        "ts": "1482334007.000964"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XQ35CDD> that main is the \"main app\"\/\"executable\" that start an sbft peer. one of the tests create that, calling go build. I can add a line to remove it, it that OK?",
+        "ts": "1482334601.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I haven't looked at your tests' source code to know what they do exactly. There might be a better way to take care of the issue, but I won't know until I see the code. In general though, the tests shouldn't leave any artifacts behind.",
+        "ts": "1482335201.000967"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think the best and easiest way of solving this is removing that artifact.",
+        "ts": "1482335283.000968"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Would I be able to have some more details on this step then? Which nodes are involved in the ordering service, who is in charge of running them (as in which organisation on the network)? how do they agree on the order?\n\nAha! Finally a question which is more native to <#C0Z4NBUN6|fabric-consensus-dev> The short answer is 'it depends'.  The ordering service has a very simple api surface with two methods `Broadcast` and `Deliver`.  Transactions are injected through `Broadcast` and the ordered batches\/blocks are retrieved by calling `Deliver`.  The backing consensus implementation and who runs this service, there are multiple options.  For v1 as the first class citizen is a Kafka shim which leverages the CFT nature and high throughput of Kafka.  We are also working on a pbft based solution (`sbft`) which provides BFT, but it will be more on the 'experimental' side for v1.\n\n&gt; What is an MSP vs. a membersrvc from v0.6?\n\nThis is a great question, because I personally find the terminology confusing.  The MSP in 0.6 provided T-certs and other network services for getting enrollment certs etc.  In v1 these MSPs simply provide a crypto implementation, such as say X.509 with a CA.  The idea is to make the crypto scheme pluggable but <@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4> might be better able to explain this.\n\n&gt; Becuase they would know who to contact about verifying someone from a speicific organisation?\n\nBecause the chain configuration embeds all the material needed to instantiate the MSP for all participating organizations to verify signatures with.",
+        "ts": "1482335456.000969"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "^ <@U2DHRR4TE>",
+        "ts": "1482335467.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hm - i dislike that label 'experimental' for bft :wink:",
+        "ts": "1482336456.000971"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Everyone heard it! <@U0Y14MWA2> is going to have `sbft` production ready and bullet proof by March",
+        "ts": "1482338021.000972"
+    },
+    {
+        "type": "message",
+        "user": "U112NNFV4",
+        "text": "Please flag <@U112NNFV4> when content on here is good for external v1.0 doc. Hard to keep track of all slack channels, thanks!",
+        "ts": "1482338732.000973"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> `We are also working on a pbft based solution (sbft) which provides BFT.' would suffice",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1482338848.000000"
+        },
+        "ts": "1482338822.000974"
+    },
+    {
+        "user": "U1GRJD9NC",
+        "text": "<@U1GRJD9NC|yuki.k> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482339509.000976"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U0XPR4NP4>, we are seeing unit-tests failure after below commit was done. ```commit cf03f20e0ed7ba5fb5f0afc6be1bf8cfe260d187\nMerge: a401b28 bfd7c84\nAuthor: Jason Yellick &lt;jyellick@us.ibm.com&gt;\nDate:   Mon Dec 19 16:18:27 2016 +0000\n\n    Merge \"Add networked stress tests for SBFT\"\n```",
+        "ts": "1482339855.000977"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "The failing unit-test case is ```unit-tests_1  | FAIL\nunit-tests_1  | coverage: 49.2% of statements\nunit-tests_1  | FAIL    <http:\/\/github.com\/hyperledger\/fabric\/orderer\/sbft\/main|github.com\/hyperledger\/fabric\/orderer\/sbft\/main> 834.346s\n```",
+        "ts": "1482339892.000978"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "Any thoughts on what could be architecture dependent in this as I see that these unit-test aren't failing on x86_64 and Z",
+        "ts": "1482339937.000979"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "It could also be some timing issue as I see grpc time out messages in the log",
+        "ts": "1482340182.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "can you pls send me the full log on dm",
+        "ts": "1482340490.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1AU8DRQR> sharing the log with you on DM",
+        "ts": "1482341669.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "seems grpc connections are not established at all",
+        "ts": "1482341679.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U11NUTP4L> sounds like <@U0Y14MWA2> and <@U1AU8DRQR> are helping you. My name is on that commit because I clicked the merge button, but it is <@U1AU8DRQR>'s code so he is likely to be more useful than I ",
+        "ts": "1482343653.000984",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11NUTP4L"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "wasn't there a Z specific problem with grpc? I am not sure ",
+        "ts": "1482344779.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is power",
+        "ts": "1482345766.000986"
+    },
+    {
+        "user": "U3HE2V38F",
+        "text": "<@U3HE2V38F|mohamoudegal> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482346057.000987"
+    },
+    {
+        "type": "message",
+        "user": "U3HE2V38F",
+        "text": "Hi everyone,",
+        "ts": "1482346094.000988"
+    },
+    {
+        "type": "message",
+        "user": "U3HE2V38F",
+        "text": "I\u2019m new to the community and I had a bug I ran into with one of the Fabric tutorials",
+        "ts": "1482346121.000989"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U3HE2V38F|mohamoudegal> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/mohamoudegal\/F3JBW031U\/screen_shot_2016-12-21_at_11.45.24_am.png|Screen Shot 2016-12-21 at 11.45.24 AM.png> and commented: I inputted the right info from the credentials file on Bluemix, but I\u2019m getting a syntax error message. Please advise.",
+        "file": {
+            "id": "F3JBW031U",
+            "created": 1482346160,
+            "timestamp": 1482346160,
+            "name": "Screen Shot 2016-12-21 at 11.45.24 AM.png",
+            "title": "Screen Shot 2016-12-21 at 11.45.24 AM.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U3HE2V38F",
+            "editable": false,
+            "size": 215778,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3JBW031U\/screen_shot_2016-12-21_at_11.45.24_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3JBW031U\/download\/screen_shot_2016-12-21_at_11.45.24_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 262,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 349,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 524,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 699,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3JBW031U-50e8c87794\/screen_shot_2016-12-21_at_11.45.24_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 745,
+            "image_exif_rotation": 1,
+            "original_w": 2270,
+            "original_h": 1652,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/mohamoudegal\/F3JBW031U\/screen_shot_2016-12-21_at_11.45.24_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3JBW031U-3e948ad952",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3HKAUTD1",
+                "created": 1482346160,
+                "timestamp": 1482346160,
+                "user": "U3HE2V38F",
+                "is_intro": true,
+                "comment": "I inputted the right info from the credentials file on Bluemix, but I\u2019m getting a syntax error message. Please advise.",
+                "channel": ""
+            }
+        },
+        "user": "U3HE2V38F",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U3HE2V38F|mohamoudegal>",
+        "bot_id": null,
+        "ts": "1482346166.000990"
+    },
+    {
+        "type": "message",
+        "user": "U3HE2V38F",
+        "text": "Also does anyone know why the chaincode.go &amp; chaincode_finished.go are completely different?",
+        "ts": "1482346220.000991"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U3HE2V38F> <#C0YPYBVJM|fabric-dev> is probably a better place for these questions",
+        "ts": "1482348756.000992"
+    },
+    {
+        "type": "message",
+        "user": "U3HE2V38F",
+        "text": "<@U0XQ35CDD> thanks",
+        "ts": "1482348789.000993",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "Hi all. As for v1.0, can I say there will be no dependency among the transactions inside the same block? e.g.  tx1 to transfer assets from A to B, tx2 is to transfer asset from B to C, these 2 transactions would never be in the same block because the readset and writeset for them during endorsement will not be satisfied in the phase of committing to ledger. Is my understanding correct?",
+        "ts": "1482366088.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U1B9E51R8> Blocks are created without regard to the contents of the transactions. Under reasonable assumptions those TX  could be committed as long as they appear in the correct order in the block.",
+        "ts": "1482367207.000995"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "Thanks! <@U0N1D1UAE> So, it's the client and committers responsibility to assure the situation I mentioned above to succeed?",
+        "ts": "1482369092.000996"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Hi, If someone point me to documentation\/ reading material on how consensus work in Hyperledger, that will be helpful. I want to understand the flow of actions that happen from the point a client initiates a transaction to the ledger reconciled to world-state, which component does what, and the type of messages exchanged.  Thank you!",
+        "ts": "1482378754.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U1B9E51R8> There is an implicit specification (I haven\u2019t seen it formally specified) that if a single client sends two transactions for consensus, then they will be committed in the order they were sent. This should certainly be true if the client waits for acknowledgment from the ordering service after each transaction. Neither the ordering service nor the the committer will reorder transactions to remove conflicts. (I personally think this might be an interesting concept to explore, though.)",
+        "ts": "1482378879.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U1SHFS1Q9> You can start by looking at the documents here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1482379077.000999"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U0N1D1UAE>, sure.  Thanks for the pointers.  Since there are multiple actions happen, like ordering of transactions, block creation, and so on, I am bit confused as to what are the sequence of actions and what constitute  the success or failure of consensus",
+        "ts": "1482379217.001001"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Some presentations are attached here: <https:\/\/jira.hyperledger.org\/browse\/FAB-37>",
+        "ts": "1482379456.001002"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "thanks <@U0N1D1UAE> ",
+        "ts": "1482379556.001003"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "so, a single  client send tx1 and wait for block generated,then it sends next tx for endorsement.Only this way can we make sure these 2txs succeed if they have dependency ",
+        "ts": "1482379780.001004"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Thank so much <@U0N1D1UAE>",
+        "ts": "1482380555.001005"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XQ35CDD> e.g. this way? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3479\/>",
+        "ts": "1482393365.001006"
+    }
+]

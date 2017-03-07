@@ -1,0 +1,479 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1T95QCUE>  when peers emerge they use the root peer to know which node to connect to",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472109766.000000"
+        },
+        "ts": "1472109757.002332"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the root peer can be a list of peers, not only a single one",
+        "ts": "1472109788.002334"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean, I think, unless it has changed and i don't know",
+        "ts": "1472109801.002335"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in fabric 0.5 all validating peers should connect to all because they all participate in concensus",
+        "ts": "1472109838.002336"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "<@U0ZJZBJLF> well, I don't know either it has changed or not.\nHowever, I set the CORE_PEER_DISCOVERY_ROOTNODE dynamically depends on the current active nodes.\n\nBTW, my question, I mean, the running node (that's still alive) has a list of discovery nodes then keep growing and synchronizing the list between running nodes.\nIn the situation that, some node down (they may come back or maybe down forever),\nshould we still keep its IP address in the list of discovery node?\n\nSince we will always have the annoying ERROR appears when we cannot connect to it.\n\nExample\n1. Start all nodes\nvp0, vp1, vp2, vp3\nDiscovery know about: vp0, vp1, vp2, vp3\nTrying to connect: vp0, vp1, vp2, vp3 ==&gt; All OK\n\n2. Join 1 new node\nvp0, vp1, vp2, vp3 &lt;== vp4 (join)\nDiscovery know about: vp0, vp1, vp2, vp3, vp4\nTrying to connect: vp0, vp1, vp2, vp3, vp4 ==&gt; All OK\n\n3. Drop vp2\nvp0, vp1, vp3, vp4 ==&gt; vp2 (drop)\nDiscovery know about: vp0, vp1, vp2, vp3, vp4\nTrying to connect: vp0, vp1, vp2, vp3, vp4 ==&gt; vp2 ERROR\n\nFrom the example, you see that connecting to vp2 is not possible, and cause the error message.\nSo, I'm not sure should vp2 IP be deleted from discovery node list after some timeout?",
+        "ts": "1472110879.002337"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think you can set that env var to be a list, e.g peer1,peer2,peer3",
+        "ts": "1472110930.002338"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and yeah of course you'll have an error...",
+        "ts": "1472110961.002339"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Yes, I meant, I set CORE_PEER_DISCOVERY_ROOTNODE  dynamically as a list of IP:PORT,IP:PORT,...",
+        "ts": "1472110980.002340"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how can you set it dynamically while a peer is running?",
+        "ts": "1472110992.002341"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean, you could use gdb to change the env var, but i think the code caches it. I remember there was a configuration cache",
+        "ts": "1472111014.002342"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Before running \"peer node start\" I run my script to set the ENV dynamically for each peer",
+        "ts": "1472111107.002343"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1472111152.002344"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then it's only for that peer",
+        "ts": "1472111157.002345"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "it means, each peer will be feed ENV to the wider root node as possible",
+        "ts": "1472111171.002346"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, what are you asking basically- whether should the peer \"forget\" about dead peer(s)?",
+        "ts": "1472111176.002347"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "yes, right",
+        "ts": "1472111198.002348"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't think it's too \"bad\", I'll tell you why- the communication uses gRPC streams",
+        "ts": "1472111222.002349"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "which means, it's asynchronous",
+        "ts": "1472111227.002350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you put the data in the TCP buffer and don't wait for an application-level ACK",
+        "ts": "1472111245.002351"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if the system \"knows\" there is no one in the other side, it'll simply emit an error",
+        "ts": "1472111259.002352"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(the method call, that is)",
+        "ts": "1472111270.002353"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "But, will it keeps this dead peer forever?\nI meant, maybe it's annoying with the ERROR message.\nAnd we might not avoid this message with CORE_LOGGING_LEVEL=INFO.",
+        "ts": "1472111428.002354"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i know. I don't know if it's that important. version 0.5 isn't supposed to be used in a highly dynamic environment. The next architecture will deal with this much better, however i'm pretty sure there will still be ERROR messages",
+        "ts": "1472111535.002355"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Well, I think this kind of connection ERROR is somehow important to know.\nBut, the system should not keep it as the ERROR for long.\nE.g. delete those peers from the list after timeout.",
+        "ts": "1472111769.002356"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "it just my random idea.",
+        "ts": "1472111786.002357"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, like i said- in the next architecture they'll get deleted after a period",
+        "ts": "1472111796.002358"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, thank for letting me know, a bit insight.",
+        "ts": "1472111809.002359"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, at least the part that disseminates messages to most of the peers",
+        "ts": "1472111820.002360"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "np",
+        "ts": "1472111829.002361"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "Hi, i am trying to set up a 4 validating peer environment. After stopping all docker containers, and deleting the \/var\/hyperledger\/production I always run into the same problem. Vp0- vp2 starts up fine, but for some reason vp3 says that it has already been registered....",
+        "ts": "1472112246.002362"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "^[[31m17:02:53.387 [crypto] register -&gt; ERRO 00d^[[0m [validator.test_vp3] Failed registering [test_vp3]: [Already registered.]\n^[[31m17:02:53.387 [crypto] register -&gt; ERRO 00e^[[0m [validator.test_vp3] Failed registering [test_vp3]: [Already registered.]",
+        "ts": "1472112272.002363"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "has anyone had any issue like this before?",
+        "ts": "1472112319.002364"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, I'm now working in between Docker swarm and Fabric.\nI made some tools to generate parameter dynamically for each fabric node under swarm.\n\nThe solution goes well under cluster to make fabric lives under swarm, and possible to scale up\/down on the fly.\n\nBut, I somehow hope we will have this thing works out-of-the-box.\n\nLet me know, if my configuration needed to be explained.",
+        "ts": "1472112354.002365"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "<@U1D9R3WAX> Do you mount the \/var\/hyperledger\/production to your host?\nPlease make sure you delete it well, all containers, and database.",
+        "ts": "1472112519.002366"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "It usually happens if you do not clean it perfectly.",
+        "ts": "1472112596.002367"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Especially docker, you better use 'docker ps -a' to see your containers",
+        "ts": "1472112636.002368"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "in my script i do rm -rf \/var\/hyperledger\/production first than delete the containers..... that might be the issue....",
+        "ts": "1472112684.002369"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "<@U1T95QCUE>  thanks for the idea.... can i disturb you later with my network setup issues? it seems you are good at it :slightly_smiling_face:",
+        "ts": "1472112807.002370"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "You better do 'docker rm your_container' before doing 'rf -rm ...'\nThen the database will not get locked by the container.",
+        "ts": "1472113051.002371"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "yepp now i see",
+        "ts": "1472113077.002372"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "<@U1T95QCUE>  it didnt solve it, but i realised that i have modified a running peer once and I didnt delete the database directory in the peer and commited it like that...  :smile:",
+        "edited": {
+            "user": "U1D9R3WAX",
+            "ts": "1472114125.000000"
+        },
+        "ts": "1472113975.002373"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I see, that happens to me, sometime. when I have lot of thing to do...",
+        "ts": "1472115454.002375"
+    },
+    {
+        "user": "U24S2J5L6",
+        "text": "<@U24S2J5L6|cfompowou> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472121867.002376"
+    },
+    {
+        "user": "U24SQ175W",
+        "text": "<@U24SQ175W|vikasmalhotra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472127098.002379"
+    },
+    {
+        "user": "U24T7TU9E",
+        "text": "<@U24T7TU9E|shafqatahmed> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472130606.002380"
+    },
+    {
+        "type": "message",
+        "user": "U1T1PHTCL",
+        "text": "is the tsc meeting happening today?",
+        "ts": "1472134259.002381"
+    },
+    {
+        "type": "message",
+        "user": "U1Y3G1V2S",
+        "text": "i wonder as well\u2026meeting has not started yet",
+        "ts": "1472134378.002382"
+    },
+    {
+        "type": "message",
+        "user": "U1T1PHTCL",
+        "text": "ah ok- so then- I'm not the only one- that's a relief",
+        "ts": "1472134638.002383"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "I believe it was cancelled.",
+        "ts": "1472134768.002384"
+    },
+    {
+        "type": "message",
+        "user": "U1T1PHTCL",
+        "text": "hmm- it was in one of the mailing list email I didn't read I guess",
+        "ts": "1472135021.002385"
+    },
+    {
+        "user": "U24V0JB4Y",
+        "text": "<@U24V0JB4Y|gokul> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472138953.002386"
+    },
+    {
+        "type": "message",
+        "user": "U205V1M45",
+        "text": "hi, I am stepping through the Fabric installation for the first time. I have it up and running, but am hitting a snag chaincode_example02. I'm getting a lot of 'cannot find package' errors when I try to run 'go build' on chaincode_example02.go. Any suggestions? I had to install go prior to this, not sure if there are steps I am missing. The docs assume go is installed, I beleive",
+        "ts": "1472139754.002387"
+    },
+    {
+        "user": "U250BA7T2",
+        "text": "<@U250BA7T2|misameel> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472142111.002388"
+    },
+    {
+        "user": "U2511HML2",
+        "text": "<@U2511HML2|ricardo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472143073.002389"
+    },
+    {
+        "user": "U251ZDKJ5",
+        "text": "<@U251ZDKJ5|sukrith> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472148294.002390"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "hey looking to start a project on hyperledger and I am wondering which one I should start experimenting with \u2018fabric\u2019 or \u2018sawtooth\u2019? any suggestions or guides to help me choose?",
+        "ts": "1472149953.002391"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "That would probably depend on a lot of things.  I'd recommend taking a look at the docs and seeing how it matches your interest.  For Sawtooth there are some tutorials to help you get started.",
+        "ts": "1472150016.002392"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "<http:\/\/intelledger.github.io\/tutorial.html>",
+        "ts": "1472150026.002393"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "and fabric docs here: <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/>",
+        "edited": {
+            "user": "U0VKPD6A2",
+            "ts": "1472150054.000000"
+        },
+        "ts": "1472150043.002394"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "are the differences between the 2 highlighted somewhere?",
+        "ts": "1472150075.002397"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "No I don't think anyone has made a cheat sheet like that.",
+        "ts": "1472150106.002398",
+        "reactions": [
+            {
+                "name": "+1::skin-tone-4",
+                "users": [
+                    "U24M29R4G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "There are 2 main difference that come to mind.. \nconsensus:",
+        "edited": {
+            "user": "U0VKPD6A2",
+            "ts": "1472150405.000000"
+        },
+        "ts": "1472150125.002399"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "sawtooth= PoET;  Fabric=Pbft variant",
+        "edited": {
+            "user": "U0VKPD6A2",
+            "ts": "1472150416.000000"
+        },
+        "ts": "1472150144.002400"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Transaction Logic:",
+        "ts": "1472150153.002401"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Sawtooth= Transaction families;  Fabric = Chain code",
+        "ts": "1472150166.002402"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "PoET is a green form of Random Leader Election (c.f. Proof of Work)",
+        "ts": "1472150208.002403"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Fabric consensus is a variant of PBFT",
+        "ts": "1472150242.002404"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Transaction Familes are transaction logic deployed on the validator.",
+        "edited": {
+            "user": "U0VKPD6A2",
+            "ts": "1472150295.000000"
+        },
+        "ts": "1472150259.002405"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Chain code is transaction logic deploy in dockers via Ledger transactions.",
+        "ts": "1472150285.002406"
+    },
+    {
+        "type": "message",
+        "user": "U251ZDKJ5",
+        "text": "hmm i see thanks for the summary. I will start reading the 2 wikis!",
+        "ts": "1472150356.002408",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0VKPD6A2",
+                    "U1HR1RWMR"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "user": "U257F35KP",
+        "text": "<@U257F35KP|vramu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472193374.002413"
+    }
+]

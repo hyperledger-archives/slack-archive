@@ -1,0 +1,140 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: I think what I'm driving at would be, 'Wouldn't it be nice, if the network periodically emitted a \"this is my block height, and its hash, and this is the time\", in a way that you could trust (say, as a bundle of signed messages).  Because the time is always advancing, and you know you should receive and advertisement at least once every n seconds, you can be certain that you're not having the current state hidden from you.  It seems like in many situations, this would be a nice substitution for a strong read, and it would also be much less work for the network.",
+        "ts": "1463867043.002071"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then, all the clients (NVPs) need, is a copy of the blockchain, and a 'recent' chain state attestation, and they could have 100% confidence in their reads (acknowledging the fact that sure, the state may have changed beyond time t, but as you say, this is difficult to prove even with a strong read)",
+        "ts": "1463867179.002072"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0XPR4NP4>: I think if you look at \"time, crontab\", you'll find that combining that with the standard way that a client can read tran-outcome from 2f+1 clients, is enough.  At least, at first blush.",
+        "ts": "1463867638.002073"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XRC0KLH>: There's been considerable interest in signing blocks.  Now, this is somewhat counter to the PBFT idea, because it tries to eliminate having to constantly be signing messages (which is a bottleneck).  Further, there's also been considerable desire to 'consent on output', which brought us to the idea of switching block creation from PBFT 'COMMIT's to PBFT CHECKPOINTS.",
+        "ts": "1463867840.002074"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, if we're signing checkpoints, and we're emitting those periodically anyway, they seem like a convenient mechanism to 'push' strong reads",
+        "ts": "1463867907.002075"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Especially since if block creation is at checkpoint, we must be manufacturing these messages already, so, there's limited additional overhead)",
+        "ts": "1463868000.002076"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0XPR4NP4> of what interest is a strong read, other than to ensure you're geting up-to-date info?   If one is truly worried that one's bank is .... lying to one .... truly, there are more effective solutions.",
+        "ts": "1463868030.002077"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "and if it's merely to ensure your data is  up-to-date, watching the clock trans is enough",
+        "ts": "1463868046.002078"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "heck, as I think about it, why bother watching 2f+1 peers?  just listen to one peer for clock trans",
+        "ts": "1463868085.002079"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "People who think they won't get their faces ripped off, if they run a full node and validate all trans, are delusional, after all",
+        "ts": "1463868119.002080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: I would agree with that",
+        "ts": "1463868217.002081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\u201cstrong read\u201d as it has been discussed might be more relevant on the query side",
+        "ts": "1463868247.002082"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I definitely need to catch up to speed on \"time, crontab\", I think I get the gist of it it, and can certainly see how that could eliminate the need for something like timestamped checkpoints.",
+        "ts": "1463868265.002083"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe it's just a use case that doesn't exist, but, I hear people asking \"How can I validate the correctness of my copy of the blockchain, as an NVP, without having to query the network\"?",
+        "ts": "1463868347.002084"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And clearly, to verify current-ness, you need to contact the network, but not correctness)",
+        "ts": "1463868399.002085"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0KPFAZNF> <@U0XPR4NP4> Guys, y'know, I think there's a far graver issue: from my understanding (and talking with Jason, Marko, others in the BFT community) the definition of \"correct\" in BFT, is -incompatible- with ANY definition of fault-tolerant in the fault-tolerance literature.",
+        "ts": "1463868405.002086"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "I think, absent a serious and careful investigation (use hot lights, rubber hoses stress positions, don't stint) , it's not at all clear that PBFT actually is a suitable protocol.",
+        "ts": "1463868443.002087"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "People who aren't banks, and ask \"how can I verify the correctness of my copy ...\" .... &lt;sigh&gt; (oh, can I borrow a few thousand dollars for a few days?)",
+        "ts": "1463868493.002088"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I completely agree that PBFT as it comes out of the box, and the desirable behavior for a fault tolerant distributed system are rather different.  I'm not convinced it's not solvable, but certainly, there seem to have been some disconnects between people's expectations of BFT.",
+        "ts": "1463868620.002089"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "re: hot lights, you should not accept \"workarounds\".  And whatever solution, must work in the face of maximum traffic (hence, must come with built-in flow-control)",
+        "ts": "1463868742.002090"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "b\/c having floor(1\/3) of your nodes lag behind on the busiest day of the year, WILL result in lawsuits",
+        "ts": "1463868762.002091"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XRC0KLH>: I agree, we need a much stronger clear long term architecture to handle this, and hopefully <@U0Y14MWA2> can help us achieve this.  But, in the interest of walking before running, ensuring that every non-byzantine node can catch up and participate under normal load (not DOS level busyness) is a good first target.",
+        "ts": "1463868938.002092"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": ":wink:",
+        "ts": "1463869007.002093"
+    }
+]

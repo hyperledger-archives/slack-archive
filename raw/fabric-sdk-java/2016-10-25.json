@@ -1,0 +1,62 @@
+[
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I'm trying to run the Java SDK against the Docker Containers provided by the Node SDK.   I changed the docker compose file to expose the the peer and member services ports    \n```\nSeeing a failure on: \nMember registrar = testChain.getMember(\"admin\");\nMember admin = testChain.enroll(\"admin\", \"Xurw3yU9zI0l\"); \/\/\/&lt;&lt;&lt;&lt;line 36 \n```\n\n```\nOct 25, 2016 1:09:22 PM org.hyperledger.fabric.sdk.FileKeyValStore loadProperties\nWARNING: Could not find the file \"\/home\/rineholt\/test.properties\"\nException in thread \"main\" org.hyperledger.fabric.sdk.exception.EnrollmentException: Failed to enroll user\n\tat org.hyperledger.fabric.sdk.MemberServicesImpl.enroll(MemberServicesImpl.java:218)\n\tat org.hyperledger.fabric.sdk.Member.enroll(Member.java:215)\n\tat org.hyperledger.fabric.sdk.Chain.enroll(Chain.java:296)\n\tat org.rick.FirstLink.main(FirstLink.java:36)\nCaused by: org.hyperledger.fabric.sdk.exception.CryptoException: Could not decrypt the message\n\tat org.hyperledger.fabric.sdk.security.CryptoPrimitives.eciesDecrypt(CryptoPrimitives.java:149)\n\tat org.hyperledger.fabric.sdk.MemberServicesImpl.enroll(MemberServicesImpl.java:193)\n\t... 3 more\nCaused by: java.security.InvalidKeyException: Illegal key size\n\tat javax.crypto.Cipher.checkCryptoPerm(Cipher.java:1039)\n\tat javax.crypto.Cipher.implInit(Cipher.java:805)\n\tat javax.crypto.Cipher.chooseProvider(Cipher.java:864)\n\tat javax.crypto.Cipher.init(Cipher.java:1396)\n\tat javax.crypto.Cipher.init(Cipher.java:1327)\n\tat org.hyperledger.fabric.sdk.security.CryptoPrimitives.aesDecrypt(CryptoPrimitives.java:169)\n\tat org.hyperledger.fabric.sdk.security.CryptoPrimitives.eciesDecrypt(CryptoPrimitives.java:144)\n\t... 4 more\n```\n\n\njava version \"1.8.0_65\"\nJava(TM) SE Runtime Environment (build 1.8.0_65-b17)\nJava HotSpot(TM) 64-Bit Server VM (build 25.65-b01, mixed mode)",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1477416493.000000"
+        },
+        "ts": "1477415945.000179"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Got past that needed Java's stronger encryption   Sorry for the noise",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1477417800.000000"
+        },
+        "ts": "1477417782.000181"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I'm trying to deploy application.\nuser.deploy(deployRequest);\nPretty much following the Node Sample code pattern. \nI see this on the peer:\n```\n[36m19:00:44.911 [devops] Deploy -&gt; DEBU 0a2[0m Initializing secure devops using context \n19:00:44.911 [crypto] InitClient -&gt; INFO 0a3[0m Initializing client []...\n[36m19:00:44.913 [crypto] Debugf -&gt; DEBU 0a4[0m [client.] Data will be stored at [\/var\/hyperledger\/production\/crypto\/client]\n[36m19:00:44.913 [crypto] Debugf -&gt; DEBU 0a5[0m [client.] Keystore path [\/var\/hyperledger\/production\/crypto\/client\/ks] missing [true]: [&lt;clean&gt;]\n[36m19:00:44.913 [crypto] Debugf -&gt; DEBU 0a6[0m [client.] Creating Keystore at [\/var\/hyperledger\/production\/crypto\/client\/ks]...\n[36m19:00:44.913 [crypto] Debug -&gt; DEBU 0a7[0m [client.]  Open Keystore DB...\n[36m19:00:44.913 [crypto] Debug -&gt; DEBU 0a8[0m [client.]  Ping Keystore DB...\n[36m19:00:44.914 [crypto] Debugf -&gt; DEBU 0a9[0m [client.] Keystore created at [\/var\/hyperledger\/production\/crypto\/client\/ks].\n[36m19:00:44.914 [crypto] Debugf -&gt; DEBU 0aa[0m [client.] Keystore opened at [\/var\/hyperledger\/production\/crypto\/client\/ks]...done\n[36m19:00:44.914 [crypto] Debug -&gt; DEBU 0ab[0m [client.]  Initializing node crypto engine...\n[36m19:00:44.914 [crypto] Debug -&gt; DEBU 0ac[0m [client.]  Loading ECA certificates chain...\n[36m19:00:44.914 [crypto] Debugf -&gt; DEBU 0ad[0m [client.] Loading certificate [eca.cert.chain] at [\/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain]...\n[31m19:00:44.914 [crypto] Errorf -&gt; ERRO 0ae[0m [client.] Failed loading certificate [eca.cert.chain]: [open \/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory].\n[31m19:00:44.914 [crypto] Errorf -&gt; ERRO 0af[0m [client.] Failed loading ECA certificates chain [open \/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory].\n[31m19:00:44.914 [crypto] Errorf -&gt; ERRO 0b0[0m [client.] Failed initiliazing crypto engine [open \/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory]. Registration to the Membership Service required.\n[31m19:00:44.914 [crypto] InitClient -&gt; ERRO 0b1[0m Failed client initialization []: [open \/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory].\n[36m19:00:50.803 [peer] ensureConnected -&gt; DEBU 0b2[0m Touch service indicates no dropped connections\n```\n\nOn the java client this just logs ```\n\nWARNING: RPC failed: Status{code=NOT_FOUND, description=open \/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory, cause=null}```\n\nUn related  but node sdk client returns a response for this call.  Which has a *chaincodeID*  but it seem the Java client does not return that.\n\nFrom the DevOpsClient:\n\n```\npublic void deploy(DeployRequest request) {\n\t\t<http:\/\/logger.info|logger.info>(\"deploy\t\");\n\n\t\tChaincodeSpec spec = getChaincodeSpec(request);\n\t\tChaincodeDeploymentSpec response;\n\t\ttry {\n\t\t\tresponse = blockingStub.deploy(spec);\n\t\t} catch (StatusRuntimeException e) {\n\t\t\tlogger.warn(String.format(\"RPC failed: %s\", e.getStatus()));\n\t\t\treturn;\n\t\t}\n\t\tchaincodeName = response.getChaincodeSpec().getChaincodeID().getName();\n\t\t<http:\/\/logger.info|logger.info>(String.format(\"Status: \\\"%s\\\" at %s, %s\", response.getChaincodeSpec().getChaincodeID().getName(),\n\t\t\t\tresponse.getExecEnv().toString(), response.getExecEnv().toString()));\n\t}```",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1477423195.000000"
+        },
+        "ts": "1477423144.000183"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "The code up to that point did register ....\n```\nString userName = \"JohnDoe\";\n\n        testChain.setDevMode(true);\n        testChain.setInvokeWaitTime(10);\n        testChain.setDeployWaitTime(120);\n\n\n        RegistrationRequest registrationRequest = new RegistrationRequest();\n        registrationRequest.setEnrollmentID(userName);\n        registrationRequest.setAffiliation(\"bank_a\");\n\n        Member user = testChain.registerAndEnroll(registrationRequest);\n```",
+        "ts": "1477423874.000185"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Stepped through the code looking to see if there is a successful enrollment of the deploying user and as best I can tell it seems to have worked.",
+        "ts": "1477431727.000186"
+    },
+    {
+        "type": "message",
+        "user": "U1Y2R5C9L",
+        "text": "Hi <@U2Q0HP4HY> , The current implementation of deploy\/invoke\/query is using DevOps client which has been deprecated, we are working on an update to this which will be committed soon (hopefully this week)",
+        "ts": "1477438604.000187"
+    },
+    {
+        "type": "message",
+        "user": "U1Y2R5C9L",
+        "text": "However not sure if ```\/var\/hyperledger\/production\/crypto\/client\/ks\/raw\/eca.cert.chain: no such file or directory``` error is related or not, it seems to be coming from server.",
+        "ts": "1477438846.000188"
+    },
+    {
+        "type": "message",
+        "user": "U1Y2R5C9L",
+        "text": "Perhaps have a look at ```<https:\/\/github.com\/hyperledger\/hyperledger\/issues\/59>```",
+        "ts": "1477438874.000189"
+    }
+]

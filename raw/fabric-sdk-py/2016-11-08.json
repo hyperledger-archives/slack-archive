@@ -1,0 +1,66 @@
+[
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "I'm seeing an error when running tox. I've gone through the different contributor steps and this is the error that I receive when performing `make check`:\n```\n$ make check\nrun python tox pylint\n# set -o pipefail\nrm -rf .tox\/pylint\/log\n# bin_path=.tox\/pylint\/bin\n# export PYTHON=in_path\/python\ntox -v -epylint\nusing tox.ini: \/home\/latitia\/work\/fabric-sdk-py\/tox.ini\nERROR: unknown environment 'pylint'\nmake: *** [pylint] Error 1\n```",
+        "ts": "1478633812.000095"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "I found the following issue for tox that seems related to this issue: <https:\/\/bitbucket.org\/hpk42\/tox\/issues\/280\/having-interpreters-that-arent-installed>",
+        "attachments": [
+            {
+                "title": "Having interpreters that aren't installed in envlist causes tox to refuse to run",
+                "title_link": "https:\/\/bitbucket.org\/hpk42\/tox\/issues\/280\/having-interpreters-that-arent-installed",
+                "text": "I have a tox.ini that looks like this. ``` [tox] # envlist = py27, py33, py34, py35, pypy, jython, pylint envlist = py27, py33, py34 skip_missing_interpreters = true [testenv] deps = py27,pypy,jython: funcsigs lazy-object-proxy py27,py33,pypy,jython: singledispatch six wrapt pylint: hg+<https:\/\/bitbucket.org\/logilab\/pylint> commands = python -m unittest discover -s {envsitepackagesdir}\/astroid\/tests -p \"unittest*.py\" ``` As I understand it, this should run with any missing interpreters skipped. Instead, running `tox` with CPython 2.7 and 3.4 installed, but not 3.3, gives: ``` ERROR: InterpreterNotFound: python3.3 ERROR: unknown environment 'py27' ``` Different combinations of missing interpreters can give different InterpreterNotFound and unknown environment errors, and it's not deterministic which will be reported. Commenting out the `commands = ` line causes it to run with: ``` py27: commands succeeded SKIPPED: py33: InterpreterNotFound: python3.3 py34: commands succeeded congratulations :) ``` As I'd expect, but of course this then doesn't run the tests. `tox -e` using py27 or py34 will run, `tox -e py33` gives the same error as `tox`. This is on Ubuntu Linux. I've tried both version 1.8.0, the version packaged by Ubuntu, and version 2.1.1 installed with pip, and they exhibit the same behavior.",
+                "fallback": "Having interpreters that aren't installed in envlist causes tox to refuse to run",
+                "from_url": "https:\/\/bitbucket.org\/hpk42\/tox\/issues\/280\/having-interpreters-that-arent-installed",
+                "service_icon": "https:\/\/d301sr5gafysq2.cloudfront.net\/92cdfbf06888\/img\/bitbucket_avatar\/192\/bitbucket.png",
+                "service_name": "Bitbucket",
+                "id": 1
+            }
+        ],
+        "ts": "1478633851.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "What's weird is I do have pylint installed, so I'm not clear why it's complaining about pylint...",
+        "ts": "1478633884.000098"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "OK, so I have been able to get around the tox errors that I'm seeing - to a point. (I'm working in a vagrant VM). Now I'm getting errors when executing `tox`. It says that `No module named google.protobuf` I've been playing with it a bit and I'm a little confused with the proto directory and files. There are `*_pb2.py` files that don't seem to match the `*.proto` files...",
+        "edited": {
+            "user": "U1B5DPRLG",
+            "ts": "1478643620.000000"
+        },
+        "ts": "1478643581.000099"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "For review: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2351\/>",
+        "ts": "1478645486.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U1B5DPRLG> looks like you already fix your build issue, right?",
+        "ts": "1478655144.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U1B5DPRLG> what cmd are u running, i guess we should not require the google.protobuf module..",
+        "ts": "1478662912.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U1B5DPRLG> and welcome to fill up your info at <https:\/\/wiki.hyperledger.org\/projects\/fabric-sdk-py.md#membership>, thanks!",
+        "ts": "1478663840.000104"
+    }
+]

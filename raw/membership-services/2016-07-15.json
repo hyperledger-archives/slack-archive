@@ -1,0 +1,506 @@
+[
+    {
+        "user": "U0YK3KKCY",
+        "text": "<@U0YK3KKCY|harrijk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1468586403.000319"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Hey guys. Today I asked this at <#C0Y4PEU22>. Now I'm bringing it here:\n\nI managed to run membersrvc, and two nodes just as the doc example says...\nbut if I shutdown one node and try to restart it again (with the same id and password), an error occurs:\n\"Identity or token does not match\"\nIt looks like the CA is trying to create new certificates\nto which  it ends with such error\n(which is not too clear, in my opinion)\nshouldn't the membersrvc just try to login if credentials already exist, instead of trying to re-enroll?\n(the same thing happens with users trying to enroll\/login through a peer)",
+        "ts": "1468624865.000320"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Hi OK, so first, congrats on getting this set up.",
+        "ts": "1468625089.000321"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Second (and we do need to document this better!), are you trying to register twice?",
+        "ts": "1468625116.000322"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There is this concept of a 'one-time-password' like logging in. Effectively the mode of work should be:",
+        "ts": "1468625146.000323"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Enroll (get an ECert)",
+        "ts": "1468625156.000324"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "And then fetch a (or a few) TCerts...",
+        "ts": "1468625166.000325"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are a few tests that you can also look at, that effectively follow this logic.",
+        "ts": "1468625206.000326"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are unit tests (in Go) that I can point you to... but these are probably too low-level.",
+        "ts": "1468625230.000327"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are some integration 'Behave' tests in Python",
+        "ts": "1468625241.000328"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are some Client\/Node SDK scenarios...",
+        "ts": "1468625259.000329"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Most of them cover this:",
+        "ts": "1468625268.000330"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Register -&gt; Enroll -&gt; Transact (and we do have different transaction types)",
+        "ts": "1468625289.000331"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "OK, let's start with the peer node example. I run a node with the info that allows it to enroll as a new validator on the network: success. Now I shut it down via Ctrl-C...",
+        "ts": "1468625310.000332"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "What next?",
+        "ts": "1468625312.000333"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "how do I re-start it without the membersvc trying to re-enroll it",
+        "ts": "1468625343.000334"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Which example\/code are you trying to run?",
+        "ts": "1468625358.000335"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "no code yet, only that simple manual test.",
+        "ts": "1468625371.000336"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "this is the command",
+        "ts": "1468625382.000337"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Cool, I want to see what you are executing.",
+        "ts": "1468625393.000338"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "docker run --rm -it -e CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375> -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_SECURITY_ENABLED=true -e CORE_SECURITY_PRIVACY=true -e CORE_PEER_PKI_ECA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TCA_PADDR=172.17.0.1:50051 -e CORE_PEER_PKI_TLSCA_PADDR=172.17.0.1:50051 -e CORE_SECURITY_ENROLLID=vp0 -e CORE_SECURITY_ENROLLSECRET=vp0_secret  hyperledger\/fabric-peer peer node start",
+        "ts": "1468625402.000339"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "(same thing as in the docs)",
+        "ts": "1468625407.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "Hi <@U1ENXTQRL>, you cannot register twice, that is probably why you are seeing that message",
+        "ts": "1468625430.000341"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "yep",
+        "ts": "1468625434.000342"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, so you are trying to use vp0 twice?",
+        "ts": "1468625435.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "so once you enroll you just need to login",
+        "ts": "1468625444.000344"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I understand that. But I want to know what's the correct command to \"just login\"",
+        "ts": "1468625453.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "I see, let me share something with you",
+        "ts": "1468625481.000346"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "OK I tried re-running with the first command showed at the docs...",
+        "ts": "1468625549.000347"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "docker run --rm -it -e CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375> -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true hyperledger\/fabric-peer peer node start",
+        "ts": "1468625552.000348"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "It works.",
+        "ts": "1468625554.000349"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "What I was wondering was... Does the peer automatically find all the PKI authorities' addresses?",
+        "ts": "1468625591.000350"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "So, is this peer connected to the membersvc?",
+        "ts": "1468625600.000351"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "First, thank you Diego. Carlos: It's a decentralized environment",
+        "ts": "1468625633.000352"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Informally: Your CA is not your FB server",
+        "ts": "1468625647.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "so for login in you are doing this, right? peer network login &lt;username&gt;",
+        "ts": "1468625655.000354"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You use the CA\/PKI for generating the Certs",
+        "ts": "1468625658.000355"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Once enrolled....",
+        "ts": "1468625667.000356"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You can continue with the EnrollID forward",
+        "ts": "1468625679.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "the answer is yes <@U1ENXTQRL>, if you take a look at the core.yaml file you will see the address of the membership services configured there",
+        "ts": "1468625695.000358"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "But you don't need to Re ('create account')",
+        "ts": "1468625701.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "so the peer knows how to find the membership services",
+        "ts": "1468625709.000360"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Oh, I see...",
+        "ts": "1468625719.000361"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(... and\/but it does not stay 'connected')",
+        "ts": "1468625745.000362"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Just to clarify Carlos.",
+        "ts": "1468625755.000363"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It's just when you need to interact with it.",
+        "ts": "1468625766.000364"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I see...",
+        "ts": "1468625779.000365"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Hmmm that's good.",
+        "ts": "1468625785.000366"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I picked on the word, just to clarify...",
+        "ts": "1468625787.000367"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yup, the mode is asynchronous... the client stores these certs and can continue even with\/if the CA is \"offline\"",
+        "ts": "1468625825.000368"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That was your first ever question to me, if I recall.",
+        "ts": "1468625837.000369"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "That's right.",
+        "ts": "1468625852.000370"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Alright, got it.",
+        "ts": "1468625887.000371"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Now, there's another test that I did...",
+        "ts": "1468625908.000372"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I ran two nodes (with the long command, as they needed to enroll)",
+        "ts": "1468625925.000373"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Just following the docs...",
+        "ts": "1468625929.000374"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "So, the second node, somehow connects to the network through the first node (I don't know if I got that right)",
+        "ts": "1468625948.000375"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Then I shutdown the second node, and the first one kept on trying to re-connect to that \"lost\" node ad infinitum.",
+        "ts": "1468625988.000376"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Is that a desirable behavior?",
+        "edited": {
+            "user": "U1ENXTQRL",
+            "ts": "1468626003.000000"
+        },
+        "ts": "1468625994.000377"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "As I understand it, second peer connects through the first because of this option `CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:30303`",
+        "ts": "1468626075.000379"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "(which is the IP address of the first node)",
+        "ts": "1468626081.000380"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I could reproduce the error. Got a second node running with such option, shut it down, and the first node stays looping this error:\n\n`Error creating connection to peer address 172.17.0.3:30303: grpc: timed out trying to connect`",
+        "ts": "1468626340.000381"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "forever.",
+        "ts": "1468626350.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "carlos, can you send me the link of the documentation you are following?",
+        "ts": "1468627577.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "<@U1ENXTQRL>",
+        "ts": "1468627585.000384"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/dev-setup\/devnet-setup\/>",
+        "ts": "1468627604.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0XQX3U9G",
+        "text": "thanks!",
+        "ts": "1468627632.000386",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1ENXTQRL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Reached out to Carlos who left to grab some dinner, and we'll continue next week.",
+        "ts": "1468630309.000387"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I still think that it's easier to start looking at a working test, but I will also try that stuff on the Wiki locally, step by step.",
+        "ts": "1468630368.000388"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I can't tell if it's related to Vagrant port forwarding configuration, or so. I suspect, but can't tell without you if that's related to `vagrant`s port forwarding... but we have many working examples of two (such) peer nodes in the tests...",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1468746112.000000"
+        },
+        "ts": "1468630426.000389"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Will document whatever we find. Have a good weekend Carlos! :wink:",
+        "ts": "1468630456.000390"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Thanks <@U11MANG9G> ! You too have a good weekend.",
+        "ts": "1468633589.000391"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Maybe this is related, maybe not... Doing some tests with <@U0XQX3U9G> I found out that I can't reach the node from outside vagrant.\n\nI wanted to test the API by doing something like `curl localhost:5000\/chain`. The response was: `curl: (56) Recv failure: Connection was reset`. Maybe this is also a port forwarding issue.",
+        "ts": "1468633770.000392"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "Now, on another subject... I was trying to enroll a new user to my new network..",
+        "ts": "1468634055.000393"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I tried via `peer network login` and also via API",
+        "ts": "1468634084.000394"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "on both cases, I get this:",
+        "ts": "1468634122.000395"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "`Error: Error on client login: rpc error: code = 2 desc = \"grpc: the client connection is closing\"`",
+        "ts": "1468634138.000396"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I tried with a new user I just added to the membersrvc.yaml file (restarted the membersrvc), but I also tried with an existing `test_user0` on the file.",
+        "ts": "1468634190.000397"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "error is the same",
+        "ts": "1468634206.000398"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "So, I still can't enroll new users.",
+        "ts": "1468634271.000399"
+    },
+    {
+        "type": "message",
+        "user": "U1ENXTQRL",
+        "text": "I'd appreciate any help.",
+        "ts": "1468634286.000400"
+    }
+]

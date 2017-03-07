@@ -1,0 +1,419 @@
+[
+    {
+        "user": "U1SLE9PJN",
+        "text": "<@U1SLE9PJN|mohan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473771658.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Following the instructions listed in `devnet-setup.md` to the letter to test out something and when querying with privacy\/security on I get this:",
+        "ts": "1473798709.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Input: `CORE_PEER_ADDRESS=172.17.0.2:30303 CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true peer chaincode query -u jim -l golang -n BLOB_GOES_HERE -c '{\"Function\": \"query\", \"Args\": [\"a\"]}'`",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473798748.000000"
+        },
+        "ts": "1473798731.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Output: `Error: Error querying chaincode: rpc error: code = 2 desc = \"Error:Failed to launch chaincode spec(Error starting container: API error (400): {\\\"message\\\":\\\"starting container with HostConfig was deprecated since v1.10 and removed in v1.12\\\"}\\n)\"`",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473798753.000000"
+        },
+        "ts": "1473798740.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Forgot to say, Fabric-0.5.)",
+        "ts": "1473798874.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - running in latest Vagrant image?",
+        "ts": "1473799033.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Working on this with <@U0Z81GL6S>, she tells me that it's an issue with my Docker version. We got this. (I think.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473799089.000000"
+        },
+        "ts": "1473799083.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that's the issue",
+        "ts": "1473799093.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if  `docker version` shows 1.12, you are in trouble with v0.5",
+        "ts": "1473799116.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "yes",
+        "ts": "1473799226.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "that is why i think using `apt-get update` inside our Vagrant install scripts is a horrible idea",
+        "edited": {
+            "user": "U0Z81GL6S",
+            "ts": "1473799423.000000"
+        },
+        "ts": "1473799249.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "we need to pick the dependencies and stick with them",
+        "ts": "1473799254.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "the Vagrant scripts essentially update EVERYTHING every time you bring up the dev environment which can break us at any point without us even doing anything at all!",
+        "ts": "1473799279.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "i am not sure why we are still doing that\u2026 but i think we need to pick the versions we use and stick with them",
+        "ts": "1473799302.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Z81GL6S> note that its not quite that egregious",
+        "ts": "1473799335.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "to get around this issue on Fabric05, the only way that i know of how to do this is to *manually* reinstall Docker inside vagrant to 1.11.1",
+        "ts": "1473799345.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, it does an apt-get update, but its also against an LTS release which has limits in terms of ABI borkage that is allowed",
+        "ts": "1473799367.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what needs more careful review is any sources of packages that are not part of the official Ubuntu repos, as they may not be as strict",
+        "ts": "1473799405.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "ok\u2026 but then we still get issues like what Kostas just cited\u2026 any way to avoid things like that by setting some of the dependencies?",
+        "ts": "1473799414.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that is one of the external deps I mentioned",
+        "ts": "1473799431.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it currently installs the latest from docker",
+        "ts": "1473799443.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, that needs to be pinned down so its repeatable",
+        "ts": "1473799451.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "yes",
+        "ts": "1473799479.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "not sure how we would identify all of these external deps. but point is, something like this can happen again and the workaround is pretty annoying",
+        "ts": "1473799523.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes\u2026just saying, its not the apt-get update\/upgrade per se",
+        "ts": "1473799540.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rather, its the unofficial repos",
+        "ts": "1473799545.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "i see",
+        "ts": "1473799580.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me think about it, perhaps I can roll something into the baseimage update I am working on",
+        "ts": "1473799581.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "that would be fantastic",
+        "ts": "1473799613.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "as the testers are pretty concerned about this too",
+        "ts": "1473799621.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes",
+        "ts": "1473799627.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "given that the env can change while doing test",
+        "ts": "1473799629.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "agreed, it needs to be repeatable",
+        "ts": "1473799648.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0XQ35CDD> somebody posted this workaround on one of these slack channels a week or so ago, I think it may work for you:   Comment out this line `err = client.StartContainer(containerID, hostConfig) ` and  add `err = client.StartContainer(containerID, nil)`  in core\/container\/dockercontroller\/dockercontroller.go",
+        "ts": "1473799653.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "alternatively reinstall Docker to version 1.11.1 from here: <http:\/\/apt.dockerproject.org\/repo\/pool\/main\/d\/docker-engine\/>",
+        "ts": "1473799689.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "here's the thing - we do want to support Docker 1.12  so we need to be able to test against it.  Clearly there was a breaking deprecation between 1.11 and 1.12.  We are also going to see this with NodeJS, JVMs, etc.",
+        "ts": "1473799771.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and if we are not already, we should be using the official Docker repository as well which will allow you to install specific versions of Docker.  You can also just install from tarballs as well",
+        "ts": "1473799889.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "also - using binary installations is quite simple as well -  <https:\/\/docs.docker.com\/engine\/installation\/binaries\/>",
+        "attachments": [
+            {
+                "service_name": "Docker",
+                "title": "Installation from binaries",
+                "title_link": "https:\/\/docs.docker.com\/engine\/installation\/binaries\/",
+                "text": "Instructions for installing Docker as a binary. Mostly meant for hackers who want to try out Docker on a variety of environments.",
+                "fallback": "Docker: Installation from binaries",
+                "image_url": "https:\/\/www.docker.com\/sites\/default\/files\/social\/docker-twitter-share.png",
+                "ts": 1464596303,
+                "from_url": "https:\/\/docs.docker.com\/engine\/installation\/binaries\/",
+                "image_width": 625,
+                "image_height": 250,
+                "image_bytes": 49214,
+                "service_icon": "https:\/\/docs.docker.com\/..\/..\/..\/favicons\/apple-touch-icon-57x57.png",
+                "id": 1
+            }
+        ],
+        "ts": "1473799946.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0YJUECE8>: Thanks for the tip, trying it out now. (Anya gave me a great workaround by downgrading to Docker 1.11 as well.)",
+        "ts": "1473801757.000317",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z81GL6S"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "FWIW, even though I fixed the Docker issue described above, I'm still having trouble deploying chaincode successfully with the fabric-0.5 code. (I'm using the weekend's patch on top of it.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473805296.000000"
+        },
+        "ts": "1473804942.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "When querying, I get:\n\n`Error: Error querying chaincode: rpc error: code = 2 desc = \"Error:Failed to launch chaincode spec(Could not get deployment transaction for aa5389f7dfb9efae379900a41db1503fea2199fe400272b61ac5fe7bd0c6b97cf10ce3aa8dd00cd7626ce02f18accc7e5f2059dae6eb0786838042958352b89fb - LedgerError - ResourceNotFound: ledger: resource not found)\"`",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473805071.000000"
+        },
+        "ts": "1473804956.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Following Anya's advice, I looked into chaincode deployment and indeed it fails:",
+        "ts": "1473804981.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; 22:14:13.502 [dockercontroller] deployImage -&gt; ERRO 03c Error building images: cannot connect to Docker endpoint\n&gt; 22:14:13.541 [dockercontroller] Start -&gt; ERRO 03d start-could not recreate container cannot connect to Docker endpoint\n&gt; 22:14:13.572 [ledger] sendProducerBlockEvent -&gt; ERRO 03e Error unmarshalling deployment transaction for block event: proto: protos.ChaincodeDeploymentSpec: wiretype end group for non-group",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473805024.000000"
+        },
+        "ts": "1473804989.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U0XQ35CDD> did you try running just a membership service and peer processes like i recommended and deploying?? i.e. NOT with Docker containers at first? any luck on that? we have extensively tested the Fabric05 branch just last week\u2026",
+        "edited": {
+            "user": "U0Z81GL6S",
+            "ts": "1473806265.000000"
+        },
+        "ts": "1473806207.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - your Docker daemon is likely not running",
+        "ts": "1473806652.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`docker info`",
+        "ts": "1473806660.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "either that or it is not listening on the tcp port",
+        "ts": "1473806674.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "actually, my guess it is not running",
+        "ts": "1473806729.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Hmm, `docker info` output looks good, and I'm setting the `CORE_VM_ENDPOINT` ENV var to the address displayed by `ifconfig docker0`.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1473806987.000000"
+        },
+        "ts": "1473806974.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ps -ef |grep docker",
+        "ts": "1473807005.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you also need the port?",
+        "ts": "1473807017.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "might not be bound to TCP port",
+        "ts": "1473807022.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`ps -ef|grep docker` - you should see a  -H option",
+        "ts": "1473807049.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "else I say just use the unix socket for the endpoint - I think its the default in the yaml anyway?",
+        "ts": "1473807123.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock`",
+        "ts": "1473807153.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The `-H` flag is nice. Yeah, the Docker daemon is running normally.",
+        "ts": "1473807329.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Will go the Unix socket route.",
+        "ts": "1473807343.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That's a no-go as well, will take a break and revisit this later on.",
+        "ts": "1473807908.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'll get to the bottom of this, was just wondering whether I was dealing with a known bug.",
+        "ts": "1473807909.000344"
+    }
+]

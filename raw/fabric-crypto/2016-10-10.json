@@ -1,0 +1,348 @@
+[
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi, <@U1CTBUNEN>, thanks!",
+        "ts": "1476084057.000201"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So far the attributes\/roles specified in the fabric TCerts of a user who is in possession of an attribute\/role, are managed\/certified by the membership service.",
+        "ts": "1476084121.000202"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But it is true that the notion of \"registrar\" exists, where \"registrar\" is an entity that can register other users into the membership service.",
+        "ts": "1476084183.000203"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U1GN670VD> : So for the membership services API, this is to be accommodated via this jira item <https:\/\/jira.hyperledger.org\/browse\/FAB-389>",
+        "ts": "1476084419.000204"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "With the endorsing peers validation APIs and process are related the following jira items: <https:\/\/jira.hyperledger.org\/browse\/FAB-40>,  <https:\/\/jira.hyperledger.org\/browse\/FAB-397>. For validation of their endorsements (signature validation if endorsement is only a signature) the membership services APIs (in FAB-389) should cover this. <@U0XPR4NP4> , <@U0ULK2JPP> to confirm :slightly_smiling_face:",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1476084751.000000"
+        },
+        "ts": "1476084600.000205"
+    },
+    {
+        "type": "message",
+        "user": "U1GN670VD",
+        "text": "Thanks <@U1BC5A0F9>",
+        "ts": "1476115360.000207"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith Smith posted high level google document -CFSSL. The only thing we will do uniquely is TCERT generation and we would use CFSSL for ECERT generation.  Elli said they were going to look to see if the API on the same or wrapper they can use.  They need some modularity of crypto and all the fabric can go through that so if some company or 3rd party- they can substitute their implementation - they can substitute the lever itself-- that way they can do it easily and not managing fabric code deeper.  Elli wants to check to see if CFSSL can do that--&gt; this is for version 1.0",
+        "ts": "1476116083.000209"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "PKCS11 is something that is supported from HSM.",
+        "ts": "1476116171.000210"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The question is where does this API sit in terms of CFSSL for HSM support?  WE are not concerned that HSM is not possible with CFSSL- concerned if the interface that CFSSL crypto library is compatible with the Hyperledger crypto interface, and we need to make sure there are no conflicts.",
+        "ts": "1476116223.000211"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Keith and Elli said they may take a look tomorrow and post on slack to see what's in the CFSSL code",
+        "ts": "1476116323.000212"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Key lifecycle is being worked- generate key, derive key and sign\/verify capabilities methods, and one of the goals is to plug in their own. Angelo has been working on this for bccsp.  Angelo  wants to try to post slides to get feedback as this is recent items he's been working on.",
+        "ts": "1476116574.000213"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "BCCSP is the blockchain cryptographic service provider that offers the implementation of cryptographic standards and algorithims. This covers key lifecycle, sign\/verify operation, and encrypt\/decrypt operation.  Genkey, derivekey, getkey, importkey, sign, verify, encrypt, decrypt are the different type of BCCSP interfaces he's working.  He tried to submit this in the implementation in his PR today.",
+        "ts": "1476116717.000214"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "what is the difference between getkey\/importkey relative to SKI?-- SKI is subject key identifier- when you want to address key on HSM, you need to have SKI -unique key in HSM.  For example, Your enrollment key of endorser will come with an SKI- this way it does not leak any information of the key.",
+        "ts": "1476116843.000215"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There is typekey interface- key represents a key. it can be a symmetric or assymetric. In case of an asymmetric key, the key can be public or private. in case of private assymetric, the publickey() method allows to retrieve the corresponding public-key.  A key can be referenced via the subject key identifier (getSKI)",
+        "ts": "1476116894.000216"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There are 5- fabric crypto provide submissions- starting with 1605 (which is under code review)",
+        "ts": "1476117115.000217"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Angelo plans to post a set of carts talking about the BCCSP",
+        "ts": "1476117534.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "```\nThe question is where does this API sit in terms of CFSSL for HSM support?  WE are not concerned that HSM is not possible with CFSSL- concerned if the interface that CFSSL crypto library is compatible with the Hyperledger crypto interface, and we need to make sure there are no conflicts.\n```\n\nthis statement confuses me.  CFSSL is simply a mechanism to request signed certificates.  On the client side, it can generate the equivalent of a CSR and on its \"server\" side (also via command line) it can issue signed X509 certificates.  It includes an interface for plugging in PCKS11 libraries.   You can actually check out the code from letsencrypt where they actually provide a concrete implementation of a PKCS11 provider",
+        "ts": "1476117583.000219"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "One area that help could be used for community how to plug in CSP for China, etc,..",
+        "ts": "1476117778.000220"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K>: BCCSP (Blockchain crypto service provider) aimed to offer an low-level interface to do key-generation\/sign\/verify signature and encrypt\/decrypt using certain algorithms. Thus the question came up (by <@U0S5KF44D>) if the interface of crypto library used within CFSSL is compatible with the one of BCCSP. That is if we could use BCCSP as a single crypto library \/ dependency in the system.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1476122365.000000"
+        },
+        "ts": "1476122304.000221"
+    },
+    {
+        "user": "U0RD1ALMV",
+        "text": "<@U0RD1ALMV|hart.montgomery> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476124486.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Thanks <@U1BC5A0F9>.  most of cfssl is a wrapper around go crypto anyway.  But I don't see why it would be an issue",
+        "ts": "1476125723.000224"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Aha, ok. So, we could implement our wrapper around our crypto library?",
+        "ts": "1476125762.000225"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Just a question of whether we could make cfssl \"refer\" to our crypto lib",
+        "ts": "1476125817.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cfssl is really just a library for certificate authority activities.  So not sure we would even need to go that far?   we should just leverage it to perform PKI CA functions?",
+        "ts": "1476127662.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "so are you saying that we should or shouldn\u2019t use cfssl apis to generate an ecert?",
+        "ts": "1476127840.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should",
+        "ts": "1476128405.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "so we would need to somehow plugin the bccsp apis underneath the cfssl api to generate the ecert it seems",
+        "ts": "1476128507.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "am I missing something?",
+        "ts": "1476128530.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "why underneath?",
+        "ts": "1476128934.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what's so special about an eCert?",
+        "ts": "1476128968.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's an ECC private key and then request a signed X509 public key",
+        "ts": "1476129050.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on the other hand, you don't have to use cfssl to generate the private key (and thus the public key) at all",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1476129335.000000"
+        },
+        "ts": "1476129307.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I was looking at using the following cfssl api to gen the root cert for example.  If we use this, then the private key is created underneath this api",
+        "ts": "1476129524.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "cfssl gencert -initca CSRJSON",
+        "ts": "1476129529.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I\u2019m trying to find which APIs I could call which would allow me to gen my own private key and pass it in",
+        "ts": "1476129618.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - that's on the CA side",
+        "ts": "1476129742.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "which I would see ZERO use for bccsp",
+        "ts": "1476129758.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I though you were talking about a client who want to get an eCert?",
+        "ts": "1476129776.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "no, they were talking about plugging the bccsp apis into membersrvc in v0.6",
+        "ts": "1476129819.000243"
+    },
+    {
+        "user": "U2L9F7VL1",
+        "text": "<@U2L9F7VL1|adrianhopebailie> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476129821.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "so i started wondering how this would work in v1 when using cfssl in a cop server",
+        "ts": "1476129852.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in a cop server I don't think you use bccsp at all",
+        "ts": "1476129879.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well - I'll take that back - it depends on the APIs you present form the server - I see you are still looking at using grpc-based external API for cop server in v1?",
+        "ts": "1476129982.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "i take by your asking that you think we should stick with REST?",
+        "ts": "1476130042.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "we aren\u2019t far down that path",
+        "ts": "1476130052.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think REST \/ HTTP would be easier for clients to integrate with - for example a mobile device which wants to enroll.",
+        "ts": "1476130098.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "seems like cfssl had a decent set of REST\/HTTP APIs and actually just recently added some type of auth endpoint as well?",
+        "ts": "1476130143.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "i haven\u2019t seen the auth endpoint, but i\u2019ll look again \u2026 anyway, I wasn\u2019t sure if mixing REST for cop and GRPC only for peer was preferable, but certainly makes it easier \u2026 though maybe more work for SDKs",
+        "ts": "1476130297.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "most other CAs will have HTTP-based endpoints as well - e.g. any SCEP-based CA.  So reality is there will always be a mix of HTTP and GRPC when pulling in different CAs.  I am not opposed to GRPC for COP either.  But if we can leverage as much of CFSSL as possible should save some time.  Of course you could probably look at possibly replacing the CFSSL API server with the GRPC APIs as well.  I briefly checked that our yesterday but not in enough depth to actually see how feasible it would be",
+        "ts": "1476130469.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "ok \u2026 we\u2019ll support REST 1st and only add GRPC if\/when needed",
+        "ts": "1476130600.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I just git pulled and don\u2019t see the auth endpoint but will look deeper.  That actually was the other reason I was going for GRPC, because it wasn\u2019t clear how intrusive it would be to add security to the existing endpoints",
+        "ts": "1476130694.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in the docs section of cfssl there was something about authentication",
+        "ts": "1476131031.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "yes, see it \u2026 thx",
+        "ts": "1476131501.000257"
+    },
+    {
+        "user": "U24M29R4G",
+        "text": "<@U24M29R4G|nikileshsa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476132840.000258"
+    },
+    {
+        "user": "U0NCW1DPX",
+        "text": "<@U0NCW1DPX|gengjh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476167278.000259"
+    }
+]

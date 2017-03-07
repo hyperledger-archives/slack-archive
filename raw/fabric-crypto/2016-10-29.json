@@ -1,0 +1,101 @@
+[
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0XPR4NP4> sorry I couldn't join the rest of the discussion yesterday. Let me see if I understand correctly. How far would this mod of fabric.proto go towards accommodating your requirements?\n```\nmessage SignedTransaction {\n\tbytes transactionBytes = 1;\n\tbytes signature = 2;\n}\n\nmessage Transaction2 {\n\tenum Type {\n\t    UNDEFINED = 0;\n\t    CONFIG = 1;\n\t    CHAINCODE = 2;\n\t}\n\t\/\/ controls how this transaction has been assembled. If it's CHAINCODE\n\t\/\/ it has been assembled via the proposal\/response\/endorsement flow\n\tType type = 1;\n\tint32 version = 2;\n\tgoogle.protobuf.Timestamp timestamp = 3;\n\n\t\/\/ payload is:\n\t\/\/  - an array of TransactionAction if type == CHAINCODE\n\t\/\/  - anything you want it to be if type == CONFIG\n\tbytes payload = 3;\n}\n```",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477728438.000000"
+        },
+        "ts": "1477726920.001297"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "you'll notice that there are now two type fields:\n1) in `Transaction2` in the code box up there \n2) in `Header` (`protos\/fabric_transaction_header.proto`)\n\nIf the type field of `Transaction2` is `CHAINCODE`, it means that the message is to be interpreted as one that has followed the proposal\/response\/endorsement flow, and hence will have a `TransactionAction` with endorsements etc. If that type is different, it signifies that a different flow was followed (which is presumably what you wanted for the config work). \n\nThe second type field in `Header` controls what specific \"thing\" has been endorsed via the proposal\/response\/endorsement flow.\n\nYour thoughts?",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477728333.000000"
+        },
+        "ts": "1477728249.001299"
+    },
+    {
+        "type": "message",
+        "user": "U2MCH9EEB",
+        "text": "refer to the SignedTranasaction  data structure ,looks it only supports single signature",
+        "ts": "1477731129.001304"
+    },
+    {
+        "type": "message",
+        "user": "U2MCH9EEB",
+        "text": "will consider to support multiple signs?",
+        "ts": "1477731162.001305"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "the \"normal\" proposal\/response\/endorsement flow does support multiple signature to the extent that multiple endorsements may be present in the tx payload. In that case though, the tx is still only signed by a single entity, which is the one that requested the action in the first place by issuing (and signing) the proposal message. What it means for a transaction to be signed by multiple entities is not yet clear (at least to me), nor is the use-case that needs it",
+        "ts": "1477737732.001306"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U2MCH9EEB> ^^",
+        "ts": "1477737741.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U26T99AQ4> Honestly, extending the transaction as you described makes things harder for me to wrap my head around, and makes the format more complicated which is I think, the wrong direction. I think it makes more sense to start from the simple envelope message described above. Although I think it would cause some duplication, you could embed the entire fabric transaction in its payload if you wanted. But from a base transaction point of view, a payload, a header, and a signature over the two seems standard, intuitive, and easy to extend. ",
+        "ts": "1477752838.001308"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> - forgetting about the actual format for a moment, can we discuss the the flow of \"messages\" in and out of the ordering service for a minute  (probably a rehash but I think I am missing something).\n\nHere's what I mean:\n\n1) In simplest terms, the ordering service implements two \"APIs\" -   broadcast and deliver - which are implemented as GRPC services\n\n2) broadcast \/ delivery are partitioned into \"channels\" - i.e a broadcast client (\"producer\") specifies a channel, the ordering service orders (and batches) broadcast messages by channel and then delivers them to deliver clients (\"consumers\") who have asked for messages on that channel\n\n3) the ordering service supports setting access control lists on \"channels\" for both \"broadcast\" and \"delivery\"\n\n4) the ordering service will \"enforce\" access control by extracting the certificate used to sign a broadcast message and\/or deliver request\n\nHopefully at a high level the above is (mostly) correct\n\nSo:\n\n1) A broadcast client (\"producer\") needs to \"sign\" the message it sends to the ordering service.  The ordering service can verify the signature and use the signing certificate to check that the sender was allowed to broadcast to the specified channel.  The \"producer\" would need to provide the channel, a payload, signature and its public certificate.   Ideally the ordering service does not care at all about what's in the payload.    \n\nLet's say the ordering service is set to use a batch size of 50 for a given channel.   So after it receives 50 verified\/authorized broadcast messages, it will create a batch of those and \"deliver\" to authorized \"consumers\".   \n\nQUESTION:   what is actually in the batch?  assuming the simple \"channel, payload, signature&lt;payload&gt;,signer-certificate\" content, is it batching the whole thing or is it actually simply creating batches of the \"payload\" ?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477763289.000000"
+        },
+        "ts": "1477763201.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(notice at this point I don't care what's actually in the &lt;payload&gt;)",
+        "ts": "1477763379.001311"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; what is actually in the batch? \n\nMy inclination is to include exactly the messages that came in into the batch, not just the payloads ",
+        "ts": "1477764295.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "got it",
+        "ts": "1477765158.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am good",
+        "ts": "1477765160.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "your partner in crime set me straight  :wink:",
+        "ts": "1477765348.001315",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

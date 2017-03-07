@@ -1,0 +1,143 @@
+[
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U31TA64TT> If you enrolled via the node SDK and then tried to enroll via the REST API with the same enrollment ID and secret, then the failure is because the secret is a one-time password.  Since you already used the secret via the node SDK, it can't be used again unless you remove membersrvc's state by stopping membersrvc, removing the \/var\/hyperledger\/production\/.membersrvc directory (this is the default directory, but can be overridden in membersrvc.yaml), and then restart membersrvc.",
+        "ts": "1479215169.000956",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U31TA64TT"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "That said, note 2 things: 1) The REST API is not secure and will be going away, but I assume you are just playing around with it for now and 2) in v1 of fabric, we will be providing a REST-based replacement for membership services based on CFSSL which is called COP.   There is a fabric-cop channel and you can see some info for COP at <https:\/\/docs.google.com\/document\/d\/1TRYHcaT8yMn8MZlDtreqzkDcXx0WI50AV2JpAcvAM5w>",
+        "ts": "1479215312.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U1RLZ5729> Hi, can you provide peer and membersrvc log files ... or better yet, some more specific instructions on how to reproduce?",
+        "ts": "1479215808.000959"
+    },
+    {
+        "user": "U2CBG8V9U",
+        "text": "<@U2CBG8V9U|humblealex> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479261591.000960"
+    },
+    {
+        "type": "message",
+        "user": "U31TA64TT",
+        "text": "<@U0S5KF44D> Thank you very much for your explanation. \nBut why when I enrolled via node SDK and then enrolled again via the REST. I got the message \"Identity or token does not match\" instead of \"User already logged in\". It seemed there was no enrollment.key file created in \/var\/hyperledger\/production\/crypto\/client\/JohnDoe directory on peer node. So, how could I check whether the user already logged in via node SDK? And, how long will the session persist to be able to submit chaincode when I logged in via node SDK?",
+        "ts": "1479262105.000961"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1F1CU61Y>: Some more info here, Some more here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md#211-membership-services>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md#211-membership-services",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md#211-membership-services",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1479281681.000962"
+    },
+    {
+        "user": "U1F1CU61Y",
+        "inviter": "U11MANG9G",
+        "text": "<@U1F1CU61Y|ankitkamra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479281687.000964"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(I\u2019m pointing you to what\u2019s there already)",
+        "ts": "1479281705.000965"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There is a lot of related changes being actively worked on for v1.0, but you can start with these.",
+        "ts": "1479281738.000966"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U11MANG9G> Thanks for the info\\",
+        "ts": "1479281933.000967"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "According to this link, we can distinguish a user by entity type.",
+        "ts": "1479281963.000968"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "so we have to check entity type in chaincode i think. if yes, then we can check that",
+        "ts": "1479281994.000969"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Not sure what exactly you are trying to do\u2026 but a \u201cquick\u201d solution, may be to take the latest `v0.6` image\/code\u2026 and configure the `membersrvc.yaml` file with users and `affiliations` (to organizations).",
+        "ts": "1479282265.000970"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Using that `v0.6` terminology, your roles can be the CLIENT\/PEER\/VALIDATOR\/AUDITOR",
+        "ts": "1479282295.000971"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "However, in the \u201centerprise\u201d your roles are closer to an affiliation + some group association, right? Such as \u201cJonathan: DBA of Database XYZ in London, blah, blah, blah\"",
+        "ts": "1479282411.000972"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You can play with it, and with some of the examples\/tests and see how it goes.",
+        "ts": "1479282433.000973"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "So, that means we have to manage enterprise roles with logic only. By fabric 0.6 terminology, roles can be CLIENT\/PEER\/VALIDATOR\/AUDITOR only",
+        "ts": "1479282595.000974"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, these are the \u201cHyperledger Fabric\u201d roles. That\u2019s why I\u2019m pointing the difference out so that it\u2019s less confusing.",
+        "ts": "1479282713.000975"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "What you refer to as Roles are more like an \u2018admin`, etc.",
+        "ts": "1479282741.000976"
+    }
+]

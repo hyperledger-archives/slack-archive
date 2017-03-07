@@ -1,0 +1,142 @@
+[
+    {
+        "type": "message",
+        "user": "U2NNLN56V",
+        "text": "Hi, from one ledger_v1 document, \"Remove Table API from Hyperledger Fabric in v1  (FAB-1257)\u201d.  Will levelDB not be supported in v1?",
+        "ts": "1483441240.000144"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "levelDB is supported by default <@U2NNLN56V>",
+        "ts": "1483446025.000145"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "goleveldb",
+        "ts": "1483446037.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2NNLN56V> - the table APIs will be replaced with some wrapper functions around the \"range query\" APIs.  Basically the table APIs were a limited set of wrappers around these functions anyway",
+        "ts": "1483446420.000147"
+    },
+    {
+        "user": "U18T2HJRM",
+        "text": "<@U18T2HJRM|greg_not_so> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483452952.000148"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "I am looking at the history manager and looks like we are trying to use couchdb to satisfy complex query requirements. I am a bit wondering if we considered using graphdb for history?",
+        "ts": "1483471809.000149"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "by nature, the history of assets are graphs, with a graphdb the path based queries would be a lot easier",
+        "ts": "1483471884.000150"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Hi Ken, for \u2018simple provenance\u2019 scenarios we\u2019re finding that we can re-use the databases that are already delivered as  state database fairly simply.  For more complex historical query scenarios I agree there is value in a graph database.  There is some research into graph databases ongoing.",
+        "ts": "1483472273.000151"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Is graphdb open source?",
+        "ts": "1483472294.000152"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "there are open source graph db such as titan",
+        "ts": "1483472394.000153"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Would be great if you could help identify open source solutions and a proposed design of how to exploit",
+        "ts": "1483472407.000154"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "I am actually looking at integrating titan for history db",
+        "ts": "1483472440.000155"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "that would be great, can you provide a couple slides or something stating how data could be structured and queried?",
+        "ts": "1483472482.000156"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "while I might not be able to do this for my PoC, I will also looking into defining an interface that would allow plugin of different graph dbs",
+        "ts": "1483472526.000157",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "cool, would love to see what you propose",
+        "ts": "1483472549.000158"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "should I create a work item and attach any docs about it to that work item? thought it would be easier to keep track",
+        "ts": "1483472595.000159",
+        "reactions": [
+            {
+                "name": "pray",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "yes, that would be great",
+        "ts": "1483472614.000160"
+    },
+    {
+        "user": "U39S0S55F",
+        "text": "<@U39S0S55F|wangjie> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483503007.000161"
+    },
+    {
+        "type": "message",
+        "user": "U39S0S55F",
+        "text": "hello everyone,I am reading the code about validateTx(),I do not understand the meaning of the  \"if updates.Exists(ns, kvRead.Key) {\n\t\t\t\treturn false, nil\n\t\t\t}\" ,somebody can help me,the code is following   \"",
+        "ts": "1483503129.000162"
+    },
+    {
+        "type": "message",
+        "user": "U39S0S55F",
+        "text": "func (v *Validator) validateTx(txRWSet *rwset.TxReadWriteSet, updates *statedb.UpdateBatch) (bool, error) {\n\tfor _, nsRWSet := range txRWSet.NsRWs {\n\t\tns := nsRWSet.NameSpace\n\t\tfor _, kvRead := range nsRWSet.Reads {\n\t\t\tif updates.Exists(ns, kvRead.Key) {\n\t\t\t\treturn false, nil\n\t\t\t}\n\t\t\tversionedValue, err := v.db.GetState(ns, kvRead.Key)\n\t\t\tif err != nil {\n\t\t\t\treturn false, nil\n\t\t\t}\n\t\t\tvar committedVersion *version.Height\n\t\t\tif versionedValue != nil {\n\t\t\t\tcommittedVersion = versionedValue.Version\n\t\t\t}\n\t\t\tif !version.AreSame(committedVersion, kvRead.Version) {\n\t\t\t\tlogger.Debugf(\"Version mismatch for key [%s:%s]. Committed version = [%s], Version in readSet [%s]\",\n\t\t\t\t\tns, kvRead.Key, committedVersion, kvRead.Version)\n\t\t\t\treturn false, nil\n\t\t\t}\n\t\t}\n\t}\n\treturn true, nil\n}",
+        "ts": "1483503150.000163"
+    }
+]

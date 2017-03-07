@@ -1,0 +1,547 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Are you around?",
+        "ts": "1467293815.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i am!",
+        "ts": "1467293833.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You haven't spoken up on <https:\/\/github.com\/hyperledger\/fabric\/issues\/2053> yet.  I'm battling back in forth in my head over which answer I think is best, was wondering your thoughts on TCP vs UDP",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Reliance on gRPC ordering in consensus \u00b7 Issue #2053 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/2053",
+                "text": "Description The gRPC protocol guarantees us that, for a single stream, messages will be delivered in order. The PBFT protocol assumes that message transmission is 'reliable', but not that message...",
+                "fallback": "GitHub: Reliance on gRPC ordering in consensus \u00b7 Issue #2053 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/2053",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467293904.001386"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i don't think we should go to udp",
+        "ts": "1467294086.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there doesn't seem to be any reason",
+        "ts": "1467294103.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we have an obvious optimization by relying on (typically) sequential delivery, we should go for it",
+        "ts": "1467294174.001390"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay.  I think that's certainly the easiest path",
+        "ts": "1467294292.001391"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It seems to me, like ultimately, we could have a faster system if we built it on UDP, and clearly PBFT was designed for a UDP network.  We've already implemented a lot of the things like windowing which would be needed for UDP to work.",
+        "ts": "1467294345.001392"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, there's certainly something to be said for making our lives easier, and we're a long way from TCP being our bottleneck at this point.",
+        "ts": "1467294394.001393"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> Care to voice your opinion in 2053?",
+        "ts": "1467294799.001394"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't even know what we are discussing",
+        "ts": "1467295474.001395"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Basically \"Should we try to keep the code tolerant of non sequential delivery?\"",
+        "ts": "1467295564.001396"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, do we have anything actionable?",
+        "ts": "1467295701.001397"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "are we trying to talk about the \"new\" mysterious code for the mythical 2.0 architecture?",
+        "ts": "1467295739.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K>: I was trying to dispose of some technical debt we've built up, namely some byzantine scenarios which we're vulnerable to.  The implementation is much simpler if we can rely on FIFO links, but, the PBFT paper does not..",
+        "ts": "1467295912.001399"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for example?",
+        "ts": "1467295968.001400"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "\"If the next pre-prepare that you receive from the primary doesn't correspond to seqNo 11 (i.e. it creates a hole), you should view-change.\"",
+        "ts": "1467295996.001401"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The question is, should we try to keep things in a state that, if we so chose, we could switch a non FIFO link network protocol (like UDP), or embrace the fact that we're running over TCP\/gRPC and take the optimizations.",
+        "ts": "1467295998.001402"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it is much harder to reason about changes",
+        "ts": "1467296026.001403"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is there anything in the code today that relies on FIFO ordering? Nothing jumped to mind for me",
+        "ts": "1467296055.001404"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in either case, you need to check for missing sequence numbers so you are always tracking the last seq no you received \/ processed.  As far as I know, gRPC does not give you access to seq no and the gRPC link could break",
+        "ts": "1467296073.001405"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is a PBFT seqNo?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467296105.000000"
+        },
+        "ts": "1467296087.001406"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - my point is you still need to track the last one received no matter what even on a FIFO link",
+        "ts": "1467296114.001408"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "maybe you don't get them out of order, but you could miss them",
+        "ts": "1467296134.001409"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Certainly.  But, if you are missing seqNo 10, and you see seqNo 11, then you know you missed something, with ordering.",
+        "ts": "1467296144.001410"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but the seqNo is in the PBFT protocol message anyway, correct?  I am most likely missing something here",
+        "ts": "1467296201.001411"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: but you also may have been disconnected and reconnected?",
+        "ts": "1467296225.001412"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, the seqNo is part of the PBFT protocol message, and PBFT assumes that these sequence numbers will arrive in any order, and so long as they are within a sliding window, we are able to process them.",
+        "ts": "1467296249.001413"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct, but he'll know he missed something and, maybe kick in state transfer, instead of thinking that this is normal due to messages arriving out of order.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1467296370.000000"
+        },
+        "ts": "1467296265.001414"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you can't rely on gRPC for sequence numbers - you can only rely on the fact that if a stream stays connected messages sent over the stream will be delivered in order (no concurrent access)",
+        "ts": "1467296277.001415"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ultimately, a FIFO link allows you to detect that things are abnormal faster.",
+        "ts": "1467296289.001416"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but if the link breaks, you have no idea what you missed",
+        "ts": "1467296289.001417"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - I think I agree with that",
+        "ts": "1467296307.001418"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and you may not need to try to sort - just track the last protocol seqNO received",
+        "ts": "1467296326.001419"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But you can detect that the link broke, and take appropriate action.  And when the link is re-established, we know the first message we get, is the lowest seqNo we will receive from that link",
+        "ts": "1467296328.001420"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1467296374.001422"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - gotcha - and then you can \"request\" the missing seqNos since you don't you won't get them over the re-established link",
+        "ts": "1467296392.001423"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but would that simplify code?",
+        "ts": "1467296393.001424"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "do we wait around today to see if out of order messages come in before requesting them?  Or do we not request them directly at all?",
+        "ts": "1467296496.001425"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We wait around for them.  There's no checking for ordering in the code today.  Basically, if there are enough healthy nodes, the network moves on, and eventually we notice, that enough people are talking about sequence numbers outside of our moving window, that we must be behind, and then do some recovery stuff.  If there aren't enough healthy nodes to keep the network going, we do a view change, which basically picks a new starting sequence number and state that everyone can agree to work forward from.",
+        "ts": "1467296947.001426"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well we can improve that  :wink:",
+        "ts": "1467297026.001427"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The piece of code I was working on, was to solve a censorship problem.  From the PBFT paper, clients are supposed to only have one request in flight, in this way, each client gets a request timer, and if the request is censored, then a view change happens.  For us, each VP is a client, so, having only 1 request in flight is a non-starter, so, we needed to basically pretend each VP is multiple clients.  In the unordered case, there's some complexity, where we can't necessarily expect requests we send to the primary for ordering to be ordered in the same order we sent them.  It's doable, but trickier than assuming that if the primary sends out of order requests, or skips one, that we immediately know there's a problem, rather than having to wait for the timer to pop.",
+        "ts": "1467297144.001428"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "gotcha - this makes sense to me -   `but trickier than assuming that if the primary sends out of order requests, or skips one, that we immediately know there's a problem, rather than having to wait for the timer to pop.`",
+        "ts": "1467297237.001429"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that what I was getting at.  at that should be true for gRPC assuming you are correct in the order you send  :wink:",
+        "ts": "1467297267.001430"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "meaning your inputs from the primary to the stream must be in order to start with  :wink:",
+        "ts": "1467297309.001431"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is how pub\/sub protocols general work as well FWIW",
+        "ts": "1467297356.001432"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.  Simplifying our lives not only makes the code easier, but probably reduces bugs, may improve execution times, etc.  So, if we've got FIFO links, I think we should definitely use them.  My question was, talking with some of the distributed guys, I've heard opinions like \"to ever seriously scale, you must be able to do UDP\".  I think we could switch to UDP today, without too much headache, but I think we need to commit one way or the other.",
+        "ts": "1467297421.001433"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Not sure you have to go to UDP.  UDP is probably better if you are going to \"broadcast\" from a single peer to tons of peers - but you can also go with more of a mesh network as well where not all peers are connected to each other directly",
+        "ts": "1467297561.001434"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "If we move to more of a \"broadcast\" model, you could follow the model where if you see a message for the first time you re-broadcast it",
+        "ts": "1467297605.001435"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "PBFT is certainly broadcast heavy, there is no normal path unicasting that I can think of.",
+        "ts": "1467297614.001436"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think we need to look at how we really do \"atomic broadcast\" if we are going that route for 2.0 and where something like PBFT fits in (if anywhere).  Clearly if you have a centralize consensus service you could use PBFT among the consenter processes, but I would assume we would move to a broadcast model for deliver to committers \/ followers",
+        "ts": "1467297730.001437"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "That's what I'd like to see laid out for this 2.0 piece.  We should be completely agnostic of blockchain, MVCC, etc.  We need to prove out a simple \"centralized\" broadcast service for \"log\" replication without caring about what's in the log message nor what the state machine which process the \"log\" on the committer does",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1467297848.000000"
+        },
+        "ts": "1467297829.001438"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "+1 to that.  It terrifies me when I see people making comments about how \"consensus should filter out bad transactions\"",
+        "ts": "1467297878.001440"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Consensus should do log replication, so that everyone gets the same order of, whatever it is, we don't care.",
+        "ts": "1467297908.001441"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, you'd like that there is admission control",
+        "ts": "1467297925.001442"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I would start simple - build a simple broadcast service and I personally would probably use something like Raft between the consenters and broadcast between the consenter and the committers",
+        "ts": "1467297929.001443"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "then build on top of that",
+        "ts": "1467297944.001444"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well go ahead and implement raft",
+        "ts": "1467297946.001445"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because we thought pbft was simple, and it is real difficult",
+        "ts": "1467297958.001446"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - actually I would just take the etcd\/raft implementation.  I am not saying ti would be the final thing, just a simple way for a dummy like me to take code that exists to prover out a consenter service",
+        "ts": "1467298011.001447"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we could actually use the PBFT implementation today in place of Raft I just have no idea how to extract it from the fabric code  :wink:",
+        "ts": "1467298039.001448"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<https:\/\/godoc.org\/github.com\/coreos\/etcd\/raft>",
+        "attachments": [
+            {
+                "title": "Package raft",
+                "title_link": "https:\/\/godoc.org\/github.com\/coreos\/etcd\/raft",
+                "text": "Package raft sends and receives messages in the Protocol Buffer format defined in the raftpb package.",
+                "fallback": "Package raft",
+                "from_url": "https:\/\/godoc.org\/github.com\/coreos\/etcd\/raft",
+                "service_icon": "https:\/\/godoc.org\/favicon.ico",
+                "service_name": "godoc.org",
+                "id": 1
+            }
+        ],
+        "ts": "1467298115.001449"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "But in the end, all I am really saying is to start with the basic \"log\" replication stuff using a consenter service rather than trying to do everything at once.  Incremental build out rather than extract and retrofit",
+        "ts": "1467298165.001451"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, going way back to my original question, should we assume FIFO links going forward or not? The unfortunate answer it sounds to me like, is \"We don't know what this future thing looks like, so let's keep our options open\"",
+        "ts": "1467298245.001452"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the question is are you trying to fix the exiting implementation in hopes that we use it in the future or just trying to fix \/ simplify the existing implementation?",
+        "ts": "1467298340.001453"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The former (fix it, under the hope that it is used in the future)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467298386.000000"
+        },
+        "ts": "1467298361.001454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Frankly, if we don't think (there's at least a decent chance) we'll be using the existing implementation in the future, why bother doing any work on it at all?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1467298462.000000"
+        },
+        "ts": "1467298416.001456"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed.  if we can give you guys a chance to come up for air, we need to have some discussions about what 2.0 architecture really looks like",
+        "ts": "1467298464.001458"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, we are heads down on master, I don't think anyone is on the 0.5 branch right now.  So, if we can't say whether we see a future for the consensus code in master, then I don't see any reason we should not have time for this discussion.",
+        "ts": "1467298686.001459"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay - cool.   I'd love to be a part of it, but unfortunately I am more or less out the rest of today and tomorrow.  but I'd love to see some more details on the underpinnings of the architecture and discuss an incremental build plan for a modular architecture  :wink:",
+        "ts": "1467298802.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Can we still make the case for this `validate` method, or should I remove it while I'm doing the refactoring? <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/obc-batch.go#L199>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/obc-batch.go#L199",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/obcpbft\/obc-batch.go#L199",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467316540.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My vote is kill it.  I don't see how this is useful to us",
+        "ts": "1467317165.001463",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "+1",
+        "ts": "1467317220.001464"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0PB67X4K> if one wants to try a crash-fault tolerant protocol in fabric v2 in place of a consensus service then one should not use etcd\/raft or anything but Kafka",
+        "ts": "1467320729.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which needs to be hacked just to output the hashchain instead of a simple total order of requests",
+        "ts": "1467320756.001466"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am talking single-topic single-partition Kafka",
+        "ts": "1467320771.001467"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as Kafka already functions as we want consensus service to function (etcd\/raft function differently)",
+        "ts": "1467320821.001468"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "of course we need BFT Kafka - which does not exist, and we can start from making one around our v0.5 PBFT code",
+        "ts": "1467320913.001469"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "later on we replace this with a more scalable protocol than PBFT",
+        "ts": "1467320935.001470"
+    }
+]

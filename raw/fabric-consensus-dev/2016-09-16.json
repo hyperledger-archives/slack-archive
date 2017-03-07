@@ -1,0 +1,1254 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this got stuck in a private chat:",
+        "ts": "1474017054.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i think we need to persist: 1. last checkpoint certificate, 2. last request, 3. last fact we sent prepare, 4. last fact we sent commit, 5. most recent \"execute\", i.e. persisted block.\n\ni don't know whether we need 6. last checkpoint message we sent ourselves because we can always reproduce the checkpoint message\nso (1) allows to sync others to us\n(2) allows the network to restart after crash during a round\n(3) is Q set\n(4) is P set\n(5) is blockchain\/app state",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1474017099.000000"
+        },
+        "ts": "1474017080.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2+3 is actually last sent\/received pre-prepare",
+        "ts": "1474019870.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - is this for the \"ordering\" nodes?   (Might have missed the beginning of the chat)",
+        "ts": "1474020528.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474020536.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for the simplified pbft rewrite",
+        "ts": "1474020547.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/fabric\/tree\/master\/consensus\/simplebft>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/fabric",
+                "title_link": "https:\/\/github.com\/corecode\/fabric\/tree\/master\/consensus\/simplebft",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: corecode\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/fabric\/tree\/master\/consensus\/simplebft",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1474020563.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this",
+        "ts": "1474020564.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so would 5) really be the last thing that the ordering node \"broadcast\"?",
+        "ts": "1474020587.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh this numbering is arbitrary and just refers to state that the replica needs to persist across restarts",
+        "ts": "1474020620.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the sequence is",
+        "ts": "1474020638.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "request -&gt; primary",
+        "ts": "1474020645.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "primary: preprepare",
+        "ts": "1474020654.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "everybody else: prepare",
+        "ts": "1474020660.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "everybody: commit",
+        "ts": "1474020664.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "everybody: checkpoint",
+        "ts": "1474020674.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "repeat",
+        "ts": "1474020684.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so it is a 4 phase protocol with one signed message",
+        "ts": "1474020695.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - so 1), 2), 3), 4) in your list make sense.  I just was not sure what you meant by \"most recent execute\"",
+        "ts": "1474020722.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so after i receive a quorum of commits (or checkpoints, to be debated), i \"execute\", i.e. add the block to the local chain (app state)",
+        "ts": "1474020761.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay - cool.  makes sense.",
+        "ts": "1474020794.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "most recent execute is the same as \"highest block\"",
+        "ts": "1474020800.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and would we store this separate to storing whatever block history we decide?  So that if I simply backed up these pieces of information (for example if the actual hardware running the node died) I could restart the node on another machine with this info and rejoin?",
+        "ts": "1474021077.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474021244.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(By the way, I'm still investigating this. I'm not getting the proper block height upon restarting  with the transferred state, so I'm checking with Manish whether there is a proper way to shutdown the good peer so that its memory contents are captured to disk.)",
+        "ts": "1474021282.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "although backup is difficult, because different files are backed up at different times",
+        "ts": "1474021284.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi kostas - early morning?",
+        "ts": "1474021291.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "kostas: of the peer?",
+        "ts": "1474021310.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Hello - yes.",
+        "ts": "1474021314.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes, I'm basically trying out this manual state transfer scenario that Gari alludes to. ",
+        "ts": "1474021340.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But the lastExec that the resurrected peer reports is not right. ",
+        "ts": "1474021367.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is this different from killing the process and restarting?",
+        "ts": "1474021371.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That's what I do but it doesn't work. ",
+        "ts": "1474021384.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "kostas: is that with pbft or with kafka?",
+        "ts": "1474021396.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "With PBFT. We're talking about the 0.5 (now: 0.6) branch.",
+        "ts": "1474021438.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So in pbft-persist, we restore lastSeqNo and that info is not what I wanted it to be for VP3 (the peer that received the state of VP2).",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474021583.000000"
+        },
+        "ts": "1474021505.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But if you stop and restart VP2, the right lastSeqNo is reported. So that means that the peer is shutdown properly.",
+        "ts": "1474021559.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah",
+        "ts": "1474021824.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, it is entirely possible that there is a bug in that code path",
+        "ts": "1474021835.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you stop vp2?",
+        "ts": "1474021906.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is there a graceful stop option?",
+        "ts": "1474021916.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "There is and I'm trying this now.",
+        "ts": "1474021966.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "lastSeqNo should come from the consensusmetadata field of the block?",
+        "ts": "1474022137.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct.",
+        "ts": "1474022511.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "As for your earlier points w\/r\/t what needs to be persisted in your simplified BFT work, are you sure about #3? (Qset = _last_ fact we sent prepare)?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474022699.000000"
+        },
+        "ts": "1474022684.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That would imply that the Qset is a single-item list, whereas Figure 3 in the original Castro paper suggests you may well have &lt;10, bar, 3&gt; and &lt;10, baz, 4&gt;, in addition to your most recent &lt;10, foo, 5&gt; prepare. (&lt;n, d, v&gt; notation)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474028048.000000"
+        },
+        "ts": "1474022686.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, but you asked me whether this applied",
+        "ts": "1474022797.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct, and I concluded that this does apply.",
+        "ts": "1474022815.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now we don't send more than one preprepare anyways",
+        "ts": "1474022823.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in the view change",
+        "ts": "1474022829.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "|Q| &lt;= 1",
+        "ts": "1474022841.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "certainly there must be a bug in there",
+        "ts": "1474022882.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right now, as in the new sBFT work?",
+        "ts": "1474022920.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474022923.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "OK, I'm suggesting that this might need to be reconsidered.",
+        "ts": "1474022938.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can you define a scenario where this is required?",
+        "ts": "1474022960.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that would help a lot",
+        "ts": "1474022963.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my intuition is that it doesn't apply",
+        "ts": "1474022986.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because a view change resolves all requests",
+        "ts": "1474022997.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because there is just one",
+        "ts": "1474023022.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am going through the paper, and I think you're right. Condition A1 ensures that the primary selects a request (for pre-prepare in the new view) that some replica in a quorum claims to have prepared in the latest view, or it's a null-request. Following that logic, you cannot have &lt;10, bar&gt; prepared in view 4 and &lt;10, foo&gt; pre-prepared in view 5; the latter implies that &lt;10, foo&gt; prepared in view 4 which contradicts with &lt;10, bar, 4&gt; preparing.",
+        "ts": "1474028741.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe <@U0Y14MWA2> has a better explanation",
+        "ts": "1474030713.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "guys",
+        "ts": "1474030873.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I read",
+        "ts": "1474030875.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but failed to get a TL DR",
+        "ts": "1474030882.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "can smbd pls summarize?",
+        "ts": "1474030908.000363"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as for  \"ou cannot have &lt;10, bar&gt; prepared in view 4 and &lt;10, foo&gt; pre-prepared in view 5\"",
+        "ts": "1474030993.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "actually you can",
+        "ts": "1474030999.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Can you give me a sequence that would result in this?",
+        "ts": "1474031018.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sure",
+        "ts": "1474031024.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "primary sends &lt;PRE-PREPARE,10,bar&gt; to all",
+        "ts": "1474031043.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I was about to write: \"...which brings up the question, why on earth do we keep a list of items in the Qset in the original PBFT paper.\" (There must be something I'm missing.)",
+        "ts": "1474031050.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "all send &lt;PREPARE,10,bar&gt;to all",
+        "ts": "1474031060.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but only primary receives PREPARES",
+        "ts": "1474031067.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so primary prepares &lt;10,bar&gt;",
+        "ts": "1474031079.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "after a complete network breakdown",
+        "ts": "1474031087.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "new leader is elected",
+        "ts": "1474031091.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "vp1",
+        "ts": "1474031094.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but now old leader (say vp0) is partitioned",
+        "ts": "1474031103.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it cannot report 10,bar from view 4",
+        "ts": "1474031116.000377"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and new primary proposes whatever he wants",
+        "ts": "1474031124.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which is 10,foo in view 5",
+        "ts": "1474031136.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "QED :slightly_smiling_face:",
+        "ts": "1474031142.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as for Qsets",
+        "ts": "1474031228.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Do we agree that all the other nodes, participating in view 5 have &lt;10, bar, 4&gt; in their Qset?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474031247.000000"
+        },
+        "ts": "1474031230.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes in this example",
+        "ts": "1474031259.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I could have a simpler one",
+        "ts": "1474031268.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in which they don't",
+        "ts": "1474031276.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "at least not all of them",
+        "ts": "1474031287.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "In your example above, wouldn't the new leader then assign the null-request to seqNo 5?",
+        "ts": "1474031304.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but only one",
+        "ts": "1474031313.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "remind me - are null requests coming from PBFT paper or is this our own invention?",
+        "ts": "1474031355.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "PBFT paper.",
+        "ts": "1474031363.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "pointer?",
+        "ts": "1474031376.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Sure, pg. 412 of the TOCS version, last paragraph. (pg. 15 of the PDF)",
+        "ts": "1474031427.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "conf call starting will come back",
+        "ts": "1474031681.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok so yes - there is null in this version",
+        "ts": "1474031756.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you are right so &lt;10,foo&gt; is not possible but &lt;10,no-op&gt; is",
+        "ts": "1474031780.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Exactly, thanks.",
+        "ts": "1474031795.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so what is the optimization you propose?",
+        "ts": "1474031851.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So if Simon is doing the no-op thing in his SBFT work, then can we claim that he doesn't need a list for the Qset? He'll only be storing a single item there.",
+        "ts": "1474031881.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "was the list because of watermarks?",
+        "ts": "1474031908.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Basically, there's no point in keeping &lt;10, bar, 3&gt; and &lt;10, baz, 4&gt; around.)",
+        "attachments": [
+            {
+                "fallback": "[September 16th, 2016 6:44 AM] kostas: That would imply that the Qset is a single-item list, whereas Figure 3 in the original Castro paper suggests you may well have &lt;10, bar, 3&gt; and &lt;10, baz, 4&gt;, in addition to your most recent &lt;10, foo, 5&gt; prepare. (&lt;n, d, v&gt; notation)",
+                "ts": "1474022686.000338",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "That would imply that the Qset is a single-item list, whereas Figure 3 in the original Castro paper suggests you may well have &lt;10, bar, 3&gt; and &lt;10, baz, 4&gt;, in addition to your most recent &lt;10, foo, 5&gt; prepare. (&lt;n, d, v&gt; notation)",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1474022686000338",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1474031938.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "To answer that, I'll have to be convinced of the use of a list for the Qset in the PBFT paper to begin with. (Short answer right now: I don't really know.)",
+        "attachments": [
+            {
+                "fallback": "[September 16th, 2016 9:18 AM] vukolic: was the list because of watermarks?",
+                "ts": "1474031908.000400",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "was the list because of watermarks?",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1474031908000400",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474032108.000000"
+        },
+        "ts": "1474032027.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I remember your conversation with Simon here a couple of weeks ago, but I don't think that example was fully worked through; at least it didn't make sense to me.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474032065.000000"
+        },
+        "ts": "1474032056.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok",
+        "ts": "1474033172.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "back",
+        "ts": "1474033173.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "is the question is should without watermarks Q set be a single value?",
+        "ts": "1474033241.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and not a set?",
+        "ts": "1474033247.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474033294.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "correct",
+        "ts": "1474033297.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I claim that if you do the null-request thing, it's definitely a single value.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474033324.000000"
+        },
+        "ts": "1474033299.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok so there are two things",
+        "ts": "1474033304.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "even without watermarks",
+        "ts": "1474033313.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "one could have sth called pipelining",
+        "ts": "1474033318.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in which I as a leader",
+        "ts": "1474033329.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "send PRE_PREPARE for seqno=10",
+        "ts": "1474033338.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but I do not wait for that to commit to start seqno=11",
+        "ts": "1474033353.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I just send the PRE-PREPARE for seqno=11",
+        "ts": "1474033365.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and so on",
+        "ts": "1474033369.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(this looks like watermarks - but t is not)",
+        "ts": "1474033389.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "namely",
+        "ts": "1474033396.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "on the reception side - pipelining mandates that followers process requests in order",
+        "ts": "1474033423.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but also in pipeline",
+        "ts": "1474033436.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "like to send PREPARE for seqno=12",
+        "ts": "1474033451.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "replcia would need to send PREPARE for seqno=11",
+        "ts": "1474033463.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but not commit seqno=11",
+        "ts": "1474033470.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you see what I mean",
+        "ts": "1474033476.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so you eliminate watermarks",
+        "ts": "1474033483.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(With you so far.)",
+        "ts": "1474033485.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but still have \"full pipe\"",
+        "ts": "1474033498.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in this case you would still need Q to be a set",
+        "ts": "1474033512.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but the set is there only because there are multiple requests in flight (albeit pipelining is diff from watermarks)",
+        "ts": "1474033532.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now",
+        "ts": "1474033537.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if the question is",
+        "ts": "1474033544.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "how many values are ther in the Q set that have the same sequence number and replica ID",
+        "ts": "1474033560.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the answer is always - at most one",
+        "ts": "1474033577.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if the question is",
+        "ts": "1474033587.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "how many values are there in the Q set that have the same sequence number - the answer is again a set",
+        "ts": "1474033606.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "because due to Byzantine leader",
+        "ts": "1474033613.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Are these answers pipeline-specific only?",
+        "ts": "1474033622.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "different replicas can have different values",
+        "ts": "1474033622.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no",
+        "ts": "1474033631.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "after \"now\" there is nothing pipeline specific",
+        "ts": "1474033642.000445"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so strictly speaking",
+        "ts": "1474033673.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Q set at the leader",
+        "ts": "1474033679.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "when it decides how to select a value for given seqNo must be a set because of you can report &lt;kostas, 10, foo&gt; and me &lt;marko,10,bar&gt;",
+        "ts": "1474033723.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and both of us are correct",
+        "ts": "1474033728.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "because the leader was Byz",
+        "ts": "1474033733.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I realize now that pipeline does not matter for this argument - but it is good we had it because I anyway wanted to actually tell you guys that this is diff from watermarks",
+        "ts": "1474033781.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": ":slightly_smiling_face:",
+        "ts": "1474033783.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah yes",
+        "ts": "1474033871.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so the Qset in the viewchange is a single item",
+        "ts": "1474033896.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right, do we agree on that?",
+        "ts": "1474033908.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in viewchange msg",
+        "ts": "1474033910.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the new primary needs to be able to deal with Qsets that refer to different digests",
+        "ts": "1474033913.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes",
+        "ts": "1474033918.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Exactly.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1474033969.000000"
+        },
+        "ts": "1474033921.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep, we have that",
+        "ts": "1474033922.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but only w\/o pipelining and w\/o watermarks",
+        "ts": "1474033930.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep",
+        "ts": "1474033937.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you have pipelining",
+        "ts": "1474033939.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is again a set",
+        "ts": "1474033940.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we need to have a simple working bft first",
+        "ts": "1474033947.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but with no two values being the same for the same seqno",
+        "ts": "1474033958.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we are talking about VIEW-CHANGE msg only",
+        "ts": "1474033985.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for Fig 3 logic at the leader",
+        "ts": "1474033992.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is always a set",
+        "ts": "1474033994.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and my expectation is that batching helps so much, and the rest of the system is so slow anyways",
+        "ts": "1474034070.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you can do things without pipelining if you want testing first",
+        "ts": "1474034279.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but eventually we will want pipelining (but not watermarks) - so just have that in the back of the mind",
+        "ts": "1474034304.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "every extra conditional makes it so much harder to reason about",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1474034324.000000"
+        },
+        "ts": "1474034321.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "pipelining should not be difficult - it is just not blocking on the commit",
+        "ts": "1474034353.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but you have two sequence numbers",
+        "ts": "1474034361.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "commit",
+        "ts": "1474034366.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and process",
+        "ts": "1474034370.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you always process process seqno+1",
+        "ts": "1474034384.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but process seqno does not have to be commit seq no + 1",
+        "ts": "1474034393.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well let's leave that for later :slightly_smiling_face:",
+        "ts": "1474034579.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my basic persistence stuff seems to be sort of working",
+        "ts": "1474034591.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "at least in my tests i can restart a node and it can participate in the network again",
+        "ts": "1474034635.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Some silly question, which was partially raised in general (by other person) but after re-thinking want to re-ask it here. What consensus actually means or guaranty us: that all peers will have the same world state, right? But can we imagine that chaincode just store random number let's say using the parameter as a key. Question here: I believe that different peers will try to store different values to KVS (as they are random), right? but actually transactions are valid for all peers, so they will be accepted by consensus. On other hand different peers have different values in KVS. I realize that this is very corner case example but... still where I'm wrong?) I mean am I wrong saying that world state should be the same on all nodes and this is guarantied by consensus or consensus will handle such cases somehow? \nAnd even more such transactions means that they are not deterministic - so now this is responsible of developer to write deterministic one or there is some 'protection'?",
+        "ts": "1474050814.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "currently the responsibility of the developer to write deterministic code",
+        "ts": "1474050882.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "make sense, just double checking.. if we use some sort of Oracle to get some data from the 'external world' and result from Oracle can be date\/time dependent (exchange rates, for example) than replaying the ledger might lead to different results... \nAt least if HL has some sort of such service usage of them should be deterministic as well - for example pass date\/time or whatever makes it deterministic..\nSorry for thinking in loud...",
+        "ts": "1474051090.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0N4P17ND> you may want to check out the architectural direction that fabric is taking",
+        "ts": "1474073439.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1474073442.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that architecture has a different approach to non-detemrinistic code",
+        "ts": "1474073457.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but it would still be expected from developer to code deterministic chaincode",
+        "ts": "1474073488.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "although fabric will give some protection",
+        "ts": "1474073501.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "against the effects of non-deterministic chaincode",
+        "ts": "1474073523.000494"
+    }
+]

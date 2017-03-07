@@ -1,0 +1,1120 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, do we review to get good code quality, or do we review so that people don't vandalize?",
+        "ts": "1470303369.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "vandalize?  could you be more constructive please?",
+        "ts": "1470312365.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i'm trying to understand the purpose of the reviews",
+        "ts": "1470312409.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "afaict, you made some comments which were addressed, and you made another comment about why it wasnt split into two patches and that was responded to",
+        "ts": "1470312420.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i did not see that reply",
+        "ts": "1470312433.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its possibly a flaw in the gerrit flow, as I think they were inline comments that get hidden once the code is changed",
+        "ts": "1470312474.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I saw them go by",
+        "ts": "1470312477.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill see if I can find them in the UI",
+        "ts": "1470312503.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, that is very unfortunate that the comments don't carry over",
+        "ts": "1470312539.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/319\/10\/events\/producer\/handler.go> introduces `getInterestKey`, which open codes some ad-hoc serialization to use it as a map key",
+        "ts": "1470312659.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think this is good code practice, and I've not heard anything about this",
+        "ts": "1470312672.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also i don't understand why the non-async case receives the timeout in the constructor",
+        "ts": "1470312707.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why set a timeout, why allow custom timeout, why in the constructor, why not use a context",
+        "ts": "1470312740.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That part I know was answered here",
+        "ts": "1470312757.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/319\/2\/events\/consumer\/consumer.go@40>",
+        "ts": "1470312757.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as far as getInterestKey, thats fine that you object, but I don\u2019t know if its clear to the author what remains to get a +2 from you",
+        "ts": "1470312812.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(its possibly a gerrit flaw)",
+        "ts": "1470312821.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as I know you mentioned it prior",
+        "ts": "1470312829.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i think it is becoming clear that communication exclusively via gerrit doesn't work",
+        "ts": "1470312851.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think the question about sync+async in one patch was answered in that same changeset",
+        "ts": "1470312919.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand the timeout API reply.  if we change the constructor, the API changes.  might as well change the register\/unregister API?",
+        "ts": "1470312923.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont know the context, its a fair enough question",
+        "ts": "1470312945.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "doesn't feel right to set the timeout there",
+        "ts": "1470312972.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think go idiomatic would be to pass a context to the function that does the operation",
+        "ts": "1470312985.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i wonder why it is even necessary to have a timeout in the first place",
+        "ts": "1470313013.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how would the caller deal with such a timeout?",
+        "ts": "1470313027.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "retry?",
+        "ts": "1470313028.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we have plenty of rpc operations, and none of them take timeouts",
+        "ts": "1470313054.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my take it was part of auto unregistration policy, therefore its not in the same category as a normal RPC response type thing",
+        "ts": "1470313101.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't see any auto unregister?",
+        "ts": "1470313127.000948"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see what you are saying",
+        "ts": "1470313176.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its literally a timeout for the RPC, not the event registration",
+        "ts": "1470313196.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that Pat answered that though:",
+        "ts": "1470313249.000951"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there always was a timeout, it was just hardcoded",
+        "ts": "1470313257.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, so what's our policy then",
+        "ts": "1470313267.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "keep questionable code when we touch it?",
+        "ts": "1470313283.000954"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or fix up code when we touch it",
+        "ts": "1470313291.000955"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, i think you are right to call that out",
+        "ts": "1470313310.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its also not clear what the action items are because of the way gerrit seems to work",
+        "ts": "1470313329.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i agree",
+        "ts": "1470313360.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so my take is:",
+        "ts": "1470313385.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no timeout",
+        "ts": "1470313387.000960"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you do me a favor and just go through the latest with any remaining objections so they are clear",
+        "ts": "1470313401.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i will back you on the questioning of whether that timeout should remain",
+        "ts": "1470313413.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is patrick on slack?",
+        "ts": "1470313444.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it would be so much easier to talk about this here",
+        "ts": "1470313453.000964"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, <@U0KQ9QKH6>",
+        "ts": "1470313454.000965"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure he is online yet though",
+        "ts": "1470313463.000966"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1470313466.000967"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think all this timeout business should go away",
+        "ts": "1470313476.000968"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead expose access to the context of the grpc connection",
+        "ts": "1470313488.000969"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and this sync registration code is broken anyways",
+        "ts": "1470313543.000970"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you call sync registration, and the other side is slow, and you abort",
+        "ts": "1470313562.000971"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no",
+        "ts": "1470313595.000972"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's even worse",
+        "ts": "1470313614.000973"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "say you're already registered to something",
+        "ts": "1470313620.000974"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and you do another register",
+        "ts": "1470313623.000975"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then it will report an error if there is a different message arriving",
+        "ts": "1470313632.000976"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and that even will be lost, no?",
+        "ts": "1470313636.000977"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1470313666.000978"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that whole code needs rework",
+        "ts": "1470313670.000979"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's why i think that we should start with an empty repo",
+        "ts": "1470313694.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and copy over pieces that get reviewed",
+        "ts": "1470313704.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "alternatively, i could go over all the code that we have and review it",
+        "ts": "1470313728.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then we go and address issues",
+        "ts": "1470313737.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "before adding new features",
+        "ts": "1470313742.000984"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hey, does anyone know if I can authenticate to Gerrit via my github id (some kind of SSO)?",
+        "ts": "1470316057.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm currently logged into github and when I go to the gerrit page it doesn't \"detect\" the SSO",
+        "ts": "1470316110.000986"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea it doesn't",
+        "ts": "1470316206.000987"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you need to use your linuxfoundation ID",
+        "ts": "1470316221.000988"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh but I was hoping to use my github ID as my LF id...",
+        "ts": "1470316244.000989"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea well",
+        "ts": "1470316300.000990"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "doesn't seem to work",
+        "ts": "1470316309.000991"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you can register with your gh id",
+        "ts": "1470316318.000992"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then you still need to set a password to log in to gerrit",
+        "ts": "1470316327.000993"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's what I'm doing, thanks",
+        "ts": "1470316429.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you will have to log out from linuxfoundation identity",
+        "ts": "1470316549.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that you can reset your password",
+        "ts": "1470316558.000996"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It might work if you go the other way",
+        "ts": "1470316658.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Create LFID and then attach an SSO to it",
+        "ts": "1470316676.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It def does -not- work to do it SSO first",
+        "ts": "1470316716.000999"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks simon &amp; ghaskins, I think I'll learn to live with it(the LF id, that is)",
+        "ts": "1470316864.001000"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U0KPFAZNF>: I am on now",
+        "ts": "1470322912.001001"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi patrick",
+        "ts": "1470322974.001002"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "hi simon",
+        "ts": "1470323011.001003"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0KQ9QKH6>: see above for some feedback on the events patch and the code in general",
+        "ts": "1470323327.001004"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "so we might want to bring <@U0ULK2JPP> into the discussion too",
+        "ts": "1470323436.001005"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "basically I have tried to scope the changes to maintain the existing API for fear of A) breaking clients B) limit impact in general",
+        "ts": "1470323494.001006"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I would have broken the patch into just the unreg addition and then the consumer changes however there was no way currently to test the unreg addition with changes on the consumer side",
+        "ts": "1470323560.001007"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "and there was a requirement to test the additions",
+        "ts": "1470323580.001008"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "as far as the timeout, the change I performed was a result of <@U0ULK2JPP> pointing out the hardcoded value during a previous PR review - note I had not touched that originally - so in an effort to improve I moved it to the comsumers context",
+        "edited": {
+            "user": "U0KQ9QKH6",
+            "ts": "1470324125.000000"
+        },
+        "ts": "1470323677.001009"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "and made it variable",
+        "ts": "1470323688.001010"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "so worth pointing out and this is just my opinion, I don't see consumer as being something that clients often use - I am working on sdk additions that should be how clients interact",
+        "ts": "1470323800.001011"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "in other words, consumer.go is test enabling and example code on how to deal with the underlying protobufs api",
+        "ts": "1470323901.001012"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I think your comments may have more to do with the code in general not the additions - for that I would suggest the following, add the unregister to the current api(with or without the consumer changes - note that without there will be no unit testing of the unregister - or with minor changes to timeout as you suggest) - review the entire component starting with the protobufs api, decide on rewrite or incremental improvement",
+        "ts": "1470324420.001014"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Could one of the other maintainers take a look at <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/357>.  Has 1+2, needs 2+2, but otherwise ready for merge",
+        "ts": "1470324885.001015"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XR6J961>, <@U0KQ9QKH6> : the there are two ways to view the timeout : one as a global property for the session and another as a per invoke parameter",
+        "ts": "1470324907.001016"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the current implementation takes the former view so all register\/unregister will use the same timeout value",
+        "ts": "1470324939.001017"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "this is consistent with other uses of timeout in the fabric (except we don\u2019t store the property in a yaml file)",
+        "ts": "1470324983.001018"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "<@U0KPFAZNF>: +1 I'm kind of stuck waiting for this patch to be merged :wink:\n<@U0KQ9QKH6>: what's the purpose of consumer.go if it won't be used by clients? It's only imported in one test and one example right now.\nI think clients should be encouraged to use this package, or there should be a deprecation notice somewhere. It would be more efficient for client developers like me :wink:",
+        "ts": "1470325107.001019"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Originally, the registratio was a one time call at the time of setting up the client and the timeout will result in a failure to setup",
+        "ts": "1470325112.001020"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "and we certainly can store it in a yaml file but one does not exist for the consumer to date",
+        "ts": "1470325128.001021"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1470325133.001022"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1MNES6NR>: I don\u2019t want to speak for <@U0KQ9QKH6>, but I took what he said to mean \u201cclients wont use it directly, because its abstracted behind the SDK\"",
+        "ts": "1470325170.001023"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as opposed to core.yaml etc, the code is directly called by client\u2026 I only mentioned the yaml to draw some lines to other fabric code",
+        "ts": "1470325208.001024"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it is not true that if there\u2019s a timeout the client cannot do anything",
+        "ts": "1470325238.001025"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "@ibonniot: I am fine with clients using it. Just note, that the sdk will have an api, initially node, that will support this",
+        "ts": "1470325252.001026"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "eventually, if a go sdk is developed, the client should move there",
+        "ts": "1470325281.001027"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "the other option for client developers is to use protobufs directly",
+        "ts": "1470325310.001028"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "indeed, to <@U0KQ9QKH6>\u2019s point, block-listener.go uses consumer directly",
+        "ts": "1470325320.001029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP>: could you chime in on this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/399\/> ?",
+        "ts": "1470325336.001030"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF>: let me look",
+        "ts": "1470325392.001031"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "to <@U0ULK2JPP> point on timeout and clients not being able to do anything, I second his opinion client could and should retry",
+        "ts": "1470325454.001032"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "Thanks for the info. I'm using grpc to communicate with the event hub right now, but the final code looks like consumer.go.\nI did not want to use it because of the lack of live register\/unregister, but your patch seems to be pretty interesting.\n\nHowever, just to say, passing a context is really better than a raw duration. Contexts can be cancelled in many ways, store the final deadline and are more idiomatic :wink:",
+        "edited": {
+            "user": "U1MNES6NR",
+            "ts": "1470325736.000000"
+        },
+        "ts": "1470325700.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i still don't get the timeout thing",
+        "ts": "1470325716.001034"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is there a timeout, and what does it mean for the timeout to expire?",
+        "ts": "1470325730.001035"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you deal with an expired timeout",
+        "ts": "1470325742.001037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not use the grpc\/stream context?",
+        "ts": "1470325757.001038"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "After reading the code, I agree with <@U0XR6J961> ; it should not be merged as this.\nThere should only be one `ec.stream.Recv()` call in the consumer to avoid concurrent issues. If the current version is merged, it will break someone's code in a very random way one day; and nobody likes that - especially if this part of the code is supposed to be integrated in some SDKs.\n\nCalling `Start` before any additional `(Un)Register` would solve the problem. When encountering (un)register events, the `Start` loop would send this event to a local channel, and voil\u00e0.\n\nAdding a context argument in `(Un)Register` functions would be perfect to avoid blocking indefinitely one client.",
+        "ts": "1470326551.001039"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "@ibonniot: I know what you are getting at and contemplated fixing it but that would have broken current clients",
+        "ts": "1470326718.001040"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "<@U0KQ9QKH6>: Hm from what I'm seeing, the `Start` and `Stop` functions would not have been modified, so no breaking change? There is a breaking change anyway in the current patch (new argument in `NewEventsClient`)... Maybe I'm wrong :confused:\n\nAnyway I'm not a maintainer, just giving some feedbacks from an event consumer user :wink:",
+        "ts": "1470327178.001041"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "the problem arises because we are trying to support a more dynamic model of registration and the original model is static in that you register all your interests at connection creation",
+        "ts": "1470327226.001042",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1MNES6NR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "its good feedback",
+        "ts": "1470327259.001043"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "there is a breaking change but it was somewhat limited as opposed to touching every reg\/unreg",
+        "ts": "1470327334.001044"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "so with limited changes in mind, one possbility is to fail calls to the sync api if the consumer has called the processEvents loop",
+        "ts": "1470327462.001045"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "this would introduced another breaking change in that the client would have to manually enter the loop",
+        "ts": "1470327493.001046"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "this is how I originally coded it actually but then got concerned via discussions that it break existing clients",
+        "ts": "1470327539.001047"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I assume this is the random breaking that you were referring too",
+        "ts": "1470327616.001048"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "oh on the start and stop, yea I looked at that as well, unfortunately I was not able to find a clean solution to breaking out of the recv call deep in the protobufs code",
+        "ts": "1470327712.001049"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "another option for us would be the following, create 2 clients - one that supports the old model and one that support the new",
+        "ts": "1470327805.001050"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "There is (maybe) a way to not break everything I think.\n- Disable (Un)Register(Async) calls as long as the connection is not established (i.e. not Started)\n- In Start call, the consumer first starts the loop and then calls the Register function from EventAdapter definition (so Start will block until everything is registered)\n- There would be a channel communication between the main loop and (Un)Register functions. This communication would be quite tricky however, because Register events may come unordered... A mutex on (Un)Register(Async) could solve that, depends on the wanted level of parallelism.",
+        "ts": "1470327857.001051"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I believe it's totally fine to have a mutex in `UnrRegisterAsync`",
+        "ts": "1470327943.001052"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "FWIW",
+        "ts": "1470327948.001053"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I don't follow - why disable the async?",
+        "ts": "1470327981.001054"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "just an idea to cope with the communication between main loop and (un)register functions, it would depend how it's done I guess",
+        "ts": "1470328044.001055"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "if your not in the mainloop, one *can* call the Recv if interested in the reply",
+        "ts": "1470328080.001056"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "yeah... but theoretically, you'll be in the main loop when calling (Un)Register functions... Right?",
+        "ts": "1470328125.001057"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "so if we want parrallism, you would not have a mainloop",
+        "ts": "1470328126.001058"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "that's also a possibility",
+        "ts": "1470328154.001059"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "you would create your own with Recv",
+        "ts": "1470328160.001060"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "per cpu or something like that",
+        "ts": "1470328174.001061",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1MNES6NR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "so in short, I think we need to agree on something incremental and address what we want in the sdk context",
+        "ts": "1470328312.001062"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "consumer.go is a thin wrapper around protobufs at the moment",
+        "ts": "1470328357.001063"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "if we want I can put together a second client that will just expose the necessary calls for clients to process their own events(without a mainloop)",
+        "ts": "1470328580.001064"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "in addition for this patchset, I think I can just change the sync forms of the register\/unregister to not be accessible to clients",
+        "ts": "1470328814.001065"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "actually this seems like the best short term option, will take a closer look",
+        "edited": {
+            "user": "U0KQ9QKH6",
+            "ts": "1470328925.000000"
+        },
+        "ts": "1470328866.001066"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "@ibonniot: making the sync forms of reg\/unreg looks like it will maintain  the current functionality which addresses your concern about synchronization - this is a simple and nonbreaking change which I like in the short term, then we can address a new client",
+        "ts": "1470329488.001068"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "then clients can migrate when they want",
+        "ts": "1470329532.001069"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KQ9QKH6>: <@U1MNES6NR> : the grpc stream Send is the only thing that needs to be serialized I think. If we pull the Send out into a separate function and protect it with a lock, we can call that function wherever Send is used and should be safe",
+        "ts": "1470329857.001070"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so basically couple of things (1) don\u2019t expose register for external use so we don\u2019t allow concurrent Recvs and (2) protoct grpc stream Send with a lock",
+        "ts": "1470333159.001071"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I just uploaded the proposed changes as patchset 11 in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/319\/>",
+        "ts": "1470336208.001072"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "I'm trying to perform REST queries against the `membersrvc` and it seems that no matter what I do I get mangled text back (`\u0004\u0004\b\u000e\ufffd\ufffd`) and the log says bogus greeting: `2016\/08\/05 01:51:47 transport: http2Server.HandleStreams received bogus greeting from client: \"GET \/registrar\/test_vp0 \"`. I assume that I am required to log in some how but I cannot seem to figure out how. Is someone able to point me in the right direction\/documentation please?",
+        "ts": "1470362225.001073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1M7K67EV>: it sounds like you are hitting the GRPC HTTP\/2 port",
+        "ts": "1470364919.001074"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Ahh that would make a lot of sense. Does that mean I require peer to be up to interact with the membersrvc?",
+        "ts": "1470365006.001075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that HTTP\/2 is binary and the GRPC interface is not conducive to curl-like strategies even if you found an HTTP\/2 compatible clinet",
+        "ts": "1470365009.001076"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "via rest that is",
+        "ts": "1470365021.001077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure tbh",
+        "ts": "1470365028.001078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive never tried to talk to the CA via rest",
+        "ts": "1470365037.001079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "only indirectly via the peer and\/or SDK",
+        "ts": "1470365045.001080"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "I was attempting to use the `\/registrar` endpoint",
+        "ts": "1470365062.001081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I do have some experience with trying to curl a GRPC endpoint, and the behavior you mention looks familar :wink:",
+        "ts": "1470365077.001082"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Thanks, yeah that was helpful :slightly_smiling_face:",
+        "ts": "1470365096.001083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect you have the wrong port",
+        "ts": "1470365101.001084"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you netstat the running process and see if there is a second option?",
+        "ts": "1470365117.001085"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "yep, I'll do it now",
+        "ts": "1470365128.001086"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "`tcp6       0      0 :::7054                 :::*                    LISTEN      11531\/membersrvc`",
+        "ts": "1470365232.001087"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "looks like that's the only port, so we have to use the peers to interact with it via rest",
+        "edited": {
+            "user": "U1M7K67EV",
+            "ts": "1470365249.000000"
+        },
+        "ts": "1470365243.001088"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "strange that it's only ipv6",
+        "ts": "1470365290.001090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "something doesnt smell right",
+        "ts": "1470365318.001091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there should at least be one tcp4",
+        "ts": "1470365336.001092"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "I'm just running the membersrvc directly in vagrant, not in docker if that makes a difference",
+        "ts": "1470365353.001093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it shouldnt",
+        "ts": "1470365360.001094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me look at my setup, hold on",
+        "ts": "1470365365.001095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats weird, thats all I see too",
+        "ts": "1470365402.001096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im confused",
+        "ts": "1470365411.001097"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Yet I still get a response on ipv4",
+        "ts": "1470365437.001098"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "It couldn't be a HTTP\/2 thing could it?",
+        "edited": {
+            "user": "U1M7K67EV",
+            "ts": "1470365452.000000"
+        },
+        "ts": "1470365448.001099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not that I am aware of",
+        "ts": "1470365457.001101"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "rest only against with peer",
+        "ts": "1470375349.001102"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "membersrvc only expose grpc",
+        "ts": "1470375363.001103"
+    }
+]

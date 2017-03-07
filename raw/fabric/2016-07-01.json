@@ -1,0 +1,103 @@
+[
+    {
+        "type": "message",
+        "user": "U1JK24HE3",
+        "text": "I am testing out the hyperledger\/fabric-peer and hyperledger\/fabric-membersrvc docker containers and when i try and deploy chaincode, the transaction results are: \n```\n\"transactionResults\": [\n            {\n                \"error\": \"Error starting container: cannot connect to Docker endpoint\",\n                \"errorCode\": 1,\n                \"uuid\": \"2bc507ae-5adf-4ac7-ba9f-abc367ce6887\"\n            }\n        ]\n```\n\nThis stack overflow article recommended mounting the docker socket into the docker container\u2026\n<http:\/\/stackoverflow.com\/questions\/37573410\/failed-to-launch-chaincode-specerror-starting-container-cannot-connect-to-dock>\n\nI tried mounting  `-v \/var\/run\/docker.sock:\/var\/run\/docker.sock ` and it didnt resolve the issue.\n\nthis is my docker-compose files:\n*compose-defaults.yml*\n```\nvp:\n  image: hyperledger\/fabric-peer\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=<http:\/\/127.0.0.1:2375>\n    - CORE_LOGGING_LEVEL=DEBUG\n  # Startup of peer must be delayed to allow membersrvc to come up first\n  command: sh -c \"sleep 5; peer node start\"\n\n  #command: peer node start\n  \n  # Use these options if coverage desired for peers\n  #image: hyperledger\/fabric-peer-coverage\n  #command: .\/peer.test --test.coverprofile=coverage.cov node start\nmembersrvc:\n   image: hyperledger\/fabric-membersrvc\n   command: membersrvc\n```\n*docker-compose.yml*\n```\nvp0:\n  extends:\n    file: compose-defaults.yml\n    service: vp\n  ports:\n    - \"5000:5000\"\n    - \"30303:30303\"\n  environment:\n    - CORE_PEER_ID=vp0\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n\nmembersrvc:\n  extends:\n    file: compose-defaults.yml\n    service: membersrvc\n  ports:\n    - \"50051:50051\"\n  environment:\n    - CORE_LOGGING_LEVEL=DEBUG\n```\n\n*Not sure if I am missing something, but as i understand it, the VPs run the chaincode in docker containers. I am running a VP as a docker container (vp0). Is vp0 trying to spawn its own docker container to execute the chaincode?*",
+        "edited": {
+            "user": "U1JK24HE3",
+            "ts": "1467394521.000000"
+        },
+        "ts": "1467391448.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "the peer does run the chaincode inside a docker container.  For docker-compose config examples,  take a look at the files in hyperledger\/fabric\/bddtests",
+        "ts": "1467394429.000951"
+    },
+    {
+        "type": "message",
+        "user": "U1JK24HE3",
+        "text": "so it is running a docker container inside of a docker container?",
+        "ts": "1467394495.000952"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "yes",
+        "ts": "1467394517.000953"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "do an `ip ad` and see what docker0 is set to ?  you might need to change your core_vm_endpoint",
+        "ts": "1467394557.000955"
+    },
+    {
+        "type": "message",
+        "user": "U1JK24HE3",
+        "text": "I am running docker for mac Beta, based off of <@U0KM61BCP>\u2019s blog post <https:\/\/developer.ibm.com\/opentech\/2016\/06\/27\/running-hyperledger-fabric-natively-on-mac\/>",
+        "attachments": [
+            {
+                "service_name": "IBM OpenTech",
+                "title": "Running Hyperledger Fabric Natively on Mac - IBM OpenTech",
+                "title_link": "https:\/\/developer.ibm.com\/opentech\/2016\/06\/27\/running-hyperledger-fabric-natively-on-mac\/",
+                "text": "How to get Hyperledger Fabric running natively on a Mac using Docker for Mac (Beta)",
+                "fallback": "IBM OpenTech: Running Hyperledger Fabric Natively on Mac - IBM OpenTech",
+                "ts": 1467028640,
+                "from_url": "https:\/\/developer.ibm.com\/opentech\/2016\/06\/27\/running-hyperledger-fabric-natively-on-mac\/",
+                "service_icon": "https:\/\/developer.ibm.com\/opentech\/wp-content\/themes\/projectnext\/css\/favicon.ico",
+                "id": 1
+            }
+        ],
+        "ts": "1467394698.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "ah, I haven't tried cbf's write-up yet  , I mostly run in x86\/win\/vagrant",
+        "ts": "1467394818.000958"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "hmmm ",
+        "ts": "1467394900.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "don't have my laptop with me but I don't recall a problem deploying chaincode",
+        "ts": "1467394943.000960"
+    },
+    {
+        "type": "message",
+        "user": "U1JK24HE3",
+        "text": "i was using the node SDK, and it took me awhile to figure out what the error was, since the transactions in the SDK don\u2019t return the results yet. they just return `\"result\":\"TODO: get actual results; waited 20 seconds and assumed deploy was successful\u201d`",
+        "edited": {
+            "user": "U1JK24HE3",
+            "ts": "1467409430.000000"
+        },
+        "ts": "1467395165.000961"
+    },
+    {
+        "user": "U11L9NAUW",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U11L9NAUW|gromeroar> has joined the channel",
+        "ts": "1467403658.000965"
+    },
+    {
+        "user": "U1N8VD2CE",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1N8VD2CE|sunsay00> has joined the channel",
+        "ts": "1467407938.000966"
+    },
+    {
+        "type": "message",
+        "user": "U113EGLBE",
+        "text": "Can I get someone to help me through DM? I have a few questions concerning REST calls to the chaincode.",
+        "ts": "1467410299.000969"
+    }
+]

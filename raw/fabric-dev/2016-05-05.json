@@ -1,0 +1,162 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "anyone alive? I just cloned the fabric and ran `go test <http:\/\/github.com\/hyperledger\/fabric\/core\/peer|github.com\/hyperledger\/fabric\/core\/peer>`, and it failed with:\n2016\/05\/05 20:35:20 setting Number of procs to -1, was 64\n2016\/05\/05 20:35:21 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:30303: getsockopt: connection refused\"; Reconnecting to \"0.0.0.0:30303\"\n2016\/05\/05 20:35:22 grpc: ClientConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:30303: getsockopt: connection refused\"; Reconnecting to \"0.0.0.0:30303\"\nerror connection to server at host:port = 0.0.0.0:30303\nFAIL\t<http:\/\/github.com\/hyperledger\/fabric\/core\/peer|github.com\/hyperledger\/fabric\/core\/peer>\t2.710s\nAlso tried setting the peer.address from 0.0.0.0:30303 to my ip:30303 but also failed, can anyone help?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1462480688.000000"
+        },
+        "ts": "1462480619.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "you need to have a 2nd peer running before running the go test",
+        "ts": "1462480884.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "doesn't the test do it itself?",
+        "ts": "1462480938.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "no ... the behave tests will spin up and delete peers as needed but you need to manually set things up for the unit tests",
+        "ts": "1462480997.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But, doesn't travis simply run the unit tests?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1462481062.000000"
+        },
+        "ts": "1462481043.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "travis runs both sets of tests ... i haven't looked at the travis scripts but i think one of the startup scripts will bring up a peer before executing go test",
+        "edited": {
+            "user": "U0UGH3X7X",
+            "ts": "1462481155.000000"
+        },
+        "ts": "1462481125.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "travis will start the peer for you, yes",
+        "ts": "1462481126.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you run the tests locally, you have to start it manually (at least today)",
+        "ts": "1462481146.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where do I find the arguments\/conf?",
+        "ts": "1462481169.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "install.md , section 3.1",
+        "ts": "1462481187.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks!",
+        "ts": "1462481195.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Actually, there is another thing I'd like to ask- I  submitted a PR but Travis failed my build on the fabric\/core\/chaincode test (killed it, maybe due to timeout) but it passes on my machine, along with all the rest (now once I ran the peer externally)...  I see that ghaskins's PR build also failed on the same thing it failed with my build. \nIs Travis tired or something?",
+        "ts": "1462481899.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems like something is not well either with the unit-tests or travis\u2019 execution of them",
+        "ts": "1462481946.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though they run fine locally, so I suspect something up with travis",
+        "ts": "1462481964.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see. BTW - do you know how can I emulate the travis build on my machine? I simply invoke serially the {before_}x{install, script} sections of the travis.yml?",
+        "ts": "1462482181.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you can actually trigger it from your own github fork",
+        "ts": "1462482212.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but I don't have a travis server",
+        "ts": "1462482220.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres a PR with doc on how to do that, hold on",
+        "ts": "1462482222.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mean the public one",
+        "ts": "1462482227.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but than it runs on github, I want to run it on my server (it'll be faster)",
+        "ts": "1462482255.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/rameshthoomu\/fabric\/blob\/travisreadme\/docs\/TravisCI_Readme.md>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462482285.000000"
+        },
+        "ts": "1462482273.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see",
+        "ts": "1462482275.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "dont know how to do that",
+        "ts": "1462482280.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok, in any case many thanks! I hope someone fixes the build",
+        "ts": "1462482299.000285"
+    }
+]

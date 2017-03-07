@@ -1,0 +1,2117 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, <@U0ULK2JPP>, <@U0PB67X4K>, <@U26T99AQ4> I did a mistake. If you look at our pdf, Proposal.header was bytes. I changed by mistake to TransactionHeader. This should fix the issue with the checks.",
+        "ts": "1477470538.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Regarding \" `TransactionAction.header` is the same as the `Proposal.header` \", the committing peer is not supposed to perform this check because it does not have the Proposal",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477470585.000000"
+        },
+        "ts": "1477470551.000614"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "Hey gang.  I want to get TLS working in both my Dev and eventually Prod envs.  For DEV membersrvc, I assume I generate self signed TLS certs.  Does this cert have to be in a particular format?  e.g. ECDSA, RSA etc\u2026?  Would anyone happen to know the correct openssl command to run to get the right format?",
+        "ts": "1477470664.000616"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, <@U0ULK2JPP>, <@U0PB67X4K>, <@U26T99AQ4>, <@U1BC5A0F9>, <@U0KN2SSKE>, <@U0UKTPMG8>   I found the following issue related to the protobuf serialization. An endorser will sign a ProposalResponsePayload message if it endorsers a received proposal. Now, this can be done in the following way: The endorser construct the ProposalResponsePayload message, marshal it and sign the bytes so obtained. But now there is an issue because each endorser might serialize in different ways and then sign different bytes. At this point, the proposal submitter is not able to put together the endowments and construct a Transaction message.",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477489749.000000"
+        },
+        "ts": "1477489603.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "This needs to be addressed.",
+        "ts": "1477489613.000618"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Just another note, <@U26T99AQ4> just noticed that in fabric_next.proto there is the following paragraph that is actually wrong: Something important to understand about protocol buffers is that while\n\/\/ serialization is deterministic in that it will always produce the same\n\/\/ bytes, deserialization is non-deterministic",
+        "ts": "1477489676.000619"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right?",
+        "ts": "1477489679.000620"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> I'm a little confused by the phrasing, but protobuf serialization is definitely _not_ deterministic.  Two different protobuf implementations (or even the same implementation executing twice) may marshal the same structure to two different sets of bytes.",
+        "ts": "1477490068.000624"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think you may have been pointing that out to <@U26T99AQ4> but just wanted to double check",
+        "ts": "1477490118.000625"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "same bytes will produce same data structure, but not guaranteed the other way",
+        "ts": "1477490172.000626"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "That paragraph was not written by us",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477490208.000000"
+        },
+        "ts": "1477490193.000627"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "was already there",
+        "ts": "1477490195.000628"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "so without a submitting peer creating a single ProposalResponsePayload for all to endorse, we have a problem....",
+        "ts": "1477490213.000630"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "unless we use a custom hashing scheme",
+        "ts": "1477490229.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "to clarify",
+        "ts": "1477490232.000632"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "SDK send to 3 endorsers. 3 endorsers send 3 ProposalResponsePayload back. These could be (should be) identical before marshalling. However the marshalled bytes and the signature they are based on would be different. So We cannot assume we can just send one of the 3 ProposalResponsePayload  in transaction but have to send all 3. Note that \u201csend just 1 ProposalResponsePayload \u201c was an optimization measure\u2026. <@U0ZR63HLK> <@U26T99AQ4> to correct the above as necessary",
+        "ts": "1477490445.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "either we use deterministic marshalling or we need to have everything in the Transaction and then having the committing peer check for consistency",
+        "ts": "1477490556.000634"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "or we use a custom hashing scheme",
+        "ts": "1477490566.000635"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah",
+        "ts": "1477490573.000636"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "also the client-sdk has to check for consistency then",
+        "ts": "1477490582.000637"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "yup",
+        "ts": "1477490588.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "for now can we  send ProposalResponsePayload  ? ie, trade clarity\/simplicity for optimization\/complexity  ?",
+        "ts": "1477490667.000639"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(need to get to office\u2026 will be online soon)",
+        "ts": "1477490691.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "a compromise must be reached, that's for sure",
+        "ts": "1477490694.000641"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's the problem?",
+        "ts": "1477490847.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "murali has clarified the point just a few messages earlier",
+        "ts": "1477490990.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; SDK send to 3 endorsers. 3 endorsers send 3 ProposalResponsePayload back. These could be (should be) identical before marshalling. However the marshalled bytes and the signature they are based on would be different. So We cannot assume we can just send one of the 3 ProposalResponsePayload  in transaction but have to send all 3.",
+        "ts": "1477490998.000644"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's no guarantee for protobufs but I thought that all Google implementations actually serialize bytes the same way in practice even if not a \"commitment\"",
+        "ts": "1477491031.000645"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "without a submitting peer and with non-deterministic marshalling, endorsers will sign the same action (logically) represented as different bytes",
+        "ts": "1477491033.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> I have never witnessed protobuf marshal the same structure to two different sets of bytes.  Still, they do explicitly warn that they may not, so for a long term file format, it seems like a bad bet to rely on.",
+        "ts": "1477491092.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed",
+        "ts": "1477491146.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I just know that there are Google projects which sign so probably why its the case",
+        "ts": "1477491193.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but they never make guarantees  - must be nice to be Google  :wink:",
+        "ts": "1477491237.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The problem I am still hoping to resolve from yesterday is that `ProposalResponsePayload` contains a `proposalHash` which is the `\/\/ Hash of the proposal that the endorser acts on`, but the `Proposal` is not available, so I don't understand the claim in the deck that `ProposalResponsePayload links to the ProposalHeader and chaincodeProposalPayload through proposalHash`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477491368.000000"
+        },
+        "ts": "1477491260.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I still see no way to enforce that the `TransactionHeader` attached to the `TransactionActions` is the same as the one used in the `Proposal`",
+        "ts": "1477491297.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Hmm  - I thought I had that figured out looking at the slides, but let me review again",
+        "ts": "1477491590.000655"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for type CHAINCODE, proposal hash is H(TransactionHeader || f(ChaincodeProposalInputs)), where is the visibility function",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477491783.000000"
+        },
+        "ts": "1477491769.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "TransactionHeader is in the Transaction, therefore the link",
+        "ts": "1477491817.000658"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is the proposalresponsepayload?  will that end up in the chain?",
+        "ts": "1477491825.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1477491835.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i still think that whatever is stored in the chain for all eternity should not be protobuf",
+        "ts": "1477491855.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So then the documentation is not correct, `ProposalResponsePayload.proposalHash\ufeff\u2060\u2060\u2060\u2060` is not the `\ufeff\u2060\u2060\u2060\u2060\/\/ Hash of the proposal that the endorser acts on`?",
+        "ts": "1477491880.000662"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4> I agree that some field should be bytes and not the actual message",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477491975.000000"
+        },
+        "ts": "1477491881.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but a fixed encoding, either some custom bytes encoding (like bitcoin does), or a ASN.1 DER encoding",
+        "ts": "1477491894.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Right, <@U26T99AQ4> and me are working on the updating the comments",
+        "ts": "1477491919.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but the deck of slides reports it correctly, I hope :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477491957.000000"
+        },
+        "ts": "1477491928.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The deck of slides says that `ProposalResponsePayload.proposalhash` is `\/\/ Hash of the proposal` :simple_smile:",
+        "ts": "1477492017.000669"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "eheheh, on slide 18 there is the clarification",
+        "ts": "1477492041.000670"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I copied from that slide",
+        "ts": "1477492045.000671"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I agree the documentation needs to be improved, sorry for that :disappointed:",
+        "ts": "1477492078.000672"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ah, just a second the slide number might be wrong",
+        "ts": "1477492152.000673"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Perhaps this is where my confusion is coming from, since I expressly do not want to use a CHAINCODE type transaction, and I am trying to use the generic Proposal structures, but not all of their fields are well defined because they are supposed to be dependent on the new type?",
+        "ts": "1477492165.000674"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because we are updating also that one",
+        "ts": "1477492167.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "may you give an example?",
+        "ts": "1477492208.000676"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I would like to define a new transaction type, CONFIGURATION",
+        "ts": "1477492221.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I don't know, are you referring to TransactionHeader's extensions field?",
+        "ts": "1477492225.000678"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No",
+        "ts": "1477492248.000679"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay",
+        "ts": "1477492252.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I defined a new `TransactionHeader.Type` called CONFIGURATION",
+        "ts": "1477492264.000681"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "good",
+        "ts": "1477492277.000682"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, in the `Proposal`, I would embed a header with that type set (no extensions)",
+        "ts": "1477492309.000683"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And for the `ProposalPayload` I would set a marshaled `ConfigurationItem` and would receive a `ProposalResponse` with mostly empty fields, but an endorsement, which I thought was over the proposal, but now sounds like it is over the `TransactionHeader` + something? Then my `ConfigurationPayload` which would go into the `TransactionActions` would consist of the same marshaled `ConfigurationItem` and the repeated set of endorsements.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477492593.000000"
+        },
+        "ts": "1477492369.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so I think the key here <@U0XPR4NP4>  is to see if <@U0ULK2JPP> can get the basic working with the new proto's so we can see this in action",
+        "ts": "1477492731.000688"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Really, I don't want any of the `ProposalResponse` and associated messages, I just want an endorsement over the header and the `ConfigurationItem` and to end it there.",
+        "ts": "1477492744.000689"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "in your case, the endorsement would be on the TransactionHeader + the ProposalPayload, which is the configuration. You don't need the visibility function",
+        "ts": "1477492754.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there is  type thing maybe we can use?",
+        "ts": "1477492759.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I think you can have it, let me check a bit more carefully",
+        "ts": "1477492814.000692"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So what would the contents of `ProposalResponse` be for me? It seems like there are a lot of unnecessary fields there for this case which I  don't know how to populate.",
+        "ts": "1477492833.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's start from the Transaction",
+        "ts": "1477492853.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "there, we have to define the TransactionActions.Payload",
+        "ts": "1477492881.000695"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> I'm not sure I follow about <@U0ULK2JPP> getting 'the basic working', since this is a different transaction type",
+        "ts": "1477492886.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> Okay, `TransactionActions.Payload`, so this must be a set of signatures, and the actual configuration payload",
+        "ts": "1477492925.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right, very simple",
+        "ts": "1477492934.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the actual configuration payload is the Proposal.Payload, right?",
+        "ts": "1477492950.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1477492957.000700"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I just meant saying how it all comes together was all.   But I see your point <@U0XPR4NP4> .",
+        "ts": "1477492959.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the endorsments are on the TransactionHeader + Proposal.Pyaload",
+        "ts": "1477492978.000702"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and you are done",
+        "ts": "1477492980.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Am I missing something?",
+        "ts": "1477493005.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, without deterministic marshaling, how do I verify those endorsements? Because the only `TransactionHeader` I have access to is the one from the `TransactionActions` which is not bytes",
+        "ts": "1477493035.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1477493083.000706"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I agree that we have to modify these fields",
+        "ts": "1477493092.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "also in Proposal, the header should be bytes as it was before, my mistake :disappointed:",
+        "ts": "1477493109.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, that solves that then.  Another question, when I send the `Proposal` to the endorsers (in my world, these will likely be physical people) they do not reply with a `ProposalResponse`, they simply reply with an `Endorsement`?",
+        "ts": "1477493158.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what's the difference in replying with a ProposalResponse and an Endorsemnt message?",
+        "ts": "1477493222.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what do you mean by physical people? They will not use some piece of software?",
+        "ts": "1477493246.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, the `Endorsement` structure claims that: \n\n```\n        \/\/ Signature of the payload included in ProposalResponse concatenate with\n        \/\/ the endorser's certificate; ie, sign(ProposalResponse.payload + endorser)\n        bytes signature = 2;\n```\n\nWhich implies that I need to somehow generate all of these structures, none of which have meaningful data",
+        "ts": "1477493303.000712"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4>  - is an endorser an ordering node in your case?",
+        "ts": "1477493310.000713"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> No, I would expect for an endorser to be an 'admin' and not necessarily for the orderers, it could also be a peer admin, anyone who is authorized to modify the configuration initially populated in the genesis block",
+        "ts": "1477493363.000714"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "By physical people, I mean that it will be a human decision, of course it will likely be implemented as 'click this button to agree',  but there will likely not generally be automated review.",
+        "ts": "1477493396.000715"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right",
+        "ts": "1477493405.000716"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(recall how I have mentioned that endorsement cannot replace signature workflow  :wink: ? )",
+        "ts": "1477493441.000717"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, to frame this problem more generally, the genesis block will consist of a `Transaction` which consists of repeated `TransactionActions` each of which contains a `ConfigurationItem` the `ConfigurationItem` has a policy attached to it, with who is allowed to modify the item (what endorsements are required), so, anyone who is authorized to submit a configuration transaction can take the previous configuration, modify the bits they are authorized to (with appropriate endorsements) and then submit the configuration tx, and these new configuration will become the new chain configuration (assuming it validates).  This is a special sort of transaction in that only valid ones ever make it onto the raw chain.",
+        "ts": "1477493559.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and there are 2 parts:   submitting this to the ordering service and then the ordering service propagating this to the peers to update their config?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477493598.000000"
+        },
+        "ts": "1477493577.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's why it's critical that the ordering service be able to evaluate the transaction's validity without any dependence on chaincode, MVCC, etc.",
+        "ts": "1477493588.000720"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "got it",
+        "ts": "1477493613.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT it only cares about config transactions, correct?",
+        "ts": "1477493637.000723"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would say yes, 3 parts.  Creating and submitting it to order, and then the ordering service concluding whether or not it satisfies the update policies, finally, the peers once they receive the config transaction can also verify that the ordering service is not trying to pull a fast one and change some peer policy it is not authorized to do so, by performing the check as well.",
+        "ts": "1477493662.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly, the ordering service will only intropsect on CONFIGURATION type transactions",
+        "ts": "1477493675.000725"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And it will make sure that such transactions get their own block)",
+        "ts": "1477493687.000726"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "got it",
+        "ts": "1477493690.000727"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(sorry for being dense - just want to make sure we bring it all back together instead of reading history)",
+        "ts": "1477493711.000728"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not at all, I've tried to document this some in the multi-channel document, but it should be done more explicitly",
+        "ts": "1477493761.000729"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "still not clear to me, what's the issue in creating the ProposalResponse. The client-sdk, I guess, will be used to send the CONFIGURATION Proposal to the endorsers and put together the endorsements it gets back, no?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477493865.000000"
+        },
+        "ts": "1477493844.000730"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "probably, I'm missing something here :disappointed:",
+        "ts": "1477493881.000732"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, may you clarify this?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477493908.000000"
+        },
+        "ts": "1477493896.000733"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, the issue I see with the `ProposalResponse` is that it assumes that the proposal is somehow 'executed' and therefore has a lot of fields that are rather meaningless when it is really a \"sign if you like it, don't if you don't\".  These changes would not be submitted to peer endorsers, rather, I'd expect them to be emailed or whatever and signatures generated\/collected manually by admins.",
+        "ts": "1477493983.000735"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> wants to simply things with a COMMON transaction format for config and regular (mvcc, chaincode) transactions and re-use the structures since in the end config and mvcc end up in blocks on the peer side",
+        "ts": "1477493985.000736"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "correct?",
+        "ts": "1477493996.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so we could have something different than CHAINCODE as the type of trans",
+        "ts": "1477494021.000738"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.  I have custom structures today which work, but they duplicate much of what is in the fabric next structures",
+        "ts": "1477494025.000739"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think in the end we need to prove that we can support non-chaincode transaction types here",
+        "ts": "1477494192.000740"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XPR4NP4>, why would we need an endorsement-based logic for configuration?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477494212.000000"
+        },
+        "ts": "1477494196.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Everyone bootstraps the network, and agrees that these 6 peer orgs are allowed to transact, and we're using ordering as a service, so the orderer org is not, and if any 4 of the 6 peer orgs vote to change membership, it's allowed.  So, the orderer gets a transaction in which attempts to add a peer org.  How does it verify that there is agreement from 4 of the 6? By checking the endorsements",
+        "ts": "1477494303.000743"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That is, to my understanding i) reconfiguration messages are deterministically prossessed, ii) do not incur into heavy computation load that would be impossible to handle without parallelization, and iii) to have an endorsement-model we would need to have some prominent\/highly priviledged endorsers that are authorized to endorse system reconfiguration proposals.",
+        "ts": "1477494344.000744"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "What is important for reconfig message authentication is the client that submits it and signsthe associated transaction but there is no need for \"automated endorsement\", no?",
+        "ts": "1477494410.000745"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "i) Yes, absolutely must be determinstic\nii) They can be processed in parallel for the signature checks\niii) Who is given the authority to modify configuration is a policy matter, it could be as open or restrictive as defined, but I would expect only highly privileged users would be able",
+        "ts": "1477494425.000746"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "well, however, endorsement is an automated processs",
+        "ts": "1477494452.000747"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that is it checks the signature on the proposal and this is what it bases its evaluation on,",
+        "ts": "1477494469.000748"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "client-signature is what is important here, i think!",
+        "ts": "1477494478.000749"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i must be missing something important",
+        "ts": "1477494494.000750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure I agree or maybe I do not follow",
+        "ts": "1477494494.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "didn't we talk about this long ago?",
+        "ts": "1477494501.000752"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Different pieces of config are going to be controlled by different groups of entities",
+        "ts": "1477494513.000753"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XR6J961>, how long is long? :slightly_smiling_face:",
+        "ts": "1477494521.000754"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "half year?",
+        "ts": "1477494530.000755"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A peer admin should not be able to change orderer policy, and vice versa",
+        "ts": "1477494533.000756"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, i do not recall, could be!",
+        "ts": "1477494541.000757"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XPR4NP4>: Correct!",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477494560.000000"
+        },
+        "ts": "1477494553.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, each piece of config has an associated modification policy",
+        "ts": "1477494555.000759"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XPR4NP4>: correct again!",
+        "ts": "1477494573.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And each piece of config here, we are trying to represent by a `TransactionActions`",
+        "ts": "1477494574.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ordering network configuration has some set of conditions (required signatures) which allow changing the configuration",
+        "ts": "1477494585.000763"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But we agree that at channel\/chain creation a configuration of which client should authorize a certain change has been set.",
+        "ts": "1477494596.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh channel",
+        "ts": "1477494616.000765"
+    },
+    {
+        "text": "retracts",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0XR6J961",
+        "ts": "1477494623.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That must be agreed upon at creation time, however, the authorization policy is itself stored as config, and therefore may be changed",
+        "ts": "1477494645.000767"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct!",
+        "ts": "1477494656.000768"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So we have two things:",
+        "ts": "1477494665.000769"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "i) initial configuration (provided at genesis), and ii) configuration update policy (also provided at genesis)",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477494703.000000"
+        },
+        "ts": "1477494689.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Where (ii) is actually part of (i)",
+        "ts": "1477494702.000771"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "can be, sure.",
+        "ts": "1477494711.000773"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, (ii) can be \"I need 2\/3 of the authorized entities to agree on a certain configuration change\"",
+        "ts": "1477494758.000774"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and (i) can be \"Alice, Bob, Charlie, Lucy, Dave\"",
+        "ts": "1477494778.000775"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Now, what is important is that a re-configuration transaction contains the signature coming from the clients of any three of the five authorized clients.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477494863.000000"
+        },
+        "ts": "1477494818.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "users?",
+        "ts": "1477494837.000777"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sorry certificates; will fix",
+        "ts": "1477494847.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1477494850.000779"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "certificates or clients i would say here",
+        "ts": "1477494872.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We decided for simplicity, that a configuration tx must contain _all_ configuration.  So, remember that this tx contains all the old config, and then whatever modifications those three authorized entities desire.",
+        "ts": "1477494900.000782"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, not sure what all configuration means here, but then one would need to check that the \"all configuration\" attached to the tx, is the correct one.",
+        "ts": "1477494966.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would say that you need to verify the configuration has not changed, or, if it has changed the changed stuff is appropriately endorsed (and not replayed)",
+        "ts": "1477495001.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is signed by a sufficient number of certificates",
+        "ts": "1477495004.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "therefore it is the right one",
+        "ts": "1477495008.000786"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "assuming that this set of certificates knows in advance the all configuration",
+        "ts": "1477495062.000787"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, give me a few lines",
+        "ts": "1477495071.000788"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "to express my thought, cause i see the \"all configuration being included in the transaciton\" more complex",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477495122.000000"
+        },
+        "ts": "1477495113.000789"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Ok, so a configuration transaction can be consisting of the same message as Transaction in protobuf file, where type (part of transaction header) is set to CONFIGURATION (either of fabric\/orderer- i leave this out for now), creator field, in the header includes a banch of certificates, and signature   field contains the signatures associated with these certificates.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477495295.000000"
+        },
+        "ts": "1477495270.000791"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The payload of the transaction would include all the re-configuration information, say \"authorized entities is now \"Alice, Bob, Charlie, Lucy, Dave, and Frank\"",
+        "ts": "1477495341.000793"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "this transaction is submitted to the system ledger (say this for simplicity) and its picked up by everyone, who then need to evaluate it.",
+        "ts": "1477495375.000794"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Then is where the execution (small processing of these transactions) can take place, that would have an effect on the local state of each entity that maintains it.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477495413.000000"
+        },
+        "ts": "1477495401.000795"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Some sort of special VSCC.",
+        "ts": "1477495426.000797"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Would this be too complicated you think?",
+        "ts": "1477495442.000798"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "First, ignoring all other parts to the scheme, what would prevent requiring that the previous config be repeated? The Transaction supports multiple `TransactionActions`, what is the complaint against requiring the entire config in the transaction?",
+        "ts": "1477495509.000799"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Well in my mind these certificates i mentioned before not necessarily refer to committing peers, but rather to clients.",
+        "ts": "1477495565.000800"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "It is Alice, who needs to approve through some application interface the creation of this transaction.",
+        "ts": "1477495583.000801"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: why repeat the previous config?",
+        "ts": "1477495598.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> It will vastly simplify our life for pruning, and makes it much easier to inspect the chain and from a single point see the configuration, rather than having to play the whole chain to determine it",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477495660.000000"
+        },
+        "ts": "1477495649.000803"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Some sort of simulation result would that be.",
+        "ts": "1477495684.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think pruning is wrong",
+        "ts": "1477495701.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> I'm not sure why committers vs clients matters here.  There is an existing configuration, so grab all of the `TransactionActions` from it.  Pick the ones you wish to modify, and replace them with appropriately endorsed new ones.",
+        "ts": "1477495702.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think all of this is way too complicated and not correctly layered",
+        "ts": "1477495735.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - for which part - just for this \"config\" part or for transactions \/ proposals in general?",
+        "ts": "1477495794.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "config, i did not follow the format of the fabric messages, nor do i care for them",
+        "ts": "1477495834.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> In order to prevent DOS attacks in the BFT case, the orderer is going to have to have insight into the transaction format to verify signatures.  So I see no way around the orderer knowing about the fabric transaction format.  I don't like it, would love to hear another option.",
+        "ts": "1477495838.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd say the ordering service defines an outer format which carries signatures",
+        "ts": "1477495876.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the fabric can fill the payload as it wants",
+        "ts": "1477495890.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no pruning",
+        "ts": "1477495901.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd say the orderer transaction format needs to have a chain ID, a submitter ID, a payload, a nonce, signatures, basically what is in the base transaction from the fabric",
+        "ts": "1477495970.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it would have made more sense to design a base transaction for the orderer, then build the fabric transaction on top of it",
+        "ts": "1477495989.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Rather than how we are approaching it now, which is to build the fabric transaction, and try to pick a subset of it for the orderer",
+        "ts": "1477496004.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(that's the conclusion I was coming to as well <@U0XPR4NP4>  - start simple and add rather than start complex)",
+        "ts": "1477496016.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "else I think you can basically just share a very simple outer envelope",
+        "ts": "1477496039.000819"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZR63HLK|adc> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2UG5PAQ6\/transaction.png|transaction.png> and commented: <@U0XPR4NP4> This is a transaction. Simpler than this?",
+        "file": {
+            "id": "F2UG5PAQ6",
+            "created": 1477496461,
+            "timestamp": 1477496461,
+            "name": "transaction.png",
+            "title": "transaction.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 139777,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UG5PAQ6\/transaction.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UG5PAQ6\/download\/transaction.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 268,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 358,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 537,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 716,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG5PAQ6-df6d223f46\/transaction_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 764,
+            "image_exif_rotation": 1,
+            "original_w": 1408,
+            "original_h": 1050,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2UG5PAQ6\/transaction.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2UG5PAQ6-35e578b6ac",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2UG5QA06",
+                "created": 1477496461,
+                "timestamp": 1477496461,
+                "user": "U0ZR63HLK",
+                "is_intro": true,
+                "comment": "<@U0XPR4NP4> This is a transaction. Simpler than this?",
+                "channel": ""
+            }
+        },
+        "user": "U0ZR63HLK",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZR63HLK|adc>",
+        "bot_id": null,
+        "ts": "1477496465.000820"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZR63HLK|adc> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2UG27ZJQ\/pasted_image_at_2016_10_26_05_41_pm.png|Pasted image at 2016-10-26, 5:41 PM> and commented: This is TransactionHeader",
+        "file": {
+            "id": "F2UG27ZJQ",
+            "created": 1477496526,
+            "timestamp": 1477496526,
+            "name": "Pasted image at 2016_10_26 05_41 PM.png",
+            "title": "Pasted image at 2016-10-26, 5:41 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 38394,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UG27ZJQ\/pasted_image_at_2016_10_26_05_41_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UG27ZJQ\/download\/pasted_image_at_2016_10_26_05_41_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG27ZJQ-2479711bdb\/pasted_image_at_2016_10_26_05_41_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG27ZJQ-2479711bdb\/pasted_image_at_2016_10_26_05_41_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG27ZJQ-2479711bdb\/pasted_image_at_2016_10_26_05_41_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 296,
+            "thumb_360_h": 360,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG27ZJQ-2479711bdb\/pasted_image_at_2016_10_26_05_41_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 395,
+            "thumb_480_h": 480,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2UG27ZJQ-2479711bdb\/pasted_image_at_2016_10_26_05_41_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 506,
+            "original_h": 615,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2UG27ZJQ\/pasted_image_at_2016_10_26_05_41_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2UG27ZJQ-9c4700cea8",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2UEP3B35",
+                "created": 1477496526,
+                "timestamp": 1477496526,
+                "user": "U0ZR63HLK",
+                "is_intro": true,
+                "comment": "This is TransactionHeader",
+                "channel": ""
+            }
+        },
+        "user": "U0ZR63HLK",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZR63HLK|adc>",
+        "bot_id": null,
+        "ts": "1477496528.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0ZR63HLK> why are all these fields bytes?",
+        "ts": "1477496566.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for simplicity :slightly_smiling_face:",
+        "ts": "1477496580.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to make it easier to implement bugs?",
+        "ts": "1477496598.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no, kidding",
+        "ts": "1477496600.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why not!",
+        "ts": "1477496608.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for this marshalling issue",
+        "ts": "1477496618.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if you find bytes that can be removed I would love to remove them",
+        "ts": "1477496636.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> This format is still not logically coherent to me",
+        "ts": "1477496718.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How do we have `n` transaction headers for a single transaction?",
+        "ts": "1477496729.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "a transaction can compose multiple proposal to be committed atomically",
+        "ts": "1477496770.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "all or nothing, no?",
+        "ts": "1477496773.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Let's forget about fabric and proposals and everything for a bit",
+        "ts": "1477496805.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, please. I'm pretty destroyed!",
+        "ts": "1477496818.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":slightly_smiling_face:",
+        "ts": "1477496819.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I hand you a signed transaction, and 50 transaction headers",
+        "ts": "1477496829.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This at a fundamental level makes no sense to me",
+        "ts": "1477496845.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Really, you are handing me a transaction, and 50 actions, which contain 50 action headers",
+        "ts": "1477496869.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's no actual transaction header",
+        "ts": "1477496873.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why? I might be wrong",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477496898.000000"
+        },
+        "ts": "1477496881.000840"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, but its actually 50 x (transaction header + endorsement of the associated proposal)",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477496922.000000"
+        },
+        "ts": "1477496902.000842"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that means that if i have two single proposals whose results one want to see committed atomically",
+        "ts": "1477496942.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's like we are overloading the word transaction.  If the top level thing is a transaction, how does each action have a transaction header? Are they all the same?",
+        "ts": "1477496957.000846"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "then we would need to have them in the same transaction no?",
+        "ts": "1477496959.000847"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "May be , correct",
+        "ts": "1477496974.000848"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "indeed",
+        "ts": "1477496978.000849"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "maybe its a multi-transaction what we have there",
+        "ts": "1477496988.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is a multi-transaction?",
+        "ts": "1477496996.000851"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "for this we can remove this complexity and define transaction to contain only what is included in transactionACtion",
+        "ts": "1477497020.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think what I am driving at, is I don't understand how a transaction can have a repeated field which contains the transaction's header(s)",
+        "ts": "1477497040.000853"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "for now it will anyway be one transaction per transaction :slightly_smiling_face:",
+        "ts": "1477497052.000854"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "the field does nto contain only transaction header",
+        "ts": "1477497066.000855"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but also transaction payload",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477497078.000000"
+        },
+        "ts": "1477497070.000856"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To us, I think a transaction is a header (which prevents replay, and provides identity), a payload, and a signature",
+        "ts": "1477497085.000858"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you want a 'multi-transaction', then I would make that payload be a message which contains repeated transactions, or some other format",
+        "ts": "1477497123.000859"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So if we have transaction include",
+        "ts": "1477497156.000860"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "timestamp, header, paylaod (parts of transactionAction) directly, and a signature without any repetition,would this simplify things in your opinion?",
+        "ts": "1477497196.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is timestamp not part of header?",
+        "ts": "1477497221.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is the purpose of the timestamp? I don't hate it, but why is it not in the header?",
+        "ts": "1477497222.000863"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and version",
+        "ts": "1477497223.000864"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ah correct, it actually is",
+        "ts": "1477497228.000865"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and the version is also part of it",
+        "ts": "1477497235.000866"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so both can be removed",
+        "ts": "1477497238.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hey let me propose something completely new:",
+        "ts": "1477497243.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "don't use protobufs for those, but standard go structs",
+        "ts": "1477497254.000869"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I guess that deck was a bit old :slightly_smiling_face:",
+        "ts": "1477497260.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and use ASN.1 to serialize\/deserialize them",
+        "ts": "1477497262.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then you can skip that whole bytes thing",
+        "ts": "1477497283.000872"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and directly integrate the arrays of structs",
+        "ts": "1477497299.000873"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Adding <@U0ZR63HLK>, <@U26T99AQ4> as they are essential for this discussion in general.",
+        "ts": "1477497325.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Using protobufs for our on disk storage seems to be causing us a lot of problems.  ASN.1 is slower, but a single unmarshal and done would be nice.",
+        "ts": "1477497384.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1477497399.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and given that it is a deterministic format you could even implement a faster version",
+        "ts": "1477497442.000877",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course the payload still will need to be an array of bytes to provide layering",
+        "ts": "1477497855.000878"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm ok, to change slightly the discussion, we prepared this <https:\/\/jira.hyperledger.org\/browse\/FAB-829> as proposal for generic membership service interface.",
+        "ts": "1477497921.000879"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ACtually a membership service provider interface (the client side mostly).",
+        "ts": "1477497945.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> I'm a little confused about what membership services is supposed to do in v1.  My assumption was that it would issue the t-certs\/e-certs for an organization, but that the signature validation etc. must be able to be performed without access to membership services, only to the chain?",
+        "ts": "1477498229.000881"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Correct. The interface i referred to has to do with the interface that transaction processing part of the client has with the membership service part of the client",
+        "ts": "1477498597.000882"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "It should be transparent to how and when the server is contacted",
+        "ts": "1477498651.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "There are 3 touch points for membership services: 1) server 2) client (how the SDK talks to the server) and 3) peer (how the peer processes certs issued by server)",
+        "ts": "1477498661.000884"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct",
+        "ts": "1477498670.000885"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "actually the server can be hidden from the client",
+        "ts": "1477498699.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "For #3, it has generally been just normal PKIX checking",
+        "ts": "1477498706.000887"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but ok the interface should be accommodatin auditing requirements on the server side",
+        "ts": "1477498725.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "yes, that is true also ... only the client knows how to talk to the server",
+        "ts": "1477498728.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "anyway, Elli, you said that we needed to change #3 and perhaps #2 also to be able to plugin Identity Mixer later",
+        "ts": "1477498808.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "that is what you are working in in FAB 829, right?",
+        "ts": "1477498818.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> - are you adamant about the fact that a \"fabric\" transaction and an \"orderer\" transaction need to share the same format?   I am not so sure I agree that they need to be and\/or should be and the more I think about it, the more I think it will cause more harm than good.   Here's my thoughts \/ understanding:\n\n- I assume that we agree that we determine the identities used for access control for the Broadcast and Deliver services\/APIs via the certificates used to sign the \"messages\" sent to either of those services?  So this means that we need to have the messages sent via Broadcast be signed by the \"client\"\n\n- For messages sent via Broadcast, we would also need to know the channel, payload, cert of sender and signature.   So the \"header, payload, signature\" structure works well here and the ordering service really does not need to know anything about the payload EXCEPT in the case where this is a CONFIG transaction?   I would assert that you could add that as a \"type\" to the header and\/or have a separate service\/API for config.  I also assume that CONFIG messages must be sent to the intended channel for ordering purposes\n\n- For non-CONFIG messages, the orderers make sure the signature is valid on the broadcast message and that the signer is allowed to broadcast to the channel.  So for \"normal\" broadcast messages (e.g. fabric transactions), the orderer views these as opaque and simply orders them and delivers to anyone connected on target channel\n\n- For a CONFIG message (determined by the type in the header or there could actually be a separate service\/API for config), the orderer actually needs to execute some logic to make sure that the config change is valid, the sender is authorized, etc.   The creation of this message would occur outside of the fabric (typically) and any type of signatures which needed to be gathered would be done outside of the fabric and the ordering service.  All of this information would be in the \"payload\" of the broadcast message.   Assuming that the CONFIG change met the rules \/ constraints, there might be certain of these types of message (or maybe all) which would need to be delivered to peers connected to the channel the config is for.   I would actually assert that the ordering service should actually deliver this as a batch of 1 and I think that perhaps you introduce a \"type\" field in the batch\/block header so that when the receiving peer(s) get it, they know that this is a special batch\/block. \n\nI think that if done this way, then the ordering service needs to know nothing about fabric (or any other things which wants to use it) transactions and you have a well-defined way of distributing config to peers using a \"config\" batch\/block",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477499140.000000"
+        },
+        "ts": "1477498840.000893"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0S5KF44D> correct.",
+        "ts": "1477498896.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think we need to stop calling the \"crypto\" layer which components use to do basic crypto \"membership services\"  :wink:",
+        "ts": "1477499085.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "\"cop-client\"  or something",
+        "ts": "1477499102.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Gari, do you agree with comments in <https:\/\/jira.hyperledger.org\/browse\/FAB-807> wrt both orderer and peers using common code to parse the 3 types of cert lists?",
+        "ts": "1477499157.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's confusing given the legacy of the current stuff",
+        "ts": "1477499164.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - we should share crypto stuff wherever possible",
+        "ts": "1477499192.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; I would actually assert that the ordering service should actually deliver this as a batch of 1 and I think that perhaps you introduce a \"type\" field in the batch\/block header so that when the receiving peer(s) get it, they know that this is a special batch\/block.\nWas this assertion ever contested? This has been the assumption in all the discussions I've taken part in.",
+        "ts": "1477499203.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(I've only scrolled back to yesterday's discussions so perhaps I've missed something.)",
+        "ts": "1477499223.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why batch of 1?",
+        "ts": "1477499282.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - I try to follow all the conversations and write ups, so perhaps there was no disagreement on some of those points but I'll be honest it is not super clear to me (which is likely that I am not involved in every discussion)",
+        "ts": "1477499284.000908",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "because I put a \"type\" field in the batch header",
+        "ts": "1477499301.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha",
+        "ts": "1477499315.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "could be more as long as they were all config transactions",
+        "ts": "1477499317.000911"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it basically gives the orderer freedom to deal with config as it likes",
+        "ts": "1477499341.000912"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is this part of the batch and not part of the payload format?",
+        "ts": "1477499344.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0S5KF44D> what are CRLs used for in the orderer?",
+        "ts": "1477499390.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "because then the config and fabric transactions would have to share something in common - which is what I wanted to avoid",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477499499.000000"
+        },
+        "ts": "1477499409.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and I wanted to ensure that the ordering nodes do not ever have to know anything about a fabric transaction.  The opposite is OK - fabric can know about ordering batch format and config payload \/ format",
+        "ts": "1477499471.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0XR6J961> CRLs would be for revoked peer and end user certs, but wouldn't that still need to flow thru this config update?  I'm assuming you don't need to support revocation of orderer certs",
+        "ts": "1477499591.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1477499609.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is this cert list a special type?  it could be maintained as a part of the ledger, no?",
+        "ts": "1477499672.000920"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Actually, the orderers will need to process CRL also, to make sure they reject traffic from a revoked peer cert",
+        "ts": "1477499881.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1477499968.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "It is a \"special type\" only in the sense that it identifies it's use as a list of revoked certs rather than a list of trusted certs",
+        "ts": "1477499973.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; are you adamant about the fact that a \"fabric\" transaction and an \"orderer\" transaction need to share the same format?  \n\n<@U0PB67X4K>  I would be adamant that the thing the fabric sends to the orderer must be encoded in the same way the thing that contains the config is encoded.  In other words, the ordering service should not have to understand fabric transactions to validate their signature, and then additionally understand ordering transactions and how to validate them.  \n\nWhat you propose, is what I would prefer, an ordering transaction type which is the only thing the orderer accepts.  It can wrap whatever fabric structure is required, and the fabric structure can depend on the orderer constructs, like the header to prevent replay, or not, does not matter to me.\n\nThe sticky points to me, are that the specification says that the client sends a fabric transaction to the orderer (not an orderer transaction), and that the raw ledger work claims to store fabric transactions (again, not orderer transactions).\n\nBecause those two things didn't seem likely to switch off the fabric transaction type to an orderer transaction type, I was attempting to switch the orderer onto the fabric transaction type, even though it seems like a suboptimal solution to me.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477502545.000000"
+        },
+        "ts": "1477501995.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "We need to be careful here not to mix up the transactions.  The intent for CONFIG type tx is for the orderers to act on them without the existence of a chaincode  (remember all tx\u2019s on peers involve some chaincode). Some CONFIG tx may also be \u201cexec\u201d on peers",
+        "ts": "1477503141.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KN2SSKE> The question is whether we try to take the proposed fabric transaction format, and add a type for CONFIG transactions, or whether we create a more generic orderer transaction type, and rework the fabric transaction type on top of it.  I think <@U0PB67X4K> and I would propose the latter, while others (I'll let them identify themselves) would opt for the former.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477503285.000000"
+        },
+        "ts": "1477503275.000929"
+    },
+    {
+        "user": "U2UMDEBU2",
+        "text": "<@U2UMDEBU2|shaileshrl> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477513721.000931"
+    },
+    {
+        "user": "U1KFBBWG1",
+        "text": "<@U1KFBBWG1|harrisob> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477519302.000932"
+    },
+    {
+        "user": "U1KFBBWG1",
+        "text": "<@U1KFBBWG1|harrisob> has left the channel",
+        "type": "message",
+        "subtype": "channel_leave",
+        "ts": "1477519641.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0MRY2LKY",
+        "text": "+1 for the latter - with wrapper and message type (in the fabric spirit of allowing additional plugin functionality on the messages themselves)",
+        "ts": "1477520856.000934"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto|chaincode_transaction.proto> and commented: <@U0ZR63HLK> <@U26T99AQ4>  multiple TransactionAction (although ledger code expects only one currently) as in this field `repeated TransactionAction actions = 3;`   is ok but not  `repeated ChaincodeEndorsedActions action = 2;`  I think ? Can you validate please ?",
+        "file": {
+            "id": "F2UPNMZD3",
+            "created": 1477527411,
+            "timestamp": 1477527411,
+            "name": "chaincode_transaction.proto",
+            "title": "chaincode_transaction.proto",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ULK2JPP",
+            "editable": true,
+            "size": 1140,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPNMZD3\/chaincode_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPNMZD3\/download\/chaincode_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2UPNMZD3-054e822b2f",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto\/edit",
+            "preview": "\/*\nCopyright IBM Corp. 2016 All Rights Reserved.\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>\/*<\/pre><\/div>\n<div><pre>Copyright IBM Corp. 2016 All Rights Reserved.<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);<\/pre><\/div>\n<div><pre>you may not use this file except in compliance with the License.<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 43,
+            "lines_more": 38,
+            "preview_is_truncated": true,
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 2,
+            "initial_comment": {
+                "id": "Fc2UPGCPRC",
+                "created": 1477527411,
+                "timestamp": 1477527411,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "<@U0ZR63HLK> <@U26T99AQ4>  multiple TransactionAction (although ledger code expects only one currently) as in this field `repeated TransactionAction actions = 3;`   is ok but not  `repeated ChaincodeEndorsedActions action = 2;`  I think ? Can you validate please ?",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1477527412.000935"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPZE64A\/fabric_transaction.proto|fabric_transaction.proto>",
+        "file": {
+            "id": "F2UPZE64A",
+            "created": 1477527413,
+            "timestamp": 1477527413,
+            "name": "fabric_transaction.proto",
+            "title": "fabric_transaction.proto",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ULK2JPP",
+            "editable": true,
+            "size": 2563,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPZE64A\/fabric_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPZE64A\/download\/fabric_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPZE64A\/fabric_transaction.proto",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2UPZE64A-11eaa1a4b9",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPZE64A\/fabric_transaction.proto\/edit",
+            "preview": "\/*\nCopyright IBM Corp. 2016 All Rights Reserved.\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>\/*<\/pre><\/div>\n<div><pre>Copyright IBM Corp. 2016 All Rights Reserved.<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);<\/pre><\/div>\n<div><pre>you may not use this file except in compliance with the License.<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 78,
+            "lines_more": 73,
+            "preview_is_truncated": true,
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1477527413.000936"
+    },
+    {
+        "type": "message",
+        "subtype": "file_comment",
+        "text": "<@U0ULK2JPP|muralisr> commented on <@U0ULK2JPP|muralisr>\u2019s file <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto|chaincode_transaction.proto>: I have attached proto files with the appropriate changes.",
+        "file": {
+            "id": "F2UPNMZD3",
+            "created": 1477527411,
+            "timestamp": 1477527411,
+            "name": "chaincode_transaction.proto",
+            "title": "chaincode_transaction.proto",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ULK2JPP",
+            "editable": true,
+            "size": 1140,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPNMZD3\/chaincode_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2UPNMZD3\/download\/chaincode_transaction.proto?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2UPNMZD3-054e822b2f",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2UPNMZD3\/chaincode_transaction.proto\/edit",
+            "preview": "\/*\nCopyright IBM Corp. 2016 All Rights Reserved.\n\nLicensed under the Apache License, Version 2.0 (the \"License\");\nyou may not use this file except in compliance with the License.",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>\/*<\/pre><\/div>\n<div><pre>Copyright IBM Corp. 2016 All Rights Reserved.<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);<\/pre><\/div>\n<div><pre>you may not use this file except in compliance with the License.<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 43,
+            "lines_more": 38,
+            "preview_is_truncated": true,
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 2,
+            "initial_comment": {
+                "id": "Fc2UPGCPRC",
+                "created": 1477527411,
+                "timestamp": 1477527411,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "<@U0ZR63HLK> <@U26T99AQ4>  multiple TransactionAction (although ledger code expects only one currently) as in this field `repeated TransactionAction actions = 3;`   is ok but not  `repeated ChaincodeEndorsedActions action = 2;`  I think ? Can you validate please ?",
+                "channel": ""
+            }
+        },
+        "comment": {
+            "id": "Fc2UPUB909",
+            "created": 1477527471,
+            "timestamp": 1477527471,
+            "user": "U0ULK2JPP",
+            "is_intro": false,
+            "comment": "I have attached proto files with the appropriate changes.",
+            "channel": ""
+        },
+        "is_intro": false,
+        "ts": "1477527471.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "note the plural-&gt;singular changes to some names as well",
+        "ts": "1477527627.000938"
+    }
+]

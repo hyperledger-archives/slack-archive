@@ -1,0 +1,688 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "still looking for reviews for my sbft changesets",
+        "ts": "1478075138.003054"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XQ35CDD>: if there is a single node that receives all these requests, isnt easier that we enforce that these requests are handled sequentially?",
+        "ts": "1478078423.003055"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "For simplicity and for the beginning since kafka already have this notion of cluster administrator no?",
+        "ts": "1478078462.003056"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "could somebody review my changesets?",
+        "ts": "1478088844.003057"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1BC5A0F9>: Well, for Kafka, this is an easy problem to solve. You just assign a partition to these requests, and then it's all up to the partition leader replica to enforce order. No need to tie this specifically to the cluster controller.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478089799.000000"
+        },
+        "ts": "1478089724.003058"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What was the exact flow you had in mind?",
+        "ts": "1478089818.003060"
+    },
+    {
+        "user": "U2W8LGBMZ",
+        "text": "<@U2W8LGBMZ|azaleta> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478091620.003061"
+    },
+    {
+        "user": "U2M6CU41G",
+        "text": "<@U2M6CU41G|seshadrs> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478095481.003062"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> I'd still like to talk to you about the race between channel creation and channel creation rights when you have a chance",
+        "ts": "1478095898.003063"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right these are the messages that need to be serialized somehow",
+        "ts": "1478095924.003064"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am here. And responded to Elli as well.",
+        "ts": "1478095926.003065"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "in the sense that orders w.r.t. changes in the permissions of entities, w.r..t channel creation\/termination should be received in the same order by all the peers who are to process channel creatiuon\/termination requests.",
+        "ts": "1478096009.003066"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "As long as all the shims read from the same partition, this concern w\/r\/t ordering is taken care of, correct?",
+        "ts": "1478096092.003067"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not quite",
+        "ts": "1478096110.003068"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, first question is:  Where is the channel creation authorization policy stored?",
+        "ts": "1478096121.003069"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Which is why I asked: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478089818003060>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478089818003060",
+                "fallback": "[November 2nd, 2016 5:30 AM] kostas: What was the exact flow you had in mind?",
+                "ts": "1478089818.003060",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "What was the exact flow you had in mind?",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478096149.003070"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Before we proceed further.",
+        "ts": "1478096162.003072"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Just to make sure we're all on the same page.",
+        "ts": "1478096170.003073"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay.  So, I'll enumerate the flow with the race in it.",
+        "ts": "1478096179.003074"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Hold on a sec --",
+        "ts": "1478096191.003075"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It's my understanding based on this <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478078423003055> and Binh's message that Elli has a flow in mind that solves this. Is that correct or not?",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478078423003055",
+                "fallback": "[November 2nd, 2016 2:20 AM] elli: <@U0XQ35CDD>: if there is a single node that receives all these requests, isnt easier that we enforce that these requests are handled sequentially?",
+                "ts": "1478078423.003055",
+                "author_subname": "elli",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0XQ35CDD>: if there is a single node that receives all these requests, isnt easier that we enforce that these requests are handled sequentially?",
+                "author_name": "Elli",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/elli",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/8a94917afbdbd7e1bd944f484dc05cfe.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0022-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478096214.003076"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "aha, the flow in mind related to either have a central admin that process all these requests one by the other",
+        "ts": "1478096289.003078"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and in this case this entity will accept and process channel creation requests as well as channel-related permission config messages",
+        "ts": "1478096314.003079"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "or that you have a chain among orderers to announce these requests",
+        "ts": "1478096324.003080"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and guarantee that all of themsee it in the sasme order",
+        "ts": "1478096332.003081"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The dedicated orderer chain is I think the likely correct answer",
+        "ts": "1478096355.003082"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct.",
+        "ts": "1478096361.003083"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Either way in my mind.",
+        "ts": "1478096371.003084"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "If centralized solution is easier fornow",
+        "ts": "1478096380.003085"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "we can also go for this",
+        "ts": "1478096383.003086"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So you are leveraging the ordering guarantees of the partition, and have a partition dedicated to all the channel-related messages (configs + creation reqs).",
+        "ts": "1478096404.003087"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right",
+        "ts": "1478096415.003088"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but assumin that this chain is internal",
+        "ts": "1478096430.003089"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "is not exposed to others",
+        "ts": "1478096436.003090"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "to peers",
+        "ts": "1478096440.003091"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am fully with you.",
+        "ts": "1478096449.003092"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "We had brought this solution up when we settled on the multi-channel JoinChannel API.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478096632.000000"
+        },
+        "ts": "1478096552.003093"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "A question though is:",
+        "ts": "1478096580.003094"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "These configuration messages that dictate the policies for channel creation, as well as the orgs that can request them. Do  you only see those stored in that special partition?",
+        "ts": "1478096773.003096"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Because as far as I can tell, this is stuff that also belongs on the system chain.",
+        "ts": "1478096837.003097"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, if my understanding is correct, there's some cross-posting that needs to happen here.",
+        "ts": "1478096860.003098"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "isn't the idea to basically have a \"dedicated\" API for config (which would of course take as a parameter the channel(s) it applies to)?",
+        "ts": "1478096935.003099"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(And then you come up with the usual race conditions that we saw with the whole cut block \/ push block mechanisms in Kafka and multiple channels.)",
+        "ts": "1478096944.003100"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0PB67X4K> Config changes are implemented as a special transaction today",
+        "ts": "1478096978.003101"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0PB67X4K> Can you expand on that?",
+        "ts": "1478096981.003102"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which comes in over the normal `Broadcast` API",
+        "ts": "1478096988.003103"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> - I guess I had a thought where all config transactions were submitted on an internal channel (regardless of which channel the config was for).    I would assume this is the case for creating a channel?",
+        "ts": "1478097364.003104"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes, we are talking about an internal channel here and these channel requests. The tricky bit though is this:",
+        "ts": "1478097426.003105"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478096773003096>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478096773003096",
+                "fallback": "[November 2nd, 2016 7:26 AM] kostas: These configuration messages that dictate the policies for channel creation, as well as the orgs that can request them. Do  you only see those stored in that special partition?",
+                "ts": "1478096773.003096",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "These configuration messages that dictate the policies for channel creation, as well as the orgs that can request them. Do  you only see those stored in that special partition?",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478097432.003106"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(And my follow-up messages.)",
+        "ts": "1478097443.003108"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "From all the discussions I've participated in, these system-wide reconfig blocks belong on the system chain.",
+        "ts": "1478097508.003109"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - but does everything that comes in this internal channel get propagated to the channel (if any) it affects?   But in any case, could the orderer then just (re)submit the transaction on the appropriate channel (if required) - or is there some trust violation there?",
+        "ts": "1478097534.003110"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the system chain which goes to the peers?",
+        "ts": "1478097548.003111"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The orderer re-submitting is what I referred to as cross-posting.",
+        "ts": "1478097558.003112"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep",
+        "ts": "1478097562.003113"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "i.e. that's how I see it working.",
+        "ts": "1478097565.003114"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so we were actually saying the same thing then (I think)",
+        "ts": "1478097581.003115"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The system chain would go to the peers, I assume, yes.",
+        "ts": "1478097583.003116"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Gari: yes.)",
+        "ts": "1478097593.003117"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "All of this makes me think that we should really redefine the whole 'system chain' concept.  I would suggest instead, that we should move to bootstrapping the orderer service separately from bootstrapping the peer network.  Essentially bootstrapping the ordering service would give you a thing that can create channels.  Then, to bootstrap the peer network, you would just create channels, one with all of the peer members for the 'system channel', but really, that would just be a normal channel.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478097735.000000"
+        },
+        "ts": "1478097707.003118"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Jeff had suggested that as well, and I like the idea.",
+        "ts": "1478097769.003121"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Well I agree that we need to support that - imagine the case where the people who run the ordering service are not actually the people who have peers which connect",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478097800.000000"
+        },
+        "ts": "1478097787.003122"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "which is a viable scenario",
+        "ts": "1478097807.003124"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's still possible without, by simply spinning up a new ordering service on demand, but I agree the other mechanism is more elegant",
+        "ts": "1478097825.003125"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Or by spinning up an ordering service with no peer network and reconfiguring it)",
+        "ts": "1478097843.003126"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How about this flow: Assuming we have an 'orderer chain', the channel creation transaction comes in as a transaction bound for the desired new channelName\/chainID.  As one of the configuration parameters, it specifies the orderer chain ID.  The ordering service checks the authorization policy on that chain, and if it's valid, wraps and submits this transaction to that chain for ordering.  Once the transaction is finally ordered, it is now concretely valid or invalid, and at this point, the channel is created with a genesis block containing the initial transaction.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478098194.000000"
+        },
+        "ts": "1478098188.003127",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As a neat side effect of specifying the orderer chain ID, would be that you could use the same mechanism to spin up 'new orderer chains' on a single backing ordering service.  Probably not ideal for dedicated hosting, but for free offerings, it would allow multi-tenancy on a single backing Kafka cluster for instance",
+        "ts": "1478098468.003129",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I am OK with that.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478105920.000000"
+        },
+        "ts": "1478098610.003130"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, sounds like we have a plan then? Are there any ambiguities that should be settled?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478099003.000000"
+        },
+        "ts": "1478098996.003131"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> the comment above `How about this flow: \u2026.`  summarizes the discussion ?",
+        "ts": "1478099328.003133"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "trying to see how far I should read back",
+        "ts": "1478099339.003134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would start there and see if you have questions",
+        "ts": "1478099346.003135"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm hesitant to call it a plan just yet, but it looks like it'll work.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478105935.000000"
+        },
+        "ts": "1478099418.003136"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> <@U0XQ35CDD> would a diagram with swim lanes be too hard ? :slightly_smiling_face: \u2026 (note I hesistate to ask )",
+        "ts": "1478099522.003137"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ULK2JPP>: I'd argue that you need some context, which is that the current design will need some cross-posting: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478096773003096>",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478099587.000000"
+        },
+        "ts": "1478099542.003138"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1478099546.003139"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You want a diagram, or a write-up?",
+        "ts": "1478099592.003141"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Bracing myself for a \"both\" answer.)",
+        "ts": "1478099614.003142"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For a little context, the initial problem was that if authorization for creating a chain is stored on one chain, and the actual creation of a chain is stored on another, then these two things are not necessarily serialized, then chain creation would be non-deterministic.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478099653.000000"
+        },
+        "ts": "1478099639.003143"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XQ35CDD> , either would be a good start (whichever is easier)\u2026",
+        "ts": "1478099771.003145"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Write-up it is then, OK.",
+        "ts": "1478099800.003146",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi, we are working on a writeup on this :slightly_smiling_face:",
+        "ts": "1478101055.003147"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The revised flow that eliminates the need for cross-posting?",
+        "ts": "1478101098.003148"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Now getting Binh's comments, but should be done soon",
+        "ts": "1478101099.003149"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Not sure if you saw this part of the discussion: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478096773003096>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478096773003096",
+                "fallback": "[November 2nd, 2016 7:26 AM] kostas: These configuration messages that dictate the policies for channel creation, as well as the orgs that can request them. Do  you only see those stored in that special partition?",
+                "ts": "1478096773.003096",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "These configuration messages that dictate the policies for channel creation, as well as the orgs that can request them. Do  you only see those stored in that special partition?",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478101126.003150"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Adding <@U0KN2SSKE> here :slightly_smiling_face:",
+        "ts": "1478105176.003152"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Chatted with Binh earlier and it seems that in his multi-channel doc he's already working under the assumption of a system chain that is only exposed to the orderers. So we're all on the same page.",
+        "ts": "1478105650.003153",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "ok, finally caught up with this discussion \u2014 yesterday i have started to rewrite part of the multichannel and posted a comment about system chain where all peers are on.  Basically the conclusion was that on the peer side, there is no system chain, just chains that app creates.",
+        "ts": "1478113097.003156"
+    }
+]

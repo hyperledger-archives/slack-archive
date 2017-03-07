@@ -1,0 +1,222 @@
+[
+    {
+        "type": "message",
+        "user": "U2Y3JHRP1",
+        "text": "<@U0PB67X4K> Yes I do need TLS because of security reason.",
+        "ts": "1484644913.000179"
+    },
+    {
+        "type": "message",
+        "user": "U2Y3JHRP1",
+        "text": "<@U0PB67X4K> On the other hand, I checked the source code and I found that the T-Cert seems not working? Is the T-Cert necessary?",
+        "ts": "1484645038.000180"
+    },
+    {
+        "user": "U3CBDC0JG",
+        "text": "<@U3CBDC0JG|kenzhang> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484671206.000181"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "<@U0PB67X4K> is there any doc on how to enable security and setup TLS in V1.0?",
+        "ts": "1484671320.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not yet - but we're getting there soon as a matter of fact",
+        "ts": "1484671372.000183"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "any tips on setting it up? I am getting errors:\n\nerror: [Peer.js]: GRPC client got an error response from the peer. Error: The creator certificate is not valid, err The supplied identity is not valid, Verify() returned x509: certificate signed by unknown authority\n    at \/root\/workspaces\/dhwang\/fabric-sdk-node\/node_modules\/grpc\/src\/node\/src\/client.js:417:17",
+        "ts": "1484671753.000184"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "even a preliminary version of your doc would help a lot",
+        "ts": "1484671826.000185"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U3CBDC0JG> this error usually stems from the fact that your COP was not started with the private key matching the trusted cert that the peer uses. so as a result, when COP signs the ecert of the user (sent by node sdk), it\u2019s not valid when the peer tries to process it as part of verifying the signature in the proposal",
+        "ts": "1484681030.000186"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric-sdk-node> readme has the command that makes it work, specifically:\n```\nbin\/cop server start -ca testdata\/ec.pem -ca-key testdata\/ec-key.pem -config testdata\/testconfig.json\n```",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric-sdk-node",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-sdk-node",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric-sdk-node>",
+                "fallback": "GitHub: hyperledger\/fabric-sdk-node",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-sdk-node",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484681088.000187"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "note the `-ca` and `-ca-key` parameters",
+        "ts": "1484681106.000189"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "<@U13TWBRBL> thx. how to find out what trusted cert (root ca) peer is using?",
+        "edited": {
+            "user": "U3CBDC0JG",
+            "ts": "1484681249.000000"
+        },
+        "ts": "1484681213.000190"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "is it controlled by the `pki.tls.rootcert.file` configuration in core.yaml?",
+        "edited": {
+            "user": "U3CBDC0JG",
+            "ts": "1484681365.000000"
+        },
+        "ts": "1484681351.000192"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U3CBDC0JG> fabric\/msp\/sampleconfig\/cacerts\/cacert.pem, you can see that its content is exactly the same as fabric-cop\/testdata\/ec.pem",
+        "ts": "1484681918.000194"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and the corresponding private key for ec.pem is ec-key.pem, hence the above command parameters",
+        "ts": "1484681956.000195"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "uh, ic, thx for the clarification",
+        "ts": "1484682383.000196"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KN2SSKE> <@U0ULK2JPP> I\u2019m seeing the following error seemingly randomly, if I submit the exact same transaction again (and again), eventually it\u2019ll pass:\n\n```\n2017-01-17 18:50:04.695 UTC [shim] func1 -&gt; ERRO 76a [1cb06fa3]Transaction execution failed. Sending ERROR\n2017-01-17 18:50:04.695 UTC [shim] func1 -&gt; DEBU 76b [1cb06fa3]Move state message ERROR\n2017-01-17 18:50:04.695 UTC [shim] handleMessage -&gt; DEBU 76c [1cb06fa3]Handling ChaincodeMessage of type: ERROR(state:ready)\n2017-01-17 18:50:04.695 UTC [shim] func1 -&gt; DEBU 76d [1cb06fa3]send state message ERROR\n2017-01-17 18:50:04.695 UTC [chaincode] processStream -&gt; DEBU 76e [1cb06fa3]Received message ERROR from shim\n2017-01-17 18:50:04.695 UTC [chaincode] processStream -&gt; ERRO 76f Got error: Invalid signature, err The signature is invalid\n2017-01-17 18:50:04.695 UTC [chaincode] HandleMessage -&gt; DEBU 770 [1cb06fa3]Handling ChaincodeMessage of type: ERROR in state ready\n2017-01-17 18:50:04.695 UTC [chaincode] HandleMessage -&gt; DEBU 771 [1cb06fa3-0b89-46c5-904e-d49a9a07bec9]HandleMessage- COMPLETED. Notify\n2017-01-17 18:50:04.695 UTC [chaincode] notify -&gt; DEBU 772 notifying Txid:1cb06fa3-0b89-46c5-904e-d49a9a07bec9\n2017-01-17 18:50:04.695 UTC [txvalidator] VSCCValidateTx -&gt; ERRO 773 VSCC check failed for transaction txid=\ufffdf\ufffd\ufffd\ufffd\ufffd7\ufffdt\ufffd, error Error executing chaincode: Transaction returned with failure: Invalid signature, err The signature is invalid\n2017-01-17 18:50:04.695 UTC [lockbasedtxmgr] Done -&gt; DEBU 774 Done query executer\/ tx simulator [eb487016-6a05-40fc-beb6-d7ee71dc8add]\n2017-01-17 18:50:04.695 UTC [txvalidator] Validate -&gt; ERRO 775 VSCCValidateTx for transaction txId = \ufffdf\ufffd\ufffd\ufffd\ufffd7\ufffdt\ufffd returned error Error executing chaincode: Transaction returned with failure: Invalid signature, err The signature is invalid\n```",
+        "ts": "1484687183.000197"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "this has been happening in the last couple of weeks",
+        "ts": "1484687231.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U13TWBRBL> with the latest as well ?",
+        "ts": "1484687252.000199"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "still the same behavior with the latest fabric",
+        "ts": "1484687253.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1484687256.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "is f, 7 and t always appear and in that exact position when the error happens ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1484687329.000000"
+        },
+        "ts": "1484687320.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "guessing not\u2026 still .. :slightly_smiling_face:",
+        "ts": "1484687380.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U13TWBRBL> might be better to check with <@U26T99AQ4>",
+        "ts": "1484688118.000205"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ULK2JPP> txid is different each time a new tx is submitted",
+        "ts": "1484688344.000206"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok will do",
+        "ts": "1484688347.000207"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "guess will start asking here, <@U26T99AQ4> any pointers about the error above?",
+        "ts": "1484688379.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "txid is not a string <@U13TWBRBL> ?",
+        "ts": "1484688505.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(as in ascii)",
+        "ts": "1484688517.000210"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "no it\u2019s an array of random bytes",
+        "ts": "1484688789.000211"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "as how it\u2019s currently generated",
+        "ts": "1484688801.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1484688801.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "just making sure the non-ascii is expected",
+        "ts": "1484688827.000214"
+    }
+]

@@ -1,0 +1,434 @@
+[
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "As suggested by simon, and I am posting my investigation on chaincode execution performance here:\n(1) Modify TestExecuteInvokeTransaction in core\/chaincode\/exectransaction_test.go:534 *It takes 20s to execute 10000 transactions on chaincode_example02*\n```\n    start := time.Now()\n    for i := 0; i &lt; 10000; i++ {\n        , , _, err := invoke(ctxt, spec, pb.Transaction_CHAINCODE_INVOKE)\n        if err != nil {\n            return fmt.Errorf(\"Error invoking &lt;%s&gt;: %s\", chaincodeID, err)\n        }\n    }\n    elapse := time.Now().Sub(start).Nanoseconds()\n    fmt.Printf(\"total time: %d\\n\", elapse)\n```\n\n(2) Modify Invoke in examples\/chaincode\/go\/chaincode_example02\/chaincode_example02.go:74 *it takes 10s to execute 10000 empty transactions*\nfunc (t *SimpleChaincode) Invoke(stub *shim.ChaincodeStub, function string, args []string) ([]byte, error) {\n   return nil, nil\n}\n\n(3) Modify TestExecuteInvokeTransaction in core\/chaincode\/exectransaction_test.go:534 *It takes 0.14s to execute 10000 transactions on peer*\n``` \n\tstart := time.Now()\n\tfor i := 0; i &lt; N; i++ {\n\t\tledgerObj, _ := ledger.GetLedger()\n\t\tledgerObj.TxBegin(\"1\")\n\n\t\tchaincodeID := cID.Name\n\t\tastr, _ := ledgerObj.GetState(chaincodeID, \"a\", false)\n\t\tbstr, _ := ledgerObj.GetState(chaincodeID, \"b\", false)\n\t\taval, _ := strconv.Atoi(string(astr))\n\t\tbval, _ := strconv.Atoi(string(bstr))\n\t\taval -= 10\n\t\tbval += 10\n\t\tastr = []byte(strconv.Itoa(aval))\n\t\tbstr = []byte(strconv.Itoa(bval))\n\t\tledgerObj.SetState(chaincodeID, \"a\", astr)\n\t\tledgerObj.SetState(chaincodeID, \"b\", bstr)\n\t\tledgerObj.TxFinished(\"1\", true)\n\t\t\/\/_, _, _, err := invoke(ctxt, spec, pb.Transaction_CHAINCODE_INVOKE)\n\t\t\/\/if err != nil {\n\t\t\/\/\treturn fmt.Errorf(\"Error invoking &lt;%s&gt;: %s\", chaincodeID, err)\n\t\t\/\/}\n\t}\n\telapse := time.Now().Sub(start).Nanoseconds()\n```\n\n(4) Modify TestExecuteDeploySysChaincode in core\/system_chaincode\/systemchaincode_test.go:193 *It takes 3.55s to execute 10000 transactions on sample syscc*\n```\n\tstart := time.Now()\n\tfor i := 0; i &lt; 10000; i++ {\n\t\t_, _, _, err = invoke(ctxt, spec, pb.Transaction_CHAINCODE_INVOKE)\n\t}\n\telapse := time.Now().Sub(start).Nanoseconds()\n\tfmt.Printf(\"total time: %d\\n\", elapse)\n```",
+        "ts": "1467809184.000364"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "zuowang: what kind of machine was this running on?",
+        "ts": "1467810093.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it really doesn't matter much",
+        "ts": "1467810277.000366"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "dunno, for me it seems like a significant factor to judge these numbers",
+        "ts": "1467820231.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why?",
+        "ts": "1467826490.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019m unclear why system chaincode is taking so much time\u2026 any thoughts?",
+        "ts": "1467828201.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0ULK2JPP>: any ideas?",
+        "ts": "1467828849.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe there also internal grpc happening?",
+        "ts": "1467828867.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP> <@U0XR6J961>  the system chaincode still retains the chaincode machinery on the peer side and the the chaincode side (the FSM for example) via common code. Only the transport is different (grpc\/TCP vs channels\/goroutines)",
+        "ts": "1467830858.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so why is it so slow then?",
+        "ts": "1467830933.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "hmm because it still retains the chaincode machinery on both sides",
+        "ts": "1467831090.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "?",
+        "ts": "1467831091.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there should be a factor improvement between docker chaincode and system chaincode though",
+        "ts": "1467831112.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yeah but it isn\u2019t what I would have expected",
+        "ts": "1467831711.000377"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "is it doing the marshaling\/unmarshaling?",
+        "ts": "1467831719.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well this would be an easy candidate for profiling",
+        "ts": "1467831978.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "The grpc protobuf marshalling\/unmarshalling is not there. Unlike the direct Database calls, there\u2019s back and forth between chaincode and the peer for every ledger access. The mechanics of this back and forth to allow for constraints (serial invokes vs parallel etc) woud likely be a big part",
+        "ts": "1467832702.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we _could_ figure out direct access from chaincode to ledger to break some of the chitchat\u2026 but then we\u2019ll have to refactor common code",
+        "ts": "1467832765.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "on a different note, the other thing I though we could do fairly easily with docker chaincodes is to execute transactions to different chaincodes concurrently. On a multichaincode system we immediately get more utilization",
+        "ts": "1467832957.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what if one chaincode calls the other?",
+        "ts": "1467833060.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "back of the que",
+        "ts": "1467833090.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so each chaincode really has a q of transactions",
+        "ts": "1467833145.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019ve been meaning to try it out in a branch\u2026 hopefully soon",
+        "ts": "1467833418.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean, back of the queue?",
+        "ts": "1467833461.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then the semantics work completely differently",
+        "ts": "1467833467.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you get a proper total order?",
+        "ts": "1467833494.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "each of the chaincode will have a q of transactions",
+        "ts": "1467833505.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "this would only for _execution_",
+        "ts": "1467833513.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not for ordering",
+        "ts": "1467833518.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the execute call would have to synchronously wait for the executions and reurn the transactions when the batch is complete",
+        "ts": "1467833602.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "again this only makes a difference when there are  txs to multiple chaincodes.",
+        "ts": "1467833652.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not impressed",
+        "ts": "1467833661.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "because",
+        "ts": "1467833667.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you have 10 transactions",
+        "ts": "1467833679.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you could be executing them in parallel",
+        "ts": "1467833688.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1467833705.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's why we have v2",
+        "ts": "1467833719.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1467833724.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where we can look at the pre\/postimage",
+        "ts": "1467833728.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and we can see directly which executions are independent",
+        "ts": "1467833739.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then can run all of them in parallel",
+        "ts": "1467833747.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "possibly even on separate machines",
+        "ts": "1467833753.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "treat it like a database",
+        "ts": "1467833771.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "maybe I\u2019m missing something\u2026.. in the endorser, when it receives 10 transactions how does it know how to execute them in parallel ?",
+        "ts": "1467833879.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it receives the pre and postimage",
+        "ts": "1467833891.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "don\u2019t you have to execute first when submitted ?",
+        "ts": "1467833928.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if pre and postimages do not intersect, they are independent",
+        "ts": "1467833931.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the submitting peer sends pre and post image",
+        "ts": "1467833949.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or at least the keys",
+        "ts": "1467833965.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's the whole reason why we want to redesign it",
+        "ts": "1467834011.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that execution can be scaled",
+        "ts": "1467834019.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so client-&gt;submitting peer (execute chaincode) -&gt; endorsers \u2026\u2026\u2026\u2026\u2026. consensus ?",
+        "ts": "1467834058.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1467834066.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "endorsers also execute",
+        "ts": "1467834074.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1467834077.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that\u2019s what I thought",
+        "ts": "1467834081.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and thats where I thought you are going to have the same issue",
+        "ts": "1467834092.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but perhaps endorsers don\u2019t \u201cexecute\" using chaincode ?",
+        "ts": "1467834126.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course they do",
+        "ts": "1467834133.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they have to",
+        "ts": "1467834135.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then I don\u2019t understand how the  parallelization can NOT help there as well",
+        "ts": "1467834272.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes it does",
+        "ts": "1467834299.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but you can look at which jobs to parallelize",
+        "ts": "1467834315.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "actually, all can be parallelized, because the state doesn't get changed by execution",
+        "ts": "1467834346.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok\u2026. I still see need to do the kind of parallization. I only claim we can do it even now based on just the chaincodes being executed",
+        "ts": "1467834457.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but how do you deal with the fact that some chaincodes can call other chaincodes?",
+        "ts": "1467834540.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we need to look more into the execution overhead",
+        "ts": "1467834583.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is it 20x",
+        "ts": "1467834588.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and only 6x between system cc and real cc",
+        "ts": "1467834776.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "c-c won\u2019t be direct call like it is today but will have to be added to the que of tx for that chaincode",
+        "ts": "1467835061.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "direct DB GetState \/ PutState instead of peer-chaincode exchange has overheads",
+        "ts": "1467835132.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "some of it is minimized by system chaincode by avoiding grpc channel calls",
+        "ts": "1467835165.000439"
+    }
+]

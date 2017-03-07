@@ -1,0 +1,883 @@
+[
+    {
+        "user": "U0XNB1QNA",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XNB1QNA|davidcosta> has joined the channel",
+        "ts": "1460625542.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this executor code is complex",
+        "ts": "1460630309.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we really need all these threads and queues?",
+        "ts": "1460630317.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can't deal with this executor; i'm looking at how to remove it again",
+        "ts": "1460634191.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's only one thread in the executor",
+        "ts": "1460639044.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And one queue?",
+        "ts": "1460639063.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, i just can't deal with it",
+        "ts": "1460639337.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "way too complicated",
+        "ts": "1460639342.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I wouldn't be overly opposed to ripping it out of Sieve, the `Validate` stuff is pretty ugly,  without that bit of code, it would simplify a lot",
+        "ts": "1460639359.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I think the simplifications it brings to pbft-core and classic\/batch are worth it",
+        "ts": "1460639423.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what kind of simplification?",
+        "ts": "1460639447.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i just ripped out a hundred lines of code, and it still seems to work",
+        "ts": "1460639461.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "By making it synchronous?",
+        "ts": "1460639668.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Pushing all state modification onto a single thread simplified pbft-core a lot from a state transfer perspective.  There was also a lot of code duplication in classic\/batch.  And completely separating the pbft-core and execution bits have made it more clear (at least to me) where issues are occurring.",
+        "ts": "1460639966.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i agree, the more synchronous, the better",
+        "ts": "1460640003.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We'll need to support remote (which means asynchronous) execution in the future?",
+        "ts": "1460640073.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know",
+        "ts": "1460640271.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think it would be asynchronous",
+        "ts": "1460640286.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I suppose we could make it more of a synchronous RPC call, that is just not how anything works today, everything is an asynchronous message on the stream.",
+        "ts": "1460640618.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe you could tell me specifically what you're interested in ripping out, I've been reviewing that code, and I'm not seeing a ton which is dedicated to keeping things asynchronous.",
+        "ts": "1460641848.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm testing what happens if i just get completely rid of the executor",
+        "ts": "1460642605.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i tried to persist the lastexec seqno, and I didn't see any obvious way how to do that with the executor",
+        "ts": "1460642719.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so my choice is: remove the complexity until I can reason about it again, and work with the code again",
+        "ts": "1460642751.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or give up and not work on the code anymore",
+        "ts": "1460642763.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, the choice seems pretty obvious.  My concern with removing the executor code is simply that some of the complexity is due to some nasty race type corner cases, and I want to make sure they aren't re-introduced",
+        "ts": "1460643346.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i agree",
+        "ts": "1460643411.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let's try to make this thing as synchronous as possible",
+        "ts": "1460643421.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we use a channel to pipe in all messages, we can skip all locks",
+        "ts": "1460643490.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "+1 on channels over locks",
+        "ts": "1460643505.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and we should have a way to send results for RPCs",
+        "ts": "1460643539.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. once a message has been accepted into persistent custody",
+        "ts": "1460643553.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or maybe the transaction submission should only reply with a transaction uuid if it was accepted by the consensus network?",
+        "ts": "1460643593.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know",
+        "ts": "1460643595.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd like to figure this out now, as it impacts #919",
+        "ts": "1460643661.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When a message comes in, we can reply with an error, or not, and those are our only two options.",
+        "ts": "1460643701.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(As the code works today)",
+        "ts": "1460643726.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i know",
+        "ts": "1460643732.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's why I'm talking about it :simple_smile:",
+        "ts": "1460643740.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the peer code isn't in a shape to wait on some event before it will reply to the originator",
+        "ts": "1460643761.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it should",
+        "ts": "1460643767.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, I think that is by design",
+        "ts": "1460643775.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "gRCP supports multiple models, and the stream one was chosen explicitly because of its future scalability, I believe",
+        "ts": "1460643802.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean, even if we persist an incoming request to disk - we might go up in flames and the request never gets pushed to consensus",
+        "ts": "1460643802.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so we should wait until the request is prepared",
+        "ts": "1460643828.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "technically",
+        "ts": "1460643831.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the transaction should come with a callback we can invoke",
+        "ts": "1460643852.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which then can send a reply to the originator",
+        "ts": "1460643863.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or a token, and somebody else stores the callback state",
+        "ts": "1460643873.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but let's fix that later",
+        "ts": "1460643892.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is too much to fix in one go",
+        "ts": "1460643898.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What about simply sending a unicast message to the submitter's handle?",
+        "ts": "1460643906.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Though in the case of the REST API, this would be local)",
+        "ts": "1460643963.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess that is why something token or callback based makes more sense.  In the case of a non-local gRPC connection, ie coming from an NVP, the notification should go back over gRPC, but in the case of REST, it should all be internal",
+        "ts": "1460644036.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now REST uses grpc as well",
+        "ts": "1460644066.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Jeff and I were looking to rip that out today or very soon",
+        "ts": "1460644082.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which makes plenty sense, because it is just a special case of the generic NVP REST gateway",
+        "ts": "1460644089.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The problem is that it is a performance bottleneck, and necessarily sidesteps authentication",
+        "ts": "1460644107.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "did you guys have a look at my performance branch modifications?",
+        "ts": "1460644123.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We have not",
+        "ts": "1460644131.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i converted the devops interface into an actual RPC",
+        "ts": "1460644139.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead of this streaming interface",
+        "ts": "1460644148.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let gRPC handle the paralleling &amp; pipelining",
+        "ts": "1460644160.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "I didn't use authentication yet, because nothing seems to use TLS anyways",
+        "ts": "1460644193.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and authentication inside of TLS is meh - no protection against MitM",
+        "ts": "1460644215.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't disagree with the idea of letting gRPC do the paralleling and pipelining, it makes a lot of sense to me, but I have to believe that the stream interface was a well thought out decision (maybe I am giving us a little too much credit though)",
+        "ts": "1460644267.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "stream is fine to push consensus messages around",
+        "ts": "1460644311.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for a devops interface - why?",
+        "ts": "1460644319.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "these *are* RPCs",
+        "ts": "1460644325.000363"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "submit, wait for result",
+        "ts": "1460644331.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i believe this is what keith smith and anya are looking at for their sdk work",
+        "ts": "1460644399.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is the team not active in <#C0YPYBVJM>?",
+        "ts": "1460644469.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why aren't any of these design deliberations a topic of discussion in <#C0YPYBVJM>?",
+        "ts": "1460644496.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "customer meeting in RTP this week",
+        "ts": "1460644505.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure, but clearly people are working\/thinking about things",
+        "ts": "1460644524.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "true, although we might need to prod people to participate",
+        "ts": "1460644557.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is supposed to be an open and distributed project",
+        "ts": "1460644601.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and it absolutely doesn't feel that way",
+        "ts": "1460644613.000372"
+    },
+    {
+        "user": "U10MVHVHQ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10MVHVHQ|inabatk> has joined the channel",
+        "ts": "1460646423.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Are you still around?",
+        "ts": "1460649234.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i am",
+        "ts": "1460649239.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In `pbft-core.go` there `innerBroadcast` call",
+        "ts": "1460649249.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "First, we `instance.consumer.broadcast`, then we `instance.recvMsgSync` if we are supposed to send to ourselves as well",
+        "ts": "1460649277.000377"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Imagine we are running with 3 replicas up (one failed), we broadcast a checkpoint, which another replica receives, and moves its watermarks, and starts sending us requests above our high watermark, because we have not processed the checkpoint ourselves yet",
+        "ts": "1460649386.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is what I am observing in the stress test now, and it seems to break our network",
+        "ts": "1460649442.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we drop the lock around `broadcast`?",
+        "ts": "1460649443.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i changed this stuff in my persistence code anyways",
+        "ts": "1460649460.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, though I'm not sure why it would matter? Since these are separate processes",
+        "ts": "1460649476.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because if we don't drop the lock, we shouldn't process the new requests or checkpoints until we processed our own",
+        "ts": "1460649511.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. broadcast and processing of our own message should be atomic",
+        "ts": "1460649526.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I see, hmmm",
+        "ts": "1460649534.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe others moved forward more quickly?",
+        "ts": "1460649556.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or does that happen for all replicas?",
+        "ts": "1460649561.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We definitely do retain the lock, so I am not sure why this is happening",
+        "ts": "1460649702.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, one replica falls behind because it is simply slower than the rest, and we are being flooded with requests.  And one replica ends up getting new pre-prepares for sequence numbers that are outside of its watermarks, but the lock should prevent that.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1460649786.000000"
+        },
+        "ts": "1460649779.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea so what is going on",
+        "ts": "1460649933.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So I think this is what's happening\n\nvp0 - send checkpoint\nvp0 - receive vp0 checkpoint\nvp1 - send checkpoint\nvp1 - receive vp1 checkpoint\nvp2 - send checkpoint\nvp2 - receive vp0,vp1,vp2 checkpoint\nvp2 - move watermarks and send pre-prepare\nvp0,1 - receive vp2 preprepare and ignore\n\nThis should trigger a view change, which is not great, but it should not lock up the network",
+        "ts": "1460650040.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea there is an issue that PBFT glances over",
+        "ts": "1460650094.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it assumes an infinite \"incoming messages\" store",
+        "ts": "1460650110.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and picks out the ones it can operate on",
+        "ts": "1460650118.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: i'm trying to understand how in your code, pbft will trigger a state transfer",
+        "ts": "1460650796.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something with `weakCheckpointSetOutOfRange`",
+        "ts": "1460650812.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1460650853.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that sets `skipInProgress`",
+        "ts": "1460650886.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The code tracks the last checkpoint message which was above our watermarks, for each replica.",
+        "ts": "1460650886.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Once f+1 replicas agree that there is a checkpoint above our watermarks, then it sets `skipInProgress` so that PBFT knows that it is out of date.",
+        "ts": "1460650931.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1460650944.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but how does the state transfer start?",
+        "ts": "1460650951.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Once PBFT observes a weak checkpoint, so, a valid state, then it tells the executor to `SkipTo` that checkpoint ID",
+        "ts": "1460650965.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah!",
+        "ts": "1460650983.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but isn't that the same?",
+        "ts": "1460650989.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's a comment in there that we should reprocess in case it is the same, but it is not necessarily.",
+        "ts": "1460651011.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could have f+1 checkpoints for the same sequence number with different ids, or we could have 3 checkpoints for different sequence numbers, all of which are above our watermarks.",
+        "ts": "1460651048.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Usually, they will be the same, but not always.",
+        "ts": "1460651069.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah",
+        "ts": "1460651087.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: i think we need to set `activeView = true` when we do `skipTo()`",
+        "ts": "1460654035.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you agree?",
+        "ts": "1460654038.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I think you're right",
+        "ts": "1460654058.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do all of these things work, if we have so many bugs everywhere? :simple_smile:",
+        "ts": "1460654087.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is kind of surprising...",
+        "ts": "1460654123.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess we should also update our view",
+        "ts": "1460654128.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but how",
+        "ts": "1460654130.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i can't just set activeView",
+        "ts": "1460654167.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i need to set view to the right view",
+        "ts": "1460654172.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(`TestFallBehind`)",
+        "ts": "1460654188.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, this is one of those pieces of the paper that I dislike, it is inconsistent with respect to 'falling behind'",
+        "ts": "1460654201.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Per the paper, we are supposed to simply reject all messages with sequence numbers outside of our watermarks, but later it refers to checking checkpoints above the watermarks, I had asked Marko, and he thought the f+1 checkpoints above was a good solution, but it kind of ignores the view thing",
+        "ts": "1460654286.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "replica 3 is effectively disconnected (doesn't receive seqno=1 message)",
+        "ts": "1460654424.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then it goes into view change",
+        "ts": "1460654429.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "later it observes checkpoints, catches up",
+        "ts": "1460654439.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it is still in view change",
+        "ts": "1460654446.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1460654467.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It seems like we not only need to track the out of bounds checkpoints, we then also need to get f+1 agreement on the current view? We could then set it active, to whatever that view happens to be.",
+        "ts": "1460654714.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We are still never really promised that we have not already missed some requests, we are basically hoping that we moved our window in time, but I don't think we can do better than that without some significant modifications to the protocol.  Effectively we need a view change to be certain of it.",
+        "ts": "1460654827.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or we keep messages around",
+        "ts": "1460654953.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i don't know",
+        "ts": "1460654976.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "will you send me an invite for the discussion with jeff?",
+        "ts": "1460654987.000432"
+    },
+    {
+        "user": "U0UFDAS91",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0UFDAS91|christophera> has joined the channel",
+        "ts": "1460655002.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Let me ask Jeff if he has a better idea of when he'll free up.  Would send the invite now but I don't have a firm time yet",
+        "ts": "1460655041.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[Also, we are somehow deadlocking when the view change timer fires, I see `Replica 2 view change timer expired, waiting for lock with expired count 2` and then the messages stop, also seeing `Replica 1 view change timer expired, waiting for lock with expired count 2` in the same network, which basically locks up the network.  This is in classic, not seeing anywhere where someone is obviously blocked waiting for the lock]",
+        "ts": "1460655237.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Jeff says 4pm EST",
+        "ts": "1460655316.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Will send out a notes invite shortly)",
+        "ts": "1460655559.000437"
+    },
+    {
+        "user": "U0N20TJUA",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N20TJUA|guruprasath> has joined the channel",
+        "ts": "1460658798.000438"
+    },
+    {
+        "user": "U0NCW1DPX",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0NCW1DPX|gengjh> has joined the channel",
+        "ts": "1460682515.000439"
+    },
+    {
+        "user": "U0ULX737C",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0ULX737C|vipinb> has joined the channel",
+        "ts": "1460683979.000440"
+    },
+    {
+        "user": "U0TFEHX8E",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0TFEHX8E|sheehan> has joined the channel",
+        "ts": "1460684258.000441"
+    }
+]

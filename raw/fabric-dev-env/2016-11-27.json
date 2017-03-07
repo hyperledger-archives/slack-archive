@@ -1,0 +1,199 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I encounter a weird behavior in the output of the unit tests:\nThe chaincode test passes but it outputs to the jenkins console, but tests that pass shouldn't output to the console, only if they fail.\n<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/3326\/console>\nCan anyone explain this?",
+        "ts": "1480259623.002268"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZJZBJLF> assuming you are referring to the logs from before the start of the actual unit test - that\u2019s a \u201cpre unit-test\u201d check using docker compose that <@U0KPFAZNF> added I believe\u2026. I gathered that its work in progress (given orderer is not started in that test) and does not affect CI in anyway.",
+        "ts": "1480259930.002269"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah I think that's the case, thanks",
+        "ts": "1480259969.002270"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yeah we switched to using compose and the side effect is the peer log is now visible",
+        "ts": "1480260513.002271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It used to get buried",
+        "ts": "1480260519.002272"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why use compose? because you need 2 node \"types\"?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1480260761.000000"
+        },
+        "ts": "1480260610.002273"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(orderer\/peer)",
+        "ts": "1480260617.002274"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "No, we always needed a peer historically,  but we launched it manually with docker-run",
+        "ts": "1480262665.002276"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "As such, we were driving compose-isms manually in a script, such as during cleanup",
+        "ts": "1480262707.002277"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "As the system grew more complex, we needed other compose-isms like IP linking",
+        "ts": "1480262739.002278"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So, we had a choice:  we could continue to add manual compose-isms or just switch to compose",
+        "ts": "1480262770.002279"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I chose the latter",
+        "ts": "1480262799.002280"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It seemed to be the logical choice.  Is there a reason this should be reconsidered?",
+        "ts": "1480262837.002281"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That said, we may need to, in fact, support launching both peer and orderer going forward, which only further makes the argument that it should be a composition",
+        "ts": "1480262931.002282"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Today the UT interaction with the peer is minimal so I think we can get away with a partial environment ",
+        "ts": "1480262985.002283"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "What I meant to ask is",
+        "ts": "1480263005.002284"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "previously you have a peer",
+        "ts": "1480263010.002285"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "*had",
+        "ts": "1480263013.002286"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and you ran in docker",
+        "ts": "1480263016.002287"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yep",
+        "ts": "1480263033.002288"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why are you running now in compose? do you have *another* component which needs to run?",
+        "ts": "1480263034.002289"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ip linking implies there are 2 or more participants",
+        "ts": "1480263075.002290"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, the orderer",
+        "ts": "1480263106.002291"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "See above: primary drivers are a) coupled lifecycle (peer stops when UT stops) and b) IP linking (UTs can discover peer)",
+        "ts": "1480263108.002292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Both are natural constructs of a composition ",
+        "ts": "1480263131.002293"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's all I wanted to ask- whether everything is for the orderer, although I don't understand why it runs in a separate process? Why not embed an orderer in the relevant unit test?",
+        "ts": "1480263154.002294"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but forget it I don't want to disturb you on Sunday :wink:",
+        "ts": "1480263180.002295"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It had nothing to do with the orderer (at least at the time)",
+        "ts": "1480263873.002296"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Though it may prove useful for integrating the orderer going forward",
+        "ts": "1480263900.002297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Not sure this is clear, but the unit tests run in a docker context now too.  That is the \"2 participants\" you were wondering about",
+        "ts": "1480269691.002298"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks, that was indeed missing. Now I can recompile all the sentences in my head :wink:",
+        "ts": "1480271906.002299"
+    },
+    {
+        "user": "U1K0ADU82",
+        "text": "<@U1K0ADU82|hsukhwa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480293669.002300"
+    }
+]

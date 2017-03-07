@@ -1,0 +1,522 @@
+[
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "Guys,Please Help me out",
+        "ts": "1486114669.004590"
+    },
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "I have three questions on the Technical aspect of HyperLedger.\n\n1) ChainCode Registraton\n\n2) Member Registration\n\n3) ChainCode in JAVA\n\nChainCode Registration\n\nI followed the docs at <https:\/\/hyperledger-fabric.readthedocs.io>  and installed fabric on Ubuntu.\n\nand was succesful in registering the chaincode with one Validating peer and one memberservice.\n\nI tried to add three more VP to ahceive consensus.\n\nSo now i spun all the containers using docker-compose.yml(PFA) and in the shipyard i saw all the containers are started .\n\nThen i registered the CC using the below command\n\n\"CORE_CHAINCODE_ID_NAME=cscc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/goods_inspection\"\n\nGot a success response as below\n\n\"14:50:11.937 [shim] INFO : error with chaincode log level: logger: invalid log level level= \n14:50:11.937 [shim] DEBU : peerAddress at return point0.0.0.0:8051\n14:50:11.937 [shim] DEBU : Peer address is: 0.0.0.0:8051\n14:50:11.937 [shim] DEBU : peerAddress is not null0.0.0.0:8051\n14:50:11.938 [shim] DEBU : os.Args returns: [.\/goods_inspection]\n14:50:11.938 [shim] DEBU : Registering.. sending REGISTER\n14:50:11.941 [shim] DEBU : []Received message REGISTERED from shim\n14:50:11.943 [shim] DEBU : []Handling ChaincodeMessage of type: REGISTERED(state:created)\n14:50:11.943 [shim] DEBU : Received REGISTERED, ready for invocations\"\n\nThen i deployed the Chaincode in the Shipyard vp0's console using the CLI command\n\n\u201cpeer chaincode deploy \u2013l go \u2013u jim -n  cscc -c '{\"Args\": [\"init\", \"a\",\"100\", \"b\", \"200\"]}'\u201d \n\nI got the success response and  expected it to be replicated across other VP\u2019s\n\nTo check it we did the query command on another VP as VP1,VP2  \u201cpeer chaincode query \u2013l java \u2013u jim -n  cscc -c '{\"Args\": [\"query\", \"b\"]}'\u201d\n\nBut I got error  \u201cLedgerError - R esourceNotFound: ledger: resource not found\u201d.\n\nSo to check if  transaction is deployed on other peers(VP1,VP2) ,we check it using curl command and postman from chrome like\n\ncurl <http:\/\/172.16.0.11:7050\/chain>.\n\nCount is increased, but when tried to query the same the same error as \u201cLedgerError - R esourceNotFound: ledger: resource not found\u201d.\n\nBut when i register the chaincode in two nodes and register it using the below command.\n\n\"CORE_CHAINCODE_ID_NAME=cscc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/goods_inspection\" \n\"CORE_CHAINCODE_ID_NAME=cscc CORE_PEER_ADDRESS=0.0.0.0:8051 .\/goods_inspection\" \nand mapping ports in docker-compose.yaml\nas\n- \"7051:7051\" for vp0\n- \"8051:7051\" for vp1\n\nI noted the chaincode registration is done on two VP's and able to query the same .I dont get the \"Resource not found Error\"\n<http:\/\/hyperledger-fabric.readthedocs.io|hyperledger-fabric.readthedocs.io>\nHyperledger Fabric\nWelcome to the Hyperledger fabric documentation",
+        "attachments": [
+            {
+                "title": "Hyperledger Fabric",
+                "title_link": "https:\/\/hyperledger-fabric.readthedocs.io",
+                "text": "Welcome to the Hyperledger fabric documentation",
+                "fallback": "Hyperledger Fabric",
+                "from_url": "https:\/\/hyperledger-fabric.readthedocs.io",
+                "service_icon": "https:\/\/hyperledger-fabric.readthedocs.io\/favicon.ico",
+                "service_name": "hyperledger-fabric.readthedocs.io",
+                "id": 1
+            }
+        ],
+        "ts": "1486114691.004591"
+    },
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "Please clarify what is the mistake am i doing\n\n\ndocker-compose.yaml\n\n\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"7054:7054\"\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:    \n    - \"7051:7051\"  \n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=INFO\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"\nvp1:  \n  image: hyperledger\/fabric-peer\n  ports:    \n    - \"8051:7051\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp1\n    - DEPLOY_MODE=dev\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp1  \n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n    - CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy\n  links:\n    - membersrvc\n    - vp0\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"",
+        "ts": "1486114700.004592"
+    },
+    {
+        "type": "message",
+        "user": "U0SPN1A68",
+        "text": "<@U3C075D4H>  you use dev mode  \"peer node start --peer-chaincodedev\" just start it with \"peer node start\" and deploy it. Check that container was created and started. docker ps",
+        "ts": "1486116055.004594"
+    },
+    {
+        "user": "U3ZSJCE2D",
+        "text": "<@U3ZSJCE2D|longkb> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486121629.004597"
+    },
+    {
+        "user": "U40KS5K45",
+        "text": "<@U40KS5K45|spk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486122002.004598"
+    },
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "Thanks mkabanau,I will try it.One more calrification ,When said check the conatiner was created and started ,Does it mean after deploy command ?",
+        "ts": "1486122733.004599"
+    },
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "bcoz when given the command docker-compose start,dockers spins off ,but as per Deploy definition  -----&gt;During \u201cDeploy\u201d the chain code is submitted to the ledger in a form of transaction and distributed to all nodes in the network. Each node creates new Docker container with this chaincode embedded. After that container will be started and Init method will be executed",
+        "ts": "1486122808.004600"
+    },
+    {
+        "type": "message",
+        "user": "U3C075D4H",
+        "text": "so will it create new docker image containing Chaincode embedded in it after deploy ?",
+        "ts": "1486122830.004601"
+    },
+    {
+        "type": "message",
+        "user": "U0SPN1A68",
+        "text": "<@U3C075D4H> you are right. After deploy image will be created. I think that Container will be started after invoke or query transaction.",
+        "ts": "1486125114.004603"
+    },
+    {
+        "user": "U40ML6613",
+        "text": "<@U40ML6613|sidiyer> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486130786.004604"
+    },
+    {
+        "type": "message",
+        "user": "U12J2D15H",
+        "text": "if he removes it its fine ?",
+        "ts": "1486131596.004605"
+    },
+    {
+        "type": "message",
+        "user": "U12J2D15H",
+        "text": "wrong window",
+        "ts": "1486131612.004606"
+    },
+    {
+        "user": "U3ZTVQKPS",
+        "text": "<@U3ZTVQKPS|renjithpillai> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486131788.004607"
+    },
+    {
+        "user": "U3ZU1T3HN",
+        "text": "<@U3ZU1T3HN|peterquick> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486132487.004608"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "for questions relative to Hyperledger Fabric- I would suggest going to fabric-dev",
+        "ts": "1486132719.004609"
+    },
+    {
+        "user": "U40NVB57E",
+        "text": "<@U40NVB57E|nticknov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486136493.004612"
+    },
+    {
+        "user": "U40NXH51A",
+        "text": "<@U40NXH51A|kathy.huang> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486136712.004613"
+    },
+    {
+        "user": "U40LMV9PC",
+        "text": "<@U40LMV9PC|hshrivas> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486136745.004614"
+    },
+    {
+        "user": "U41B8JN8N",
+        "text": "<@U41B8JN8N|engioneer> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486136873.004615"
+    },
+    {
+        "user": "U40P9UJQL",
+        "text": "<@U40P9UJQL|dhumphri> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486137860.004616"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U3RV94S8M|jansony1> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jansony1\/F40Q12TUM\/-.sh|Untitled>",
+        "file": {
+            "id": "F40Q12TUM",
+            "created": 1486139287,
+            "timestamp": 1486139287,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U3RV94S8M",
+            "editable": true,
+            "size": 1540,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40Q12TUM\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40Q12TUM\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jansony1\/F40Q12TUM\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F40Q12TUM-856adf55db",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/jansony1\/F40Q12TUM\/-.sh\/edit",
+            "preview": "Hi team: \r\n\r\nWhen I follow the instruction here http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/gettingstarted\/\r\n\r\nAnd make progress to this step\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Hi team: <\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>When I follow the instruction here http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/gettingstarted\/<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>And <span class=\"cm-builtin\">make<\/span> progress to this step<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 36,
+            "lines_more": 31,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U3RV94S8M",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U3RV94S8M|jansony1>",
+        "bot_id": null,
+        "ts": "1486139288.004617"
+    },
+    {
+        "user": "U4022DPL1",
+        "text": "<@U4022DPL1|kazi25> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486141219.004618"
+    },
+    {
+        "user": "U41DA3R6J",
+        "text": "<@U41DA3R6J|kilby> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486143428.004619"
+    },
+    {
+        "user": "U40PKHWSE",
+        "text": "<@U40PKHWSE|jmather> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486146354.004621"
+    },
+    {
+        "user": "U40S65GQM",
+        "text": "<@U40S65GQM|creatinglake> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486146420.004622"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U3ZTVQKPS>, <@U3ZU1T3HN>, <@U40NVB57E>, <@U40NXH51A>, <@U40LMV9PC>, <@U41B8JN8N>, <@U4022DPL1>, <@U41DA3R6J>, <@U40PKHWSE>, <@U40S65GQM>:\n1. You should probably know that we are moving\/transitioning to <https:\/\/chat.hyperledger.org>\n2. Welcome! :wink:",
+        "ts": "1486146898.004623"
+    },
+    {
+        "type": "message",
+        "user": "U40S65GQM",
+        "text": "<@U11MANG9G> thanks for the heads up.",
+        "ts": "1486147204.004624"
+    },
+    {
+        "type": "message",
+        "user": "U40S65GQM",
+        "text": "although it does not look like I can register at the URL.",
+        "ts": "1486147286.004625"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You should be able to use the exact same LFID actually (there is an option there)",
+        "ts": "1486147308.004626"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U11MANG9G|jonathanlevi> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F40S5MZRS\/2017-02-03_lfid.png|Log in with LFID button>",
+        "file": {
+            "id": "F40S5MZRS",
+            "created": 1486147391,
+            "timestamp": 1486147391,
+            "name": "2017-02-03_LFID.png",
+            "title": "Log in with LFID button",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U11MANG9G",
+            "editable": false,
+            "size": 142918,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40S5MZRS\/2017-02-03_lfid.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40S5MZRS\/download\/2017-02-03_lfid.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 142,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 190,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 285,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 380,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 405,
+            "image_exif_rotation": 1,
+            "original_w": 1158,
+            "original_h": 458,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F40S5MZRS\/2017-02-03_lfid.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F40S5MZRS-1497318337",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "pinned_to": [
+                "C0J02NU1E"
+            ]
+        },
+        "user": "U11MANG9G",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U11MANG9G|jonathanlevi>",
+        "bot_id": null,
+        "ts": "1486147394.004627"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "5.5 K users !",
+        "ts": "1486147416.004628"
+    },
+    {
+        "user": "U11MANG9G",
+        "topic": "MOVED TO:  <https:\/\/chat.hyperledger.org>",
+        "text": "<@U11MANG9G|jonathanlevi> set the channel topic: MOVED TO:  <https:\/\/chat.hyperledger.org>",
+        "type": "message",
+        "subtype": "channel_topic",
+        "ts": "1486147473.004629"
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U11MANG9G",
+        "item_type": "F",
+        "text": "<@U11MANG9G|jonathanlevi> pinned their Image <https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F40S5MZRS\/2017-02-03_lfid.png|Log in with LFID button> to this channel.",
+        "item": {
+            "id": "F40S5MZRS",
+            "created": 1486147391,
+            "timestamp": 1486147391,
+            "name": "2017-02-03_LFID.png",
+            "title": "Log in with LFID button",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U11MANG9G",
+            "editable": false,
+            "size": 142918,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40S5MZRS\/2017-02-03_lfid.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F40S5MZRS\/download\/2017-02-03_lfid.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 142,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 190,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 285,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 380,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F40S5MZRS-368e62d8e1\/2017-02-03_lfid_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 405,
+            "image_exif_rotation": 1,
+            "original_w": 1158,
+            "original_h": 458,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F40S5MZRS\/2017-02-03_lfid.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F40S5MZRS-1497318337",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "pinned_to": [
+                "C0J02NU1E"
+            ]
+        },
+        "ts": "1486147492.004630"
+    },
+    {
+        "type": "message",
+        "user": "U2F9G4BJ8",
+        "text": "is the LFID same as the one for the hyperledger slack.",
+        "ts": "1486150162.004631"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U2F9G4BJ8>  no. visit <https:\/\/identity.linuxfoundation.org\/> to sign up for one (please do not use a social login to create your account, use your email, add social logins later)",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1486150545.000000"
+        },
+        "ts": "1486150521.004632"
+    },
+    {
+        "type": "message",
+        "user": "U40S65GQM",
+        "text": "thanks",
+        "ts": "1486150789.004634"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "*WE HAVE MOVED TO*: <https:\/\/chat.hyperledger.org>",
+        "ts": "1486151124.004637"
+    },
+    {
+        "user": "U41FSH1E2",
+        "text": "<@U41FSH1E2|thedivic> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486152055.004638"
+    },
+    {
+        "text": "hi",
+        "username": "matanyahu",
+        "bot_id": "B3ZG694UR",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1486153308.004639"
+    },
+    {
+        "text": "Just 2c from my side: I am hoping that this time two things will be avoided: 1) channel bloat 2) general chaos in discussions where same topic was discussed across various channels",
+        "username": "matanyahu",
+        "bot_id": "B3ZG694UR",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1486153471.004640"
+    },
+    {
+        "text": "searching into history for references without limits is definitely a plus, let's see if this is going to work out",
+        "username": "matanyahu",
+        "bot_id": "B3ZG694UR",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1486153513.004641"
+    },
+    {
+        "type": "message",
+        "user": "U3M5K237X",
+        "text": "we could just pay for it",
+        "ts": "1486153628.004642"
+    },
+    {
+        "text": "[ ](<https:\/\/chat.hyperledger.org\/channel\/general?msg=2sB64vcMR4sD8NMRa>) <@U1P1ZV6RF|matanyahu> To avoid asking questions other people have already asked is there some kind of wiki\/FAQ\/sticky or any kind of reference material a newcomer like me can read? ",
+        "username": "thedivic",
+        "bot_id": "B3ZG694UR",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1486153762.004643"
+    },
+    {
+        "user": "U406F6HCZ",
+        "text": "<@U406F6HCZ|konstantin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486156821.004644"
+    },
+    {
+        "type": "message",
+        "user": "U3Z328DFE",
+        "text": "so this channel is permanently switching to <https:\/\/chat.hyperledger.org>?",
+        "ts": "1486157025.004645"
+    },
+    {
+        "type": "message",
+        "user": "U3Z328DFE",
+        "text": "just want to confirm",
+        "ts": "1486157073.004646"
+    },
+    {
+        "type": "message",
+        "user": "U3QM6RWS2",
+        "text": "Joined :slightly_smiling_face:",
+        "ts": "1486159757.004653"
+    },
+    {
+        "user": "U41J54UFQ",
+        "text": "<@U41J54UFQ|rleonard> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486162223.004654"
+    },
+    {
+        "user": "U408VFWF2",
+        "text": "<@U408VFWF2|pari> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486187048.004657"
+    },
+    {
+        "user": "U412U8VL5",
+        "text": "<@U412U8VL5|shahisa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486187170.004658"
+    },
+    {
+        "type": "message",
+        "user": "U412U8VL5",
+        "text": "Hey yall",
+        "ts": "1486187238.004659"
+    },
+    {
+        "user": "U4090NW56",
+        "text": "<@U4090NW56|a_daud> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486191619.004661"
+    }
+]

@@ -1,0 +1,184 @@
+[
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "where is 0.5 branch now? still github?",
+        "ts": "1471590227.001925"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "i guess so",
+        "ts": "1471592211.001926"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U12452RAP>:   correct.  the 0.5 branch is frozen in the \"old\" github repo",
+        "ts": "1471594023.001927"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "thanks, guys",
+        "ts": "1471595962.001928"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "could anybody help me with this? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/567\/> I mean the failing tests",
+        "ts": "1471596542.001929"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR>:     does this line pass in unit tests  `ctorbytes, merr := asn1.Marshal(chaincodeInvocationSpec.ChaincodeSpec.CtorMsg)` ?",
+        "ts": "1471597539.001930"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "locally it passed them",
+        "ts": "1471597566.001931"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "shouldn't you be marshaling the args ?",
+        "ts": "1471597567.001932"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I marshall all the ctormsg",
+        "ts": "1471597586.001933"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "Same problem.",
+        "ts": "1471597597.001934"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "which is ChaincodeInput{ Args :: [][]byte }",
+        "ts": "1471597604.001935"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right.  but how would the asn1 encoder know how to marshal \/ unmarshal protobufs?  maybe I am just missing something (so sorry if I am)",
+        "ts": "1471597651.001936"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I am looking at the error `Assertion Failed: Failed to POST to <http:\/\/172.17.0.37:7050\/devops\/invoke>:  {\"Error\": \"Error marshalling constructor: asn1: structure error: unknown Go type: *protos.ChaincodeInput\"}`",
+        "ts": "1471597704.001937"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "ChaincodeInput is just a go struct. maybe I missed something but for me it seemed that Go's ASN1 can marshal any Go interface",
+        "ts": "1471597735.001938"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but you may be right if it is really there, the error",
+        "ts": "1471597751.001939"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "ooh",
+        "ts": "1471597753.001940"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "are you looking at this? <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/421\/consoleFull>",
+        "ts": "1471597814.001941"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw this fails on master (for me at least):   peer_basic.feature:896  chaincode example02 with 4 peers and 1 membersrvc, test crash fault -- @1.1 Consensus Options",
+        "ts": "1471597911.001942"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/421\/testReport\/junit\/peer_basic\/Network%20of%20Peers\/chaincode_map_single_peer_content_generated_ID\/>",
+        "ts": "1471598052.001943"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Shouldn't that have made other tests even unit tests fail?",
+        "ts": "1471598395.001944"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hgabor: you can't marshal pointers, just embedded structs",
+        "ts": "1471598572.001945"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "maybe not since it looks like that is only hit if you set the customIDgenAlg flag",
+        "ts": "1471598583.001946"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Oh right ",
+        "ts": "1471598989.001947"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Is it enough to just dereference it?",
+        "ts": "1471599855.001948"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/571\/>  I took your advice about the relationship of the binary version to yaml and removed it",
+        "ts": "1471613050.001949"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its baked into the binary now, which I think is the right direction",
+        "ts": "1471613061.001950"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me know your thoughts on that patch",
+        "ts": "1471613080.001951"
+    },
+    {
+        "user": "U0YK3KKCY",
+        "text": "<@U0YK3KKCY|harrijk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1471613343.001952"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Submitted the <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/415\/> after rebasing with master again since new commits caused merge conflict.",
+        "ts": "1471629156.001953"
+    },
+    {
+        "user": "U2368MLAW",
+        "text": "<@U2368MLAW|adrianclv> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1471638627.001954"
+    }
+]

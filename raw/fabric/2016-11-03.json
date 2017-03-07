@@ -1,0 +1,158 @@
+[
+    {
+        "user": "U2Y8XHSUD",
+        "text": "<@U2Y8XHSUD|liuzl123> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478179406.003572"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "`transport: http2Server.HandleStreams received bogus greeting from client: \"POST \/registrar HTTP\/1.1\"` Getting this error for all my rest calls after taking latest fabric repo. Everything was working fine with V0.6.0 . Can anyone help me out ?  I am working in vagrant env.",
+        "ts": "1478183463.003573"
+    },
+    {
+        "type": "message",
+        "user": "U0STZRN0Y",
+        "text": "<@U1BR7GTEU>: I will try restarting the docker containers and test it again",
+        "ts": "1478185102.003574"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<@U269P9D8W>. By latest, are you talking about the code from Master branch?  may be its because of this <https:\/\/jira.hyperledger.org\/browse\/FAB-930>? Recently they removed support the REST calls that was part of the peer from master. <@U13TWBRBL>  can confirm :slightly_smiling_face:",
+        "ts": "1478185909.003575"
+    },
+    {
+        "type": "message",
+        "user": "U0STZRN0Y",
+        "text": "<@U24M29R4G>: I am also getting the same error transport: http2Server.HandleStreams received bogus greeting from client: \"POST \/registrar HTTP\/1.1\". I am using the docker method...i recently updated my containers to the latest code",
+        "ts": "1478186180.003576"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0STZRN0Y> <@U269P9D8W> REST API is disabled by default in master, you can re-enable it by passing an env variable CORE_REST_ENABLED=true, however note that the REST API will eventually be removed from the Peer.",
+        "ts": "1478186470.003577"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "they are definitely useful but the Peer is not the right place to host it, at least not the APIs that require user identity (deploy, send transaction, query, etc.)",
+        "ts": "1478186522.003578"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "the SDK team is planning to add a way for REST APIs to be easily enabled based on the SDK library",
+        "ts": "1478186563.003579"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-156>",
+        "ts": "1478186633.003580"
+    },
+    {
+        "type": "message",
+        "user": "U0STZRN0Y",
+        "text": "<@U13TWBRBL>: Should I add  CORE_REST_ENABLED=true in the docker compose yaml file?\nCould you also help me with this too?\n1) I am trying to add a new user in the membersrvc.yaml file \n2) when I am trying to use the registrar API to register my user, I am getting the following error \"Identity lookup error: sql: no rows in result set\"\nrequest:\n{\n\"enrollId\": \"administrartor\",\n\"enrollSecret\": \"password\"\n}\n\nresponse:\n{\n\"Error\": \"rpc error: code = 2 desc = \\\"Identity lookup error: sql: no rows in result set\\\"\"\n}",
+        "ts": "1478186650.003581"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0STZRN0Y> yes, for the peer service in docker compose",
+        "ts": "1478186678.003582"
+    },
+    {
+        "type": "message",
+        "user": "U0STZRN0Y",
+        "text": "Thank you!",
+        "ts": "1478186692.003583"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "the error above is typically caused by the member service store and client\u2019s keyvalue store getting out of sync",
+        "ts": "1478186740.003584"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "since you are using the REST API, the \u201cclient\u201d in this case is the Peer, so the key value store would be in \/var\/hyperledger\/production. that\u2019s also where the member service store is. so you can delete that folder and re-start the member service and Peer",
+        "ts": "1478186813.003585"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "<@U13TWBRBL> Thanks for the help. Although able to register client with REST but deploy transaction is failing. `URL: \/chaincode\nERROR: runtime error: invalid memory address or nil pointer dereference`",
+        "ts": "1478187937.003586"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "can you paste your POST request?",
+        "ts": "1478188006.003587"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "```{\n  \"jsonrpc\": \"2.0\",\n  \"method\": \"deploy\",\n  \"params\": {\n    \"type\": 1,\n    \"chaincodeID\": {\n      \n      \"path\": \"<http:\/\/github.com\/hyperledger\/fabric\/projects\/inCar\/src\/|github.com\/hyperledger\/fabric\/projects\/inCar\/src\/>\"\n    },\n    \"ctorMsg\": {\n      \"function\": \"init\",\n      \"args\": [\n        \n      ]\n    },\n    \"secureContext\": \"jim\"\n  },\n  \"id\": 0\n}```",
+        "ts": "1478188093.003588"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "`POST 0.0.0.0:7050\/chaincode`",
+        "ts": "1478188145.003589"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U269P9D8W|rajeshsubhankar> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/rajeshsubhankar\/F2YD7EQ86\/peer_output.yaml|Peer Output>",
+        "file": {
+            "id": "F2YD7EQ86",
+            "created": 1478188595,
+            "timestamp": 1478188595,
+            "name": "Peer_Output.yaml",
+            "title": "Peer Output",
+            "mimetype": "text\/plain",
+            "filetype": "yaml",
+            "pretty_type": "YAML",
+            "user": "U269P9D8W",
+            "editable": true,
+            "size": 5386,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YD7EQ86\/peer_output.yaml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YD7EQ86\/download\/peer_output.yaml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/rajeshsubhankar\/F2YD7EQ86\/peer_output.yaml",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2YD7EQ86-40d9f6ec53",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/rajeshsubhankar\/F2YD7EQ86\/peer_output.yaml\/edit",
+            "preview": "```15:36:35.065 [devops] Deploy -> DEBU 932 Sending deploy transaction (9cfd16d3a7d728346c71fe9272229a0a710d248317e4d85cb004c9ebb3b68800d90d65b11192190815bd691ad08a9d9ea98eb6150cd0630cd65d91e096e7a720) to validator\r\n15:36:35.065 [peer] sendTransactionsToLocalEngine -> DEBU 933 Marshalling transaction CHAINCODE_DEPLOY to send to local engine\r\n15:36:35.066 [peer] sendTransactionsToLocalEngine -> DEBU 934 Sending message CHAIN_TRANSACTION with timestamp seconds:1478187395 nanos:66982895  to local engine\r\n15:36:35.067 [crypto] closeClientInternal -> INFO 935 Closing client [jim]...\r\n15:36:35.067 [crypto] Debug -> DEBU 936 [client.jim]  Storing unused TCerts...\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>```15:36:35.065 <span class=\"cm-meta\">[<\/span>devops<span class=\"cm-meta\">]<\/span> Deploy -&gt; DEBU 932 Sending deploy transaction (9cfd16d3a7d728346c71fe9272229a0a710d248317e4d85cb004c9ebb3b68800d90d65b11192190815bd691ad08a9d9ea98eb6150cd0630cd65d91e096e7a720) to validator<\/pre><\/div>\n<div><pre>15:36:35.065 <span class=\"cm-meta\">[<\/span>peer<span class=\"cm-meta\">]<\/span> sendTransactionsToLocalEngine -&gt; DEBU 933 Marshalling transaction CHAINCODE_DEPLOY to send to local engine<\/pre><\/div>\n<div><pre>15:36:35.066 <span class=\"cm-meta\">[<\/span>peer<span class=\"cm-meta\">]<\/span> sendTransactionsToLocalEngine -&gt; DEBU 934 Sending message CHAIN_TRANSACTION with timestamp seconds:1478187395 nanos:66982895  to local engine<\/pre><\/div>\n<div><pre>15:36:35.067 <span class=\"cm-meta\">[<\/span>crypto<span class=\"cm-meta\">]<\/span> closeClientInternal -&gt; INFO 935 Closing client <span class=\"cm-meta\">[<\/span>jim<span class=\"cm-meta\">]<\/span>...<\/pre><\/div>\n<div><pre>15:36:35.067 <span class=\"cm-meta\">[<\/span>crypto<span class=\"cm-meta\">]<\/span> Debug -&gt; DEBU 936 <span class=\"cm-meta\">[<\/span>client.jim<span class=\"cm-meta\">]<\/span>  Storing unused TCerts...<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 56,
+            "lines_more": 51,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U269P9D8W",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U269P9D8W|rajeshsubhankar>",
+        "bot_id": null,
+        "ts": "1478188596.003590"
+    }
+]

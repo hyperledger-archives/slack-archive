@@ -1,0 +1,290 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<http:\/\/stackoverflow.com\/questions\/37259222\/how-could-i-get-unique-ids-in-hyperledger>",
+        "attachments": [
+            {
+                "title": "How could I get unique IDs in Hyperledger",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/37259222\/how-could-i-get-unique-ids-in-hyperledger",
+                "text": "Given that Hyperledger's chaincode needs to be deterministic because it's being executed on all validating peers (Are blocks mined in HyperLedger?), how would one get a unique ID so I can 'InsertRow'",
+                "fallback": "How could I get unique IDs in Hyperledger",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/37259222\/how-could-i-get-unique-ids-in-hyperledger",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "id": 1
+            }
+        ],
+        "ts": "1463569249.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is an interesting question",
+        "ts": "1463569255.000753"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should we provide a deterministic randomness to the chaincode?",
+        "ts": "1463569289.000754"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "<@U0XR6J961>: could it be for example just the hash of the chaincode?",
+        "ts": "1463578609.000755"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "how is it currently determined?",
+        "ts": "1463578617.000756"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is?",
+        "ts": "1463578931.000757"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "the deploy transaction id",
+        "edited": {
+            "user": "U0Z3BE0F5",
+            "ts": "1463579127.000000"
+        },
+        "ts": "1463579038.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: I suppose if necessary we could have some facility where the deployment seeds a PRNG deterministically, but i am thinking for this use case its not really necessary",
+        "ts": "1463583545.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a monotonically increasing sequence number facility would do the trick",
+        "ts": "1463583572.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this could be implemented directly in the putstate",
+        "ts": "1463583594.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "<@U0KPFAZNF>: do you know how it is currently determined?",
+        "ts": "1463586928.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "is it the VP where it is sent who chooses it?",
+        "ts": "1463586957.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the hash?",
+        "ts": "1463587012.000765"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as a general statement, pretty much everything we do within the fabric needs to be deterministic, and the hash computation is no different",
+        "ts": "1463587054.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "each VP should compute the hash on their own",
+        "ts": "1463587080.000767"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: <@U0KPFAZNF>: The Go chaincode has access to  stub.GetTxTimestamp() which is deterministic. Is a SHA(txTimestamp) good enough?\n(usage example in chaincode_example01.go)",
+        "edited": {
+            "user": "U0MSG4RL7",
+            "ts": "1463587103.000000"
+        },
+        "ts": "1463587080.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0MSG4RL7>: i would think so, though I still think its overkill w.r.t. the OP question",
+        "ts": "1463587120.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but yes",
+        "ts": "1463587123.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you would want to be careful about clock granularity though",
+        "ts": "1463587154.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0KPFAZNF>: You're right - two transactions in same millisecond (or so) will create identical hash values. Your answer on StackOverflow makes sense to me (just keep a counter in the world state).",
+        "ts": "1463587232.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "don't keep a counter",
+        "ts": "1463587486.000774"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that is a congestion point - all transactions need to serialize around the counter",
+        "ts": "1463587522.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0Z3BE0F5",
+        "text": "what I mean is that currently if you do a deploy transaction, an UID is returned, how is this UID determined?",
+        "ts": "1463587606.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "mcrafols: devops creates the uuid, i think",
+        "ts": "1463587671.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its a hash of various input parameters, like the code itself, the ctorMsg, etc",
+        "ts": "1463587860.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i forget where it is computed in the code, but its a function of the inputs to the deploy",
+        "ts": "1463587874.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "part of the story is here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/chaincode\/platforms\/golang\/hash.go#L255>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1463587946.000000"
+        },
+        "ts": "1463587940.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but IIUC, that output is hashed further higher in the stack",
+        "ts": "1463587960.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the same concept applies: function of inputs",
+        "ts": "1463587968.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0MSG4RL7",
+        "text": "<@U0XR6J961>: Re: \"congestion point\": I thought anyway all the transactions are serialized (in some way or another) so they are put in a strict order in the blockchain. Or, in other words, if the transactions don't modify the same key in the world state, will they be parallelized?",
+        "ts": "1463588396.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not at the moment",
+        "ts": "1463588644.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but you could, if they are independent",
+        "ts": "1463588653.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you certainly can't if they are all serialized around the counter",
+        "ts": "1463588668.000788"
+    },
+    {
+        "type": "message",
+        "user": "U15B57S4R",
+        "text": "Hi all, I pulled the last commit on master (30399796913350ead56ec59cac16add658c39b3e): and unit tests fail:\n\n```\n--- FAIL: TestChaincodeInvokeChaincode (53.50s)\n\texectransaction_test.go:675: Error invoking &lt;b736a304eeda340a47c52c44367a28c8f41004518a4181eb7e8417a778ad3a4b4fe37ea149399cb7b27be88c3920025141cf4be0ebb7791e5968897bdc31d1b6&gt;: Transaction or query returned with failure: [fa2b3f5b-d8db-4a43-a561-8dfc9f8d8254]Chaincode handler FSM cannot handle message (ERROR) with payload size (269) while in state: ready\n\u2026\nFAIL\nexit status 1\nFAIL\t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t197.766s\n```",
+        "ts": "1463598475.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U15B57S4R>: strange, I just confirmed that the PR that created 30399 did in fact pass CI",
+        "ts": "1463598616.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is it repeatable?",
+        "ts": "1463598629.000791"
+    },
+    {
+        "type": "message",
+        "user": "U15B57S4R",
+        "text": "yes it is:\u00a0\n```\ncd $GOPATH\/src\/github.com\/hyperledger\/fabric\/core\/chaincode\/\ngo test -v -run=TestChaincodeInvokeChaincode\n\u2026\n--- FAIL: TestChaincodeInvokeChaincode (48.37s)\n\texectransaction_test.go:675: Error invoking &lt;b736a304eeda340a47c52c44367a28c8f41004518a4181eb7e8417a778ad3a4b4fe37ea149399cb7b27be88c3920025141cf4be0ebb7791e5968897bdc31d1b6&gt;: Transaction or query returned with failure: [c89c565e-027f-445d-8185-845cdde56ae9]Chaincode handler FSM cannot handle message (ERROR) with payload size (269) while in state: ready\n=== RUN   TestChaincodeInvokeChaincodeErrorCase\n\u2026\n--- PASS: TestChaincodeInvokeChaincodeErrorCase (37.16s)\nFAIL\nexit status 1\nFAIL\t<http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode|github.com\/hyperledger\/fabric\/core\/chaincode>\t85.599s\n```",
+        "edited": {
+            "user": "U15B57S4R",
+            "ts": "1463599121.000000"
+        },
+        "ts": "1463599021.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF>:  do you know if  chaincode_example02 was changed  ?",
+        "ts": "1463601907.000794"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let me check",
+        "ts": "1463601918.000795"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP>: not to my knowledge",
+        "ts": "1463601944.000796"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1463601949.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U15B57S4R>: FWIW  \u2026.  I ran \"go test -run=TestChaincodeInvokeChaincode\u201d  and \u201cgo test\u201d with latest and both worked",
+        "ts": "1463604070.000798"
+    },
+    {
+        "user": "U0UFDAS91",
+        "type": "message",
+        "subtype": "channel_leave",
+        "text": "<@U0UFDAS91|christophera> has left the channel",
+        "ts": "1463616073.000799"
+    }
+]

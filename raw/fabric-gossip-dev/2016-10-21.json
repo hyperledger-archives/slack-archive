@@ -1,0 +1,574 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Thoughts regarding Gossip multi-channel support:\n(Multichannel Consensus and Ledgers): <https:\/\/docs.google.com\/document\/d\/1eRNxxQ0P8yp4Wh__Vi6ddaN_vhN2RQHP-IruHNUwyhc\/edit#heading=h.v3lesbw3atum> \nIt shouldn't be too hard to implement support for that, but there is only 1 delicate issue when the channel membership changes (specifically- when nodes are *removed*):\n- For state transfer we're good (feasible to implement) because the way the state transfer works is it obtains blocks from the ledger directly, meaning- if the a peer `p0` got a block `B50` from `p1`, then `p1 ` must have committed all configuration blocks sent prior to `B50` and ensured that `p0` is still a member of the channel when he requests that block. \n- If we use the gossip to disseminate blocks from the consenters to the peers (instead of having *all of them* them connected directly to kafka orderers\/sBFT\/SOLO, that's not the current architecture but I want gossip to support this option)  we have a problem because our gossip disseminates blocks in arbitrary order, meaning- if I'm a peer I might gossip a block to peers before I got a configuration change that should have prevented me of gossipping that block.  What I propose to do for this is to have the following mechanism: once in every `Min(K blocks, T seconds)` the consenters send via gossip a `channel` message containing the channel membership + the latest block sequence number sent. Of course, once a configuration is changed, a `channel` message is sent right away.\nNow, if I'm a peer and I got block `B50`,  before I disseminate it further I wait to get a `channel` message (via gossip) with a block sequence `i` such that `i&gt;=50` and when I got that message (I might get it even before I got `B50`) I know who are the members of the channel that I can forward this message to. \nIf `K` and `T` are chosen optimally I think we can minimize dissemination latency. \n\nAny comments\/ideas (<@U0PB67X4K>  \/ <@U0KN2SSKE> )?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477072024.000000"
+        },
+        "ts": "1477051466.000031"
+    },
+    {
+        "user": "U0XPR4NP4",
+        "text": "<@U0XPR4NP4|jyellick> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477072021.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> You say the gossip disseminates blocks in arbitrary order, how is this possible? Without knowledge of the preceding blocks or a succeeding block, there is no way to validate the block contents?",
+        "ts": "1477072271.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "really? why? I thought you can always determine it came from the consensus and that no one simply made a blob and sent it",
+        "ts": "1477072388.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe you mean- validation in terms of ledger?",
+        "ts": "1477072402.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought consensus hashes the block, signes the hash and sends it and it's possible to hash at the peer side, verify the sig and forward it?",
+        "ts": "1477072458.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But imagine the scenario where:\n\nblock 0: declare blocks must be signed by A,B,C 2\/3\nblock 1: data\nblock 2: data\nblock 3: data\nblock 4: declare blocks must now be signed by B,C,D 3\/3\nblock 5: data\nblock 6: data",
+        "ts": "1477072605.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you retrieve them in arbitrary order, how do you know which validation policy to apply to those signatures?\n\nIf you were to retrieve 0, 1, 5, 6, 3, 4",
+        "ts": "1477072642.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "block 0 and 4 is a consenter change?",
+        "ts": "1477072646.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is a block validation policy change",
+        "ts": "1477072663.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so if we get block 5 before 4 is committed, it'll be thrown. what's the problem with that? how frequently does a BVP change?",
+        "ts": "1477072708.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It'll be thrown?",
+        "ts": "1477072723.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "into the abyss",
+        "ts": "1477072729.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What if you get back a faked block 5 with signatures from A,B",
+        "ts": "1477072751.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then it's OK",
+        "ts": "1477072762.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You would accept it as a valid block, even though it violates the block validation policy",
+        "ts": "1477072766.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "nope",
+        "ts": "1477072770.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How not?",
+        "ts": "1477072773.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because I'm talking now (I wasn't clear enough) about only the gossip layer. it doesn't interact with the ledger. it simply forwards to another layer that we have (we don't even have a name for it yet, even though it's implemented. we call it \"state\" or something) and that layer passes to the peer in order",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477072859.000000"
+        },
+        "ts": "1477072839.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah okay,  and what prevents the gossip layer from being crowded with garbage? And discarding valid post-configuration blocks?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477072925.000000"
+        },
+        "ts": "1477072910.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you initialized the gossip component with proper cryptographic implementation of \"Verify(Block)\" I discard blocks that are not signed properly",
+        "ts": "1477072956.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "discarding valid post-configuration- nothing prevents, well, no one is perfect",
+        "ts": "1477072972.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't think it's that bad as you describe",
+        "ts": "1477072991.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if I don't pass the block to the \"state\" layer- it \"senses it\" because it \"senses\" other peers have a higher block than the peer has and fetches from other peers the valid blocks",
+        "ts": "1477073027.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you are not committing to the ledger, I agree, things are probably fine.  I'm a little concerned about the gossip network grinding to a near halt on configuration change, but maybe this is okay",
+        "ts": "1477073042.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, it's good I know this now because without knowing I can never start thinking of a solution to a problem I wasn't aware of",
+        "ts": "1477073169.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(obviously, I'm only blaming myself here)",
+        "ts": "1477073196.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Eh, we as a project could be better with communication.  As it stands today, there is a very simple, 'configuration transaction', which defines the chain configuration, including things like 'who must sign a block for it to be valid'",
+        "ts": "1477073223.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This configuration transaction always comes in a block by itself",
+        "ts": "1477073236.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where is this thing written, btw?",
+        "ts": "1477073257.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the architecture proposal?",
+        "ts": "1477073271.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I've read it, but I don't recall orderers and stuff, maybe it has changed since",
+        "ts": "1477073299.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-359> has some information on it",
+        "ts": "1477073310.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As does the multichannel doc from Binh",
+        "ts": "1477073325.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A lot of it was sort of handwaved at \"The chain has a validation policy which is stored on the chain\"",
+        "ts": "1477073346.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1799\/> and the dependent commits have a first pass implementation",
+        "ts": "1477073370.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok I see. I'll see what can be done about the configuration change, but- I still don't think that's really an acute problem if it happens rare enough. \nWhat about my suggestion regarding m-channels? What do you think?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477073564.000000"
+        },
+        "ts": "1477073553.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The contents of the configuration transaction are somewhat open ended right now.  My hope is that configuration changes will be relatively infrequent, but, if it is abused to track other information, it could be more frequent.",
+        "ts": "1477073731.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; What I propose to do for this is to have the following mechanism: once in every \ufeff\u2060\u2060\u2060\u2060Min(K blocks, T seconds)\ufeff\u2060\u2060\u2060\u2060 the consenters send via gossip a \ufeff\u2060\u2060\u2060\u2060channel\ufeff\u2060\u2060\u2060\u2060 message containing the channel membership + the latest block sequence number sent. Of course, once a configuration is changed, a \ufeff\u2060\u2060\u2060\u2060channel\ufeff\u2060\u2060\u2060\u2060 message is sent right away.\n\nBy consenters, here, you mean the orderers?",
+        "ts": "1477073752.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1477073760.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Two notes.\n\nFirst, I am wary of having the ordering service try to manage channel membership by peer.  I think this is too fine grained for the orderer, and in order to do this, we would essentially have to embed this into the configuration tx, which would (in my mind) be a bit abusive, and lead to many frequent configuration changes, which is not ideal.\n\nSecondly, going back to what was said in <#C0Z4NBUN6|fabric-consensus-dev> I'm also very skeptical of having the ordering service do any sort of gossiping.  The atomicbroadcast api is quite simple as it stands, and easy to implement without pulling in a lot of fabric specific logic.  I wouldn't say never, but I would want a very compelling reason before modifying the orderer spec in this way.",
+        "ts": "1477073925.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "about the 2nd thing- it doesn't matter if its the ordering service or a peer, if you transfer raw blocks using gossip in the way we discussed a few min ago on cons-dev, the problem persists",
+        "ts": "1477074053.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Elaborate?",
+        "ts": "1477074071.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you either connect directly to the ordering service, or you connect via gossip",
+        "ts": "1477074096.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you connect via the ordering service you're safe, but then you disseminate blocks in a non-order-guaranteeing manner",
+        "ts": "1477074124.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the gossip, why not include the number of the last configuration block?",
+        "ts": "1477074163.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, in the block itself?",
+        "ts": "1477074181.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(in a \"real\" block)?",
+        "ts": "1477074189.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this will only work in a non-byzantine environment though",
+        "ts": "1477074213.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not in the real block, but as metadata.  That way if a peer gets  block 6, and included in the metadata is that the config changed at block 4, then the receiving peers know not to rebroadcast it until they have committed block 4",
+        "ts": "1477074229.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In a byzantine environment, if the peer's goal is to leak the block contents, I think you have already lost",
+        "ts": "1477074259.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I get it",
+        "ts": "1477074273.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that actually is pretty convenient",
+        "ts": "1477074290.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "multi-channel essentially works only in a conforming-peer-type env",
+        "ts": "1477074311.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I actually thought about that idea, but- it's hard to implement and will impact latency. But, if you want to make the orderers as simple as possible I assume our code can change to accommodate....",
+        "ts": "1477074404.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think you can allow and handle some types of byzantine attacks, like censorship, but information leakage is one that I see no way to ever prevent.  You can encrypt data so that if it is leaked it is less useful (think netflix DRM type stuff), but if a rogue actor wants to rebroadcast what you sent, you are out of luck.",
+        "ts": "1477074413.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok so let me recap",
+        "ts": "1477074450.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "a peer that is connected directly to the ordering service, gossips a block but also puts there the last sequence number of the configuration block, right? I assume you sign the hash of the conf block?",
+        "ts": "1477074513.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then, each peer (including that peer that's directly connected to the ordering service) first commits block `i` and only then transfers it.",
+        "ts": "1477074619.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The ordering service will sign the block header and include the signature in the block metadata.  And the config tx hash will be in the block header (for the block in which the config tx appears, because the config tx is the block contents)",
+        "ts": "1477074631.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right.  The rule would be, never transmit a block for which you have not already committed its corresponding configuration block.",
+        "ts": "1477074686.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think this might *really* impact latency, and also impact throughput because blocks are created in an \"application-driven\" pace and not a constant pace but that can be done, I guess. \nAnother idea is to simply include the configuration in each transaction block, that's the simplest of all.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477074789.000000"
+        },
+        "ts": "1477074773.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I _might_ be convinced that it's worth adding the last configuration block number to the block header, so that it does not need to be encoded at the peer, as I think this might be a generally useful thing.  However when you say membership, you mean on a per peer basis?",
+        "ts": "1477074891.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what else? isn't that what is written in the configuration block?",
+        "ts": "1477074933.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how does the ordering service know it can send block `i` to `p`?",
+        "ts": "1477074956.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, the participant org CA membership is written into the configuration",
+        "ts": "1477074966.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Any peer who calls deliver against a channel who presents a valid signed cert which chains to a participant org CA is allowed to receive the blocks for that channel",
+        "ts": "1477075001.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I see. so you blacklist and white list an entire org then?",
+        "ts": "1477075042.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The orderer makes no decisions about what peer to send it to.  If a peer wants it, the peer connects to the orderer to get it.  The peer then allows or disallows based on the presented cert and configured policy",
+        "ts": "1477075044.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In general, yes, I would expect to whitelist only, at an org level.  The use cases I have seen, this is the desired behavior.",
+        "ts": "1477075102.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait... I didn't catch the last part. the peer itself does what?",
+        "ts": "1477075107.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the filtering is done by the peers themselves?!",
+        "ts": "1477075128.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The orderer service never initiates any connections.  A peer connects in and asks for blocks from a particular channel.  If that peer's identity is allowed to use that channel, the orderer replies as requested, if not, it drops the request.",
+        "ts": "1477075166.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but if a peer is no longer a valid member, the ordering service is supposed to stop disseminating the messages to it",
+        "ts": "1477075216.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If an org is no longer allowed to transact on that channel, someone needs to submit a configuration transaction to that channel, which will be consensed upon, and once committed, applied to deliver requests",
+        "ts": "1477075261.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but that deliver API is a gRPC stream, isn't it? once I start the \"deliver\" stream I get blocks on that channel non-stop, don't i? or maybe I'm missing something really important here",
+        "ts": "1477075331.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Kicking off existing streams is going to be an annoying implementation detail, but basically, when a configuration change happens, all existing deliver streams will need to be re-authorized, and clients which are no longer allowed disconnected",
+        "ts": "1477075421.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I missed that part",
+        "ts": "1477075434.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The good news is, this should not require any client interaction",
+        "ts": "1477075439.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since we already have the client ID, it's just verifying they are still allowed or not",
+        "ts": "1477075449.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I understand. But, basically what's important here is that you have (or will have) code that does this \"is this peer valid?\" logic",
+        "ts": "1477075523.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I can simply incorporate that code into the peer and this makes sending all the \" participant org CA membership\" or whatever in each block a no-brainer doesn't it?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477075610.000000"
+        },
+        "ts": "1477075553.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there is code which does this, and it's being designed as 'common code' which can hopefully be libraryified easily",
+        "ts": "1477075590.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But it's much more generic than that.  We cannot only consider the peer org certificates",
+        "ts": "1477075633.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There are going to be an arbitrary number of policies, different ones for who is allowed to submit from who is allowed to modify policy, etc.",
+        "ts": "1477075658.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could shove a hash of the last configuration transaction into the block header, but I see that as less useful than the last block the policy changed in.",
+        "ts": "1477075688.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's not like you can evaluate the policies based only on a hash.",
+        "ts": "1477075698.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see... well, this must be discussed in further detail some other time I think.",
+        "ts": "1477075709.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Thanks a lot for the discussion and explanations and for bringing up that problem.",
+        "ts": "1477075798.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure thing, always happy to, good to hear how the gossip stuff is developing as well",
+        "ts": "1477075995.000132"
+    },
+    {
+        "user": "U2BGFAHC7",
+        "text": "<@U2BGFAHC7|donovanhide> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477076554.000133"
+    }
+]

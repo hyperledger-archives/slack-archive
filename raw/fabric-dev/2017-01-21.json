@@ -1,0 +1,98 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "Would like to throw an old item: <https:\/\/jira.hyperledger.org\/browse\/FAB-1412>. Currently, `make peer` will first build lots of dependencies (e.g., those run-time docker images) implicitly and then compile the peer binary (like a `make peer-all`). I guess it would be helpful if we can decouple those two steps by providing some method to enable just compiling the binary (save time and efforts), as the `make peer`\u2018s doc says: `builds a native fabric peer binary`. Would like to hear more comments, thanks!:slightly_smiling_face:",
+        "ts": "1485041104.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Z41KY5V> the coupling was intentional since the peer cannot really run without the prerequisites.  Disabling that can cause its own set of problems that I would classify as worse than developer inconvenience, especially since (baring bugs) it should employ build caching\/optimization",
+        "ts": "1485041770.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think FAB-1412 is likely just a bug that needs addressing, but I would treat FAB-1412 as different from your decoupling request",
+        "ts": "1485041816.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "plus you can always build the peer binary directly with `go build`",
+        "ts": "1485041885.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that's what I do  :wink:",
+        "ts": "1485041890.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I actually build the orderer that was as well",
+        "ts": "1485041911.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I would discourage that in general as you wont pick up all of the same flags",
+        "ts": "1485042554.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "most notably, the metadata.Version wouldnt be provided",
+        "ts": "1485042574.001303"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps we need a \"training-wheels off\" mode for the build, then",
+        "ts": "1485042589.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well I'm just doing it for quick local tests - not for distributing binaries",
+        "ts": "1485042615.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "understood, I actually meant that more as an example",
+        "ts": "1485042628.001306"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "today, its not too harmful, but tomorrow it could be",
+        "ts": "1485042635.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not sure what <@U0Z41KY5V> really wants to do",
+        "ts": "1485042643.001308"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "today the only implication is you dont get the metadata baked in, but that could change without notice",
+        "ts": "1485042664.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually, you also get slightly different optimization levels",
+        "ts": "1485042681.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U0PB67X4K> <@U0KPFAZNF> yeap, understand that we need the dependencies to run the peer. Building such is not that stable with downloading stuffs from various sources. Maybe we can add some `make binary` to simply build out those binaries with `go build`.",
+        "ts": "1485065297.001311"
+    }
+]

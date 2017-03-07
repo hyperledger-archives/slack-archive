@@ -1,0 +1,451 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "please help us by reviewing this chain:\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2517\/>",
+        "ts": "1479810586.004253"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "very urgent and important",
+        "ts": "1479810594.004254"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U1AU8DRQR> so how do i replicate that test failure?",
+        "ts": "1479813105.004255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is grpc on two ports?",
+        "ts": "1479813294.004256"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the genesis block hashes are still different",
+        "ts": "1479813404.004257"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "am i looking at the wrong patchset?",
+        "ts": "1479813423.004258"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe I forgot to commit the genesis thing. orderer\/common\/bootstrap\/static\/static.go should be changed in line 44:\n        chainID, err := primitives.GetRandomBytes(16)\nyou should put a 16 bytes const to there",
+        "ts": "1479813724.004259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can you please commit what you have",
+        "ts": "1479813740.004260"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what two ports? one for AB, one for consensus",
+        "ts": "1479813743.004261"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes",
+        "ts": "1479813746.004262"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why two ports then?",
+        "ts": "1479813751.004263"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "both can be on the same grpc",
+        "ts": "1479813760.004264"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I was following the ideas of your original 'main app' and decided to have two ports. if that is possible, we can have one",
+        "ts": "1479813793.004265"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the grpc connect failures are to the grpc port",
+        "ts": "1479813802.004266"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "whatever that may be",
+        "ts": "1479813805.004267"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah not only?",
+        "ts": "1479813828.004268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is going on",
+        "ts": "1479813830.004269"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "you mean?",
+        "ts": "1479813845.004270"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2016\/11\/22 12:13:05 could not connect to replica 1 (79bb48 [:6004]): grpc: timed out when dialing",
+        "ts": "1479813853.004271"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2016\/11\/22 12:13:05 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp :6003: getsockopt: connection refused\"; Reconnecting to {\":6003\" &lt;nil&gt;}",
+        "ts": "1479813861.004272"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's going on, why timed out?",
+        "ts": "1479813869.004273"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why connection refused?",
+        "ts": "1479813878.004274"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "my theory is that if you run two tests after each other and one has X nodes and other has Y, X &gt; Y, then there are some grpc.Dial's (goroutine) from connectWorker remaining and they try to connect to non-existing nodes",
+        "ts": "1479813976.004275"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha",
+        "ts": "1479813991.004276"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but 6003 is the port of node number 1",
+        "ts": "1479813995.004277"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "sorry I meant replica",
+        "ts": "1479814001.004278"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/gist.github.com\/ca84029b57bdbb10b882985aea8be1d2>",
+        "ts": "1479814554.004279"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "look at what goroutines are still around at the end of TestTwoReplicasBroadcastAndDeliverUsingTheSame",
+        "ts": "1479814577.004280"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "unless all of this cleans up, i'd expect more test failures",
+        "ts": "1479814626.004281"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "probably it is more practical to keep the receiver in the test process and run the replicas in separate processes",
+        "ts": "1479814686.004282"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe we could analyze that log",
+        "ts": "1479814949.004283"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I mean we should concentrate on gotoutines which are related to our code",
+        "ts": "1479814965.004284"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "e.g. this is not: \t\/usr\/lib\/go\/src\/testing\/testing.go:583 +0x8d2 it is the test framework I guess",
+        "ts": "1479815009.004285"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`TestTwoReplicasBroadcastAndDeliverUsingTheSame` has a logic error - see my comment on patch 9 but basically you need to modify the broadcast call to use peer 1 not peer 9",
+        "ts": "1479817007.004286"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right now, the first 2 tests pass for me but the \"Bomb\" test fails",
+        "ts": "1479817031.004287"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1479817111.004288"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "for the Bomb test do you see that the test fails with 10 messages received every time?  I guess it's supposed to be 12",
+        "ts": "1479817162.004289"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there are some other issues that we need to address for testing",
+        "ts": "1479817183.004290"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yes - there are background routines (as you mentioned) which continue to run",
+        "ts": "1479817204.004291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea we're changing it to use exec + kill",
+        "ts": "1479817306.004292"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool - just thought i'd take a quick look since everyone else ignored Gabor  :disappointed:",
+        "ts": "1479817423.004293"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "seems like you guys have it under control",
+        "ts": "1479817431.004294"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're working on it",
+        "ts": "1479817724.004295"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somehow the conversation moved away from the channel",
+        "ts": "1479817737.004296"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "hi gus,   does anynoe known the TPS of the fabric?",
+        "ts": "1479818073.004297"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "100\uff1f 10000\uff1f or more?",
+        "ts": "1479818110.004298"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You know we can\u2019t really ignore <@U1AU8DRQR>\u2026 he always finds a way to reach out :wink:",
+        "attachments": [
+            {
+                "fallback": "[November 22nd, 2016 4:23 AM] garisingh: cool - just thought i'd take a quick look since everyone else ignored Gabor  :disappointed:",
+                "ts": "1479817423.004293",
+                "author_subname": "garisingh",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "cool - just thought i'd take a quick look since everyone else ignored Gabor  :disappointed:",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/garisingh",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-10\/78323915894_521dc680194c08b166e0_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1479817423004293",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1479818371.000000"
+        },
+        "ts": "1479818131.004299",
+        "reactions": [
+            {
+                "name": "woo",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U2FR6FUJV> It depends on your set up. Less than 10K TPS last time I checked (with Fabric v0.6)",
+        "ts": "1479818165.004300"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "But whatever number people will give you, v1.0 has so many changes that will have a HUGE impact on performance.",
+        "ts": "1479818213.004301"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(the biggest is the \u201cpluggable architecture\u201d where you can specify\/switch components using configuration)",
+        "ts": "1479818238.004302"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "FWIW, I was able to show a stable 2K TPS flow by disabling\/simplifying a lot.",
+        "ts": "1479818270.004303"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "niubwang: 100-1000",
+        "ts": "1479818275.004304"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "depending on the complexity of the chaincode",
+        "ts": "1479818284.004305"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, and other factors (e.g., the number of validators, complexity of the TCerts, etc.)",
+        "ts": "1479818323.004306"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It is easy (at this point) to \u201cplay\u201d with these numbers. Just being frank.",
+        "ts": "1479818343.004307"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "thanks simon and jonathanlevi",
+        "ts": "1479818487.004309"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "and the transaction Latency?",
+        "ts": "1479818514.004310"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "does it depending on the pbft configuration?",
+        "ts": "1479818590.004311"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes it does depend on that, but not much",
+        "ts": "1479818700.004312"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, batch size influences it",
+        "ts": "1479818712.004313"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "the time out of batch is bigger, the TPS is bigger and the Latency is bigger, is it right?",
+        "ts": "1479819091.004314"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, in theory",
+        "ts": "1479819132.004315"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think 100 or 500 batch size already reaches top tps",
+        "ts": "1479819196.004316"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "the batch size set to 100 or 500 and the batch time out set to 1s  or 2s?",
+        "ts": "1479819670.004317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "batch timeout is just to keep the system going if there are not many requests",
+        "ts": "1479819740.004318"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think 1s or so is reasonable, but it really depends on your requirements",
+        "ts": "1479819755.004319"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "thanks simon",
+        "ts": "1479819903.004320"
+    },
+    {
+        "user": "U36D36JH4",
+        "text": "<@U36D36JH4|hmhem> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479870006.004321"
+    },
+    {
+        "user": "U1F1CU61Y",
+        "text": "<@U1F1CU61Y|ankitkamra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479887726.004322"
+    }
+]

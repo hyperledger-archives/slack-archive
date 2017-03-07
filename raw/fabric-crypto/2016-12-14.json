@@ -1,0 +1,50 @@
+[
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZR63HLK> thanks",
+        "ts": "1481720764.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "will look in a bit",
+        "ts": "1481720773.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "We know that we bootstrap orderers with info about admins, who can create chains, but we currently don\u2019t have that info on the peer bootstrap. The configuration block (genesis) comes in a bit too late.  We need to verify the signature of the sender of \u201cJoinChain\u201d, but that info is in the transaction buried in the genesis block.  We could either crack open the block and verify the signature using the info on the config tx, or we bootstrap the peer with the same info as we bootstrap the orderer.  Thoughts?  <@U1BC5A0F9> <@U0ZR63HLK> <@U0XPR4NP4> <@U0PB67X4K>",
+        "ts": "1481758694.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KN2SSKE> It seems like we must have a concept of peer admin.  I discussed this with <@U26T99AQ4> and since it makes sense that a peer can be started with no chains, it also makes sense that the peer must be able to authenticate its administrator from this state.  So I would argue that the peer does not need to do any signature checking on the genesis block in `JoinChan`, instead, the peer needs to authenticate that the `JoinChain` request is from his administrator.",
+        "ts": "1481758968.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You can imagine for instance an organization that has 10 peers and 100 chains, say with each peer participating in 20 chains (so each chain has 2 peers attached).  It would be absolutely unacceptable if another organization could instruct my peers to join chains of their choosing just by sending them the genesis block.  Just because the org agreed to participate in a chain, does not mean it agreed for all its peers to participate in it.",
+        "ts": "1481759097.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And of course it is the administrator's responsibility to make sure that the signatures etc. is correct in the genesis block)",
+        "ts": "1481759198.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "That makes sense, but I wonder if too restrictive.  Chain is application level that application should be able to create a chain as needed based on business context. Requiring an admin role would restrict that API call to a very small set.",
+        "ts": "1481759301.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A random and not fully thought through idea: What if each peer org started a chain of which they were the only member, and used this chain to bootstrap all their peers? This chain would maintain the admin concepts and orchestrate peer chain membership.  The peer org could roll this themselves using their own local ordering for more complete security, or could simply rely on it from the standard ordering service.",
+        "ts": "1481759724.000815"
+    }
+]

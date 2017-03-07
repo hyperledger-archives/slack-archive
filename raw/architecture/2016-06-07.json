@@ -1,0 +1,28 @@
+[
+    {
+        "user": "U130QV7RB",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U130QV7RB|mpage> has joined the channel",
+        "ts": "1465299506.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0KM97TRP",
+        "text": "Folks, in case you have not joined the mail-list yet, please do so. I sent this to the mail-list yesterday:",
+        "ts": "1465326004.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0KM97TRP",
+        "text": "Folks,\n\nI\u2019ve taken a stab at generalizing the first approach, that we\u2019ve been discussing in the arch-wg, to include the concept of a \u201cvalidating set\u201d. Wanted to address the requirement where only a subset of peers (similar to endorsers) execute a transaction, and adopting the state-update concept.\n\nThe aim is to see if the simpler approach has legs. \n\nValidating-set: Set of validating peer nodes that have cleartext access and authorization to execute and validate transactions\nValidation-policy: Rules on what constitutes a valid-tx (similar to endorsement policy)\n\nSmart Contract Function:\nReceives tx from communication layer (unicast from client-node)\nIf this peer is part of validating-set, executes the validation\/business-logic and stores result in scratch-space, if tx is valid. Computes state-update, and optionally includes it in tx sent to network. (In this model, it seems we may not need version-dependencies). Tx is rejected\/tossed if not-valid.\nTransmit tx to network (broadcast to peers) via communication layer\nBlock-creator (leader) role: Creates proposed block \u2013 ordered list of \u201cvalid\" tx. Uses state-update information to eliminate potentially conflicting txs (e.g. Double spend txs would be updating using same key.). Sends block to Consensus layer.\nBlock-validator role: Executes each tx in received block that it is authorized to (I.e. This peer belongs to validating set of tx) and appends it\u2019s \u201cvalidation(endorsement)\u201d to each valid tx. Checks state-update info for inconsistencies for other txs, that it can not execute. Sends validation responses to Consensus layer.\nBlock-committer: Commits all state-updates on completion of consensus\nConsensus Function:\nBlock-creator (leader) role: Receives proposed block from SC function and starts consensus protocol to peer-nodes (broadcast) via communication layer. Ensures validation-policy is enforced. \nBlock-validator role: Receives proposed-block from peer via communication layer, and send to SC function for block-validation \u2013 Uses response in Consensus process and confirms that validation-policy is enforced (Additional round of communication may be needed for confirmation.)\nOutput of Consensus is agreement on ordered set of valid tx. If Block contains hash of global-state, also verifies global state is consistent. If Consensus is not reached tx returned to \u201cmempool\u201d?\nPlease review and lets discuss by e-mail and on the arch-WG call on Wednesday.",
+        "ts": "1465326011.000008"
+    },
+    {
+        "user": "U1F16MNH0",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1F16MNH0|norbs> has joined the channel",
+        "ts": "1465362472.000009"
+    }
+]

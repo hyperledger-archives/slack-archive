@@ -1,0 +1,1052 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "I've been pondering for hours about how to do this 2f+1 send limit",
+        "ts": "1465208225.000002"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is real tricky",
+        "ts": "1465208232.000003"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem i'm having is that i think i shouldn't treat error results (= no send) as success",
+        "ts": "1465208645.000004"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "Let's say we are in a situation where f replicas are disconnected and byzantine, and the rest is connected, but a bit slow.  If I don't consider send errors as byzantine, I will end up waiting only for f+1 replicas, instead of for 2f+1, because the other f erroring ones complete most quickly.",
+        "ts": "1465208934.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "Now let's say I consider errored ones as byzantine.  Maybe they are not, and we just lost the network connection, and instead there are f byz replicas that don't accept data.  Then I would be blocked because while waiting for 2f+1 sends to succeed, f byz replicas are not accepting data and the sends never finish.",
+        "ts": "1465209049.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "So that doesn't work.  It means send errors need to be treated like \"it's still sending\", i.e. we need to retry sending.  Now the question becomes, how long should we wait for the network to become available?  If we say \"indefinitely\", then we stop operation on network failures.  Which may be fine, but seems counter to the spirit of PBFT.  If we say \"don't wait\", we will start discarding messages, maybe without need.  Imagine a deploy transaction - huge amount of data.  Following messages won't fit into the buffers and will be discarded.  That won't be good for system performance.",
+        "ts": "1465209304.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "That leaves me with some arbitrary send timeout, which feels uncomfortable, but seems necessary.",
+        "ts": "1465209335.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "define \"send errors\"?",
+        "ts": "1465209435.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "anything where send returns an error",
+        "ts": "1465209835.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "typically disconnected peers, i'd guess",
+        "ts": "1465209844.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1056>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Investigate blocking network operations in fabric \u00b7 Issue #1056 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1056",
+                "text": "Per a discussion with @chetmurthy we should audit the fabric code to ensure that we never expect network operations to only succeed\/fail immediately, but instead ensure that we also handle the time...",
+                "fallback": "GitHub: Investigate blocking network operations in fabric \u00b7 Issue #1056 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1056",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465210786.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I went through a similar dilemma trying to account for things beyond f problems.  Then I realized: you can't do much,  it essentially undefined at that point. ",
+        "ts": "1465211350.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So, if you have f bad nodes and a few more slow nodes, just do whatever is the most conservative ",
+        "ts": "1465211397.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "In this case, that might be to block for a really long time",
+        "ts": "1465211417.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The algorithms are only designed to guarantee loveliness if you have not crossed the Byzantine threshold",
+        "ts": "1465211505.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Liveliness ",
+        "ts": "1465211529.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(Thanks, autocorrect)",
+        "ts": "1465211542.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Problems arise when you try to handle the condition in an effort to make forward progress",
+        "ts": "1465211647.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "the paper states that it \"guarantees liveness provided message delays are bounded eventually\"",
+        "ts": "1465212737.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "so a timeout seems in order here",
+        "ts": "1465212761.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe, but that isnt necessarily the conclusion to draw",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1465214259.000000"
+        },
+        "ts": "1465214245.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it just simply says that liveness is predicated on messages within the 2f+1 arriving eventually\u2026that has no bearing on what to do if they don't",
+        "ts": "1465214314.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "that is correct - I am looking for a practical fix",
+        "ts": "1465214373.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The system only works at approximately the speed of the healthiest 2f+1 nodes\u2026the moment you don\u2019t have 2f+1 healthy nodes, all bets are off\u2026but the most conservative thing to do might be to wait until you do",
+        "ts": "1465214407.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i guess the question is: what do we hope to accomplish with the timeout?",
+        "ts": "1465214454.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if merely logging, that is harmless enough",
+        "ts": "1465214468.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anything beyond that starts to get into sketchy territory, where we are no longer covered by the proofs",
+        "ts": "1465214511.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "the timeout would fix #1478 and #1056",
+        "ts": "1465214581.000031"
+    },
+    {
+        "text": "looks",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1465214587.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "other than that, as I said, I agree - did Marko have a look into this?",
+        "ts": "1465214628.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't yet talk to him about the specific thoughts i came up with",
+        "ts": "1465214683.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see, seems like we are talking about a different problem here",
+        "ts": "1465214693.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "technically you can just discard messages",
+        "ts": "1465214701.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in 1478, IIUC, its 4 out of 5 nodes that are healthy",
+        "ts": "1465214716.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but if you're too aggressive about that, then you basically produce a constantly failing network",
+        "ts": "1465214727.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0KPFAZNF>: correct, you don't cross the `f` threshold",
+        "ts": "1465214728.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XQ35CDD>: ok, apologies, I thought @corecode mentioned situations beyond f failures",
+        "ts": "1465214753.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "he did :simple_smile:",
+        "ts": "1465214765.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "f byzantine plus network failures",
+        "ts": "1465214775.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which are not considered byzantine",
+        "ts": "1465214781.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "he also included the link to #1056 which is what I was addressing",
+        "ts": "1465214785.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: I guess it depends on your definition of byzantine, but isn\u2019t it true that you cant easily tell the difference?",
+        "ts": "1465214824.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you cannot",
+        "ts": "1465214847.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and that's exactly the problem",
+        "ts": "1465214851.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, thats my point\u2026once you cross f, regardless of the reason, all bets are off in terms of how you may reasonably respond",
+        "ts": "1465214876.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems the most conservative approach is to assume that forward progress is impeded and actively attempt to restore connectivity until we are below the threshold again",
+        "ts": "1465214930.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, network failure does not count towards f",
+        "ts": "1465214936.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that makes no sense to me",
+        "ts": "1465214946.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "how can you discern \u201cnetwork failure\u201d from any other class of error where the node isnt responsive",
+        "ts": "1465214964.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "FWIW, it doesn't make sense to me either",
+        "ts": "1465214969.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you can't",
+        "ts": "1465214986.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it still doesn't mean that more than f nodes are byzantine",
+        "ts": "1465214999.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont care if I cant reach node X because the trans-atlantic hop went down, the DC it lives in lost power, or the software that runs on it was hacked",
+        "ts": "1465215012.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, you don't care",
+        "ts": "1465215025.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "either way, its not a healthy node as part of the 2f+1 from the perspective of the observer",
+        "ts": "1465215025.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1465215036.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "an impartial observer can tell that there is a network partition",
+        "ts": "1465215056.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and all the proofs are based on that",
+        "ts": "1465215066.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure that matters though",
+        "ts": "1465215072.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "each node is its own observer and nodes that cannot be reached are effectively byzantine",
+        "ts": "1465215102.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no they are not",
+        "ts": "1465215113.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because if they were byzantine and i knew it",
+        "ts": "1465215123.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i would have to stop",
+        "ts": "1465215127.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that sounds like a semantic debate",
+        "ts": "1465215128.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we agree the network is decentralized, right?  there is no impartial byzantine status manager, right?",
+        "ts": "1465215184.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "on the node, i can't tell what is what, that's correct",
+        "ts": "1465215185.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "correct, you cant",
+        "ts": "1465215192.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but this is not just theory",
+        "ts": "1465215201.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all you can tell is how many nodes are responding and in agreement",
+        "ts": "1465215206.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're trying to build a system that meets expectations that are stronger than what PBFT can provide",
+        "ts": "1465215233.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, but lets finish this thought:",
+        "ts": "1465215248.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all we can tell is how many nodes are responding and in agreement, nothing more\u2026.and we can try to be helpful to other nodes by responding ourselves",
+        "ts": "1465215280.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1465215292.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "from that, the system, from the perspective of this node, can make forward progress if 2f+1 are responding and in agreement",
+        "ts": "1465215316.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and we cannot make forward progress if we have less than that",
+        "ts": "1465215344.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we will quickly try to run into trouble if you try to get fancy with how you respond after f has been crossed",
+        "ts": "1465215372.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, you have to do something",
+        "ts": "1465215397.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only thing you can really do is recognize that we have to wait until we get back to 2f+1",
+        "ts": "1465215404.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in PBFT, when the timeout expires, you do a view change",
+        "ts": "1465215415.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, service is out (at least on your side of the partition) but that is all you can really do",
+        "ts": "1465215418.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and hope that it was the primary's fault",
+        "ts": "1465215429.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or maybe it is the network and eventually you'll sync up",
+        "ts": "1465215443.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "trying to do a view change in a subordinate or inferior partition will be fruitless though",
+        "ts": "1465215448.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465215459.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, you should perhaps try, yes",
+        "ts": "1465215463.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's on the receiving side",
+        "ts": "1465215475.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but really, once &gt;f, you are stalled",
+        "ts": "1465215480.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what i'm at is the sending side",
+        "ts": "1465215482.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats fine, i think we are talking about slightly different things now anyay",
+        "ts": "1465215512.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway",
+        "ts": "1465215514.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "currently the code waits for all sends to return",
+        "ts": "1465215525.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i thought you were talking about channel timeouts, which would be a different consideration from view-change timeouts",
+        "ts": "1465215542.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which fails if a node deliberately doesn't service its connection",
+        "ts": "1465215544.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, you need to wait for 2f+1, not all",
+        "ts": "1465215563.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, have to get kiddos to school, bbiab",
+        "ts": "1465215578.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ok",
+        "ts": "1465215581.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is all difficult - even if 2f+1 nodes accept the send, there may still be f nodes that don't",
+        "ts": "1465216799.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "their send may block.  but that means that i might queue an unbounded amount of data to these non-responding nodes",
+        "ts": "1465216937.000101"
+    },
+    {
+        "user": "U1EEGQARJ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1EEGQARJ|philippe> has joined the channel",
+        "ts": "1465226886.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I think you fell off the call",
+        "ts": "1465228919.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i did :confused:",
+        "ts": "1465228997.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There should be no scenario where the PBFT event thread stops reading messages off of the receive queue",
+        "ts": "1465229435.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Actually, there is a piece of code that really needs to be reworked, which I think could be causing those buffers to fill",
+        "ts": "1465229457.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Somehow, after all of the cleanup that's been done, in batch, the execution is being done on the main event thread now",
+        "ts": "1465229504.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, for deploy transactions in particular, we could end up blocking for somewhat long periods of time",
+        "ts": "1465229525.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's been on my TODO list to fix, maybe now if the time.",
+        "ts": "1465229558.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ooooh",
+        "ts": "1465229568.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1465229599.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that with slow execution could explain both timeouts and discarded messages",
+        "ts": "1465229616.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds like a reasonable priority for me for the moment then, I'll focus on that unless you see something else more pressing?",
+        "ts": "1465229666.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that sounds good and not too complicated",
+        "ts": "1465229679.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now with all events in place",
+        "ts": "1465229682.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1465229688.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should i look into commit on checkpoint?",
+        "ts": "1465229746.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm a little worried we're going to be touching the same code there (since it's both in the batch execution path)",
+        "ts": "1465229783.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465229804.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that was my thought",
+        "ts": "1465229806.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll hold off for now",
+        "ts": "1465229812.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and think about the sending issue",
+        "ts": "1465229818.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good, thanks <@U0XR6J961>!",
+        "ts": "1465229826.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> <https:\/\/github.com\/hyperledger\/fabric\/pull\/1734>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Move pbft batch execution off main thread by jyellick \u00b7 Pull Request #1734 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1734",
+                "text": "Description This changeset moves the actual fabric execution off of the main event thread and onto its own thread so that PBFT can continue to process messages while execution is being performed. ...",
+                "fallback": "GitHub: Move pbft batch execution off main thread by jyellick \u00b7 Pull Request #1734 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1734",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465233609.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD>: <@U0UGH3X7X> ^ for review as well",
+        "ts": "1465234390.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "guys - I have second thoughts on commit on checkpoint",
+        "ts": "1465246409.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in the case of #1701 or #1545 - what this would do is simply block the whole network for good - since we cannot make a valid checkpoint",
+        "ts": "1465246461.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with that - we are not addressing the source of issues that lead to #1701 and #1545",
+        "ts": "1465246487.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we need to understand: 1) do they have non-deterministic chaincode",
+        "ts": "1465246505.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or 2) we have a bug in execution \/ state hash calculation",
+        "ts": "1465246524.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in case of 1) - my response is - we do not care and will not do anything",
+        "ts": "1465246617.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in case of 2) we obviously need to fix",
+        "ts": "1465246626.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and re - commit on checkpoints - I do not think that blocking the entire network for good is actually a sufficiently good resolution of these issues",
+        "ts": "1465246628.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2>: In the event that there are 2f+1 matching checkpoints, any of the remaining f which disagree would believe themselves to be byzantine, and recover via state transfer",
+        "ts": "1465246685.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "indeed but logs from JPX show all 4 peers diverging",
+        "ts": "1465246704.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "at that point not only you cannot make a stable checkpoint",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1465246746.000000"
+        },
+        "ts": "1465246715.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but cannot trust anyone to actually transfer state from",
+        "ts": "1465246723.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we block",
+        "ts": "1465246725.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If they all four diverge at the same point, then yes, we would have a problem, I had not seen any logs which actually included the problem",
+        "ts": "1465246739.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "again this may fix this run - but certainly does not fix the cause of the issue",
+        "ts": "1465246767.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Certainly the 'commit on checkpoint' is not a solution to non-determinism, but it would prevent inconsistent state from being committed across the network",
+        "ts": "1465246776.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "agree wit hthat - but it does not solve the source of the issue",
+        "ts": "1465246807.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Completely agree with respect to (1) and (2)",
+        "ts": "1465246809.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "non-determinism should not be there",
+        "ts": "1465246812.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If (2), this is a very serious bug that _must_ be identified and fixed",
+        "ts": "1465246823.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If (1), they should fix, but, committing on checkpoint would prevent a client from querying, and receiving a value which ultimately may not be committed",
+        "ts": "1465246859.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway - it would be great to make that  (checkpoint on commit) configurable",
+        "ts": "1465246871.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we can actually configure the \"normal\" pbft and \"paranoid\" pbft",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1465246911.000000"
+        },
+        "ts": "1465246891.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, <@U0XR6J961> and I discussed this some on the phone, we should be able to make this configurable",
+        "ts": "1465246923.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok - but again we need to also look at the source of the issue",
+        "ts": "1465246944.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "do we have the chaincode?",
+        "ts": "1465246948.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I have not seen the logs to which you're referring, last I checked, I found the logs were not complete to the point they described the problem (and only for 2 nodes)",
+        "ts": "1465246974.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And we were missing chaincode logs, but I could be out of date",
+        "ts": "1465246983.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is what I saw as well - but we need actual chaincode to look for non-determinism",
+        "ts": "1465247002.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we do not have that right?",
+        "ts": "1465247007.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "barry\/mihir are replicating the environment ... should have more logs in the morning",
+        "ts": "1465247008.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "and chaincodes",
+        "ts": "1465247023.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok then - pls post here when you have the chaincodes",
+        "ts": "1465247034.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "BTW - as a general rule",
+        "ts": "1465247038.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we must tell folks to submit chaincode + logs",
+        "ts": "1465247051.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "otherwise no bug of this kind is reproducible",
+        "ts": "1465247064.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "+1",
+        "ts": "1465247081.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i meant - do not post chaincode here :slightly_smiling_face:",
+        "ts": "1465247087.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but post a notice",
+        "ts": "1465247091.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "thks!",
+        "ts": "1465247098.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2>: I am not an expert with the chaincodes, but I believe for many, this is where their 'application' which is being built on top of the fabric lives, I am not certain everyone will be happy\/willing to share this",
+        "ts": "1465247116.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But when available, certainly it could be helpful",
+        "ts": "1465247135.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ack but then it is easy for us - we offer no service :slightly_smiling_face:",
+        "ts": "1465247145.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "until there is a chaincode utility  with which they can provably show it is deterministic :slightly_smiling_face:",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1465247246.000000"
+        },
+        "ts": "1465247184.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in zero knowledge",
+        "ts": "1465247206.000174"
+    }
+]

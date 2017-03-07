@@ -1,0 +1,1833 @@
+[
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "can anyone tell me how to use fabric without docker? I tried going into the source and running `make peer` and this happened:\n\n```\ntom@tom-VirtualBox:~\/src\/github.com\/hyperledger\/fabric$ make peer\nBuilding docker base-image\nBUILD-CACHE: Pulling \"hyperledger\/fabric-baseimage:x86_64-0.0.10\" from dockerhub..\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nError while pulling image: Get <https:\/\/index.docker.io\/v1\/repositories\/hyperledger\/fabric-baseimage\/images>: dial tcp: lookup <http:\/\/index.docker.io|index.docker.io> on 127.0.1.1:53: server misbehaving\nBUILD-CACHE: Success!\nstdin: is not a tty\nSending build context to Docker daemon 10.75 kB\nStep 1 : FROM hyperledger\/fabric-baseimage:x86_64-0.0.10\n ---&gt; a2392cc113fd\nStep 2 : ENV HOSTNAME c89059a2f488\n ---&gt; Running in 31ed06271d2d\n ---&gt; 8779a6d0bd34\nRemoving intermediate container 31ed06271d2d\nStep 3 : ENV PATH \/usr\/local\/sbin:\/usr\/local\/bin:\/usr\/sbin:\/usr\/bin:\/sbin:\/bin:\/opt\/go\/bin:\/opt\/gopath\/bin\n ---&gt; Running in 7d6dbe0ce0cb\n ---&gt; a877105ff896\nRemoving intermediate container 7d6dbe0ce0cb\nStep 4 : ENV PWD \/\n ---&gt; Running in 3f68532293ae\n ---&gt; 54f0e2a8ea8c\nRemoving intermediate container 3f68532293ae\nStep 5 : ENV SHLVL 1\n ---&gt; Running in 1ae0c83da178\n ---&gt; 234886c1801b\nRemoving intermediate container 1ae0c83da178\nStep 6 : ENV HOME \/root\n ---&gt; Running in 92cea79c130e\n ---&gt; c6fd984a2c18\nRemoving intermediate container 92cea79c130e\nStep 7 : ENV GOROOT \/opt\/go\n ---&gt; Running in 34b969f81cbc\n ---&gt; 03370e6e2a24\nRemoving intermediate container 34b969f81cbc\nStep 8 : ENV GOPATH \/opt\/gopath\n ---&gt; Running in c6131c686a6f\n ---&gt; 7ffa4e58c7f0\nRemoving intermediate container c6131c686a6f\nStep 9 : ENV _ \/usr\/bin\/printenv\n ---&gt; Running in 47b80a01a4bf\n ---&gt; 3d7ec573c071\nRemoving intermediate container 47b80a01a4bf\nStep 10 : COPY scripts \/hyperledger\/scripts\/provision\n ---&gt; 8394bb919e68\nRemoving intermediate container 22c4ac98e06e\nStep 11 : RUN \/hyperledger\/scripts\/provision\/common.sh\n ---&gt; Running in 5fb570be80f4\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty\/InRelease>  \n\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty-updates\/InRelease>  \n\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty-security\/InRelease>  \n\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty\/Release.gpg>  Could not resolve '<http:\/\/archive.ubuntu.com|archive.ubuntu.com>'\n\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty-updates\/Release.gpg>  Could not resolve '<http:\/\/archive.ubuntu.com|archive.ubuntu.com>'\n\nW: Failed to fetch <http:\/\/archive.ubuntu.com\/ubuntu\/dists\/trusty-security\/Release.gpg>  Could not resolve '<http:\/\/archive.ubuntu.com|archive.ubuntu.com>'\n\nW: Some index files failed to download. They have been ignored, or old ones used instead.\nReading package lists...\nBuilding dependency tree...\nReading state information...\nE: Unable to locate package default-jre\nThe command '\/bin\/sh -c \/hyperledger\/scripts\/provision\/common.sh' returned a non-zero code: 100\nMakefile:172: recipe for target 'build\/image\/base\/.dummy' failed\nmake: *** [build\/image\/base\/.dummy] Error 100\n\n```\n\nWhat does it want docker for?",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1478156862.000000"
+        },
+        "ts": "1478156823.001678"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that looks like a DNS problem <@U2DHRR4TE> .\nIf you want to use docker, just do \"go build -o peer\" and that should work (I think)",
+        "ts": "1478157453.001680"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "I _don't_ wan't to use docker",
+        "ts": "1478157511.001681"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "is there anyway I can use it without docker?",
+        "ts": "1478157519.001682"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "or is that required?",
+        "ts": "1478157524.001683"
+    },
+    {
+        "user": "U2W6ZESRH",
+        "text": "<@U2W6ZESRH|ski> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478162627.001684"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2DHRR4TE> in the current build, it is possible to build both a native peer binary and a docker-based binary\u2026.however, theres a dependency on docker in general regardless of which method you choose because the peer uses docker to contain chainccode instances",
+        "ts": "1478176837.001685"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, I agree with <@U0ZJZBJLF>: it looks like you have some kind of networking problem",
+        "ts": "1478176880.001686"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ghaskins, do you have access control to the jenkins like the LSF guys?",
+        "ts": "1478176916.001687"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i.e- abort\/retrigger jobs manually?",
+        "ts": "1478176927.001688"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont think so, but I can try",
+        "ts": "1478176931.001689"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what do you need",
+        "ts": "1478176934.001690"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "not me",
+        "ts": "1478176937.001691"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1AU8DRQR>",
+        "ts": "1478176940.001692"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, well, if <@U1AU8DRQR> doesn\u2019t, I probably dont either",
+        "ts": "1478176958.001693"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh ok",
+        "ts": "1478176964.001694"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im willing to try though, just point me to a job or whatever",
+        "ts": "1478176976.001695"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "sad :disappointed:",
+        "ts": "1478178258.001696"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is the status with protobuf? Are we using 3.1.0?",
+        "ts": "1478185249.001697"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> yes, master is on 3.1.0",
+        "ts": "1478185848.001698"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When I build the protos in vagrant, protoc claims to be:\n\n```\n$ protoc --version\nlibprotoc 3.1.0\n```\n\nBut the resulting `ab.pb.go` file contains:\n\n```\n\/\/ This is a compile-time assertion to ensure that this generated file\n\/\/ is compatible with the proto package it is being compiled against.\n\/\/ A compilation error at this line likely means your copy of the\n\/\/ proto package needs to be updated.\nconst _ = proto.ProtoPackageIsVersion2 \/\/ please upgrade the proto package\n```\n\nWhen I generate them locally, using my own local copy of 3.1.0, the result is different, and I do not get that line.",
+        "ts": "1478185865.001699"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "v0.6 isn\u2019t in case it matters",
+        "ts": "1478185869.001700"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm only worried about master",
+        "ts": "1478185879.001701"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is certainly curious",
+        "ts": "1478185900.001702"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is its your protoc-gen-go",
+        "ts": "1478185969.001703"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what does your prompt say in vagrant?",
+        "ts": "1478185979.001704"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm, `protoc-gen-go --version` just hangs there, do you know how to check?",
+        "ts": "1478186042.001705"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it should be v0.2.0 blah blah",
+        "ts": "1478186044.001706"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure actually",
+        "ts": "1478186076.001707"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "try without the \u2018--'",
+        "ts": "1478186081.001708"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`vagrant@hyperledger-devenv:v0.2.0-614e268`",
+        "ts": "1478186082.001709"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats good",
+        "ts": "1478186086.001710"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the fact that you have a v0.2.0 prompt tells me that you built this environment _after_ the patch went in to upgrade protoc",
+        "ts": "1478186209.001711"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which means you should have also had the updated vendor\/protobuf library, which would have been used to compile protoc-gen-go",
+        "ts": "1478186232.001712"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, I _just_ did a destroy and up to be sure",
+        "ts": "1478186236.001713"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, good\u2026thats the most conservative option",
+        "ts": "1478186272.001714"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if it continues to emit different code from your native v3.1.0 toolchain, that is curious",
+        "ts": "1478186293.001715"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> i suppose its possible that the vendored lib is 3.0.x",
+        "ts": "1478186330.001716"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I rather suspect my local toolchain is broken, as I've been seeing some odd bugs (like `proto.Marshal` returning `nil, nil` for a valid proto message)",
+        "ts": "1478186333.001717"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "from what I know- the pb.go files that are outputted are effected by the protobuf in the vendor folder.",
+        "ts": "1478186342.001718"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it works like this: protoc looks for a file called `protoc-gen-go`",
+        "ts": "1478186354.001719"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> yes, I believe that is true",
+        "ts": "1478186360.001720"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can \"control\" the protobuff version that is outputted by manipulating your PATH",
+        "ts": "1478186379.001721"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one interesting side note, I think <@U0ZJZBJLF> did the work to update the vendor lib _before_ 3.1.0 came out",
+        "ts": "1478186379.001722"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, so you upgraded the env protobuf version after cherry picking my code?",
+        "ts": "1478186404.001723"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, my guess is: protoc\/libproto.so are v3.1.0 and vendor\/protoc-gen-go are slightly older",
+        "ts": "1478186405.001724"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, I believe we did",
+        "ts": "1478186427.001725"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(it didnt dawn on me at the time)",
+        "ts": "1478186442.001726"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but in retrospect, I think that is what happened",
+        "ts": "1478186449.001727"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Interesting, I removed `$GOPATH\/bin\/protoc-gen-go` on my local environment, and it was regenerated, and things seem happy now",
+        "ts": "1478186463.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we updated from v3.0.2 to v3.1.0 to support Z, but I dont think vendor was also updated",
+        "ts": "1478186469.001729"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when I do on my computer `protoc --version` I get `3.0.0`",
+        "ts": "1478186474.001730"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is that bad?",
+        "ts": "1478186476.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> ah!  I think I understand now",
+        "ts": "1478186492.001732"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the build saw that the hostfs:$GOPATH\/bin\/protoc-gen-go was satisified and didnt rebuild it",
+        "ts": "1478186519.001733"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "good to know",
+        "ts": "1478186528.001734"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ghaskins?",
+        "ts": "1478186541.001735"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "FWIW, this should be fixed soon indirectly by the fact that I am moving tooling out of $GOPATH\/bin",
+        "ts": "1478186566.001736"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> not sure, but it might be",
+        "ts": "1478186583.001737"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, okay, I was just about to ask if this was worth JIRA-ing, but it sounds like not",
+        "ts": "1478186585.001738"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is Z using V1?",
+        "ts": "1478186600.001739"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> generally, im a fan of keeping tabs, so if you dont mind",
+        "ts": "1478186603.001740"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "going to soon?",
+        "ts": "1478186605.001741"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is the Z builds using the same code base we do now?",
+        "ts": "1478186616.001742"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because, I have a pb.go file of gossip committed....",
+        "ts": "1478186625.001743"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> I could easily get distracted from my current queue and the issue gets lost",
+        "ts": "1478186627.001744"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Alright, sure, I can open it",
+        "ts": "1478186643.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> not sure what you mean with \u201cV1\"",
+        "ts": "1478186644.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you mean master branch aka v1.0",
+        "ts": "1478186652.001747"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1478186653.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1478186656.001749"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is the Z using the current master, or not",
+        "ts": "1478186662.001750"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "support is still emerging, but master is the most closely ready to support Z",
+        "ts": "1478186678.001751"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually, scratch that",
+        "ts": "1478186690.001752"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and, can anyone of you do \"devenv\/compile_protos.sh\" please and tell me if gossip\/proto\/messages.pb.go is colored red when you do `git status`?",
+        "ts": "1478186701.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "v0.6 also supports Z by virtue of the old contingency logic",
+        "ts": "1478186710.001754"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'd like to know if the output is different",
+        "ts": "1478186710.001755"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(I'm not using the vagrant)",
+        "ts": "1478186722.001756"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to your other question: yes, Z will use the same code base in master",
+        "ts": "1478186747.001757"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we need to cut a new v0.2.1 baseimage to enable that though",
+        "ts": "1478186762.001758"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "FYI <https:\/\/jira.hyperledger.org\/browse\/FAB-947>",
+        "ts": "1478186871.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> ty",
+        "ts": "1478186900.001760"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\n        modified:   core\/chaincode\/shim\/table.pb.go\n        modified:   gossip\/proto\/message.pb.go\n        modified:   orderer\/atomicbroadcast\/ab.pb.go\n```",
+        "ts": "1478186904.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Those last two are my fault",
+        "ts": "1478186915.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I did `git pull` on master in a vagrant devenv",
+        "ts": "1478186920.001763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because my local proto gen was incorrect",
+        "ts": "1478186922.001764"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, not the gossip one",
+        "ts": "1478186930.001765"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sorry, just the last one",
+        "ts": "1478186933.001766"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "**sigh**",
+        "ts": "1478186957.001767"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll upgrade my proto I guess and will do a PR tonight",
+        "ts": "1478186972.001768"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> do we need a vendor update to v3.1.0?",
+        "ts": "1478187034.001769"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is \u201cnot urgently\u201d, but I am not sure",
+        "ts": "1478187044.001770"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why would we need a vendor update?",
+        "ts": "1478187058.001771"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1478187069.001772"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1478187071.001773"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I guess?",
+        "ts": "1478187073.001774"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4> did you get parity between your local tooling and the vagrant tooling after fixing the protoc-gen-go snafu?",
+        "ts": "1478187080.001775"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe try download the latest and see if there is a difference in the files in the vendor",
+        "ts": "1478187092.001776"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i probably wont have time today",
+        "ts": "1478187108.001777"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but we can check that",
+        "ts": "1478187112.001778"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF> Yes, I did get parity between local and vagrant after the regen",
+        "ts": "1478187146.001779"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok cool",
+        "ts": "1478187169.001780"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> i think thats the answer: its not urgent, as v3.0.2 and v3.1.0 seem to generate identical pb.go",
+        "ts": "1478187196.001781"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just on the low-pri \u201cto do\u201d list",
+        "ts": "1478187205.001782"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZJZBJLF|yacovm> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2YCTUD5K\/-.go|Untitled>",
+        "file": {
+            "id": "F2YCTUD5K",
+            "created": 1478187235,
+            "timestamp": 1478187235,
+            "name": "-.go",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "go",
+            "pretty_type": "Go",
+            "user": "U0ZJZBJLF",
+            "editable": true,
+            "size": 5787,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YCTUD5K\/-.go?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YCTUD5K\/download\/-.go?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2YCTUD5K\/-.go",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2YCTUD5K-a1590b71f8",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F2YCTUD5K\/-.go\/edit",
+            "preview": "--- a\/gossip\/proto\/message.pb.go\r\n+++ b\/gossip\/proto\/message.pb.go\r\n@@ -826,55 +826,56 @@ var _Gossip_serviceDesc = grpc.ServiceDesc{\r\n func init() { proto1.RegisterFile(\"message.proto\", fileDescriptor0) }\r\n\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-operator\">---<\/span> <span class=\"cm-variable\">a<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">gossip<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">proto<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">message<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-variable\">pb<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-keyword\">go<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-operator\">+++<\/span> <span class=\"cm-variable\">b<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">gossip<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">proto<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">message<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-variable\">pb<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-keyword\">go<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">@<\/span><span class=\"cm-variable\">@<\/span> <span class=\"cm-operator\">-<\/span><span class=\"cm-number\">826<\/span>,<span class=\"cm-number\">55<\/span> <span class=\"cm-operator\">+<\/span><span class=\"cm-number\">826<\/span>,<span class=\"cm-number\">56<\/span> <span class=\"cm-variable\">@<\/span><span class=\"cm-variable\">@<\/span> <span class=\"cm-keyword\">var<\/span> <span class=\"cm-variable\">_Gossip_serviceDesc<\/span> <span class=\"cm-operator\">=<\/span> <span class=\"cm-variable\">grpc<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-variable\">ServiceDesc<\/span>{<\/pre><\/div>\n<div><pre> <span class=\"cm-keyword\">func<\/span> <span class=\"cm-variable\">init<\/span>() { <span class=\"cm-variable\">proto1<\/span><span class=\"cm-number\">.<\/span><span class=\"cm-variable\">RegisterFile<\/span>(<span class=\"cm-string\">&quot;message.proto&quot;<\/span>, <span class=\"cm-variable\">fileDescriptor0<\/span>) }<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 61,
+            "lines_more": 56,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ZJZBJLF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZJZBJLF|yacovm>",
+        "bot_id": null,
+        "ts": "1478187236.001783"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's the diff I get",
+        "ts": "1478187238.001784"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> are you saying this is an unexpected churn?",
+        "ts": "1478187276.001785"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, i dont have the context",
+        "ts": "1478187280.001786"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when I compiled gossip it was with 3.0.0",
+        "ts": "1478187291.001787"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(e.g. are you editing message.proto, etc?)",
+        "ts": "1478187292.001788"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "not 3.1",
+        "ts": "1478187293.001789"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "now I did from a vagrant image- git pull in master",
+        "ts": "1478187319.001790"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and compiled the proto files",
+        "ts": "1478187324.001791"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and that's the diff",
+        "ts": "1478187328.001792"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, the code that is checked in master at the moment has a diff in comparison to what should have been there instead",
+        "ts": "1478187345.001793"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as a high level comment, I would say format produced from devenv is authoritative over produced by native tooling",
+        "ts": "1478187365.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all else being equal, and barring bugs (e.g. FAB-947)",
+        "ts": "1478187403.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course...",
+        "ts": "1478187403.001796"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the devenv defines what should be inside",
+        "ts": "1478187413.001797"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if in doubt, recompile from devenv tooling ahead of your .proto updating patch, and we can get that in there",
+        "ts": "1478187454.001798"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF> want to follow up on the topic in <#C28CXQXD5|fabric-maintainers> that <@U0KM61BCP> brought up regarding publishing the v1.0 docker images. the SDK teams (node.js, java, python) would greatly benefit from this because it allows them to do development in the native host environment without vagrant",
+        "ts": "1478199877.001799"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, independent from that, we are also working on making the development environment vagrant free",
+        "ts": "1478199917.001800"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "would that be helpful?",
+        "ts": "1478199930.001801"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "an even bigger benefit is it allows the test prep to be done automatically so the test bucket can run in the local host environment without requiring manually setting up the target network.",
+        "ts": "1478199976.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which?",
+        "ts": "1478199994.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, which provides that benefit?",
+        "ts": "1478200040.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the image publication or the eradication of vagrant) ?",
+        "ts": "1478200052.001805"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "image publication will enable me to set up the target network without vagrant",
+        "ts": "1478200088.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "with the patch queue I am preparing, any docker compatible host (linux, docker-for-mac, docker-for-win) can just clone fabric &amp;&amp; make",
+        "ts": "1478200107.001807"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "that\u2019s very useful, however I think for SDK contributors in most cases a daily published images are sufficient",
+        "ts": "1478200197.001808"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so they don\u2019t need to always stay on the latest fabric code and build locally",
+        "ts": "1478200210.001809"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have concerns about the published image model though",
+        "ts": "1478200214.001810"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "really? isn\u2019t that what we\u2019ve been doing though?",
+        "ts": "1478200251.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, i mean -snapshot publication",
+        "ts": "1478200269.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not releases",
+        "ts": "1478200271.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "those are fine",
+        "ts": "1478200273.001814"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "oh...",
+        "ts": "1478200282.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there would be a few issues to sort out, and a few issues that really cant be sorted out with that model",
+        "ts": "1478200305.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one thing, today we build every snapshot with a unique hash in the name",
+        "ts": "1478200339.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so you would have no deterministic target to pull from",
+        "ts": "1478200354.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we can mitigate that with :latest or similar, but that has problems with repeatability",
+        "ts": "1478200368.001819"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then there is the question of abuse of the storage on dockerhub as a more minor concern",
+        "ts": "1478200396.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear: I am not saying I am voting against this: I just have some concerns",
+        "ts": "1478200450.001821"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i\u2019d say having a :latest and a :sprint-end is sufficient",
+        "ts": "1478200476.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, but :latest what?",
+        "ts": "1478200487.001823"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "even just :latest",
+        "ts": "1478200489.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fabric-peer:latest ?  what is that? x86_64 or s390x?  v0.6:latest or v1.0:latest, etc",
+        "ts": "1478200518.001825"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "can we use a naming scheme with v1.0 in the name?",
+        "ts": "1478200525.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we could have fabric-peer:s390x-1.0.0-snapshot",
+        "ts": "1478200554.001827"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i remember that now",
+        "ts": "1478200569.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would get you closer\u2026but its still impacts repeatability",
+        "ts": "1478200577.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it may work today, but not tomorrow",
+        "ts": "1478200584.001830"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now I am of the mindset that we are better to reduce the friction of producing the artifacts and let those environments link that way",
+        "ts": "1478200622.001831"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\"still impacts repeatability\u201d - can you elaborate?",
+        "ts": "1478200641.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, say todays image \u201cworks\u201d and tomorrows image \u201cdoesnt\"",
+        "ts": "1478200659.001833"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could have a test that you run today\u2026touch nothing, and get a different result tomorrow",
+        "ts": "1478200673.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thus, its not a repeatable operation",
+        "ts": "1478200679.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "generally this should be avoided",
+        "ts": "1478200699.001836"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i\u2019d say having \u201cfabric-peer:x86_64-1.0.0-latest\u201d is going to make a number of use cases happy (local tests, CI jobs)",
+        "ts": "1478200699.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, \u201chappy\u201d != \u201cdeterministic\u201d or \u201creliable\u201d :wink:",
+        "ts": "1478200736.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i understand what you are after, i just have concerns with the model",
+        "ts": "1478200751.001839"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\"a test that you run today\u2026touch nothing, and get a different result tomorrow\u201d - why would that be?",
+        "ts": "1478200772.001840"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "you mean the fabric-peer has progressed and updated and now doesn\u2019t work with my SDK code because the peer broke in the latest build?",
+        "ts": "1478200811.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, say todays \"s390x-1.0.0-snapshot\u201d works flawlessly and tomorrows is a repackaged \/bin\/true",
+        "ts": "1478200818.001842"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could have an SDK workflow that is non deterministic even if nothing locally changes",
+        "ts": "1478200850.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "tomorrows release doesn\u2019t open its GRPC port, or anything else",
+        "ts": "1478200878.001844"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats all I am getting at: its not guaranteed to be repeatable",
+        "ts": "1478200894.001845"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "in that case I value staying up-to-date over determinism, i\u2019d rather be told \u201cSDK doesn\u2019t work with latest peer\u201d and go investigate who\u2019s broken, rather than \u201ceverything\u2019s still good\u201d when it\u2019s not",
+        "ts": "1478200953.001846"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there are other ways to stay up to date that don\u2019t introduce reliability concerns though",
+        "ts": "1478201026.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what is the friction point we are trying to address?",
+        "ts": "1478201037.001848"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so first of all, trying to get rid of vagrant so the changeset that you are working on would help with that (big thanks!)",
+        "ts": "1478201091.001849"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "even after that, i\u2019d still have to download fabric and build it (thought it\u2019ll be better now that it\u2019s done in macOS)",
+        "ts": "1478201139.001850"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and we would set up SDK\u2019s CI job to pull down the latest fabric and build the images",
+        "ts": "1478201181.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if we assume for a second that bandwidth\/compute is unlimited and you could pull any version of fabric.git and get the corresponding docker images instantaneously, would that satisfy your itch?",
+        "ts": "1478201196.001852"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "yes",
+        "ts": "1478201214.001853"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok\u2026obviously \u201cinstant\u201d is impossible, but I think we can get this pretty low friction, especially after its been done once before",
+        "ts": "1478201245.001854"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "plus i don\u2019t have to explain to newcomers to the SDK project how they set up the target network",
+        "ts": "1478201246.001855"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\u201cjust use this docker-compose\u201d, that\u2019s it",
+        "ts": "1478201275.001856"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right\u2026to be clear: i have no problem with that model for releases",
+        "ts": "1478201291.001857"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its the -snapshot\/latest stuff that gives me heartburn",
+        "ts": "1478201306.001858"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\u201cnewcomers\u201d as early adopters or contributors",
+        "ts": "1478201323.001859"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sure",
+        "ts": "1478201328.001860"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "users or contributors, doesnt matter",
+        "ts": "1478201336.001861"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "want it to be as smooth and painless as possible",
+        "ts": "1478201347.001862"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "right",
+        "ts": "1478201352.001863"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, well let me finish up this POC and we can go from there",
+        "ts": "1478201367.001864"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might be that its trivial to get what you want based on it",
+        "ts": "1478201379.001865"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok, i think i advocated for my case, please give it some thought. in the meanwhile i can\u2019t wait to be able to build the images natively on Mac",
+        "ts": "1478201405.001866"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok will do",
+        "ts": "1478201423.001867"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "thanks Greg",
+        "ts": "1478201425.001868"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one note: right now I am leaning towards only supporting docker-for-mac (rather than the older docker-machine\/boot2docker)",
+        "ts": "1478201451.001869"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "works for me, it\u2019s infinitely more convenient than docker-machine anyway :wink:",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1478201489.000000"
+        },
+        "ts": "1478201476.001870"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there are limitations on the older stuff",
+        "ts": "1478201478.001871"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i agree",
+        "ts": "1478201483.001872"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have a 2009 macpro desktop that can only run docker-machine :disappointed:",
+        "ts": "1478201494.001874"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but my macbook-pro is new enough to run docker-for-mac and its quite awesome",
+        "ts": "1478201510.001875",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF> I'm looking at organizing our proto files into directories per some discussion with <@U0ULK2JPP> and others.  The plan is to have a `protos\/common` for things which the orderer and the peer need to understand (like the block format) and then a `protos\/orderer` for the orderer service definitions.  Apparently, if you want to import proto files across directories in a sane way, you need to specify the proto root as a base directory, and then reference them by 'canonical name'. \n\n<https:\/\/github.com\/google\/protobuf\/issues\/723>  &lt;- this has more information if you are curious\n\nI'm looking at modifying the `devenv\/compile_protos.sh`, which today compiles all protos only in the context of their current directory.  I was looking to modify this, and was wondering if you had an opinion as to a clean way to do so?  The obvious way is to exclude the `fabric\/protos` dir and add a separate compilation step for it, but that seems a little messy to me.  Do you have a better idea?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "confusing interaction between -I and --cpp_out arguments \u00b7 Issue #723 \u00b7 google\/protobuf \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/google\/protobuf\/issues\/723",
+                "text": "I have the following directory structure (master)$ tree . \u251c\u2500\u2500 Makefile \u251c\u2500\u2500 protofiles \u2502\u00a0\u00a0 \u251c\u2500\u2500 Base \u2502\u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 Base.proto \u2502\u00a0\u00a0 \u251c\u2500\u2500 CategoryA \u2502\u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500 MessageA1.proto \u2502\u00a0\u00a0 \u251c\u2500\u2500 CategoryB \u2502\u00a0\u00a0 \u2502\u00a0\u00a0 \u2514\u2500\u2500...",
+                "fallback": "GitHub: confusing interaction between -I and --cpp_out arguments \u00b7 Issue #723 \u00b7 google\/protobuf",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/6911903?v=3&s=400",
+                "from_url": "https:\/\/github.com\/google\/protobuf\/issues\/723",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478202288.001876"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i pretty much have to wrap my head around it each time I need to work with protoc",
+        "ts": "1478202351.001878"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only comment I have atm is that <@U0ZJZBJLF> and I worked on a patch that dynamically compiled protos (rather than committed .pb.go files) which cleaned some of this up",
+        "ts": "1478202382.001879"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we ultimately abandoned the patch because not having the .pb.go files commited breaks some workflows",
+        "ts": "1478202400.001880"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "however, there might be a few nuggets of improvement buried in that patch you could borrow",
+        "ts": "1478202420.001881"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill see if I can find it",
+        "ts": "1478202444.001882"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks!",
+        "ts": "1478202461.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, maybe it wasnt <@U0ZJZBJLF>",
+        "ts": "1478202580.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or maybe it wasnt abandoned yet, let me look in open patches",
+        "ts": "1478202596.001885"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, having trouble finding it",
+        "ts": "1478202781.001886"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I always prefer to steal, but no need to waste your time looking for it.  I can hack something up pretty quickly, was just hoping there was some silver bullet I was unaware of",
+        "ts": "1478202941.001887"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "found it",
+        "ts": "1478203006.001888"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/789\/>",
+        "ts": "1478203007.001889"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure its entirely helpful\u2026i just remember wrestling with protoc :wink:",
+        "ts": "1478203049.001890"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks! I'll take a look",
+        "ts": "1478203135.001891"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that *was* me",
+        "ts": "1478205182.001892"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XPR4NP4>  what's wrong with the compile protos script? why would you have it exclude something?",
+        "ts": "1478205877.001893"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, sorry, i was struggling to find the patch when searching by your name, thats why I questioned my memory",
+        "ts": "1478205897.001894"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it turns out, it was because that was the one I had re-issued so it showed up under my LFID",
+        "ts": "1478205918.001895"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> Essentially, the proto compilation today assumes every proto's root is the directory it resides in.  If you want to have proto imports work across directories, this doesn't work",
+        "ts": "1478205943.001896"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do you mean across dirs? you can only \"go up a level\" and then go down levels but you can't for instance- go up 2 levels, etc?",
+        "ts": "1478206056.001897"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, for my particular application, I want to have two dirs (eventually more). `protos\/common` which contains the block definition and some other stuff, and `protos\/orderer` which contains the atomicbroadcast service definitions etc.",
+        "ts": "1478206112.001898"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `protos\/orderer\/ab.proto` file needs to reference the block structure, so, I could say something like `import common.proto`, but of course, `common.proto` is not in the same directory, so this resolution fails",
+        "ts": "1478206157.001899"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Proto also doesn't support relative path resolution, so `..\/common\/common.proto` is out",
+        "ts": "1478206183.001900"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So my first stab, was to basically pass the list of the directories which contain protos in as directories to be included for searching.  This works, to an extent, in so far as the protos compile.  However, the resulting go code does not.",
+        "ts": "1478206222.001901"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, right! so the script assumes everything is in each local dir",
+        "ts": "1478206240.001902"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1478206243.001903"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I remember now... I was editing that script and made it into a makefile with <@U0KPFAZNF> 's crazy (in a good way)  Makefile DSL tips",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478206319.000000"
+        },
+        "ts": "1478206276.001904"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, apparently the 'right' way to do this, is to run the protoc command from a common parent directory, to use for the canonical root in naming, so I am working on doing this cleanly",
+        "ts": "1478206300.001905"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And <@U0KPFAZNF> remembered that there had been some work done around cleaning up the proto generation (yours) and thought it might be helpful",
+        "ts": "1478206325.001907"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it actually turns out that there's not a ton of overlap, especially if the decision to move it into make got veto-ed",
+        "ts": "1478206355.001908"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thing is- I had a commit that removed the pb.go files and made them autogenerate",
+        "ts": "1478206373.001909"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep",
+        "ts": "1478206379.001910"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is the same commit we are referring to",
+        "ts": "1478206387.001911"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it passed CI and all",
+        "ts": "1478206393.001912"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "was merged and then broke some people's builds",
+        "ts": "1478206393.001913"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no one knows why",
+        "ts": "1478206393.001914"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i actually like the idea",
+        "ts": "1478206402.001915"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i know why",
+        "ts": "1478206404.001916"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I was on a business trip to greece, couldn't take care of it at that time :disappointed:",
+        "ts": "1478206413.001917"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its because, well, to put it bluntly, golang is a little limited sometimes, heh",
+        "ts": "1478206433.001918"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "there is also a small... security flaw in our current aproach",
+        "ts": "1478206450.001919"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I assume if someone changes a .proto file and uploads pb.go files, no one reviews the pb.go files, right?",
+        "ts": "1478206472.001920"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, this is why I like your approach, if we could make it work with the other issues",
+        "ts": "1478206473.001921"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can easy put there some backdoor or something",
+        "ts": "1478206479.001922"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we could mitigate this by having CI check the pb.go files as part of the linter run if this were a concern though",
+        "ts": "1478206504.001923"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep, that's a great idea.",
+        "ts": "1478206520.001924"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "make it generate and do diff",
+        "ts": "1478206526.001925"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1478206530.001926"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that'll also solve problems such as someone having an old protoc",
+        "ts": "1478206540.001927"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think thats about as good as we can get with the current limitations",
+        "ts": "1478206553.001928"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the issue is that things that have go deps dont understand what protoc is",
+        "ts": "1478206591.001929"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, for instance, if you do \u201cimport <http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim|github.com\/hyperledger\/fabric\/core\/chaincode\/shim>\u201d in a chaincode app, it has no idea what a .proto is",
+        "ts": "1478206626.001930"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the missing .pb.go will mean it doesnt compile",
+        "ts": "1478206650.001931"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "+1 on generating the protos in the CI build and making sure there is no diff",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478206707.000000"
+        },
+        "ts": "1478206686.001932"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so it works when you have something like a makefile based build, but not so much elsewhere",
+        "ts": "1478206693.001933"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't understand the chaincode example",
+        "ts": "1478206723.001935"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, ignore chaincode\u2026say you have two golang projects",
+        "ts": "1478206738.001936"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why would you want to import pb.go files when you write chaincode",
+        "ts": "1478206746.001937"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one is a library that uses protobufs",
+        "ts": "1478206749.001938"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "another is an app that imports the library",
+        "ts": "1478206759.001940"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "when you write the app, the golang toolchain manages all the deps stuff for you",
+        "ts": "1478206781.001944"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so the app just says \u201cimport foo\u201d and golang goes and downloads foo.git and compiles it into your app",
+        "ts": "1478206805.001945"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you never get to interject and say \u201cwait!  I need to compile .proto -&gt; .pb.go first\"",
+        "ts": "1478206826.001946"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it just does it all in one fell swoop",
+        "ts": "1478206835.001947"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I see what you mean now",
+        "ts": "1478206843.001948"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so you won't get *.pb.go",
+        "ts": "1478206849.001949"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, therefore, the library has to have the .pb.go checked in",
+        "ts": "1478206849.001950"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if they're auto-generated",
+        "ts": "1478206857.001951"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1478206860.001952"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and we were hitting this on the shim",
+        "ts": "1478206866.001953"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but why does this fit to our use case?",
+        "ts": "1478206868.001954"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the shim is a part of the fabric",
+        "ts": "1478206890.001955"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "basically things like the SDK and the shim were interacting in a manner similar to how I described",
+        "ts": "1478206891.001956"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, the shim is a library that gets embedded into chaincode",
+        "ts": "1478206905.001957"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its _related_ to fabric, sure",
+        "ts": "1478206911.001958"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but its not part of the peer proper",
+        "ts": "1478206916.001959"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its part of the chaincode proper",
+        "ts": "1478206928.001960"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah it runs \"outside\"",
+        "ts": "1478206928.001961"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I see",
+        "ts": "1478206932.001962"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you need the pb.go files from the fabric to compile the shim",
+        "ts": "1478206940.001963"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bingo",
+        "ts": "1478206946.001964"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats what broke",
+        "ts": "1478206950.001965"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's what was broken in my changeset that time?",
+        "ts": "1478206965.001966"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep",
+        "ts": "1478206969.001967"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh cool. Thanks for the explanation",
+        "ts": "1478206980.001968"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not your fault\u2026i didnt pick up on it either until we got more testing on it",
+        "ts": "1478206982.001969"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "basically if that was C or java",
+        "ts": "1478207043.001970"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you could have compiled the shim into a .o file or something",
+        "ts": "1478207058.001971"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and added that to the chaincode",
+        "ts": "1478207062.001972"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe there is something like that in go? an object file?",
+        "ts": "1478207180.001973"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<http:\/\/stackoverflow.com\/a\/30488222> ? maybe we can create a shared object for the shim?",
+        "attachments": [
+            {
+                "title": "Building and linking dynamically from a go binary",
+                "title_link": "http:\/\/stackoverflow.com\/a\/30488222",
+                "text": "My problem is the following: I have a go binary on a machineFrom that binary I need to compile an external .go fileOnce compiled, I need to link the compiled go file into the current binary so I...",
+                "fallback": "Building and linking dynamically from a go binary",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/a\/30488222",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1478207807.001974"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2237\/>",
+        "ts": "1478216250.001976"
+    }
+]

@@ -1,0 +1,1016 @@
+[
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U1CTBUNEN> sorry for delay \u2026 what error are you seeing with asset_mgmt_with_dynamic_roles.js?",
+        "ts": "1475754642.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U1WUAQJVC> I think <@U0ZR63HLK> probably would know the cause.  Angelo?",
+        "ts": "1475754715.000382"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```root@6bb235f2609d:\/opt\/gopath\/src\/mytest\/github.com\/hyperledger\/fabric\/sdk\/node\/test\/unit# node asset-mgmt-with-dynamic-roles.js \nTAP version 13\n# setup asset management with roles\nsetup asset management with roles\ninitializing ...\nenrolling deployer ...\nenrolling assigner2 ...\nregisterAndEnroll name=assigner2 attrs=[{\"name\":\"role\",\"value\":\"assigner\"}]\nnot ok 1 error: Error: Signature verification failed.\n  ---\n    operator: fail\n  ...\n```",
+        "ts": "1475755164.000383"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0S5KF44D> this is what I'm getting back",
+        "ts": "1475755173.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "@martOnix Do you see any errors in the membersrvc logs?",
+        "ts": "1475755860.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "sorry, I mean in chaincode logs",
+        "ts": "1475755871.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "actually, it could be in either \u2026 but more likely from membersrvc logs, so pls check that 1st",
+        "ts": "1475755940.000387"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0S5KF44D> nothing shows up in the logs for membersrvc",
+        "ts": "1475756270.000388"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```  environment:\n    - MEMBERSRVC_CA_ACA_ENABLED=true\n    - MEMBERSRVC_CA_LOGGING_SERVER=debug\n```",
+        "ts": "1475756281.000389"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "this is what I have in my docker-compose for   container_name: membersrvc",
+        "ts": "1475756295.000390"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "actually I should probably have     - CORE_LOGGING_LEVEL=DEBUG as well there ?",
+        "ts": "1475756354.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Hi <@U1CTBUNEN>, please, may you summarize the issue? Just to speed up the process",
+        "ts": "1475757631.000392"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ZR63HLK> I'm just trying to run the nodesdk JS unit tests",
+        "ts": "1475757695.000393"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I have a docker-based set-up with three containers (peer, membersrvc, nodesdk)",
+        "ts": "1475757742.000394"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm running this chaincode: <https:\/\/github.com\/hyperledger\/fabric\/tree\/ceefb12425b7ccb09fc0f88dc78d395a459dca55\/examples\/chaincode\/go\/asset_management_with_roles>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1475757765.000000"
+        },
+        "ts": "1475757761.000395"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "note that asset-mgmt-with-roles.js works fine",
+        "ts": "1475757787.000398"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it's the asset-mgmt-with-dynamic-roles.js that fails",
+        "ts": "1475757804.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I see, please, may you check the membersrvc.yaml to see if under the aca section the property 'enabled' is set to true?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1475757838.000000"
+        },
+        "ts": "1475757809.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "environment:\n    - MEMBERSRVC_CA_ACA_ENABLED=true",
+        "ts": "1475757855.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if the ACA is not activated the tests will fail for sure",
+        "ts": "1475757856.000404"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "here's my docker-compose.yml file",
+        "ts": "1475757868.000406"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```membersrvc:\n  # try 'docker ps' to see the container status after starting this compose\n  container_name: membersrvc\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"7054:7054\"\n  environment:\n    - MEMBERSRVC_CA_ACA_ENABLED=true\n    - CORE_LOGGING_LEVEL=DEBUG\n    - MEMBERSRVC_CA_LOGGING_SERVER=debug\n  command: membersrvc\n```",
+        "ts": "1475757897.000408"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ZR63HLK> so yes - I do have MEMBERSRVC_CA_ACA_ENABLED=true",
+        "ts": "1475757917.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "should it be just MEMBERSRVC_ACA_ENABLED???",
+        "ts": "1475757931.000410"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I don't think so",
+        "ts": "1475757944.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "aca is not under ca",
+        "ts": "1475757945.000412"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "hmm",
+        "ts": "1475757953.000413"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "let me check",
+        "ts": "1475757955.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "look at the yaml file",
+        "ts": "1475757959.000415"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "you may be right - let me change that",
+        "ts": "1475757992.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "thanks",
+        "ts": "1475758007.000417"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "yeah - same situation after update",
+        "ts": "1475758178.000418"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "except that now even asset-mgmt-with-roles.js fails",
+        "ts": "1475758242.000419"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```action or query returned with failure: {\\\"Error\\\":\\\"Failed retrieving owner for MyAsset. \\\"}\"}\nnot ok 2 error: [object Object]\n  ---\n    operator: fail\n    at: TransactionContext.&lt;anonymous&gt; (\/opt\/gopath\/src\/mytest\/github.com\/hyperledger\/fabric\/sdk\/node\/test\/unit\/asset-mgmt-with-roles.js:142:16)\n  ...\n```",
+        "ts": "1475758252.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "MEMBERSRVC_CA_ACA_ENABLED was correct \u2026 see the constant in server.go of membersrvc",
+        "ts": "1475758373.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "indeed, MEMBERSRVC_CA is the prefix",
+        "ts": "1475758413.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay",
+        "ts": "1475758418.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "then the error is another",
+        "ts": "1475758424.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "i have to head to office \u2026 dropping for a bit",
+        "ts": "1475758442.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, the error 'Signature verification failed' is coming from the ECA",
+        "ts": "1475758542.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so the failure is at enrollment time",
+        "ts": "1475758552.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1CTBUNEN>, which version of code are you running?",
+        "ts": "1475758571.000428"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "good question",
+        "ts": "1475758607.000429"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "how do I check",
+        "ts": "1475758609.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "may you check on which branching are you on your local git",
+        "ts": "1475758712.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "with git status",
+        "ts": "1475758723.000432"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so I'm trying with a fresh git clone from master",
+        "ts": "1475759716.000433"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but when I run the unit tests - i'm getting errors about \"Error: Cannot find module '.\/lib\/hfc'\"",
+        "ts": "1475759741.000434"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm running this JS unit test inside the repo",
+        "ts": "1475759762.000435"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it runs fine when I change the require to: var hfc = require('hfc');",
+        "ts": "1475759878.000436"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I also had to manually enter the IPs of the member srvc and the peer",
+        "ts": "1475759973.000437"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "inside asset-mgmt-with-dynamic-roles.js",
+        "ts": "1475759984.000438"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and it still fails with: not ok 1 error: Error: Signature verification failed.",
+        "ts": "1475759994.000439"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "anyways ...",
+        "ts": "1475761100.000440"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "now even asset-mgmt-with-roles.js fails : ((",
+        "ts": "1475761174.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sorry for that",
+        "ts": "1475761986.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let me give a try",
+        "ts": "1475761991.000443"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "would be great to create a simple README\/TUTORIAL on a very basic docker-compose.yml",
+        "ts": "1475762017.000444"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "1) run the containers",
+        "ts": "1475762034.000445"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "2) run the chaincode",
+        "ts": "1475762038.000446"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "3) run the JS unit tests",
+        "ts": "1475762050.000447"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "this is basically what 99% of the people who are just getting started are looking for",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1475762102.000000"
+        },
+        "ts": "1475762070.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that makes sense.",
+        "ts": "1475762104.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I must say that personally I don't use docker container, I go directly in dev mode",
+        "ts": "1475762121.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I found it simpler",
+        "ts": "1475762126.000453"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I never figured out how to do that",
+        "ts": "1475762135.000454"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "vagrant ?",
+        "ts": "1475762137.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no vagrant",
+        "ts": "1475762144.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I have a linux vm",
+        "ts": "1475762148.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and I run everything there",
+        "ts": "1475762152.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no vagrant, no docker",
+        "ts": "1475762156.000459"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "really ?",
+        "ts": "1475762165.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1475762167.000461"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I didn't know you can do that",
+        "ts": "1475762171.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is much simpler",
+        "ts": "1475762171.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "at least for me :slightly_smiling_face:",
+        "ts": "1475762175.000464"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "where's the HOWTO ?",
+        "ts": "1475762178.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "probably there isn't for that. I figure it out by myself to simply my life",
+        "ts": "1475762199.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":slightly_smiling_face:",
+        "ts": "1475762200.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but I might write on",
+        "ts": "1475762207.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let me see if I can have the tests working",
+        "ts": "1475762215.000469"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well linux is a much better option for me",
+        "ts": "1475762232.000470"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but I thought there were two ways 1) docker and 2) vagrant",
+        "ts": "1475762241.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "vagrant is just used to orchestrates vms",
+        "ts": "1475762263.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and docker as container",
+        "ts": "1475762271.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ma in dev mode you don't really need all that",
+        "ts": "1475762279.000474"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well please write a simple 'dev mode' set-up because I badly need that",
+        "ts": "1475762297.000475"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "you mean you compile and run peer and membersrv on the command line in linux ?",
+        "ts": "1475762424.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah",
+        "ts": "1475762449.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and also the chaincode",
+        "ts": "1475762452.000478"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "oh man",
+        "ts": "1475762452.000479"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": ": ))",
+        "ts": "1475762455.000480"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "PLEASE PLEASE PLEASE",
+        "ts": "1475762460.000481"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "write a simple HOWTO",
+        "ts": "1475762466.000482"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I've been looking for this for so long",
+        "ts": "1475762474.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm running the tests",
+        "ts": "1475762719.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "now",
+        "ts": "1475762721.000485"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZR63HLK|adc> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L642KK2\/screenshot_from_2016-10-06_16-05-37.png|Screenshot from 2016-10-06 16-05-37.png>",
+        "file": {
+            "id": "F2L642KK2",
+            "created": 1475762967,
+            "timestamp": 1475762967,
+            "name": "Screenshot from 2016-10-06 16-05-37.png",
+            "title": "Screenshot from 2016-10-06 16-05-37.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 354276,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L642KK2\/screenshot_from_2016-10-06_16-05-37.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L642KK2\/download\/screenshot_from_2016-10-06_16-05-37.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 254,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 338,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 507,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 676,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2L642KK2-6c5bb9d195\/screenshot_from_2016-10-06_16-05-37_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 721,
+            "image_exif_rotation": 1,
+            "original_w": 1400,
+            "original_h": 986,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L642KK2\/screenshot_from_2016-10-06_16-05-37.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L642KK2-2b84ebce0e",
+            "channels": [
+                "C1J0BM448"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ZR63HLK",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZR63HLK|adc>",
+        "bot_id": null,
+        "ts": "1475762972.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1CTBUNEN>, I have something like showed in the picture",
+        "ts": "1475762982.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "four shells, one for node, one for the membership service, one for peer and one for the chaincode",
+        "ts": "1475763008.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and the tests are passing :slightly_smiling_face:",
+        "ts": "1475763020.000489"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "yeah I guess I'm doing something wrong on my end",
+        "ts": "1475763047.000490"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "do you mind writing a simple HOWTO - so I can get your set-up ?",
+        "ts": "1475763060.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sure",
+        "ts": "1475763083.000492"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "+ running the tests please",
+        "ts": "1475763100.000493"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "awesome thanks",
+        "ts": "1475763109.000494"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZR63HLK|adc> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md|fabric-dev-modemd.md>",
+        "file": {
+            "id": "F2L81T6VC",
+            "created": 1475769665,
+            "timestamp": 1475769665,
+            "name": "fabric-dev-modemd.md",
+            "title": "fabric-dev-modemd.md",
+            "mimetype": "text\/plain",
+            "filetype": "markdown",
+            "pretty_type": "Markdown (raw)",
+            "user": "U0ZR63HLK",
+            "editable": true,
+            "size": 3380,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81T6VC\/fabric-dev-modemd.md?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81T6VC\/download\/fabric-dev-modemd.md?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L81T6VC-f5dd46fa2d",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md\/edit",
+            "preview": "Alice wants to setup the fabric in dev-mode (no vagrant, no docker) to run the *asset_management_with_roles* chaincode and test it using the node-sdk. Here are the steps Alice has to performs.\r\n\r\n**Assumptions**\r\n\r\n1. Let's assume that Alice is using an Ubuntu machine (latest version available) and golang is already configured in the proper way following the instructions recommend by hyperledger-fabric. Alices has also installed rocksdb and so on.\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Alice wants to setup the fabric in dev-mode (no vagrant, no docker) to run the <span class=\"cm-em\">*<\/span><span class=\"cm-em\">asset<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">management<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">with<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">roles<\/span><span class=\"cm-em\">*<\/span> chaincode and test it using the node-sdk. Here are the steps Alice has to performs.<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-strong\">**<\/span><span class=\"cm-strong\">Assumptions<\/span><span class=\"cm-strong\">**<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-variable-2\">1. <\/span><span class=\"cm-variable-2\">Let<\/span><span class=\"cm-variable-2\"><\/span><span class=\"cm-variable-2\">'<\/span><span class=\"cm-variable-2\">s<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">assume<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">that<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Alice<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">is<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">using<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">an<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Ubuntu<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">machine<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">(<\/span><span class=\"cm-variable-2\">latest<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">version<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">available)<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">and<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">golang<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">is<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">already<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">configured<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">in<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">the<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">proper<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">way<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">following<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">the<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">instructions<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">recommend<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">by<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">hyperledger-fabric.<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Alices<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">has<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">also<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">installed<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">rocksdb<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">and<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">so<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">on.<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 56,
+            "lines_more": 51,
+            "preview_is_truncated": true,
+            "channels": [
+                "C1J0BM448"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "pinned_to": [
+                "C1J0BM448"
+            ]
+        },
+        "user": "U0ZR63HLK",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZR63HLK|adc>",
+        "bot_id": null,
+        "ts": "1475769666.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1CTBUNEN>, I sketched an how-to. Let's try to follow it and improve it up to reaching a stable version and then we can contribute it to the fabric documentation :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1475769739.000000"
+        },
+        "ts": "1475769719.000496"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ZR63HLK> awesome - I will step through it as soon as I resolved the bizarre issue I'm having",
+        "ts": "1475769774.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Actually, the steps to install golang and rocksdb need to be clarified",
+        "ts": "1475769801.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I did this once long time ago and I don't remember all the steps",
+        "ts": "1475769813.000500"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok if everyone has seen this before:",
+        "ts": "1475770009.000501"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "```buntu@ip-172-31-23-34:\/$ CGO_CFLAGS=\"-I\/usr\/local\/include\/rocksdb\/include\" CGO_LDFLAGS=\"-L\/usr\/local\/lib -lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy\" go get <http:\/\/github.com\/tecbot\/gorocksdb|github.com\/tecbot\/gorocksdb>\n\n# <http:\/\/github.com\/tecbot\/gorocksdb|github.com\/tecbot\/gorocksdb>\ncould not determine kind of name for C.rocksdb_options_set_expanded_compaction_factor\ncould not determine kind of name for C.rocksdb_options_set_max_grandparent_overlap_factor\ncould not determine kind of name for C.rocksdb_options_set_source_compaction_factor\nubuntu@ip-172-31-23-34:\/$ \n```",
+        "ts": "1475770011.000502"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "please enlighten me : ))",
+        "ts": "1475770018.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1CTBUNEN> im just speculating, but isnt your environment using rocksdb 4.9?",
+        "ts": "1475770819.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i know the official build uses v4.1, so I wonder if related",
+        "ts": "1475770841.000505"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0KPFAZNF> it sounds like some weird C compiler related issue",
+        "ts": "1475770930.000506"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm doing a major upgrade of this ubuntu EC2 to see if things will change",
+        "ts": "1475770943.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok..tangent here, but I am seeing problems with 16.04 fwiw",
+        "ts": "1475770966.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not like above",
+        "ts": "1475770973.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but just FYI",
+        "ts": "1475770977.000510"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I just miss the simple Slackware years : ))",
+        "ts": "1475771045.000511"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm still not convinced a package manager is a good thing for linux",
+        "ts": "1475771064.000512"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": ": ))",
+        "ts": "1475771065.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "does anyone know the envvar incantations to make membersrvc more verbose like it used to be?",
+        "ts": "1475771068.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the bug I am chasing on 16.04 is some problem with behave firing up compose jobs",
+        "ts": "1475771098.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but i need to see the membersrv output to diagnose",
+        "ts": "1475771109.000516"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0KPFAZNF> I'm using version 4.12",
+        "ts": "1475771425.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, that was just a guess",
+        "ts": "1475771435.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i saw you had 4.9 in that other thread for osx native build",
+        "ts": "1475771445.000519"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but I compiled it from source - how do you guys go about installing rocksdb on linux ?",
+        "ts": "1475771445.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, its compiled from source as well, but cached in the baseimage",
+        "ts": "1475771472.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is where it happens: <https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh#L115>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric-baseimage",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh#L115",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric-baseimage>",
+                "fallback": "GitHub: hyperledger\/fabric-baseimage",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-baseimage\/blob\/master\/scripts\/common\/setup.sh#L115",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1475771516.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that gets cached in a baseimage pushed to atlas\/dockerhub",
+        "ts": "1475771528.000524"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "so make shared_lib;make install",
+        "ts": "1475772061.000525"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "?",
+        "ts": "1475772063.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats what we do for the baseimage at least",
+        "ts": "1475772947.000527"
+    },
+    {
+        "user": "U0W7D64LC",
+        "text": "<@U0W7D64LC|markparz> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475774596.000528"
+    },
+    {
+        "type": "message",
+        "subtype": "pinned_item",
+        "user": "U1CTBUNEN",
+        "item_type": "F",
+        "text": "<@U1CTBUNEN|mart0nix> pinned <@U0ZR63HLK|adc>\u2019s Markdown (raw) <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md|fabric-dev-modemd.md> to this channel.",
+        "item": {
+            "id": "F2L81T6VC",
+            "created": 1475769665,
+            "timestamp": 1475769665,
+            "name": "fabric-dev-modemd.md",
+            "title": "fabric-dev-modemd.md",
+            "mimetype": "text\/plain",
+            "filetype": "markdown",
+            "pretty_type": "Markdown (raw)",
+            "user": "U0ZR63HLK",
+            "editable": true,
+            "size": 3380,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81T6VC\/fabric-dev-modemd.md?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2L81T6VC\/download\/fabric-dev-modemd.md?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2L81T6VC-f5dd46fa2d",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2L81T6VC\/fabric-dev-modemd.md\/edit",
+            "preview": "Alice wants to setup the fabric in dev-mode (no vagrant, no docker) to run the *asset_management_with_roles* chaincode and test it using the node-sdk. Here are the steps Alice has to performs.\r\n\r\n**Assumptions**\r\n\r\n1. Let's assume that Alice is using an Ubuntu machine (latest version available) and golang is already configured in the proper way following the instructions recommend by hyperledger-fabric. Alices has also installed rocksdb and so on.\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Alice wants to setup the fabric in dev-mode (no vagrant, no docker) to run the <span class=\"cm-em\">*<\/span><span class=\"cm-em\">asset<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">management<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">with<\/span><span class=\"cm-em\">_<\/span><span class=\"cm-em\">roles<\/span><span class=\"cm-em\">*<\/span> chaincode and test it using the node-sdk. Here are the steps Alice has to performs.<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-strong\">**<\/span><span class=\"cm-strong\">Assumptions<\/span><span class=\"cm-strong\">**<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-variable-2\">1. <\/span><span class=\"cm-variable-2\">Let<\/span><span class=\"cm-variable-2\"><\/span><span class=\"cm-variable-2\">'<\/span><span class=\"cm-variable-2\">s<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">assume<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">that<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Alice<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">is<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">using<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">an<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Ubuntu<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">machine<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">(<\/span><span class=\"cm-variable-2\">latest<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">version<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">available)<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">and<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">golang<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">is<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">already<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">configured<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">in<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">the<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">proper<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">way<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">following<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">the<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">instructions<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">recommend<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">by<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">hyperledger-fabric.<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">Alices<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">has<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">also<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">installed<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">rocksdb<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">and<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">so<\/span><span class=\"cm-variable-2\"> <\/span><span class=\"cm-variable-2\">on.<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 56,
+            "lines_more": 51,
+            "preview_is_truncated": true,
+            "channels": [
+                "C1J0BM448"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "pinned_to": [
+                "C1J0BM448"
+            ]
+        },
+        "ts": "1475787719.000529"
+    },
+    {
+        "user": "U1PJBPWV8",
+        "text": "<@U1PJBPWV8|n-sawada> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475801627.000530"
+    }
+]

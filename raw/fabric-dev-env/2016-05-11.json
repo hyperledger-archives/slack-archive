@@ -1,0 +1,418 @@
+[
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "hi, it seems missing how to run unit test and behave tests",
+        "ts": "1462956850.000991"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "in contribute doc",
+        "ts": "1462956885.000992"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```--- FAIL: TestVM_BuildImage_ChaincodeLocal (35.87s)\n\tvm_test.go:105: Error building Chaincode container: Error building Chaincode container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n```",
+        "ts": "1462967244.000993"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what am i doing wrong?",
+        "ts": "1462967251.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it worked yesterday",
+        "ts": "1462967256.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: we rebranded the docker image to the HL, I suspect you still have obc branded in your cache",
+        "ts": "1462968004.000996"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "run \u201cdocker images\u201d and post it to me in a DM",
+        "ts": "1462968019.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: in short, run \u201cdocker images\u201d\u2026if you have \u201copenblockchain\/baseimage\u201d your cache is stale",
+        "ts": "1462968772.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i advise people to run \u201cmake clean peer\u201d any time they adjust HEAD, it will make sure you system is kept up to date",
+        "ts": "1462968803.000999"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for now anyway, until we make the prerequisite detection more intelligent",
+        "ts": "1462968837.001000"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my docker images is miles long",
+        "ts": "1462969015.001001"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "grep for openblockchain and hyperledger",
+        "ts": "1462969026.001002"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is you have the former but not the latter",
+        "ts": "1462969039.001003"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea possible",
+        "ts": "1462969047.001004"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if so, \u201cmake clean peer\u201d will rebuild it for you",
+        "ts": "1462969066.001005"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why clean peer?",
+        "ts": "1462969073.001006"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was just about to say: \u201cmake clean baseimage\u201d is the shortest path",
+        "ts": "1462969093.001007"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I figured you wanted the peer built too (the clean will nuke the peer binary)",
+        "ts": "1462969108.001008"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "peer is a superset of baseimage, since it depends on it",
+        "ts": "1462969134.001009"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im sorry, its \u201cbase-image\u201d with a dash",
+        "ts": "1462969195.001010"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that I do not attempt to docker rmi the openblockchain\/* stuff, you can do that at will after the cache is rebuilt",
+        "ts": "1462969236.001011"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ghaskins: do i have to build this baseimage in vagrant?",
+        "ts": "1462971091.001012"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or should it be in the repo already?",
+        "ts": "1462971101.001013"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```Building docker base-image\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nTag unknown-0.0.9 not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nUnable to find image 'hyperledger\/fabric-baseimage:unknown-0.0.9' locally\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\ndocker: Tag unknown-0.0.9 not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>.\nSee 'docker run --help'.\nSending build context to Docker daemon  7.68 kB\n\nStep 1 : FROM hyperledger\/fabric-baseimage:unknown-0.0.9\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nTag unknown-0.0.9 not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n```",
+        "ts": "1462971142.001014"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Hmm, no but it does only work currently if \"uname -m\" == \"x86_64\"",
+        "ts": "1462971737.001015"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yours is returning \"unknown\" for some reason",
+        "ts": "1462971756.001016"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Any idea why?",
+        "ts": "1462971787.001017"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I could probably beef it up by defaulting to x86_64",
+        "ts": "1462971833.001018"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Obviously you are on x86_64 or it would never have worked",
+        "ts": "1462971867.001019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I mean as in previously)",
+        "ts": "1462971942.001020"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'm out right now, but as a workaround hack scripts\/provision\/docker.sh and force ARCH=x86_64 and I think it will work",
+        "ts": "1462972030.001021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'll have to put in a mapping function and\/or defaults to fix it for real",
+        "ts": "1462972065.001022"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, `uname -p` returns unknown",
+        "ts": "1462972851.001023"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`uname -m` returns `x86_64`",
+        "ts": "1462972883.001024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Oh right, I have this patched in the multi arch pr ",
+        "ts": "1462972977.001025"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That's good, much easier ;)",
+        "ts": "1462972997.001026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Just hack it locally for now, I'll push a pr to fix it for real",
+        "ts": "1462973194.001027"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I actually didn't know -p would do that, I just noted that everything else uses -m",
+        "ts": "1462973348.001028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Good to know",
+        "ts": "1462973353.001029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Feel free to submit it yourself, if you'd like",
+        "ts": "1462973627.001030"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: working now?",
+        "ts": "1462982078.001031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i ran into other issues with my build",
+        "ts": "1462983757.001032"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1462984447.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "docker files don't need to be executable, do they?",
+        "ts": "1462987329.001034"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "like this one: .\/consensus\/docker-compose-files\/Dockerfile",
+        "ts": "1462987341.001035"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "+x not needed",
+        "ts": "1462987371.001036"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "thanks for confirming",
+        "ts": "1462987377.001037"
+    },
+    {
+        "user": "U13R9RGF6",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U13R9RGF6|toddinpal> has joined the channel",
+        "ts": "1462998186.001038"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "I'm trying to get fabric running in a different environment (RHEL without vagrant) and seem to have stuff built, but the unit tests report things like: \n ?   \t<http:\/\/github.com\/hyperledger\/fabric\/bddtests\/chaincode\/go\/table|github.com\/hyperledger\/fabric\/bddtests\/chaincode\/go\/table>\t[no test files]",
+        "ts": "1462998437.001039"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "Is that expected or did that unit-test fail, or what?",
+        "ts": "1462998611.001040"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats expected",
+        "ts": "1462999656.001041"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its basically that go-test does an oppotunistic grab of all source without knowing whether it has any test code, and then makes that report when it doesnt find any",
+        "ts": "1462999693.001042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only ones you need to worry about are the explicit FAILs",
+        "ts": "1462999712.001043"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "ok, thanks!",
+        "ts": "1463002003.001044"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "Are there any instructions for how to set up a multi-node network of validating peers?  Lets say I want to create a blockchain with 4 validating peers, each on separate hosts and with security enabled.  Is there a sample\/template\/whatever I can follow to set this up?",
+        "ts": "1463013370.001045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13R9RGF6>: are you familar with docker compose?",
+        "ts": "1463013929.001046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there are a number of docker-compose configurations you could either use directly, or at least glean the steps",
+        "ts": "1463013961.001047"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "to a limited extent, meaning I have played with it in a single machine environment",
+        "ts": "1463013963.001048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Take a look at this one for instance: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/bddtests\/docker-compose-4-consensus-batch.yml>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1463014033.000000"
+        },
+        "ts": "1463014029.001049"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "I've looked a little at the behave tests as I believe those are closest to what I want, but I know squat about behave... too many new open source projects for me... meh",
+        "ts": "1463014040.001052"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "look at the files in fabric\/consensus\/docker-compose-files",
+        "ts": "1463014085.001053"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "in particular compose-consensus-4.md",
+        "ts": "1463014112.001054"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "<@U0UGH3X7X>, thanks!  I think that might do it although I'll have to look at it in more detail.  The stuff in the bddtest directory has no descriptions, so it's hard to tell what's going on",
+        "ts": "1463014232.001055"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "`behave` is actually a pretty neat way of doing testcases ...  gaining entry is a bit hard though",
+        "ts": "1463014309.001056"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "like I said, this project is about 3-4 open source dependencies beyond my limit.  :simple_smile:    I'll get there",
+        "ts": "1463014357.001057",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U13R9RGF6>:   forgot to mention the docs in fabric\/docs\/dev-setup  also have instructions on setting a multi peer network,  using docker only, not docker-compose",
+        "ts": "1463015600.001058"
+    },
+    {
+        "type": "message",
+        "user": "U13R9RGF6",
+        "text": "So I'm trying to set up a 4 peer network just using docker, and it seems like it's stuck in the discovery phase...  I keep getting these messages in the root peer:  \n06:25:02.194 [peer] HandleMessage -&gt; DEBU 855 Handling Message of type: DISC_PEERS \n06:25:02.194 [peer] beforePeers -&gt; DEBU 856 Received DISC_PEERS, grabbing peers message\n06:25:02.194 [peer] beforePeers -&gt; DEBU 857 Received PeersMessage with Peers: peers:&lt;ID:&lt;name:\"vp0\" &gt; address:\"172.17.0.2:30303\" type:VALIDATOR pkiID:\"\\277j\\260\\340Q\\335JTM\\343\\371\\262\\312\\353\\035\\030\\254\\002\\275\\030\\213\\246F!\\336svd\\250\\240\\375\\256\" &gt; peers:&lt;ID:&lt;name:\"vp1\" &gt; address:\"172.17.0.3:30303\" type:VALIDATOR pkiID:\"B\\177\\220|\\205\\005\\r\\307{\\024\\262\\204\\233v\\n77\\273y\\353\\275\\203 \\301FnI\\003\\325\\023\\210\\014\" &gt; peers:&lt;ID:&lt;name:\"vp3\" &gt; address:\"172.17.0.5:30303\" type:VALIDATOR pkiID:\"Ig\\252\\037\\204\\376w\\340\\3370v\\357%\\035\\352a\\260I\\031sf\\223\\321\\234~\\271f\\361\\222\\177}\\024\" &gt; \n06:25:02.219 [consensus\/handler] HandleMessage -&gt; DEBU 858 Did not handle message of type DISC_GET_PEERS, passing on to next MessageHandler\n06:25:02.219 [peer] HandleMessage -&gt; DEBU 859 Handling Message of type: DISC_GET_PEERS \n06:25:02.219 [peer] beforeGetPeers -&gt; DEBU 85a Sending back DISC_PEERS\n06:25:02.219 [peer] SendMessage -&gt; DEBU 85b Sending message to stream of type: DISC_PEERS \n06:25:03.354 [peer] SendMessage -&gt; DEBU 85c Sending message to stream of type: DISC_GET_PEERS \n06:25:03.355 [consensus\/handler] HandleMessage -&gt; DEBU 85d Did not handle message of type DISC_PEERS, passing on to next MessageHandler\n06:25:03.355 [peer] HandleMessage -&gt; DEBU 85e Handling Message of type: DISC_PEERS \n06:25:03.355 [peer] beforePeers -&gt; DEBU 85f Received DISC_PEERS, grabbing peers message\n06:25:03.355 [peer] beforePeers -&gt; DEBU 860 Received PeersMessage with Peers: peers:&lt;ID:&lt;name:\"vp1\" &gt; address:\"172.17.0.3:30303\" type:VALIDATOR pkiID:\"B\\177\\220|\\205\\005\\r\\307{\\024\\262\\204\\233v\\n77\\273y\\353\\275\\203 \\301FnI\\003\\325\\023\\210\\014\" &gt; peers:&lt;ID:&lt;name:\"vp2\" &gt; address:\"172.17.0.4:30303\" type:VALIDATOR pkiID:\"\\030\\265\\337\\026\\020\\251\\312\\250T6\\266j\\210\\276h`\\261&lt;?B\\262\\332\\223\\3638%'n\\3147\\244\\002\" &gt; peers:&lt;ID:&lt;name:\"vp0\" &gt; address:\"172.17.0.2:30303\" type:VALIDATOR pkiID:\"\\277j\\260\\340Q\\335JTM\\343\\371\\262\\312\\353\\035\\030\\254\\002\\275\\030\\213\\246F!\\336svd\\250\\240\\375\\256\" &gt;",
+        "ts": "1463034342.001059"
+    }
+]

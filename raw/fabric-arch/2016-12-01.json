@@ -1,0 +1,175 @@
+[
+    {
+        "user": "U234U0A5U",
+        "text": "<@U234U0A5U|ruslan.ardashev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480602603.000081"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "Question about something that seems fairly simple but am not getting (from the v1 next consensus architecture proposal) - \"Chaincode trust flexibility. The architecture separates trust assumptions for chaincodes (blockchain applications) from trust assumptions for consensus. In other words, the consensus service may be provided by one set of nodes (consenters) and tolerate some of them to fail or misbehave, and the endorsers may be different for each chaincode.\"",
+        "ts": "1480602706.000082"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "\u2014&gt; How does this make sense \/ work? I was under the impression that the way the architecture works chaincode and consensus are inherently tied to another - a peer would run through the chaincode and then allow or disallow a transaction",
+        "ts": "1480602772.000083"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "validating and non-validating peers still makes sense (validating peers do consensus and verify with the cc and nonvalidating peers simply get a copy)",
+        "ts": "1480602802.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's pretty simple actually - peers \"endorse\" transactions (proposals in V1 terms) which translates to each peer executing the chaincode, obtaining a result (which is basically read-write set of KV peers) and assuming it is happy with the result, signs it and sends back a endorsement response.  A \"client\" requests endorsement from a bunch of peers, collects all the responses, packages them up and submits a transaction to the ordering service (which orders the transactions) which then delivers the transactions in order to \"committing peers\"  (all endorsing peers are committing peers as well).  When the peer receives the ordered transactions, it checks to see that the transaction has the right endorsements based on the policy that was set (e.g. requires 75% of the members of the chain).  Assuming it passes that check, it then modifies the state in the state database\n\nSo the reality is that endorsement provides a signature-based mini-consensus mechanism for agreement on the transaction and ordering orders and delivers to all committing peers (you could have some peers which simply receive the data and don't participate in endorsement - e.g. an auditor)",
+        "ts": "1480603436.000085"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "oh okay, that makes sense (many thanks for the explanation \/ clarification)",
+        "ts": "1480604982.000086"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "is there a reason why all endorsing peers are committing peers as well? network redundancy \/ data availability?",
+        "ts": "1480605066.000087"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "seems like if all they\u2019re doing is collecting chaincode-verification-results, ordering transactions, and propagating them to committing peers then might be unnecessary",
+        "ts": "1480605105.000088"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "I guess I was slightly confused by this (and maybe the wording\u2019s off here) but from the next consensus architecture doc *\"Besides, chaincode execution, which can potentially be costly, is removed from the critical path of the consensus service.\u201d*",
+        "ts": "1480605263.000089"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "seems like all of these endorsers are then still waiting for a majority (75%) of consenters to reply in the affirmative",
+        "ts": "1480605300.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Endorsing peers will need access to the latest state to make decisions (although in theory you could probably build endorsers which never need to read any state) and the only way to actually commit state is to be a committer",
+        "ts": "1480606425.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "endorser simulates the \"transaction\" but does not commit the result until it comes back around via ordering",
+        "ts": "1480606487.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I may not have been clear.  At a high level, there are 3 parts of the end to end flow:\n\n1) Endorsement - clients submit proposal to a group of endorsers and collect the results.  Endorsers execute the chaincode and produce simulated (uncommitted) results\n\n2) Ordering - client packages up all the signed proposal responses into a transaction and submits to the ordering nodes \/ service (They can optionally pre-check that they actually got the proper endorsements based on policy as well and decide not to send)\n\n3) Ordering nodes create a hash chain of blocks of ordered transactions and deliver blocks to committing \"nodes\"\n\n4) Committing nodes validate the transactions (make sure they meet endorsement policy and that there are no conflicts in the read\/write sets) and then commit the data\n\n5) Peers which act in the endorsing role would also be in the committing role else they won't know to commit the latest blocks \/ state",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480606971.000000"
+        },
+        "ts": "1480606515.000093"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "- this is going to sound silly probably but I thought endorsers don\u2019t execute chaincode? (to point 1, thought we separate \u201cconsensus\u201d and \u201cchaincode\u201d execution. sounds like maybe the next consensus architecture doc might be off)\n- 2 makes sense. would be interested in reading more about how exactly this mechanism would work. sounds like that it\u2019s something that\u2019s currently under development and would have to look at the code for that. *also wondering how many kinds of nodes we have now*, whether we have \u201cpeers\u201d \u201cendorsers\u201d and \u201cconsenters\u201d or whether there are actually more kinds of roles (upon some more reading sounds like consenting peers are responsible for forming kind of a network \u201cbase\u201d and perform the ordering)\n- 3 understood\n- 4 would be interested in learning how exactly these conflicts are \u201cconflicts\u201d - read writes to the same location sound fine (when ordered properly)\n- 5 to play devil\u2019s advocate could say \u201cso? I was under the impression we pass around and look at deltas (as in the blockchain explored and technical enablement session docs) and not the actual ledger state, and for verification that might not be necessary)\"",
+        "edited": {
+            "user": "U234U0A5U",
+            "ts": "1480607798.000000"
+        },
+        "ts": "1480607539.000095"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "although to be honest I could spend more time on understanding 5",
+        "ts": "1480607613.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "1,2,3,4 actually all work today (not complete in terms of security, etc) but the latest stuff all works in the master repo",
+        "ts": "1480608010.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "1) we do separate things out compared to the previous architecture\n\nIn v0.6, you submit a transaction to a peer which then submits that transaction to the current \"leader\" which then starts the 3 phase PBFT handshake which in the end results in a block of ordered transactions being sent to all validating nodes who then break open that block, execute each transaction (which basically means they now execute the chaincode), commit all the data and write and store the block in the ledger",
+        "ts": "1480608201.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so technically you don't get a ledger until you've executed chaincode but ironically the ledger consists of a list of chaincode \/ functions to execute (along with the parameters to pass to the functions)",
+        "ts": "1480608275.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in V1, chaincode is executed by endorsers which simulate the state changes and provide a read-write set.   so chaincode is now out of the mix.   the results of endorsement are package and sent to the ordering service which then delivers the blocks to any peer which is acting as a committer.   We now have an ordered, immutable ledger at all those committers.",
+        "ts": "1480608454.000102"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "<http:\/\/static3.gamespot.com\/uploads\/original\/271\/2716782\/3145283-8549606202-7MKka.gif>",
+        "attachments": [
+            {
+                "fallback": "480x269px image",
+                "image_url": "http:\/\/static3.gamespot.com\/uploads\/original\/271\/2716782\/3145283-8549606202-7MKka.gif",
+                "image_width": 480,
+                "image_height": 269,
+                "image_bytes": 2556090,
+                "is_animated": true,
+                "from_url": "http:\/\/static3.gamespot.com\/uploads\/original\/271\/2716782\/3145283-8549606202-7MKka.gif",
+                "id": 1
+            }
+        ],
+        "ts": "1480613244.000103"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "it all just clicked. thanks for taking the time to explain.",
+        "ts": "1480613268.000105"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "I think most of my confusion stemmed from the \u201cordering\" vs the \u201cconsensus\u201d terminology used in the arch doc. to rephrase, the ordering is done independently of data, plain &amp; simple (which could introduce cases where the chaincode-execution that endorsers perform could have differing results depending on order, but that can be handled via failed consensus and then going back and retrying with corrected order, etc)",
+        "edited": {
+            "user": "U234U0A5U",
+            "ts": "1480613493.000000"
+        },
+        "ts": "1480613371.000106"
+    },
+    {
+        "type": "message",
+        "user": "U234U0A5U",
+        "text": "(but also understood why it\u2019s called \u201cconsensus\u201d versus simply \u201cordering\u201d - there\u2019s a communication process of all nodes finally agreeing on a set order)",
+        "edited": {
+            "user": "U234U0A5U",
+            "ts": "1480613851.000000"
+        },
+        "ts": "1480613838.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool.  and no problem",
+        "ts": "1480622985.000111"
+    }
+]

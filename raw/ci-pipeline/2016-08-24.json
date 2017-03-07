@@ -1,0 +1,1758 @@
+[
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "docker pulls in layers",
+        "ts": "1472054206.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "only changed layers are pulled",
+        "ts": "1472054213.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "what we probably want to do is to build and publish in layers - eg a base docker image and another that adds the code",
+        "ts": "1472054276.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> revisiting the problem from last night",
+        "ts": "1472061535.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, missed your comments above too\u2026yes, its accessing it from local cache",
+        "ts": "1472061581.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it doesnt know the difference per se",
+        "ts": "1472061593.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok.",
+        "ts": "1472061640.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, the problem I am facing right now is, it seems that the vagrant+jenkins environments are too divergent",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1472061908.000000"
+        },
+        "ts": "1472061882.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i cant simultaneously make both happy",
+        "ts": "1472061895.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the jenkins+vagrant environment diverges from your local workspace?",
+        "ts": "1472061973.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, one thing I am seeing is that I am having trouble managing docker tags because what works in vagrant\/1.12 doesnt work in jenkins\/1.8 or vice versa",
+        "ts": "1472062452.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I basically have to choose which one I want to break",
+        "ts": "1472062470.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "part of this is being exacerbated by something that might be a fixable problem",
+        "ts": "1472062505.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is: it seems that the CI build is running parts of the build twice (suboptimally)",
+        "ts": "1472062532.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "oh, really? that does seem sub optimal",
+        "ts": "1472062552.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because of this, I had to add \u201c-f\u201d to docker tag to force it to retag, but this isnt supported in 1.12",
+        "ts": "1472062556.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hold on, let me find the conversation with Ramesh",
+        "ts": "1472062569.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, take a look at this log",
+        "ts": "1472062616.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/546\/console>",
+        "ts": "1472062617.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fabric-src is built at 13:27:06",
+        "ts": "1472062650.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but then it mysteriously is rebuilt at 13:57:08",
+        "ts": "1472062668.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for reasons that are not clear",
+        "ts": "1472062672.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this has two implications: #1 the build is not as efficient as it could be",
+        "ts": "1472062686.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "#2 to work around it, I later added \u201c-f\u201d to docker tag to force it, but this tag is not supported in 1.12 so vagrant breaks",
+        "ts": "1472062711.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its not clear to me why the CI build thought it needed to rebuild the image, but it should have been available",
+        "ts": "1472062751.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and to be clear, I am not pointing the finger at anyone\u2026it could be a bug in my makefile)",
+        "ts": "1472062772.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the bottom line is: i dont know why that is happening but its causing problems",
+        "ts": "1472062786.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is there a verbosity flag or flags you could turn up?",
+        "ts": "1472062883.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m looking through <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=jjb\/fabric\/fabric-macros.yaml;h=28b18e9f8baacce70db51e9cbb131993319bd856;hb=HEAD> which shows where make is invoked. probably not the right place to change it",
+        "ts": "1472063328.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, adding -d to \u201cmake\u201d will cause it to spew a bunch of stuff about the decisions it is making",
+        "ts": "1472063811.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that might clue us in as to why the target was believed to be out of date",
+        "ts": "1472063830.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i cant tell where behave is being run in that scenario",
+        "ts": "1472063912.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=jjb\/fabric\/include-raw-fabric-behave.sh;h=845d63632d34fedd8bc31ab346bac3539362fbc4;hb=HEAD>",
+        "ts": "1472064013.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "line 12",
+        "ts": "1472064017.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah!",
+        "ts": "1472064045.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "invoked from line 80 of <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=jjb\/fabric\/fabric-macros.yaml;h=28b18e9f8baacce70db51e9cbb131993319bd856;hb=HEAD>",
+        "ts": "1472064050.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wonder if the sed is triggering the rebuild",
+        "ts": "1472064056.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres nothing wrong with patching the file in this manner per se, but doing it after the system has already performed some builds will make the images be rebuilt",
+        "ts": "1472064115.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it would be better if this file could be patched before _any_ make operations are performed",
+        "ts": "1472064132.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that would avoid the cycle",
+        "ts": "1472064141.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(i cant easily tell what files have an impact, so there is a gross \u201crebuild if _any_ source files changed\u201d rule",
+        "ts": "1472064178.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "propose a change to the ci-m repo - one downside is we can\u2019t really test that in isolation",
+        "ts": "1472064179.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "well, actually, now that you see the shell scripts, could you debug it locally?",
+        "ts": "1472064215.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think all thats needed is to move line 11 from <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=blob;f=jjb\/fabric\/include-raw-fabric-behave.sh;h=845d63632d34fedd8bc31ab346bac3539362fbc4;hb=HEAD> to something that is more \u201cinit\"",
+        "ts": "1472064253.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont know enough about this environment to suggest where that might want to go",
+        "ts": "1472064316.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but conceptually, that should fix the churn",
+        "ts": "1472064327.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y>  - any pointers here?",
+        "ts": "1472064345.000344"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF>: Why to move line 11 ?",
+        "ts": "1472064510.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11HH3P7Y> i believe it is the cause of the fabric-src rebuild",
+        "ts": "1472064534.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you run \u201cmake X\u201d and then sed a file managed by git (such as the compose.yml in the above link), a subsequent \u201cmake\u201d (including \u201cmake behave\u201d) will trigger a complete rebuild",
+        "ts": "1472064588.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(because the makefile cannot tell what impact a change to a .yml file might have on binaries)",
+        "ts": "1472064611.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we could try to make this smarter, of course, but its tricky",
+        "ts": "1472064627.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and generally, fraught with risk)",
+        "ts": "1472064650.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "generally speaking, its better to be conservative and rebuild too often than not often enough",
+        "ts": "1472064678.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the first wastes build-system\/CI time, the second wastes human debugging time",
+        "ts": "1472064704.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "therefore, I am proposing that the environmental touch up of the yaml should ideally occur during initialization, before any other builds have occured",
+        "ts": "1472064778.000353"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Oh ok.. this is working in current build process. any changes related to this in recent patch?",
+        "ts": "1472064783.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, i think this patch just highlighted the problem",
+        "ts": "1472064800.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is, if we go look, we will see that the CI process has been compiling fabric-src twice for a while now",
+        "ts": "1472064819.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "given that build times haven\u2019t varied much over time, yes",
+        "ts": "1472064835.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i havent confirmed this though",
+        "ts": "1472064837.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(it broke here because I am trying to tag something != \u201clatest\"",
+        "ts": "1472064867.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "latest tags are fairly lax, you can tag it over and over",
+        "ts": "1472064881.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "non latest tags do not like to be retagged",
+        "ts": "1472064893.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the successful builds have taken about an hour for a while: <https:\/\/jenkins.hyperledger.org\/view\/fabric\/job\/fabric-verify-x86_64\/buildTimeTrend>",
+        "ts": "1472064907.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "since this patch introduced non-latest tagging, it broke when it found out that fabric-src was already tagged",
+        "ts": "1472064914.000363"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes that is true.. So, fabric-src always build when there is a change in the binaries..",
+        "ts": "1472065004.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "close: when there is a change to any files managed by git",
+        "ts": "1472065027.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(including compose.yml)",
+        "ts": "1472065034.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which makes sense when you really think about it:  if fabric-src is a container of the src, it is invalidated if the source changes",
+        "ts": "1472065070.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins if you see somewhere obvious to park the sed script, I\u2019m all ears",
+        "ts": "1472065100.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> ok, i dont really understand the flow here, but ill try",
+        "ts": "1472065116.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y> this is what I was hoping for assistance on, git log shows you wrote much of these files",
+        "ts": "1472065148.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "\u201cwhere to put the sed line post checkout, pre build\"",
+        "ts": "1472065163.000371"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "we can keep that in pre-build, I mean before execute behave tests cases this file has to change..",
+        "ts": "1472065230.000372"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I am checking the configuration compose file.. one min..",
+        "ts": "1472065260.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "perhaps in include-raw-fabric-clean-environment.sh, inserted after line 3?",
+        "ts": "1472065362.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is that early enough? I think it\u2019s before docker does anything",
+        "ts": "1472065383.000375"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I think that works..",
+        "ts": "1472065519.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is `gopath\/src\/github.com\/hyperledger\/fabric` going to be in the right place?",
+        "ts": "1472065551.000377"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes",
+        "ts": "1472065591.000378"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "but we have to add above path in clean-environment script..",
+        "ts": "1472065618.000379"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "shall I submit this change?",
+        "ts": "1472065656.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m pretty close",
+        "ts": "1472065667.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<http:\/\/gerrit.hyperledger.org\/r\/669>",
+        "ts": "1472065815.000382"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes..",
+        "ts": "1472065848.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont have committer to that repo, but LGTM",
+        "ts": "1472066043.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me know when its active, I want to push a new patch to 571 but will wait to avoid a wasted cycle",
+        "ts": "1472066058.000385"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes it's merged..",
+        "ts": "1472066061.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, ok, cool",
+        "ts": "1472066065.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so it will be in effect now?",
+        "ts": "1472066070.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I already kicked 571",
+        "ts": "1472066071.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes",
+        "ts": "1472066073.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, can you kill it?",
+        "ts": "1472066078.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i want to revert the -f vhange in 13",
+        "ts": "1472066086.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "done",
+        "ts": "1472066109.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, you guys see this before?",
+        "ts": "1472066209.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/671> gets to be the test mule",
+        "ts": "1472066211.000395"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F24K995AL\/-.m|Untitled>",
+        "file": {
+            "id": "F24K995AL",
+            "created": 1472066213,
+            "timestamp": 1472066213,
+            "name": "-.m",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "objc",
+            "pretty_type": "Objective-C",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 550,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F24K995AL\/-.m?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F24K995AL\/download\/-.m?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F24K995AL\/-.m",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F24K995AL-e2bcf8d228",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F24K995AL\/-.m\/edit",
+            "preview": "$ git push gerrit HEAD:refs\/for\/master\r\nCounting objects: 32, done.\r\nDelta compression using up to 8 threads.\r\nCompressing objects: 100% (28\/28), done.\r\nWriting objects: 100% (32\/32), 4.98 KiB | 0 bytes\/s, done.\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-variable\">$<\/span> <span class=\"cm-variable\">git<\/span> <span class=\"cm-variable\">push<\/span> <span class=\"cm-variable\">gerrit<\/span> <span class=\"cm-variable\">HEAD<\/span>:<span class=\"cm-variable\">refs<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-keyword\">for<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">master<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Counting<\/span> <span class=\"cm-variable\">objects<\/span>: <span class=\"cm-number\">32<\/span>, <span class=\"cm-variable\">done<\/span>.<\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Delta<\/span> <span class=\"cm-variable\">compression<\/span> <span class=\"cm-variable\">using<\/span> <span class=\"cm-variable\">up<\/span> <span class=\"cm-variable\">to<\/span> <span class=\"cm-number\">8<\/span> <span class=\"cm-variable\">threads<\/span>.<\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Compressing<\/span> <span class=\"cm-variable\">objects<\/span>: <span class=\"cm-number\">100<\/span><span class=\"cm-operator\">%<\/span> (<span class=\"cm-number\">28<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-number\">28<\/span>), <span class=\"cm-variable\">done<\/span>.<\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Writing<\/span> <span class=\"cm-variable\">objects<\/span>: <span class=\"cm-number\">100<\/span><span class=\"cm-operator\">%<\/span> (<span class=\"cm-number\">32<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-number\">32<\/span>), <span class=\"cm-number\">4.98<\/span> <span class=\"cm-variable\">KiB<\/span> <span class=\"cm-operator\">|<\/span> <span class=\"cm-number\">0<\/span> <span class=\"cm-variable\">bytes<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">s<\/span>, <span class=\"cm-variable\">done<\/span>.<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 11,
+            "lines_more": 6,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1472066214.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i def have a change from 13",
+        "ts": "1472066226.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure why its saying \u201cno new changes\"",
+        "ts": "1472066234.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(it is probably identical to 571,12",
+        "ts": "1472066246.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "`git commit \u2014amend` and add a CRLF to the commit message perhaps?",
+        "ts": "1472066295.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "weird, yeah, that did it",
+        "ts": "1472066327.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so weird, it did pick up the change once I changed the commit message",
+        "ts": "1472066363.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/571\/13..14\/Makefile>",
+        "ts": "1472066366.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if I had to guess, that\u2019s to prevent you from pushing from an old repo",
+        "ts": "1472066367.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, maybe",
+        "ts": "1472066373.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "guess you cant change your mind in gerrit, heh",
+        "ts": "1472066387.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I think your theory about 12 and 14 being the same is best",
+        "ts": "1472066392.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\u201cthats an old idea!\"",
+        "ts": "1472066393.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "BUST A DEAL FACE THE WHEEL",
+        "ts": "1472066420.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "wait wrong movie",
+        "ts": "1472066425.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1472066426.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "that would work for breaking the build, though",
+        "ts": "1472066494.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/551\/console> will be our test subject, anyway.",
+        "ts": "1472066582.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1AU8DRQR> : do we need to be stashing the chaincode.tar still?",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1472067427.000000"
+        },
+        "ts": "1472067397.000414"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "No, is it ok if I remove it next Monday? ",
+        "ts": "1472068241.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I already have the change staged, I can wait to merge it",
+        "ts": "1472068262.000417"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "You mean a revert?",
+        "ts": "1472068432.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I added you to the change I\u2019ve proposed but we can wait",
+        "ts": "1472068488.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, <@U11HH3P7Y> doesnt look like its fixed",
+        "ts": "1472069917.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/552\/console>",
+        "ts": "1472069919.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually its slightly different now",
+        "ts": "1472069951.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this time its rebuilding fabric-peer",
+        "ts": "1472069956.000423"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "any clue, why it is rebuilding peer..",
+        "ts": "1472070225.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF>: should I revert my change?",
+        "ts": "1472070389.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> not yet, it did change",
+        "ts": "1472070415.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if anything, there might be additional changes of a similar nature required",
+        "ts": "1472070436.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, in his case, fabric-peer was created at 19:40:44",
+        "ts": "1472070685.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then again at 20:16:08",
+        "ts": "1472070707.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think in this case, it might be a makefile bug",
+        "ts": "1472070719.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this line is suspicious",
+        "ts": "1472070740.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "20:16:00 rm build\/docker\/bin\/peer",
+        "ts": "1472070741.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that was an implicit rule related to make believing that artifact is an INTERMEDIATE",
+        "ts": "1472070777.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which is not the case)",
+        "ts": "1472070785.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that might be related to what triggered the rebuild in this case",
+        "ts": "1472070793.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> I did confirm that this is a general problem in all builds, at least",
+        "ts": "1472070945.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, check this out",
+        "ts": "1472070951.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/523\/consoleText>",
+        "ts": "1472070952.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "search for \u201cdocker peer-image\u201d (you\u2019ll get 2 hits)",
+        "ts": "1472070962.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "same for \u201cdocker src-image\u201d and \u201cdocker ccenv-image\"",
+        "ts": "1472070975.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there should only be one of those (each) in a healthy setup",
+        "ts": "1472070993.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I suspect that the src-image issue was fixed with your patch to the CI setup",
+        "ts": "1472071033.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the remaining ones are a Makefile bug",
+        "ts": "1472071039.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we should probably open a JIRA",
+        "ts": "1472071071.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "OK. I was suspicious as I didn\u2019t see anything in the log from around that sed, I was thinking of adding some echos to show where I really was",
+        "ts": "1472071074.000445"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Correct me if I am wrong.. We are executing make images two times.. one in unit-tests and other in behave..",
+        "ts": "1472071101.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems to be the case, yes, but the issue is: we shouldnt need to",
+        "ts": "1472071178.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one should reuse the other",
+        "ts": "1472071182.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "once its built, the system should be detecting that its already satisfied and skipping that step",
+        "ts": "1472071216.000449"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes",
+        "ts": "1472071283.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you run \u201cmake images\u201d in vagrant, only the first one will do work",
+        "ts": "1472071311.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or at least, that is the intention",
+        "ts": "1472071346.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins <https:\/\/jira.hyperledger.org\/browse\/FAB-243>",
+        "ts": "1472071628.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hey, does anyone know how to update the image that runs the jenkins jobs?",
+        "ts": "1472072108.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "It doesn't have protoc installed (the protobuf compiler) and it'll be needed when the upgrade from protobuf3-beta to protobuf3 will be made, because the pb.go files are intended to be removed from the source (and will be generated during \"make\")",
+        "ts": "1472072202.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "how and when would that be installed?",
+        "ts": "1472072237.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is that something I\u2019d get via apt-get?",
+        "ts": "1472072256.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no, you need to compile it with make",
+        "ts": "1472072271.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>: there are binary packages available for some platforms (e.g. x86_64) though others like Z might need to be built from source",
+        "ts": "1472072344.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF> Z looks dead right now, so not too worried about it",
+        "ts": "1472072374.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "google\/protobuf",
+                "title_link": "https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0",
+                "text": "protobuf - Protocol Buffers - Google's data interchange format",
+                "fallback": "GitHub: google\/protobuf",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/1342004?v=3&s=400",
+                "from_url": "https:\/\/github.com\/google\/protobuf\/releases\/tag\/v3.0.0",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1472072379.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If thats the case, you can probably use <https:\/\/github.com\/google\/protobuf\/releases\/download\/v3.0.0\/protoc-3.0.0-linux-x86_64.zip>",
+        "ts": "1472072411.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "otherwise, <https:\/\/github.com\/google\/protobuf\/archive\/v3.0.0.tar.gz>",
+        "ts": "1472072420.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, it doesn't really matter how it does into the jenkins image, as long as it goes there, in some form, binary or source :slightly_smiling_face:",
+        "ts": "1472072441.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im sure apt support is available if you really dig, at least for 16.04 etc",
+        "ts": "1472072453.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "AFAIK you should not do it via apt-get",
+        "ts": "1472072466.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yacovm my question is, do you expect to build this every time, or should it be baked in?",
+        "ts": "1472072470.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that installs 2.6, not 3.0",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472072528.000000"
+        },
+        "ts": "1472072470.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> baked in preferred",
+        "ts": "1472072482.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins OK. What do you want to do with the docker version? wait for this current makefile problem to be resolved?",
+        "ts": "1472072531.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> yeah, that is fine",
+        "ts": "1472072576.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "stated more clearly: should I build a new vagrant image with docker 1.8 and protoc 3.0.0, knowing in a week or so\u2026 ok",
+        "ts": "1472072581.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im working on FAB-243 right now",
+        "ts": "1472072583.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one question; do you use vagrant in the CI process?",
+        "ts": "1472072602.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ry, I think that adding protoc 3.0.0 to what's running now can not hurt since the scripts that exist at the moment, don't invoke it",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472072632.000000"
+        },
+        "ts": "1472072616.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I concur with <@U0ZJZBJLF>, adding protoc can be done at any time as long as it is before we merge 611",
+        "ts": "1472072663.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins we use vagrant to prop up the VMs where the builds are run.",
+        "ts": "1472072664.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, thats interesting",
+        "ts": "1472072678.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i assume you are _not_ using our fabric-baseimage then?",
+        "ts": "1472072693.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I haven\u2019t examined the fabric build itself to see if it uses vagrant",
+        "ts": "1472072696.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we do!",
+        "ts": "1472072710.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am wondering if this is a chance to get the vagrant-devenv and jenkins setup more aligned",
+        "ts": "1472072729.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I didnt realize jenkins was utilizing vagrant)",
+        "ts": "1472072745.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "we use openstack, which uses vagrant",
+        "ts": "1472072759.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1BC5NF2S> what was the source of our baseimage at vexxhost?",
+        "ts": "1472072773.000489"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0UHG4VP1> The fabric build doesn't use vagrant",
+        "ts": "1472072810.000490"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0UHG4VP1> I believe it was their public Ubuntu 16.04 image",
+        "ts": "1472072822.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh well",
+        "ts": "1472072830.000492"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "Sorry, 14.04: `Ubuntu 14.04.4 LTS (2016-06-02)`",
+        "ts": "1472072856.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, and disregard my \u201cwe do\u201d above\u2026i thought you were talkign about the devenv build",
+        "ts": "1472072879.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think you meant the build engine in the jenkins pipeline",
+        "ts": "1472072892.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i misunderstood",
+        "ts": "1472072894.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes, no worries",
+        "ts": "1472072926.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, what needs to be done from my side for the protoc binary to be present in the PATH of the jenkins image? do I need to open a JIRA issue or something?",
+        "ts": "1472072983.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yacovm: sure, file a JIRA and assign it to me",
+        "ts": "1472073147.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-244>",
+        "ts": "1472073579.000500",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U24M29R4G",
+        "text": "<@U24M29R4G|nikileshsa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472075670.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/679\/>",
+        "ts": "1472077427.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/681\/>",
+        "ts": "1472077435.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins : any estimate on build time savings? I\u2019d guess 15 minutes or so",
+        "ts": "1472078694.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im somewhat skeptical it will be _that_ beneficial\u2026the builds are generally fast on my local system",
+        "ts": "1472078736.000505"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i should look at some of the logs though",
+        "ts": "1472078744.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "they might be more costly within the CI environment",
+        "ts": "1472078753.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "eh, we\u2019ll know soon enough",
+        "ts": "1472078765.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its def not \u201c0\u201d, so there will be some savings no doubt",
+        "ts": "1472078773.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so possibly a silly question, are we at a point where we could do multiple CI runs on one VM serially?",
+        "ts": "1472078838.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "we could save some time by setting the machines to do multiple builds before disposal.",
+        "ts": "1472078898.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "peer-image is only taking about 2s",
+        "ts": "1472078933.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/523\/console>",
+        "ts": "1472078939.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "second src-image takes about 7s",
+        "ts": "1472078978.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so, not much",
+        "ts": "1472078998.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "looks like about 9s that I can guestimate",
+        "ts": "1472079017.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, its hard to say if that is the full picture",
+        "ts": "1472079026.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this could have a cascading effect",
+        "ts": "1472079039.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "now we enter the slow part",
+        "ts": "1472080463.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins not even a little faster :wink:",
+        "ts": "1472082064.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Unless 551 was the new normal, then it\u2019s 20 minutes faster",
+        "ts": "1472082101.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Oh wow, awesome",
+        "ts": "1472082319.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "nice rebase. Hope this works",
+        "ts": "1472083494.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, fingers crossed",
+        "ts": "1472083507.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect I still have a different problem with behave failing",
+        "ts": "1472083530.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but we shall see",
+        "ts": "1472083533.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I did confirm that there are no more rebuilds occurring, so that's good",
+        "ts": "1472084271.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Extra rebuilds I mean",
+        "ts": "1472084284.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "was moving that sed worth it, or did you fix a deeper problem with decorating the secondary artifacts correctly?",
+        "ts": "1472084593.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think the sed problem was legit",
+        "ts": "1472084845.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "But you can confirm if you'd like",
+        "ts": "1472084858.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "cool!",
+        "ts": "1472086625.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "nah, confirmation would mean reverting the change, re-running builds, and if it was real, re-doing the change. It didn\u2019t break anything so I\u2019d rather not monkey with it",
+        "ts": "1472086854.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hey!  it worked",
+        "ts": "1472089134.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "woohoo",
+        "ts": "1472089137.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>: so is it consistently faster now?",
+        "ts": "1472089161.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i was having a hard time getting stats on the other builds",
+        "ts": "1472089170.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF>: ask me when we have ~20 successful builds after your merge",
+        "ts": "1472089903.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": ":grinning:",
+        "ts": "1472089907.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, where is that graph you posted earlier?",
+        "ts": "1472089922.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/buildTimeTrend>",
+        "ts": "1472090125.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its hard to say if it made a difference, for all the successful builds, its in that range",
+        "ts": "1472090221.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see 1:04, 1:06, 1:07 1:28 1:15 1:04 1:11 1:07",
+        "ts": "1472090260.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, headed in the right direction, but there were some 1:04-1:07s before too",
+        "ts": "1472090290.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh well, needless to say, rebuilding stuff that didnt need to be rebuilt was just wasteful, even if only marginally so",
+        "ts": "1472090335.000545"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Jumping in here too :stuck_out_tongue: I had some under an hour occasionally when there was only one build running",
+        "ts": "1472090342.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "As I said, if 551 was new normal ",
+        "ts": "1472090344.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "true",
+        "ts": "1472090352.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it could have been trending up, and this knocked it back some",
+        "ts": "1472090365.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I think a couple more tests were turned on recently",
+        "ts": "1472090379.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Could be mistaken ",
+        "ts": "1472090388.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, at the very least, I got patch 571 to pass finally",
+        "ts": "1472090405.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Could be the other project ",
+        "ts": "1472090412.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "When could I test the docker roll forward? ",
+        "ts": "1472090461.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what are you looking to do?",
+        "ts": "1472090475.000555"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the 1.12 stuff you mean?",
+        "ts": "1472090479.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I'll be occupied all day tomorrow then I'm off from Saturday until post Labor Day ",
+        "ts": "1472090500.000557"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Yes 1.12",
+        "ts": "1472090506.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im fine any time\u2026i have 571 and 681 running now, but its just to confirm",
+        "ts": "1472090536.000559"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I just had comment changes, so I am not anticipating any regression in the CI outcome",
+        "ts": "1472090561.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": " I'm at dinner now, so it would be an hour or two before I'm home ",
+        "ts": "1472090575.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats perfect",
+        "ts": "1472090583.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "What change could I use for testing ?",
+        "ts": "1472090616.000563"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you are welcome to use 571, particularly if you can do it in a way that wont mess up the CI+1 status (that I am anticipating)",
+        "ts": "1472090651.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I'll cherry pick it",
+        "ts": "1472090664.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I suspect there will be no reviews until tomorrow, minimally",
+        "ts": "1472090665.000566"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so even that isnt a big deal",
+        "ts": "1472090671.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Didn't it break other changes? There was a wedged change IIRC",
+        "ts": "1472090713.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure what the \u201cit\u201d is in your first sentence",
+        "ts": "1472090734.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Should wait for your merge before I switch",
+        "ts": "1472090739.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "patch 571? or docker 1.12?",
+        "ts": "1472090741.000571"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "The docker 1.12",
+        "ts": "1472090751.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I seem to recall 1.12 caused it to hang while running a docker build before",
+        "ts": "1472090769.000573"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(which is weird, as I run 1.12 in my devenv and it builds fine",
+        "ts": "1472090791.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Classic :grinning:",
+        "ts": "1472090802.000575"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "of course",
+        "ts": "1472090805.000576"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I'll mess with it tonight. I need to roll a new image for <@U11HH3P7Y> anyway",
+        "ts": "1472090865.000577"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool, let me know if you need anything",
+        "ts": "1472090926.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "enjoy dinner",
+        "ts": "1472090927.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Thanks, will do",
+        "ts": "1472090939.000580"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ghaskins : looks like 1\/3 just got merged",
+        "ts": "1472095546.000581"
+    }
+]

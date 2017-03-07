@@ -1,0 +1,222 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "Hi, could somebody help me with the following error?\n*vp_18_00009_1  | 11:59:21.111 [peer] handleChat -&gt; ERRO 03d Error handling message: Peer FSM cannot handle message (DISC_GET_PEERS) with payload size (0) while in state: created*\n*vp_18_00013_1  | 11:59:21.217 [peer] ensureConnected -&gt; WARN 040 Touch service indicates dropped connections, attempting to reconnect\u2026*\nI am using the following images *ibmblockchain\/fabric-peer:ppc64le-0.6.1-preview* and *hyperledger\/fabric-baseimage:ppc64le-0.2.2* and I get the errors if I try and start 17 or more  peers with docker-compose. Could it be a docker issue?",
+        "ts": "1486133258.002576"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Z6DQ030> the error is from the discovery\/pings between peers \u2026hard to say for sure, but I would doubt its a docker issue. First guess would be gRPC dropping connection",
+        "ts": "1486134286.002577"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "Thanks <@U0ULK2JPP>, is there any way to work around the issue or diagnose the cause? Is there an upper bound on the number of peers in v0.6?",
+        "ts": "1486134514.002578"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I do not know of work around (honestly, I have\u2019t tried with more than 4 peers). It does say `attempting to reconnect` .. did that work ?",
+        "ts": "1486134699.002579"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as to upperbounds, are you using pbft or noops ? if pbft, I\u2019d check on fabric-consensensus-dev as a first cut upperbound for pbft",
+        "ts": "1486134783.002580"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "<@U0ULK2JPP> it is using pbft",
+        "ts": "1486134910.002581"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "I\u2019ll try it with noops, that should rule out pbft?",
+        "ts": "1486134950.002582"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it would, yes",
+        "ts": "1486134960.002583"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "No, switching to noops has no effect\n*vp_18_00006_1  | 15:16:31.471 [rest] StartOpenchainRESTServer -&gt; INFO 018 Initializing the REST service on 0.0.0.0:7050, TLS is disabled.*\n*vp_18_00017_1  | 15:16:34.482 [peer] handleChat -&gt; ERRO 019 Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: transition canceled with error: Error registering Handler: Duplicate Handler error: {name:\"vp_18_00001\"  172.18.0.16:7051 VALIDATOR }*\n*vp_18_00001_1  | 15:16:34.483 [peer] handleChat -&gt; ERRO 019 Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: transition canceled with error: Error registering Handler: Duplicate Handler error: {name:\"vp_18_00017\"  172.18.0.11:7051 VALIDATOR }*",
+        "ts": "1486135273.002584"
+    },
+    {
+        "user": "U1JHA4NP9",
+        "text": "<@U1JHA4NP9|gbolo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1486136965.002585"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "I am getting a panic when running peer: panic: ---empty version---(chain=,chaincode=cscc,version=,txid=26d72afe-e3d9-4314-b1cb-53aeff0d3271,syscc=true,proposal=0x0",
+        "ts": "1486136982.002586"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "what is this empty version all about?",
+        "ts": "1486136994.002587"
+    },
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "<@U1JHA4NP9> I suppose you need to rebuild the peer, i.e. do `make peer`in the fabric directory",
+        "ts": "1486138720.002588"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1JHA4NP9> second <@U3S1PENVA>\u2019s recommendatiod. The above is what I\u2019d expect if you did \u201cgo build\u201d and \u201c.\/peer\u201d \u2026 but basically the fabrics version is not being set in the exe",
+        "ts": "1486138887.002589"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "<@U3S1PENVA> yea i found that i needed -ldflags \"-X <http:\/\/github.com\/hyperledger\/fabric\/common\/metadata.Version=1.0.0-preview|github.com\/hyperledger\/fabric\/common\/metadata.Version=1.0.0-preview>\" during my go build",
+        "edited": {
+            "user": "U1JHA4NP9",
+            "ts": "1486138920.000000"
+        },
+        "ts": "1486138912.002590"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1486138916.002591"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or that",
+        "ts": "1486138918.002592"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`make peer` does the ldflags glue for you",
+        "ts": "1486138938.002594"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "yea i just noticed :slightly_smiling_face:",
+        "ts": "1486138945.002595"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1486138949.002596"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "sorry about that",
+        "ts": "1486138949.002597"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no worries",
+        "ts": "1486138953.002598"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "things change really fast",
+        "ts": "1486138959.002599"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that they do",
+        "ts": "1486138972.002600"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "another hard time im having is this msp config certs and the orderer.template",
+        "edited": {
+            "user": "U1JHA4NP9",
+            "ts": "1486138997.000000"
+        },
+        "ts": "1486138983.002601"
+    },
+    {
+        "type": "message",
+        "user": "U1JHA4NP9",
+        "text": "any ideas on this? how to generate these?",
+        "ts": "1486139062.002603"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Z6DQ030> Often, the cause of what you are seeing is as follows:   I've seen this where people are trying to use the v0.6 branch of the code and then are following the instructions in the v0.6 branch of the documentation, but....get twisted up because there are a couple spots in this doc where it has a wget (for the chaincode) and a git clone (for getting the fabric code available locally in order to build the chaincode) that refer to *master*.   The problem is, that *master* is now v1.0 code.    So, they are running Docker images with v0.6 code but when they build the chaincode locally, it incorporates v1.0 code in into it.   The solution is, in the *wget* and the *git clone*,  change *master* to *v0.6* in the path name.   I am being purposely vague as to where this documentation is, because if I've guessed correctly, you know what I'm referring to, but if I've guessed wrong, it's something else and I don't want to lead you on a wild goose chase.   I hope this helps.",
+        "ts": "1486140360.002604"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "Hi <@U0YJUECE8>, tbh, I followed bits and pieces of various docs. What I did was\n```\ndocker pull  ibmblockchain\/fabric-peer:ppc64le-0.6.1-preview\ndocker pull  hyperledger\/fabric-baseimage:ppc64le-0.2.2\n\ndocker tag  ibmblockchain\/fabric-peer:ppc64le-0.6.1-preview  hyperledger\/fabric-peer:latest\ndocker tag  hyperledger\/fabric-baseimage:ppc64le-0.2.2  hyperledger\/fabric-baseimage:latest\n```\n\ncreated a *peer.yml*\n\n```\nversion: '2'\n\nservices:\n  vp:\n    image: hyperledger\/fabric-peer:latest\n    restart: unless-stopped\n    environment:\n      - CORE_PEER_ADDRESSAUTODETECT=true\n      - CORE_PEER_NETWORKID=dev\n      - CORE_LOGGING_LEVEL=info  #critical, error, warning, notice, info, debug\n      # The following section enables pbft consensus\n      - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=noops # noops, pbft\n      - CORE_PBFT_GENERAL_MODE=batch  # batch. classic and sieve will be not supported again.\n      - CORE_PBFT_GENERAL_N=4\n      - CORE_PBFT_GENERAL_BATCHSIZE=2  # only useful when in batch mode\n      - CORE_PBFT_GENERAL_TIMEOUT_REQUEST=2s\n      - GOPATH=\/opt\/gopath\n    expose:\n      - \"7050\"  # Rest\n      - \"7051\"  # Grpc\n      - \"7052\"  # Peer CLI\n      - \"7053\"  # Peer Event\n      - \"7054\"  # eCAP\n      - \"7055\"  # eCAA\n      - \"7056\"  # tCAP\n      - \"7057\"  # eCAA\n      - \"7058\"  # tlsCAP\n      - \"7059\"  # tlsCAA\n    volumes: # docker.sock is mapped as the default CORE_VM_ENDPOINT\n      - \/home\/sheehanj\/quickstart\/chaincode:\/opt\/gopath\/src\/chaincode\n      - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n    command: peer node start\n```\n\ncreated *00018peers.yml*\n\n```\nversion: '2'\n\nservices:\n  # validating node as the root\n  # vp0 will also be used for client interactive operations\n  # If you want to run fabric command on the host, then map 7051:7051 to host\n  # port, or use like `CORE_PEER_ADDRESS=172.17.0.2:7051` to specify peer addr.\n\n\n  vp_18_00000:\n    extends:\n      file: peer.yml\n      service: vp\n    hostname: vp_18_00000\n    environment:\n      - CORE_PEER_ID=vp_18_00000\n    ports:\n      - \"7050:7050\"\n      #- \"7051:7051\"\n \n\n  # validating node\n  vp_18_00001:\n    extends:\n      file: peer.yml\n      service: vp\n    hostname: vp_18_00001\n    environment:\n      - CORE_PEER_ID=vp_18_00001\n      - CORE_PEER_DISCOVERY_ROOTNODE=vp_18_00000:7051\n    links:\n      - vp_18_00000\n\n\n  # validating node\n  vp_18_00002:\n    extends:\n      file: peer.yml\n      service: vp\n    hostname: vp_18_00002\n    environment:\n      - CORE_PEER_ID=vp_18_00002\n      - CORE_PEER_DISCOVERY_ROOTNODE=vp_18_00000:7051\n    links:\n      - vp_18_00000\n\netc...\n```\n\nand ran *docker-compose -f 00018peers.yml up*",
+        "ts": "1486141087.002605"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Z6DQ030>   what I described is only applicable if you are getting it when trying to do a query-  that is, you have successfully deployed and invoked the chaincode_example02.    Also, I should have mentioned this, I was referring to your original error message that mentioned *Peer FSM...*  If that error occurred anywhere else you are probably running into something different.   You're already off the beaten path by running on Power  (not that there's anything wrong with that!)",
+        "ts": "1486141296.002606"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "<@U0YJUECE8>  :smile:  . have you tried running lots (more than 16 say) peers (on any arch)?",
+        "ts": "1486141512.002607"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U0Z6DQ030>   I'm lazy.  I've maxed out at 4.",
+        "edited": {
+            "user": "U0YJUECE8",
+            "ts": "1486141606.000000"
+        },
+        "ts": "1486141589.002608"
+    },
+    {
+        "type": "message",
+        "user": "U0Z6DQ030",
+        "text": "<@U0YJUECE8>  no worries, I thought I ask.",
+        "ts": "1486141683.002610"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Let\u2019s move to <https:\/\/chat.hyperledger.org> ?",
+        "ts": "1486147099.002611",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3DHKV84C"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

@@ -1,0 +1,311 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we need to be down to 2 branches - v0.6 (no new features) and master which is v1.0.0",
+        "ts": "1477041827.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "now we'll need to figure out the best way to get the BCCSP stuff merged into master - we are still waiting on moving convergence into master",
+        "ts": "1477041862.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Everything under the bccsp package can be merged easily. It has only dependencies onto the primitives package which has not been modified. After that, I can re-apply the refactoring to have all the other components using the BCCSP. How this sounds?",
+        "ts": "1477043848.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this sounds about right.  not exactly sure what you mean by `re-apply the refactoring to have all the other components using the BCCSP`?   My assertion would be that at this point there actually is no crypto in use for the new peer \/ endorser code.  For example, assuming the BCCSP is integrated into the src tree (as we are discussing), next step for example would be to have the peer code (default ESCC and VSCC) leverage BCCSP for signing and verification.",
+        "ts": "1477044087.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "same should hold true for the orderer code as well (I would hope).   I think this is what you meant?",
+        "ts": "1477044120.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "That's right, actually. Because the old code can be discarded at this point. Right!",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477044308.000000"
+        },
+        "ts": "1477044292.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool",
+        "ts": "1477044460.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this should make for a very clean way to use the BCCSP package",
+        "ts": "1477044499.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1ZT4H8MC> <@U0UKTPMG8> and I discussed this yesterday in terms of next steps for the endorser code once we finish the merge",
+        "ts": "1477044545.000366"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U184J2R7S> Yes, this makes sense (to \"jump on\" the latest).\n<@U0PB67X4K>, <@U0ZR63HLK> : OK, then let\u2019s resubmit these against `master`. Sounds good. Probably after the `v0.6` &gt; `master` work is done and possibly the `convergence`\u2026 though after taking a quick look at it, I don\u2019t expect conflicts as the above items are mostly new.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1477062814.000000"
+        },
+        "ts": "1477059067.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1477059568.000368",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Makes sense.",
+        "ts": "1477063644.000370"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Though transaction\/proposal processing components on the peer\/client side may make sense to call membership service interface rather than directly crypto CSP calls. Of course the transition to such calls should not be difficult to be done later.",
+        "ts": "1477063766.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1BC5A0F9> - you aren't saying that at runtime the peer would ever need to call out to membership services are you?  For the client - yes - it would call membership services directly",
+        "ts": "1477063959.000372"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct. I am not saying that. I am saying that the peer\/client would need to invoke the membership service library function to validate a a certain authenticated messsage (e.g., a message signed with a secret corresponding to a certificate).",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477064239.000000"
+        },
+        "ts": "1477064033.000373"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, in a way, if we are to make memberhsip service pluggable, we would need to specify APIs for peer\/client to use for message authentication (signature or other means that that membership service has\/adopts) and authenticated message validation (signature verification or other mechanisms that that membership service considers)",
+        "ts": "1477064133.000374"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "What\u2019s to `validate a signature produced by a certificate` ?",
+        "ts": "1477064157.000375"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "my bad, corrected :slightly_smiling_face:",
+        "ts": "1477064244.000377"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Oh, OK. To validate `with a certificate`.",
+        "ts": "1477064269.000378"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Sure, yes. Especially as the extensions are not standard.",
+        "ts": "1477064287.000379"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So membership service A has standard x509 certificates and for authentication uses ECDSA key-pairs.",
+        "ts": "1477064294.000380"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(they are standard X509, but require logic)",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1477064331.000000"
+        },
+        "ts": "1477064309.000381"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Membership service B has idemix certificates (not x509 based) and for authentication uses RSA keys and signature of knowledge.",
+        "ts": "1477064323.000382"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The interface of membership service as used in the core should be done in such a way, that membership service A and B can implement that interface and plugged into the peer\/client code without affecting the transaction processing components of the system.",
+        "ts": "1477064396.000384"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K> , <@U11MANG9G> does this make sense?",
+        "ts": "1477064520.000385"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Something we already discussed with <@U0S5KF44D>, <@U0ZR63HLK>, and we actually have some preliminary  form of this (generic) interface.",
+        "ts": "1477064564.000386"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, it does. Much better to have the logic encapsulated within Membership Services (that will call the underlying crypto)\u2026 than require the logic in the client, using the (probably too low-level for the client) crypto CSP.",
+        "ts": "1477064588.000387"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct!",
+        "ts": "1477064602.000388"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It will be a lot easier to validate\/test\/extend and componentize using the external API that will allow us to have the logic in one place (and just share, rather than duplicate).",
+        "ts": "1477064657.000389",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[That is, I agree - this makes sense]",
+        "ts": "1477064702.000392"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We should probably work out a few sequence\/entity-interaction diagrams at some point, at least at the higher level, to make sure that everyone is on the same page.",
+        "ts": "1477064757.000393"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "But for now, it makes sense to expose the crypto to only one layer (above it) to consume\u2026 especially while it is \u201cin the making\"",
+        "ts": "1477064821.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - I see - you were talking about the \"client\" piece of membership services.  I just want to make sure that at runtime there is no need to call out to membership services server",
+        "ts": "1477065031.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":wink:",
+        "ts": "1477065032.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I want to be able to provide my own crypto material if I want to  :wink:",
+        "ts": "1477065139.000397"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, these really need to be separate! We don\u2019t want a chrome browser that needs to call the server for `internal` logic implementation.",
+        "ts": "1477065144.000398"
+    },
+    {
+        "user": "U2BGFAHC7",
+        "text": "<@U2BGFAHC7|donovanhide> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477076577.000399"
+    },
+    {
+        "user": "U13TWBRBL",
+        "text": "<@U13TWBRBL|jzhang> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477079709.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-dev\/p1477079668002159>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-dev\/p1477079668002159",
+                "fallback": "[October 21st, 2016 12:54 PM] jzhang: or, as per <@U0ULK2JPP> from <#C2NESEYV9|fabric-reconcile> channel, this is now left completely to the client and chaincode? is that just going to be merely TLS or would there still be encryption on the payload itself? if the latter, then I think there should be a standard REST API all endorsers publish to download the certificate for extracting the public key for encryption",
+                "ts": "1477079668.002159",
+                "author_subname": "jzhang",
+                "channel_id": "C0YPYBVJM",
+                "channel_name": "fabric-dev",
+                "is_msg_unfurl": true,
+                "text": "or, as per <@U0ULK2JPP> from <#C2NESEYV9|fabric-reconcile> channel, this is now left completely to the client and chaincode? is that just going to be merely TLS or would there still be encryption on the payload itself? if the latter, then I think there should be a standard REST API all endorsers publish to download the certificate for extracting the public key for encryption",
+                "author_name": "Jim Zhang",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jzhang",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/693baf7118ea52f1ad0aadf6fa97d962.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0010-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-dev"
+            }
+        ],
+        "ts": "1477079738.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "This is w.r.t encryption\/decryption in app\/SDK. assume this is now handled by the application level, ie app\/SDK &lt;\u2014\u2014&gt; chaincode ?",
+        "ts": "1477079827.000403"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "thanks <@U0ULK2JPP>. <@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4> this question came about when I was wondering how the SDK\u2019s endorse API would support confidentiality. would we continue to use \u201cpkChain\u201d returned from ECertCreateResp, or should we expose the payload to give the application developer a chance to encrypt it however they want (using a PKI b\/w app and endorser nodes)",
+        "ts": "1477080210.000404"
+    },
+    {
+        "user": "U2QLU433N",
+        "text": "<@U2QLU433N|msoumeit> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477112992.000405"
+    }
+]

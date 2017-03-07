@@ -1,0 +1,1214 @@
+[
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Hoping someone can assist - has anyone got a setup where they are running the docker images inside a Vagrant VM?",
+        "ts": "1474270132.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "<@U2CC1NDT2> I have docker images inside and outside vagrant.. both seems to be working fine.",
+        "ts": "1474285242.000066"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "are you facing any issues?",
+        "ts": "1474285254.000067"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U1CS08EP3> - I'm trying to get a setup going where I can have one Vagrant managed VM that automatically launches the various docker containers exposing ports, with Host OS to Container file system sync - the purpose being so that we can then use another VM to dev REST API calls with.",
+        "ts": "1474290385.000068"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "But I'm really stuck - all the official docs either use pure Vagrant or Docker - I guess I'm going to have to have some kind of custom Vagrantfile config but not sure how to do it - found a few tutorials but they all show rather simple use cases...",
+        "ts": "1474290499.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm, <@U2CC1NDT2>  why not add some startup scripts to the `devenv\/setup.sh` that startup these docker containers and add iptable rules for port forwarding or something?",
+        "ts": "1474295519.000070"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0ZJZBJLF> <@U1CS08EP3> Tried to get the core Fabric up in vagrant by cloning the Gerrit repo as per the docs - no luck at all - the VM boots but when it runs the provisioning script it bombs - being doing this since we launched our project on Friday last...\n\nI built my own wily64 based VM and then provisioned docker, docker-compose, installed go etc and got the Fabric and Memberservices running all ok - but the way docker handles networking \/ ports is totally foreign to me atm. So although I could see the container messages on the console I am lost as to how those services should be exposed to the host VM and then out to \"world\" via vagrant port forwarding (I did however get this done by coping aspects of the Vagrantfile from the core Gerrit repo). \n\nAt the end of the day I guess I need to get some kind of Vagrantfile going that boots a VM (for chaincode development) with the docker containers running and exposed in such a fashion that this VM is accessible via a locally running hosts file DNS entry (i,e. that it appears to be a live node) - when this is working we'll then be able to load another (existing) VM image that we do webdev with to code REST API calls with - I think :slightly_smiling_face:",
+        "ts": "1474316288.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> I work on the vagrant development env: can you provide more details about what you were doing or seeing when the provisioner died?",
+        "ts": "1474316576.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm, I think the port forwarding rules are defined in the Vagrantfile...",
+        "ts": "1474316982.000073"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> Starting Fri \/ over the weekend as soon as it started to run the provisioning script it would throw a stdin tty error - I tried to manually patch it with some code I found which corrected that but then it threw red immediately thereafter (setting ENV vars I think) - this did not happen a few mins ago though - it passed that OK...\n\nLater on it gives an issue re keys during the apt-get update I think, and then it eventually complains about unresolved dependencies and bombs out.\n\nOver the weekend I also tried to manually run the setup script which got further but also eventually died with unresolved dependencies...",
+        "ts": "1474317001.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do you mean about the DNS entry? i don't quite understand",
+        "ts": "1474317008.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think it can be also useful if you can provide a console output log of the failures, or all of it.",
+        "ts": "1474317065.000076"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0ZJZBJLF> yeah the VM port fwding rules are in the \/devenv Vagrantfile which I used to get Host OS to VM ports working - the issue for me (I think) is how to get docker to bi-bidirectionally link up. \n\nBy host DNS I mean the ability to (from the Host OS) connect using a DNS name set in the VM Vagrantfile (e.g. hyperledger.local) so that at the end of the day when we have our dev environment setup we have 2 VM's running - one for the Fabric based on the docker containers for chaincode dev and the other with our webdev stuff for REST API calls to Fabric \"node\" - if that makes any sense...",
+        "ts": "1474317290.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> I assume you mean you were doing \u201ccd devenv; vagrant up\"",
+        "ts": "1474317415.000078"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "re your request for console log output - sure - I can run the vagrant up process in debug mode if you wish and output to a logfile but I can't do it now as am in GMT +4 so can do it tomorrow sometime",
+        "ts": "1474317425.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1474317430.000080"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> yes",
+        "ts": "1474317435.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is this on windows, linux, mac?",
+        "ts": "1474317446.000082"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "win10",
+        "ts": "1474317450.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah",
+        "ts": "1474317454.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you paste the tty error you mentioned?",
+        "ts": "1474317467.000085"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "unfortunately not now - before we get really going i'm doing everything in a sandboxed win10 install on a usb drive so have to spin that up etc etc - can do it tomorrow when I get a gap though as am in GMT+4 timezone...",
+        "ts": "1474317576.000086"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "however I should mention that when I tried the vagrant up a few mins ago (after pulling a fresh copy of the repo) that the stdin tty error did not come up nor did I see red on the setting of the ENV vars",
+        "ts": "1474317664.000087"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "it bombed after doing the apt update",
+        "ts": "1474317678.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "very strange",
+        "ts": "1474317813.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im on OSX here so not sure I will know exactly what is wrong but I think we have quite a few people who use the devenv on windows",
+        "ts": "1474317847.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the apt-get update is sometimes slow, could it be that you arent waiting long enough?",
+        "ts": "1474317864.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. what did you see in that circumstance?",
+        "ts": "1474317880.000092"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "nope - vagrant bombs totally after missing dependencies error",
+        "ts": "1474317903.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok\u2026id probably need more context to try to figure that out",
+        "ts": "1474317923.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, when you get a chance to run it again, if you can grab screenshots or logs, that would be helpful",
+        "ts": "1474317942.000095"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ssh into the VM and running the script manually gets further but also bombs eventually",
+        "ts": "1474317945.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you dont happen to be in china per chance?",
+        "ts": "1474317970.000097"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "do you want me to run a vagrant up in debug mode and push the output to a file?",
+        "ts": "1474317974.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive seen users have trouble getting ubuntu updates in china, but otherwise...",
+        "ts": "1474317986.000099"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "BWHAHA ROLF nope - Mauritius",
+        "ts": "1474317988.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm, so you want to have 2 VMs running in parallel in the end?",
+        "ts": "1474317993.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, debug output would be great",
+        "ts": "1474318022.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the most helpful thing is likely the main provisioner log though",
+        "ts": "1474318038.000103"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0ZJZBJLF> yup - one for chaincode dev and one for web dev - so it's a full development eco-system",
+        "ts": "1474318046.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm not sure, and <@U0KPFAZNF>  can correct me if i'm wrong- but I think the vagrant file configures the VM to use NAT networking, you'll need bridged for that",
+        "ts": "1474318077.000105"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> Ok will do that tomorrow after I get through the sprint for the day",
+        "ts": "1474318093.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> not necessarily\u2026it will surface all the ports to the host, so the webvm could just be pointed to the host IP and it would probably work",
+        "ts": "1474318113.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not super clean, either",
+        "ts": "1474318136.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep, haven't thought of that.",
+        "ts": "1474318143.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but depends on what the requirements are",
+        "ts": "1474318147.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> ok, sounds good",
+        "ts": "1474318165.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> also, can you tell me what branch\/sha you are on?",
+        "ts": "1474318176.000112"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "i made progress this evening though (I think) - the issue now it seems is the link between the docker containers and the VM",
+        "ts": "1474318185.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my gut feeling is that, whatever is going on, you are likely to hit it if you try to make your own VM too",
+        "ts": "1474318213.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the vagrant stuff isnt doing anything particularly magical,,,its just running bash scripts on top of ubuntu",
+        "ts": "1474318232.000115"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> I cloned from the repo exactly as per the docs",
+        "ts": "1474318239.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if apt-get is failing for instance, it might fail outside devenv too",
+        "ts": "1474318248.000117"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "sure but that seems to be trusty issue - doesnt do it on wily64",
+        "ts": "1474318269.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, thats good to know",
+        "ts": "1474318277.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im actually trying to get everything updated, including trusty-&gt;xenial",
+        "ts": "1474318294.000120"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "this BADSIG \/ KEY issue on trusty64 seems to be a known problem",
+        "ts": "1474318303.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but i have a few blocking tasks to tackle first",
+        "ts": "1474318310.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I dont understand is why this is hitting you",
+        "ts": "1474318334.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do you know what version of vbox\/vagrant you have on this host?",
+        "ts": "1474318349.000124"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "latest (although Virtualbox just released an update)",
+        "ts": "1474318383.000125"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "when i do the log for you i'll check all that",
+        "ts": "1474318414.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, cool",
+        "ts": "1474318434.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just checked, mine is a little old (5.0.8)",
+        "ts": "1474318447.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wonder if some issue slipped in",
+        "ts": "1474318453.000129"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "tomorrow I'll see if I can't also make some head way on figuring out how to get docker to expose bidirectional comms on the port for the REST API",
+        "ts": "1474318541.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why do you need bi-di comms?",
+        "ts": "1474318553.000131"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Host OS &lt; --- &gt; VM &lt; --- &gt; docker",
+        "ts": "1474318615.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the VM you mean the hyperledger VM?",
+        "ts": "1474318645.000133"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "no not \/devenv",
+        "ts": "1474318668.000134"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "my own VM with docker running the Fabric and Memberservices images for chaindev",
+        "ts": "1474318705.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, you have 2 VMS- 1 VM is the fabric VM, and the other is some web-dev VM right?",
+        "ts": "1474318736.000136"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "currently on my end the official \/devenv VM is busted totally on vagrant up - will do a debug log on that tomorrow",
+        "ts": "1474318816.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh i think i understand. you want to be able to connect from the docker, to the outside world?",
+        "ts": "1474318829.000138"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "so I built my own VM image based on wily64, installed docked, docker-compose, go etc and got the Fabric running",
+        "ts": "1474318862.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to the host for example?",
+        "ts": "1474318865.000140"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yeah that's it, bingo",
+        "ts": "1474318869.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why not set up an iptables port forwarding rule",
+        "ts": "1474318880.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that will redirect everything on a specific port to the ip address of the docker interface",
+        "ts": "1474318900.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to the host IP?",
+        "ts": "1474318913.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you'll need to configure the VM to be bridged for that",
+        "ts": "1474318932.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or add another NIC that will be host-only",
+        "ts": "1474318945.000146"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "i was reading up on that and was going to see how to do that tomorrow - please remember I'm no *nix guru...",
+        "ts": "1474318950.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's not *nix, that's virtualbox :slightly_smiling_face:",
+        "ts": "1474318962.000148"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "so a LOT of this is above my paygrade :slightly_smiling_face:",
+        "ts": "1474318972.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "my timezone isn't very far from yours, I'll be online tomorrow",
+        "ts": "1474318981.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i cant think of anything that would require outside mapping aside from some basic NAT stuff which should already be working",
+        "ts": "1474319030.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but maybe I am just missing some use case",
+        "ts": "1474319042.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in any case, getting it mapped the way you want it shouldnt be too difficult",
+        "ts": "1474319054.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe he has a chaincode that does forbidden stuff",
+        "ts": "1474319059.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "like networking?",
+        "ts": "1474319068.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, thats the only thing I can think of",
+        "ts": "1474319071.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually right now we dont lock it down, either)",
+        "ts": "1474319081.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but like I said, even for that case, it should stuff be NATed out of the VM",
+        "ts": "1474319100.000158"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "i hope i'm not adding confusion here due to poor explanation",
+        "ts": "1474319125.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no, I think that if the NIC is in NAT mode you can't connect from the guest to the host",
+        "ts": "1474319129.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "at least in virtualbox",
+        "ts": "1474319148.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sure you can, just use the host ip",
+        "ts": "1474319155.000162"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ideally i'd like to get a VM like the Homestead one going",
+        "ts": "1474319197.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "where you might run into trouble is routing tables for something that sits between the host and the public",
+        "ts": "1474319204.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but having something that needs to reach out into that space would be \u201ccreative\u201d :wink:",
+        "ts": "1474319231.000165"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ok guys - i gotta run - will post findings tomorrow as promised",
+        "ts": "1474319306.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> ok, have a good one",
+        "ts": "1474319314.000167"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "thanks folks bye for now",
+        "ts": "1474319347.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> you might be right",
+        "ts": "1474319458.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it doesnt look like the devenv is assigning a host ip",
+        "ts": "1474319465.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep thats what i meant",
+        "ts": "1474319471.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I do see 10.0.2.2 but i cant tell what implements that",
+        "ts": "1474319482.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where do you see this?",
+        "ts": "1474319507.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "must be some internal vbox bridge or something",
+        "ts": "1474319508.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in the routing table in the devenv",
+        "ts": "1474319514.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no, that's not the host",
+        "ts": "1474319520.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's the \"router\"",
+        "ts": "1474319524.000177"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DCBGTGC\/-.m|Untitled>",
+        "file": {
+            "id": "F2DCBGTGC",
+            "created": 1474319544,
+            "timestamp": 1474319544,
+            "name": "-.m",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "objc",
+            "pretty_type": "Objective-C",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 435,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2DCBGTGC\/-.m?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2DCBGTGC\/download\/-.m?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DCBGTGC\/-.m",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2DCBGTGC-70511cef04",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DCBGTGC\/-.m\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.1.0-b9a1408:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ route\r\nKernel IP routing table\r\nDestination     Gateway         Genmask         Flags Metric Ref    Use Iface\r\ndefault         10.0.2.2        0.0.0.0         UG    0      0        0 eth0\r\n10.0.2.0        *               255.255.255.0   U     0      0        0 eth0\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-variable\">vagrant<\/span><span class=\"cm-keyword\">@hyperledger<\/span><span class=\"cm-operator\">-<\/span><span class=\"cm-variable\">devenv<\/span>:<span class=\"cm-variable\">v0<\/span>.<span class=\"cm-number\">1.0<\/span><span class=\"cm-operator\">-<\/span><span class=\"cm-variable\">b9a1408<\/span>:<span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">opt<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">gopath<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">src<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">github<\/span>.<span class=\"cm-variable\">com<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">hyperledger<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">fabric$<\/span> <span class=\"cm-variable\">route<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Kernel<\/span> <span class=\"cm-variable\">IP<\/span> <span class=\"cm-variable\">routing<\/span> <span class=\"cm-variable\">table<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Destination<\/span>     <span class=\"cm-variable\">Gateway<\/span>         <span class=\"cm-variable\">Genmask<\/span>         <span class=\"cm-variable\">Flags<\/span> <span class=\"cm-variable\">Metric<\/span> <span class=\"cm-variable\">Ref<\/span>    <span class=\"cm-variable\">Use<\/span> <span class=\"cm-variable\">Iface<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-keyword\">default<\/span>         <span class=\"cm-number\">10.0<\/span>.<span class=\"cm-number\">2.2<\/span>        <span class=\"cm-number\">0.0<\/span>.<span class=\"cm-number\">0.0<\/span>         <span class=\"cm-variable\">UG<\/span>    <span class=\"cm-number\">0<\/span>      <span class=\"cm-number\">0<\/span>        <span class=\"cm-number\">0<\/span> <span class=\"cm-variable\">eth0<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-number\">10.0<\/span>.<span class=\"cm-number\">2.0<\/span>        <span class=\"cm-operator\">*<\/span>               <span class=\"cm-number\">255.255<\/span>.<span class=\"cm-number\">255.0<\/span>   <span class=\"cm-variable\">U<\/span>     <span class=\"cm-number\">0<\/span>      <span class=\"cm-number\">0<\/span>        <span class=\"cm-number\">0<\/span> <span class=\"cm-variable\">eth0<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 6,
+            "lines_more": 1,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1474319545.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you `nmap` it, it won't return to you the ports that your host listens to I think",
+        "ts": "1474319550.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i tried to ssh to it, it didnt respond",
+        "ts": "1474319564.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh though wait, this is my laptop, i might not have sshd on",
+        "ts": "1474319573.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if you have linux try do `nc -l` or something",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1474319604.000000"
+        },
+        "ts": "1474319594.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, that worked",
+        "ts": "1474319635.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i enabled sshd on my laptop and I was able to ssh to ghaskins@10.0.2.2",
+        "ts": "1474319652.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "really? it's the host then? weird... but, the host doesn't have an ip address 10.0.2.2~",
+        "ts": "1474319662.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whats weird is I dont see that endpoint on my host",
+        "ts": "1474319665.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1474319669.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, thats whats confusing me",
+        "ts": "1474319673.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, try the other way",
+        "ts": "1474319691.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "from the host, ssh to 10.0.2.15",
+        "ts": "1474319698.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you shouldn't be able to do that",
+        "ts": "1474319704.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, doesnt work",
+        "ts": "1474319773.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it doesnt seem like the host sees 10.0.2\/24",
+        "ts": "1474319788.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because you don't have an ip address",
+        "ts": "1474319789.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "understood",
+        "ts": "1474319793.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure what the mechanics of the 10.0.2.2 route are",
+        "ts": "1474319812.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but in any case, it does seem you can at least reference the host that way",
+        "ts": "1474319837.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(as well as the broader internet via NAT)",
+        "ts": "1474319845.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if you wanted something between the two, that wouldnt work",
+        "ts": "1474319853.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can use the port-forwarding from the host's end",
+        "ts": "1474319884.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "using localhost or something, heh",
+        "ts": "1474319891.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i think that is \u201cthe vagrant way\u201d in general",
+        "ts": "1474319910.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah. It doesn't have anything to do with the virtualbox....",
+        "ts": "1474319927.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the alternative is to create an explicit network",
+        "ts": "1474319931.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in the vagrantfile, i mean",
+        "ts": "1474319942.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or simply define it bridged.",
+        "ts": "1474319950.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, though I think that also has a similar impact",
+        "ts": "1474319966.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IIRC vagrant always creates nic0 as a NAT",
+        "ts": "1474319982.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't know you can connect from the guest to the host with NAT. always tried before setting an additional dedicated host-only interface :confused:",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1474320009.000000"
+        },
+        "ts": "1474319986.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe I am wrong",
+        "ts": "1474319987.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1474319993.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, thats what I usually do",
+        "ts": "1474320011.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its kind of a PITA though, as the NAT one is still there",
+        "ts": "1474320019.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it would be nice if you could just override nic0",
+        "ts": "1474320043.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I understand why its not trivial, but that doesnt change the fact that it can make certain vagrant configurations awkward)",
+        "ts": "1474320067.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't see how creating a network would help, because you always need a NAT for internet access",
+        "ts": "1474320074.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, if you want to manage that yourself",
+        "ts": "1474320090.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how? create a NAT yourself?",
+        "ts": "1474320115.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "vagrant wants it a certain way so the provisioner stuff is consistent",
+        "ts": "1474320116.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whatever you want: doesnt have to be NAT",
+        "ts": "1474320130.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, could be bridged to a network that has DHCP",
+        "ts": "1474320149.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- to access the internet you need some kind of NAT, or have a \"public\" ip address in the segment of the host",
+        "ts": "1474320149.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah exactly",
+        "ts": "1474320157.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not necessarily",
+        "ts": "1474320160.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why?",
+        "ts": "1474320163.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh yes, i didnt catch the second half of your statement",
+        "ts": "1474320180.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, needs to be viable some way or another",
+        "ts": "1474320188.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that doesnt mean NAT, at least not vbox NAT",
+        "ts": "1474320197.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "could be bridged to your LAN environment which could also do NAT, or give you a public address, or whatever",
+        "ts": "1474320221.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just mean it doesnt have to do NAT termination coming out of vbox",
+        "ts": "1474320239.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah i understand",
+        "ts": "1474320245.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i had written a config recently that was doing exactly this",
+        "ts": "1474320275.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "setting up an openshift environment",
+        "ts": "1474320284.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wanted a fixed IP so I was defining a host-only interface",
+        "ts": "1474320300.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but then I was battling with the nic0 stuff",
+        "ts": "1474320312.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "don't know openshift",
+        "ts": "1474320335.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "kubernetes distro",
+        "ts": "1474320344.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can define a fixed IP there?",
+        "ts": "1474320391.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep",
+        "ts": "1474320397.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think in docker you can't define, at least not out of the box",
+        "ts": "1474320403.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for something like openshift, that is more desirable than doing the port mapping",
+        "ts": "1474320411.000243"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DD46WTC\/-.rb|Untitled>",
+        "file": {
+            "id": "F2DD46WTC",
+            "created": 1474320456,
+            "timestamp": 1474320456,
+            "name": "-.rb",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "ruby",
+            "pretty_type": "Ruby",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 409,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2DD46WTC\/-.rb?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2DD46WTC\/download\/-.rb?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DD46WTC\/-.rb",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2DD46WTC-74c1a99db9",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2DD46WTC\/-.rb\/edit",
+            "preview": "$ cat Vagrantfile\r\n# -*- mode: ruby -*-\r\n# vi: set ft=ruby :\r\n\r\nVagrant.configure(\"2\") do |config|\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-variable-3\">$ <\/span><span class=\"cm-variable\">cat<\/span> <span class=\"cm-tag\">Vagrantfile<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-comment\"># -*- mode: ruby -*-<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-comment\"># vi: set ft=ruby :<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-tag\">Vagrant<\/span><span class=\"cm-operator\">.<\/span><span class=\"cm-property\">configure<\/span>(<span class=\"cm-string\">&quot;2&quot;<\/span>) <span class=\"cm-keyword\">do<\/span> |<span class=\"cm-def\">config<\/span>|<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 18,
+            "lines_more": 13,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1474320456.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh but thats virtualbox",
+        "ts": "1474320469.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that sets a fixed IP in vagrant",
+        "ts": "1474320482.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't the kubernetes docker?",
+        "ts": "1474320486.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, this was w.r.t. standing up a vagrant environent to run openshift itself",
+        "ts": "1474320506.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh... ok.",
+        "ts": "1474320512.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(for development)",
+        "ts": "1474320513.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "anyway, it's already past midnight and I have to get up tomorrow to continue working on the gossip mechanism for the next architecture...",
+        "ts": "1474320522.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, take it easy",
+        "ts": "1474320531.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "bye",
+        "ts": "1474320540.000253"
+    }
+]

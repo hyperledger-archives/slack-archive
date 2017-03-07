@@ -1,0 +1,1510 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: we can't access op.pbft.activeView, because that's racy",
+        "ts": "1463751215.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we really need to put this in a single thread",
+        "ts": "1463751227.001827"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: 100% agree, that's been on my radar for a bit, thought about opening an issue for it, but we reference it a lot",
+        "ts": "1463752696.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i just opened one",
+        "ts": "1463752715.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could try to track it in  both locations, but at the end of the day, we just need to get rid of the second thread",
+        "ts": "1463752726.001830"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: TestClassicBackToBackStateTransfer is failing because the state transfer seems to happen at seqno 4",
+        "ts": "1463756791.001831"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is presumably after some changes you made? Is this after the null stuff?",
+        "ts": "1463756838.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(as I've not seen that test fail locally or in CI)",
+        "ts": "1463756872.001833"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my only explanation is that it did a state transfer more quickly",
+        "ts": "1463758490.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, i can't run any of these unit tests",
+        "ts": "1463758528.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: <https:\/\/gist.github.com\/5df88b0104c0f1c14fa9f215f7fd96a6>",
+        "ts": "1463758694.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is this what's in master, or are there changes on top of it?",
+        "ts": "1463758737.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, my changes",
+        "ts": "1463758749.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Are they the null eavesdropping changes?",
+        "ts": "1463758763.001839"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nono",
+        "ts": "1463758766.001840"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm still tweaking out the custody bugs",
+        "ts": "1463758774.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or rather, i think i've been mostly trying to pass erratic unit tests for the last hours",
+        "ts": "1463758793.001842"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm going to submit this PR as is",
+        "ts": "1463758833.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the failures are random here",
+        "ts": "1463758839.001844"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure why custody should have any effect on it.  I think if these unit tests were failing randomly, we would have seen CI complain",
+        "ts": "1463758866.001845"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, my laptop is slower than everybody's machines",
+        "ts": "1463758909.001846"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it takes different code interleavings",
+        "ts": "1463758920.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is not too bad",
+        "ts": "1463758935.001848"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because it exposes bugs occasionally",
+        "ts": "1463758944.001849"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and badly written tests (all :)",
+        "ts": "1463758955.001850"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let's see what CI says",
+        "ts": "1463758959.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1537>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "resubmit raced custody requests, fix other custody bugs by corecode \u00b7 Pull Request #1537 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1537",
+                "text": "Description If one of our requests turned stale without having been committed (because a newer request of us raced it), we need to repackage and resubmit the request. During implementation of t...",
+                "fallback": "GitHub: resubmit raced custody requests, fix other custody bugs by corecode \u00b7 Pull Request #1537 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1537",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1463758969.001852"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll go outside for a walk, haven't been in fresh air for a week",
+        "ts": "1463758999.001854"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looking at that test, wondering if I don't see a bug",
+        "ts": "1463759230.001855"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Actually, not a bug, but, try on line 77 of mock_consumer_test.go bumping `MaxStateTransferTime` up to say, 400 instead of 200",
+        "ts": "1463759502.001856"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The test does assume, that given at least 100ms is sufficient time to processes 5 rounds of PBFT",
+        "ts": "1463759546.001857"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "uh oh",
+        "ts": "1463759594.001858"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "talk about brittle code :slightly_smiling_face:",
+        "ts": "1463759600.001859"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, it takes 20ms on my laptop to do that",
+        "ts": "1463759686.001860"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, 5x seemed like a reasonable guess as to the power of other machines.  Actually blocking for it would be better, but, would have made the changes for the test much more invasive.",
+        "ts": "1463759794.001861"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Wow, it is taking over 3 seconds on your machine",
+        "ts": "1463759902.001862"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's roughly 150x as slow",
+        "ts": "1463759931.001863"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I can take a TODO for this to modify the test infrastructure to support blocking this call, but I'm a little shocked any of the timing related tests run successfully for you",
+        "ts": "1463760112.001864"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0UGH3X7X>: <@U0XQ35CDD> <@U0XR6J961> <@U0XPR4NP4> Re Sharon's email",
+        "ts": "1463765646.001865"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and #1454 and #1120",
+        "ts": "1463765655.001866"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if they pause ONE node and want it to resume - that node falls directly into 1454",
+        "ts": "1463765683.001867"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as the view does not change - so this is the most severe case and it won't be addressed by 1120",
+        "ts": "1463765705.001868"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is no way to make this node come back - as we cannot change the view based on the decision of one node, nor can we resume the node in a view",
+        "ts": "1463765736.001869"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we need SUSPECTs",
+        "ts": "1463765740.001870"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "my question is",
+        "ts": "1463765742.001871"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "can you implement configurable SUSPECTs?",
+        "ts": "1463765753.001872"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "meaning - there is a config param in which the whole trick can be switched off?",
+        "ts": "1463765766.001873"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the reason is I would like to avoid adding instability to the code, so - if we decide to implement - would like to sandbox the SUSPECTs as much as possible - so they do not necessarily add to more instability",
+        "ts": "1463765826.001874"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's nothing technically infeasible about making it configurable, though obviously that is more work than simply forcing it to be enabled",
+        "ts": "1463766183.001875"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2>: I responded to your email, but, per the discussions in those issues, I thought it had been agreed that 1454 was the priority, and that 1120 should be deferred",
+        "ts": "1463766243.001876"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What might be a simpler solution, which I'm not sure I like, but would like your thoughts on.  What if we mandated view changes every n checkpoints? Combined with periodic null requests, this would at least guarantee us 'eventual consistency', and without introducing new messages.",
+        "ts": "1463766420.001877"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe that's a horrible idea, but it seems like it could be implemented much more easily than the SUSPECT mechanism.  I've also heard that despite PBFT's design, some users might not be comfortable with the idea that the primary never changes, so long as no one believes it to be byzantine, and this would address that fear as well.",
+        "ts": "1463766516.001878"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is not necessarily bad idea - some protocols do this anyway (see Aardvark from UT Austin)",
+        "ts": "1463766546.001879"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi",
+        "ts": "1463766549.001880"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the drawback is killing the performance when we have a good leader",
+        "ts": "1463766581.001881"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but I agree it may be easier to implement",
+        "ts": "1463766593.001882"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok - do try it",
+        "ts": "1463766672.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "just make this configurable",
+        "ts": "1463766679.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with special value that switches it ioff",
+        "ts": "1463766687.001885"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "e.g., we can configure after how many reqs we switch the leader",
+        "ts": "1463766716.001886"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but if we put -1 than we switch it off (or whatever value)",
+        "ts": "1463766729.001887"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, I think that would be a much more direct change, and much easier to enable\/disable than something like SUSPECT",
+        "ts": "1463766766.001888"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "agree",
+        "ts": "1463766772.001889"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok solved",
+        "ts": "1463766774.001890"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": ":slightly_smiling_face:",
+        "ts": "1463766776.001891",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Haha, great, I'll throw a comment on 1120",
+        "ts": "1463766787.001892"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and 1454",
+        "ts": "1463766794.001893"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm still stuck trying to remove small bugs from the code",
+        "ts": "1463766826.001894"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "rather than adding features",
+        "ts": "1463766833.001895"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "by the way - let's make sure the test case keeps adding requests",
+        "ts": "1463766877.001896"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "otherwise there is no use of this :slightly_smiling_face:",
+        "ts": "1463766883.001897"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "already talked to the testers",
+        "ts": "1463766902.001898"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think before we add any convenience feature (replicas catching up), we need to address any subtle bugs",
+        "ts": "1463766904.001899"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> anything more specific?",
+        "ts": "1463766921.001900"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vukolic: <https:\/\/github.com\/hyperledger\/fabric\/issues\/1535>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "pbft modules and pbft core data access needs to be synchronized \u00b7 Issue #1535 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1535",
+                "text": "Description obcBatch accesses op.pbft.activeView, which is racy. Either provide a blocking \"RPC\" (which would return outdated values), or merge batch and pbft core goroutines.",
+                "fallback": "GitHub: pbft modules and pbft core data access needs to be synchronized \u00b7 Issue #1535 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1535",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1463766951.001901"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I thought we are getting rid of pbft-classic and merging core and batch?",
+        "ts": "1463767007.001903"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think we should.  The problem is, we either need to duplicate the code, and do this, or we need to remove Sieve.",
+        "ts": "1463767063.001904"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Merging classic and batch effectively requires eliminating the pbft plugin concept in the code.",
+        "ts": "1463767088.001905"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Sieve should be implementable on the merged pbft",
+        "ts": "1463767108.001906"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "probably with quite some refactoring",
+        "ts": "1463767116.001907"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not the way the code is structured today.  Sieve also has a number of outstanding bugs with no clear solutions.",
+        "ts": "1463767135.001908"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "there are a few more issues floating e.g. #1538  #1466",
+        "ts": "1463767163.001909"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would agree it could be implemented on top of the merged PBFT, but it would certainly be broken in the meantime.",
+        "ts": "1463767174.001910"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that's clear",
+        "ts": "1463767181.001911"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: <https:\/\/github.com\/hyperledger\/fabric\/issues\/1538> that's state transfer being confused?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Consensus sieve has error on LoZ platform -- one peer cannot get block  \u00b7 Issue #1538 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1538",
+                "text": "Description Get the latest hyper ledger code (commit 66ca505 ) Run with busywork and get error from peers. After tested with @bcbrock , he confirmed that this is bug with sieve on LoZ platform....",
+                "fallback": "GitHub: Consensus sieve has error on LoZ platform -- one peer cannot get block  \u00b7 Issue #1538 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/12942488?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1538",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1463767207.001912"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And 'breaking it in the meantime', to me is effectively removing it)",
+        "ts": "1463767217.001914"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so:",
+        "ts": "1463767231.001915"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, I think that is the longstanding Sieve bug that Sieve must advertise the block hash before the block is committed, so when state transfer goes to retrieve it, it is a race to see whether the block is written or read first.",
+        "ts": "1463767269.001916"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "seems bishop says #1538 is looking like #1120?",
+        "ts": "1463767275.001917"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "from a skim I'd say it at least looks similar",
+        "ts": "1463767285.001918"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we make batch agree on (and sign in COMMIT) the next block (hash), instead of on a set of transactions, we already have half the infrastructure to implement sieve in batch",
+        "ts": "1463767301.001919"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And any Sieve and state transfer that is not a single block catchup, I think is broken right now",
+        "ts": "1463767309.001920"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or maybe not any",
+        "ts": "1463767343.001921"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: but statetransfer complains about non-matching correlation IDs",
+        "ts": "1463767349.001922"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But any time it tries to recover the sequence number from the block",
+        "ts": "1463767351.001923"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I have issue following multithreaded slack conversations...",
+        "ts": "1463767363.001924"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1463767367.001925"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sorry",
+        "ts": "1463767369.001926"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no parallel processing here...",
+        "ts": "1463767387.001927"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hehe",
+        "ts": "1463767390.001928"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "decades of IRC trained me",
+        "ts": "1463767398.001929"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so anyway",
+        "ts": "1463767413.001930"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "1535 is orthogonal to 1120",
+        "ts": "1463767421.001931"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes they are",
+        "ts": "1463767432.001932"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so Jason pls try what you just suggested and make it -1able",
+        "ts": "1463767438.001933"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> as for sigs on commits - we could have the same",
+        "ts": "1463767480.001934"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this was 1182, right?",
+        "ts": "1463767493.001935"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i forget the number",
+        "ts": "1463767598.001936"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we have a problem with sieve persistence and maybe also state transfer",
+        "ts": "1463767633.001937"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but with signed commits, maybe we can treat them as checkpoints",
+        "ts": "1463767656.001938"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we can get rid of checkpoints, and use the signed commits to catch up in a granular fashion",
+        "ts": "1463767677.001939"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: TestBatchStaleCustody failed in CI...",
+        "ts": "1463767751.001940"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all stupid racy tests",
+        "ts": "1463767761.001941"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep, there's that race there, which we ID-ed yesterday",
+        "ts": "1463767768.001942"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in the test, not in the code?",
+        "ts": "1463767785.001943"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Nope, in the code",
+        "ts": "1463767794.001944"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2>: <@U0XR6J961> before you sign off, I'd love to talk with you about some of what's been discussed in RTP regarding 'consenting on output', and signing blocks, etc.",
+        "ts": "1463767847.001945"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463767857.001946"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should we do a quick call, or do you prefer here?",
+        "ts": "1463767867.001947"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "here documents it for eternity",
+        "ts": "1463767873.001948"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Either works for me, whichever you guys are more comfortable with",
+        "ts": "1463767887.001949"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "here is fine",
+        "ts": "1463767903.001950"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, so, the key issue is, people do not like the fact that we only 'consent on the input', and that even with 100% deterministic transactions (ie, the postimage stuff), people are still not happy about that.  Further, they do not like the fact that the only time we get a guarantee that the network is in a particular state, is at checkpoints, which means, there are are up to k-1 blocks, who's content, they would argue they cannot trust.",
+        "ts": "1463768001.001951"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Obviously we could do a round of signing after every block, and store some signatures on the block, but, at that point, we've really lost a lot of PBFT, because if we're going to be doing signatures at every round, why did we choose a protocol that deliberately avoids them? I'm obviously not a protocol expert, but I believe that with the use of signatures, it is possible to perform less chatty byzantine consensus.",
+        "ts": "1463768116.001952"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They further hate the idea that the although the network eventually halts on non-determinism, there are committed blocks which should not have been in this case.",
+        "ts": "1463768195.001953"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the proposal I would give, is the following.  Today, we correspond a COMMIT message, and to a block. and issue checkpoints which confirm we all have the same view of the blockchain.",
+        "ts": "1463768211.001954"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would propose, that we make COMMIT messages correspond to executions, and CHECKPOINT messages correspond to blocks.",
+        "ts": "1463768234.001955"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then, we can sign checkpoint messages, and since this is at a configurable interval, we can control the overhead from the signatures.",
+        "ts": "1463768273.001956"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And further, once a replica receives f+1 signatures, it can broadcast them to its NVPs, which effectively acts as a 'strong read' for that block.",
+        "ts": "1463768298.001957"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could actually bump that to 2f+1 signatures, if we wanted to ensure that the network will continue to make progress.",
+        "ts": "1463768347.001958"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(as in, only consider the read strong if we know we can build more blocks upon the current state)",
+        "ts": "1463768364.001959"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does that all relate to the new consensus architecture?",
+        "ts": "1463768383.001960"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, in the MVCC+postimage world, there's no state to shift around, so having a copy of the blockchain is sufficient to prove the state of the world, especially if you are only interested in the 'latest' state of a key, so a strong read on a block hash, is trivially a strong read against all the previous key values.",
+        "ts": "1463768456.001961"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because we only actually call 'commit' in the ledger at the checkpoint, and only once we have the signatures, everyone gets the promise that any reads they do will always be against an unequivocally committed state (whereas before, if nondeterminism had diverged the chains, it is possible that it could be wrong).",
+        "ts": "1463768540.001962"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And assuming the checkpoints have signatures, you don't even need to introduce a strong read, and you don't have clients needing to deal with trying to connect to multiple VPs.",
+        "ts": "1463768624.001963"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The complaint from <@U0XQ35CDD> I believe is that you basically force higher latency on people.  That if you want to perform a read, and you're 'sure' that the transactions are deterministic, you can get a fresher result if we commit the blocks with the COMMIT messages.",
+        "ts": "1463768678.001964"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, you still could be lagged",
+        "ts": "1463768688.001965"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but yes",
+        "ts": "1463768709.001966"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Absolutely, but what you get will never be incorrect for that version.",
+        "ts": "1463768712.001967"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "has this been an ongoing conversation? or did that come up recently?",
+        "ts": "1463768726.001968"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It happened late last week on a whiteboard randomly when <@U0XQ35CDD>, <@U0TFEHX8E>, <@U0KN2SSKE> and I happened to be in the same room",
+        "ts": "1463768763.001969"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it was a point <@U0TFEHX8E> made, is that no one actually wants a \"I'm 99% sure this read is reading something that will be committed\", that reporting data before we can verify it via a checkpoint is really of very little value.",
+        "ts": "1463768857.001970"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well",
+        "ts": "1463768873.001971"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why would it be wrong?",
+        "ts": "1463768885.001972"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With deterministic transactions, it should never be wrong.  But, that's apparently not an argument the community is willing to accept, and to some extent, I get it.  Your RAM is hit by some cosmic radiation and you screw up the execution.  I think it's a bit of a silly game to play \"I can't trust myself\", but something could have gone wrong, and if you get agreement from f+1, or 2f+1 other replicas in the form of signatures, you can have a much higher confidence.  You've essentially got consent on the output.",
+        "ts": "1463769026.001973"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1463769050.001974"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "your ram is hit after you calculate the hash, but before you write it to disk...",
+        "ts": "1463769084.001975"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the problem in making sure you have the right hash",
+        "ts": "1463769120.001976"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It all seems pretty unlikely to me... and it would only help with benign faults.  If it's a malicious fault, like, maybe somebody fixes your crypto sig checker to always return true.... then you have a problem.",
+        "ts": "1463769123.001977"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "is that no amount of \"protection\" is going to save you from a \"cosmic ray\"",
+        "ts": "1463769136.001978"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we could run agreement on output\/input\/NBA finals outcome",
+        "ts": "1463769150.001979"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and then once we are done",
+        "ts": "1463769156.001980"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with whatever",
+        "ts": "1463769158.001981"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "\"cosmic ray\" strikes",
+        "ts": "1463769164.001982"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so, how can you be sure?",
+        "ts": "1463769176.001983"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I agree, I think real world, analytically, once you start not trusting yourself, you've got nothing.  Pretty sure philosophers have pondered on this for a long time.  But, apparently, psychologically, people really want consent on the output.",
+        "ts": "1463769221.001984"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1463769235.001985"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "arguably, the less computation happens between consenting and final data, the less bug surface you have",
+        "ts": "1463769267.001986"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, you also need a little less trust between the clients and their VP, if they can validate the other VP's signatures independently.",
+        "ts": "1463769294.001987"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we can agree on output - this is what sieve does - it may be buggy but conceptually it is implementable",
+        "ts": "1463769297.001988"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with mvcc+ postimage we will have a leaderless approach to the same thing",
+        "ts": "1463769311.001989"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which should inherently be less buggy",
+        "ts": "1463769317.001990"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is however IMPOSSIBLE",
+        "ts": "1463769326.001991"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "to have a 3 round ala PBFT protocol",
+        "ts": "1463769334.001992"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that agrees on output",
+        "ts": "1463769338.001993"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I can write a proof",
+        "ts": "1463769342.001994"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so",
+        "ts": "1463769344.001995"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, I think the difference between this and Sieve would be.  \"Assume your transactions are deterministic, and if they're not, it's fine if the network halts, but, never commit anything to the chain, unless the network consents on the output\"",
+        "ts": "1463769349.001996"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hacking into PBFT to agree on output, without adding more comm is doomed to fail",
+        "ts": "1463769367.001997"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is wrong with not 'committing' the block, until you have a stable checkpoint",
+        "ts": "1463769385.001998"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ah but that is more msgs",
+        "ts": "1463769395.001999"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "like k*3",
+        "ts": "1463769401.002000"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": ":slightly_smiling_face:",
+        "ts": "1463769403.002001"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For sure, I agree it is.  So, it's basically cheating.  People dislike that PBFT doesn't validate at every round.... so, we say fine, we'll let PBFT run as it's designed and do what it does, and quickly.  But we only officially agree on the result of PBFT at the checkpoint interval.",
+        "ts": "1463769472.002002"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "btw, that does not explain what happens if the checkpoint reveals a non-det tx",
+        "ts": "1463769511.002003"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what do you do then?",
+        "ts": "1463769517.002004"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Halt",
+        "ts": "1463769528.002005"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "checkpoint after every commit is like a 4th message already",
+        "ts": "1463769529.002006"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "well we should not halt right?",
+        "ts": "1463769537.002007"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that's a DoS",
+        "ts": "1463769546.002008"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I write non-det chaincode and kill the blockchain",
+        "ts": "1463769557.002009"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the MVCC+Postimage world, it should not be possible",
+        "ts": "1463769559.002010"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Postimage is inherently deterministic",
+        "ts": "1463769577.002011"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok, so MVCC+postimage solves the thing and if you look at the pattern it is exactly like sieve",
+        "ts": "1463769590.002012"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "w\/o leader",
+        "ts": "1463769592.002013"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "fact it does not have a leader",
+        "ts": "1463769597.002014"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "makes it more susceptible to concurrency clashes",
+        "ts": "1463769606.002015"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but otherwise the pattern is the same",
+        "ts": "1463769613.002016"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as we will have this in v2",
+        "ts": "1463769625.002017"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I think we should do 0 in v1",
+        "ts": "1463769631.002018"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, I would say the difference is that in Sieve, you do not know the output going in, you have to agree on the output",
+        "ts": "1463769634.002019"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the MVCC+Postimage you only have to agree whether an output is correct or not.",
+        "ts": "1463769651.002020"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is a minor change to have the same as in MVCC+postimage",
+        "ts": "1463769651.002021"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "leader could execute and propose a hash",
+        "ts": "1463769659.002022"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and replicas would not execute themselves but confirm the leader or not",
+        "ts": "1463769671.002023"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "at some point I told chet we could easily have postimage in Sieve",
+        "ts": "1463769690.002024"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but",
+        "ts": "1463769692.002025"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, that is essentially the endorsers requiring f+1 policy",
+        "ts": "1463769693.002026"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "exactly",
+        "ts": "1463769698.002027"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but",
+        "ts": "1463769700.002028"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "MVCC is where I clashed with Chet - because of the leader vs leader-less approach",
+        "ts": "1463769717.002029"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and then",
+        "ts": "1463769719.002030"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "MVCC is simpler",
+        "ts": "1463769721.002031"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so",
+        "ts": "1463769723.002032"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "let's try it",
+        "ts": "1463769725.002033"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(Chet did say that this - simplicity - is the main reason MVCC is superior in his view)",
+        "ts": "1463769760.002034"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and I can concur with that",
+        "ts": "1463769772.002035"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if we end up with concurrency clashes all over the place - we sit and rethink the leader-based (or multi-leader) design",
+        "ts": "1463769798.002036"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, yes, you basically go leaderless, so that you assume your endorser is non-byzantine and you fix a lot of problems.",
+        "ts": "1463769845.002037"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "leaderless is the issue for concurrent tx changing the same objects",
+        "ts": "1463769867.002038"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in UTXO this is largely a non issue",
+        "ts": "1463769874.002039"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but we have a key-value store",
+        "ts": "1463769881.002040"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "will depend on the granularity of the data model - how often do we have concurrency issues",
+        "ts": "1463769898.002041"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But getting back to the verifying the output side.  It seems obvious to me, that if we want the system to scale, it's impractical to have clients connect to f+1 peers to perform a strong read.  So it makes a lot of sense to me, to simply sign checkpoints, and then broadcast bundles of them, as implicit strong reads.",
+        "ts": "1463769900.002042"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in principle this does not solve the issue",
+        "ts": "1463769923.002043"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you can sign whatever",
+        "ts": "1463769928.002044"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I as a Byzantine replica can serve to my clients stale reads",
+        "ts": "1463769938.002045"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you need to go to more to be sure",
+        "ts": "1463769946.002046"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, this is two different problems to me.",
+        "ts": "1463769963.002047"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "One is, is the data that I'm reading definitely correct, at the version I'm being sent it.",
+        "ts": "1463769979.002048"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "IE, are blocks up through n correct.",
+        "ts": "1463769988.002049"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that is signature-fixable yes",
+        "ts": "1463769989.002050"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The other half, is \"is it current\", and the simple answer is, I don't think that's answerable.  Period.",
+        "ts": "1463770012.002051"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You could ask \"is it current as of time XXXX\" and maybe you can answer that.",
+        "ts": "1463770025.002052"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But it's an asynchronous system, nothing's atomic, even at it's most basic level, by the time the reply comes over the wire, it could no longer be current.",
+        "ts": "1463770066.002053"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sure",
+        "ts": "1463770079.002054"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway - great chatting here",
+        "ts": "1463770088.002055"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "seems we also made progress",
+        "ts": "1463770092.002056"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "need to take off",
+        "ts": "1463770094.002057"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, would love to continue this conversation at some point.",
+        "ts": "1463770110.002058"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sure",
+        "ts": "1463770115.002059"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0Y14MWA2>: \"how often do we have concurrency issues\u201d yes, that is the question that we struggle with",
+        "ts": "1463770183.002060"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "if choosing mvcc",
+        "ts": "1463770194.002061"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I know we've frequently talked about adding a trusted time service.  Assuming we have periodic checkpoints, and some way to sync on time, could we not include a timestamp in the signed checkpoint, to give a guarantee on \"current as of time XXXX\"?",
+        "ts": "1463770256.002062"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "time...",
+        "ts": "1463770725.002063"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<http:\/\/www.scientificamerican.com\/article\/is-time-an-illusion\/>",
+        "attachments": [
+            {
+                "service_name": "Scientific American",
+                "title": "Is Time an Illusion?",
+                "title_link": "http:\/\/www.scientificamerican.com\/article\/is-time-an-illusion\/",
+                "text": "The concepts of time and change may emerge from a universe that, at root, is utterly static",
+                "fallback": "Scientific American: Is Time an Illusion?",
+                "from_url": "http:\/\/www.scientificamerican.com\/article\/is-time-an-illusion\/",
+                "id": 1
+            }
+        ],
+        "ts": "1463770726.002064"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0TFEHX8E>: we will need to program with this in mind - it makes our life simpler as fabric developers - but whoever programs the chaincodes and defines objects will have a tougher job",
+        "ts": "1463770963.002066"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but one should not implement chaincode for presidential election that says \"if vote='trump' then trump:=trump+1\"",
+        "ts": "1463771182.002067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: I would argue its actually three problems: you mention \u201ccorrect\" and \u201ccurrent\"\u2026quorum signatures solve the first, and, to your point, \u201ccurrent\u201d is difficult to prove\u2026however, there is a middle state and that is whether anything has been omitted outside of reasonable asynchronous issues.  Lets call the third one \"omission-detection\u201d.  I would argue that 1) strong reads are a solution to the omission detection problem and that 2) \u201ccurrent\u201d isn\u2019t really an issue we need to worry about because this is solved a different way (e.g. transaction confirmation).",
+        "ts": "1463800089.002068"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "To put it another way, I don\u2019t necessarily care if I am \u201ccurrent\u201d but I do want to figure out if information is being withheld from me (up to the limits of byzantine tolerance of the network) and I do want to monitor whether transactions confirm in a reasonable timeframe.",
+        "ts": "1463800207.002069"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Y14MWA2>: I am not following your argument about variable increment within chaincode.  Could you elaborate?",
+        "ts": "1463800443.002070"
+    }
+]

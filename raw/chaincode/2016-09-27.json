@@ -1,0 +1,198 @@
+[
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel> FYI, we seem to have a regression in deploying chaincode with the latest from master",
+        "ts": "1474996303.000974"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this can be temporarily addressed with the following docker command run inside your vagrant environment",
+        "ts": "1474996330.000975"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "docker tag hyperledger\/fabric-ccenv:latest hyperledger\/fabric-ccenv:X86_64-",
+        "ts": "1474996332.000976"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "fyi, I rebuilt my environment early this morning and was able to deploy production chaincode without messing with the docker tags.  so, I guess the problem I was having was fixed sometime between last Thursday and today  (it's not obvious to me which commit between those two points would have affected this though)",
+        "edited": {
+            "user": "U23S3DPFY",
+            "ts": "1474996862.000000"
+        },
+        "ts": "1474996583.000977"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I deployed my devenv with vagrant on Sunday,it deploys example02 w\/o problems",
+        "ts": "1474996671.000978"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Hi. According to  <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Setup\/Chaincode-setup.md#option-2-docker-for-mac-or-windows>   I have \n\ndocker pull hyperledger\/fabric-peer:latest\ndocker pull hyperledger\/fabric-membersrvc:latest\n\ncreated Docker Compose file and started docker-compose up\n\nI\u2019ve  authenticated on \/registrar using jim \n\n{\"height\":13,\"currentBlockHash\":\"fAy6QuPtn41VN93sdPVGORNs+YOpbtXPsC+E3RmYyezc4qFrA8fgAILVQ3nmRXVojmpK1FQQ0I8jq9\/3Fwis7Q==\",\"previousBlockHash\":\"\/nOB7XE75jfRUz6i5sBCWw5xybB3Nl4AadkqvJXAcB552TXCH6NHxjRBktXLORc3VCa\/1MRT\/815EYpBq27PoA==\u201c}\n\nREST Service on PORT 7075 is fine CLI looks fine too",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Setup\/Chaincode-setup.md#option-2-docker-for-mac-or-windows",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Setup\/Chaincode-setup.md#option-2-docker-for-mac-or-windows",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1474999112.000980"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "I\u2019ve tried running some to run some examples that work fine on bluemix.  But it seems I am unable to deploy even a simple function \n\npeer chaincode deploy -u jim -n mycc -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}'\n\n\n08:22:16.272 [logging] LoggingInit -&gt; DEBU 001 Setting default logging level to DEBUG for command 'chaincode'\n08:22:16.272 [chaincodeCmd] getChaincodeSpecification -&gt; INFO 002 Local user 'jim' is already logged in. Retrieving login token.\n2016\/09\/27 08:22:17 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:30303: getsockopt: connection refused\"; Reconnecting to {\"0.0.0.0:30303\" &lt;nil&gt;}\n2016\/09\/27 08:22:18 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:30303: getsockopt: connection refused\"; Reconnecting to {\"0.0.0.0:30303\" &lt;nil&gt;}\nError: Error building chaincode: Error trying to connect to local peer: grpc: timed out when dialing\n2016\/09\/27 08:22:19 grpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:30303: getsockopt: connection refused\"; Reconnecting to {\"0.0.0.0:30303\" &lt;nil&gt;}",
+        "ts": "1474999318.000982"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Looks like peer can not deploy because it can not connect to port 30303",
+        "ts": "1474999367.000983"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Membership service and peers where launched using \n\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"7054:7054\"\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"7050:7050\"\n    - \"7051:7051\"\n    - \"7053:7053\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\u201d",
+        "ts": "1474999425.000984"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Am I missing something ?",
+        "ts": "1474999441.000985"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U17CZFXGU> are you running Fabric in development or production mode?",
+        "ts": "1474999899.000986"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "of I see, it looks like dev mode",
+        "ts": "1474999921.000987"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "unlike with BlueMix, you need to run the chaincode locally so that it can listen and receive requests.  something like this:",
+        "edited": {
+            "user": "U23S3DPFY",
+            "ts": "1475000099.000000"
+        },
+        "ts": "1474999954.000988"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "```\nCORE_PEER_ADDRESS=172.17.0.1:7051 CORE_CHAINCODE_ID_NAME=sample .\/finished\n```",
+        "ts": "1474999984.000989"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "the difference being that BlueMix downloads your chaincode source, builds it, and hosts it in a Docker container as far as I know (i.e. it is in production mode).  In development mode, which is much simpler, you must start your chaincode on your own and let it run so it can receive requests from the peer",
+        "ts": "1475000065.000990"
+    },
+    {
+        "type": "message",
+        "user": "U0ND61SLF",
+        "text": "<@U17CZFXGU>  I have put instructions here on how to run example02 locally in the simplest way on your local machine: <https:\/\/github.com\/Bartman250\/hyperledgergetgoing>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Bartman250\/hyperledgergetgoing",
+                "title_link": "https:\/\/github.com\/Bartman250\/hyperledgergetgoing",
+                "text": "hyperledgergetgoing - An attempt to create the simplest guide to getting started with hyper ledger fabric",
+                "fallback": "GitHub: Bartman250\/hyperledgergetgoing",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/16797642?v=3&s=400",
+                "from_url": "https:\/\/github.com\/Bartman250\/hyperledgergetgoing",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1475000928.000992"
+    },
+    {
+        "user": "U0PV6MUD6",
+        "text": "<@U0PV6MUD6|sbrakev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475001598.000994"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Thanks <@U0ND61SLF>",
+        "ts": "1475002324.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0ND61SLF",
+        "text": "np",
+        "ts": "1475002344.000996"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "guys for the asset_management GO code samples - I can't figure out if I should run the chaincode on the command line or the samples actually will deploy it programmatically",
+        "ts": "1475003680.000997"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "can anyone help ?",
+        "ts": "1475003698.000998"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "for example - it looks like the member services are being started from the code",
+        "ts": "1475003830.000999"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "the chaincode and peer sections are not very clear to me in asset.yaml",
+        "ts": "1475004079.001000"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it looks like a validating peer is being launched as well",
+        "ts": "1475004479.001001"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "22:26:25.125 [chaincode] NewChaincodeSupport -&gt; INFO 00e Chaincode support using peerAddress: 0.0.0.0:40404",
+        "ts": "1475004482.001002"
+    },
+    {
+        "user": "U1TMQDYKE",
+        "text": "<@U1TMQDYKE|wil.pannell> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475011782.001005"
+    }
+]

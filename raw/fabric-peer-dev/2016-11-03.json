@@ -1,0 +1,300 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U26T99AQ4>  - can you take a look at my comment on <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2135\/8> ?",
+        "ts": "1478173907.000627"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0PB67X4K> I did, thanks! I've replied on gerrit + pushed a fix",
+        "ts": "1478177984.000628",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U2Y3JHRP1",
+        "text": "<@U2Y3JHRP1|daniellee> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478180922.000629"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so I am trying to run directly on my Mac (i.e. not in Vagrant) and trying to run the go test in the core\/endorser package",
+        "ts": "1478181124.000630"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "getting this error\n\n```\n09:24:41.057 [chaincode] launchAndWaitForRegister -&gt; DEBU 1c4 stopping due to error while launching Timeout expired while starting chaincode 6aed51f7804b40925659cc1107549ad6740286faa82a690f571790431cffc594cb2d2f35e2479a3ea28e1d6d6271dbcbbbaf762dd5f8b7423536ba1c2962ad3d(networkid:dev,peerid:jdoe,tx:lccc)\n09:24:41.116 [chaincode] Launch -&gt; ERRO 1c5 launchAndWaitForRegister failed Timeout expired while starting chaincode 6aed51f7804b40925659cc1107549ad6740286faa82a690f571790431cffc594cb2d2f35e2479a3ea28e1d6d6271dbcbbbaf762dd5f8b7423536ba1c2962ad3d(networkid:dev,peerid:jdoe,tx:lccc)\n--- FAIL: TestDeployAndInvoke (46.95s)\n\tendorser_test.go:291: Error deploying &lt;6aed51f7804b40925659cc1107549ad6740286faa82a690f571790431cffc594cb2d2f35e2479a3ea28e1d6d6271dbcbbbaf762dd5f8b7423536ba1c2962ad3d&gt;: Timeout expired while starting chaincode 6aed51f7804b40925659cc1107549ad6740286faa82a690f571790431cffc594cb2d2f35e2479a3ea28e1d6d6271dbcbbbaf762dd5f8b7423536ba1c2962ad3d(networkid:dev,peerid:jdoe,tx:lccc)\n```",
+        "ts": "1478181136.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the image is created and seems like a container is launched",
+        "ts": "1478181152.000632"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do the containers logs say?",
+        "ts": "1478181470.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "unfortunately they get deleted",
+        "ts": "1478181613.000634"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay - I was able to capture the error - \n```\ngrpc: addrConn.resetTransport failed to create client transport: connection error: desc = \"transport: dial tcp 0.0.0.0:21212: getsockopt: connection refused\"; Reconnecting to {\"0.0.0.0:21212\" &lt;nil&gt;}\n```",
+        "ts": "1478181875.000635"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe the peer isn't listening to that port somehow?",
+        "ts": "1478182022.000636"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's no such address really",
+        "ts": "1478182035.000637"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "connecting to `0.0.0.0` does not work on many platforms",
+        "ts": "1478182052.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1478182057.000639"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "listen - yes.  connect as client - no  :disappointed:",
+        "ts": "1478182071.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "makes sense",
+        "ts": "1478182076.000641"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I thought that was just a log print",
+        "ts": "1478182080.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and it translates 0.0.0.0 to localhost or something",
+        "ts": "1478182093.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but its even worse on the Mac because Docker runs in a hidden VM",
+        "ts": "1478182116.000644"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> right, I was going to say INADDR_ANY may not be working as a connection address",
+        "ts": "1478182152.000645"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "one thing though",
+        "ts": "1478182161.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "anyway - I'll figure it out - glad I was able to predict the container name before it got deleted",
+        "ts": "1478182163.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`endorser_test.go:291` does not exist in latest master\u2026 and I don\u2019t see TestDeployAndInvoke there either",
+        "ts": "1478182190.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this was from a patch - but I just ran i master and get the same basic timeout error",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1478182251.000000"
+        },
+        "ts": "1478182243.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1478182346.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ok - so when I set the peer.address to my IP in endorser_test.yaml things worked",
+        "ts": "1478182491.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1478182519.000653"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "perhaps we should use 127.0.0.1 there ?",
+        "ts": "1478182532.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it would still fail on a Mac unfortunately",
+        "ts": "1478182553.000655"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "because the containers technically run in a hidden vm",
+        "ts": "1478182572.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah ok",
+        "ts": "1478182611.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "no worries - I'll think about it some more but I am over my issue - I can actually check the code  :wink:",
+        "ts": "1478182616.000658"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "don\u2019t I know it :slightly_smiling_face:",
+        "ts": "1478182654.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K> fwiw, <@U0ULK2JPP> and I just fixed this all up",
+        "ts": "1478199508.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have a patch queue in development that lets the build\/uts run on a native system (such as docker-for-mac) and we had to fix that issue",
+        "ts": "1478199535.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there was a bug in the UTs that was just getting lucky on vagrant",
+        "ts": "1478199557.000662"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2YHLDU6Q\/-.c|Untitled> and commented: <@U0PB67X4K>",
+        "file": {
+            "id": "F2YHLDU6Q",
+            "created": 1478199682,
+            "timestamp": 1478199682,
+            "name": "-.c",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "c",
+            "pretty_type": "C",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 10537,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YHLDU6Q\/-.c?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2YHLDU6Q\/download\/-.c?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2YHLDU6Q\/-.c",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2YHLDU6Q-9ad735f6ac",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2YHLDU6Q\/-.c\/edit",
+            "preview": "commit 22c27a601f1104ce53b9106f21ecf74fda636dee\r\nAuthor: Gregory Haskins <gregory.haskins@gmail.com>\r\nDate:   Thu Nov 3 13:07:42 2016 -0400\r\n\r\n    Allow peer endpoints to be autodetected\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-variable\">commit<\/span> <span class=\"cm-number\">22<\/span><span class=\"cm-variable\">c27a601f1104ce53b9106f21ecf74fda636dee<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Author<\/span>: <span class=\"cm-variable\">Gregory<\/span> <span class=\"cm-variable\">Haskins<\/span> <span class=\"cm-operator\">&lt;<\/span><span class=\"cm-variable\">gregory<\/span>.<span class=\"cm-variable\">haskins<\/span><span class=\"cm-variable\">@gmail<\/span>.<span class=\"cm-variable\">com<\/span><span class=\"cm-operator\">&gt;<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">Date<\/span>:   <span class=\"cm-variable\">Thu<\/span> <span class=\"cm-variable\">Nov<\/span> <span class=\"cm-number\">3<\/span> <span class=\"cm-number\">13<\/span>:<span class=\"cm-number\">07<\/span>:<span class=\"cm-number\">42<\/span> <span class=\"cm-number\">2016<\/span> <span class=\"cm-operator\">-<\/span><span class=\"cm-number\">0400<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>    <span class=\"cm-variable\">Allow<\/span> <span class=\"cm-variable\">peer<\/span> <span class=\"cm-variable\">endpoints<\/span> <span class=\"cm-variable\">to<\/span> <span class=\"cm-variable\">be<\/span> <span class=\"cm-variable\">autodetected<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 234,
+            "lines_more": 229,
+            "preview_is_truncated": true,
+            "channels": [
+                "C27E2LGJY"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2X6C9K8R",
+                "created": 1478199682,
+                "timestamp": 1478199682,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "<@U0PB67X4K>",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1478199683.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill hopefully have this queue pushed to gerrit soon",
+        "ts": "1478199747.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool",
+        "ts": "1478201928.000665"
+    },
+    {
+        "type": "message",
+        "user": "U2Y3JHRP1",
+        "text": "[Question]  \nHi everyone, I am trying to setup TLS connection between 2 docker validating nodes in my development environment. 2 validating nodes enabled TLS and adding self-signed certificate and key. However, I got an error message from non-root validating node about certificate signed by unknown authority. \nI don't want to get certificates from known CA on development phase, what can I do?\n\nThe followings are my changes to peer configuration and how to create my certificates:\n\n(1) core.yaml  changes:  ( they are the same on 2 validating nodes )\n\npeer:\n   tls:\n       enabled:  true\n       cert:\n           file: \"\/var\/hyperledger\/production\/.peer\/tls.pem\"\n       key:\n           file: \"\/var\/hyperledger\/production\/.peer\/tls.key\"\n\n(2) Root validating node: ( ip: 192.168.0.209 )\n\ndocker run \\\n    --name=vp0 \\\n    --restart=unless-stopped \\\n    -it \\\n    -p 192.168.0.209:7050:7050 \\\n    -p 192.168.0.209:7051:7051 \\\n    -p 192.168.0.209:7053:7053 \\\n    -e CORE_LOGGING_LEVEL=DEBUG \\\n    -e CORE_PEER_ID=vp0 \\\n    -e CORE_PEER_ADDRESSAUTODETECT=true \\\n    -e CORE_VM_ENDPOINT=<http:\/\/192.168.0.209:2375> \\\n    -e CORE_PEER_PKI_ECA_PADDR=192.168.0.209:7054 \\\n    -e CORE_PEER_PKI_TCA_PADDR=192.168.0.209:7054 \\\n    -e CORE_PEER_PKI_TLSCA_PADDR=192.168.0.209:7054 \\\n    -e CORE_SECURITY_ENABLED=true \\\n    -e CORE_SECURITY_PRIVACY=true \\\n    -e CORE_SECURITY_ENROLLID=test_vp0 \\\n    -e CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT \\\n    hyperledger\/fabric-peer peer node start\n\t\n\t\n(3) Non-root validating node: ( ip: 192.168.0.218 )\n\ndocker run \\\n    --name=vp1 \\\n    --restart=unless-stopped \\\n    -it \\\n    -p 192.168.0.218:7050:7050 \\\n    -p 192.168.0.218:7051:7051 \\\n    -p 192.168.0.218:7053:7053 \\\n    -e CORE_LOGGING_LEVEL=DEBUG \\\n    -e CORE_PEER_ID=vp1 \\\n    -e CORE_PEER_ADDRESSAUTODETECT=true \\\n    -e CORE_PEER_DISCOVERY_ROOTNODE=192.168.0.209:7051 \\\n    -e CORE_VM_ENDPOINT=<http:\/\/192.168.0.218:2375> \\\n    -e CORE_PEER_PKI_ECA_PADDR=192.168.0.209:7054 \\\n    -e CORE_PEER_PKI_TCA_PADDR=192.168.0.209:7054 \\\n    -e CORE_PEER_PKI_TLSCA_PADDR=192.168.0.209:7054 \\\n    -e CORE_SECURITY_ENABLED=true \\\n    -e CORE_SECURITY_PRIVACY=true \\\n    -e CORE_SECURITY_ENROLLID=test_vp2 \\\n    -e CORE_SECURITY_ENROLLSECRET=vQelbRvja7cJ \\\n    hyperledger\/fabric-peer peer node start\n\t\n\t\n(4) self-signed certificate :\n\nopenssl req -out ca.pem -new -x509\nopenssl genrsa -out tls.key 1024\nopenssl req -key tls.key -new -out tls.req\necho \"00\" &gt; file.srl\necho subjectAltName = IP:192.168.0.209 &gt; extfile.cnf\nopenssl x509 -req -in tls.req -CA ca.pem -CAkey privkey.pem -CAserial file.srl -out tls.pem -extfile extfile.cnf",
+        "ts": "1478224092.000668"
+    }
+]

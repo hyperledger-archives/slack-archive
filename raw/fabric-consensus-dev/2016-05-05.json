@@ -1,0 +1,169 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP>: Having a little trouble making sense of this.  What does 'blockfailure' mean?",
+        "ts": "1462460442.001227"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> : basically opposite of commit",
+        "ts": "1462460735.001228"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you look at the picture above, the \u201cconsensus failure\u201d path",
+        "ts": "1462460759.001229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What about the scenario where it's rolled back on some nodes, but committed on others?",
+        "ts": "1462460836.001230"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right, that and also other complex cases where we may not have all the information to send out a meaninful \u201cevent\u201d \u2026",
+        "ts": "1462460913.001231"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[This is basically only a Sieve case, where consensus is achieved, but instead of commit, the block comes from statetransfer]]",
+        "ts": "1462460915.001232"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019m thinking the best we can do is the \u201cconsensus success\u201d path",
+        "ts": "1462460933.001233"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it appears simple and better to do something that we can guarantee (and just an extension of what we do already)",
+        "ts": "1462461011.001234"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what do you think ?",
+        "ts": "1462461015.001235"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Sorry, juggling scrum too)",
+        "ts": "1462461042.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I think we can definitely handle the 'consensus success' path, as you say.  If a peer calls into commit, that should indicate that consensus has occurred for that particular block.",
+        "ts": "1462461699.001237"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so every peer will send an event ...  is it ok that the listener will receive multiple events about the same tx ?",
+        "ts": "1462461773.001238"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The only thing that consensus can more generally give you, is an agreement on the hash of the latest block.  This happens at every block for Sieve, and ever `K` blocks for the other PBFT variants.  This is the only insight consensus has into the 'execution output' (unless you're talking about Sieve, but it is a special case, and its long term viability is in question)",
+        "ts": "1462461822.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'll also say, that except for the black sheep that is Sieve, the other consensus plugins all call Begin Exec Commit in essentially an atomic fashion.  The output from Exec is possibly logged, but otherwise ignored (last we looked at it, it wasn't particularly useful, I think it was the state hash as output), and it's not at all clear what consensus should do if there is an error invoking exec.",
+        "ts": "1462461978.001240"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XR6J961> how are things with your rebase ?  also PR #1277 ?",
+        "ts": "1462462018.001241"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0UGH3X7X> : it will be ideal if listener receives one event - block success\/block failure",
+        "ts": "1462462072.001242"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I was hoping ledger.CommitTx and ledger.RollbackTx will catch those nicely",
+        "ts": "1462462098.001243"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But for a byzantine consensus protocol, you cannot rely on any one particular replica following the protocol",
+        "ts": "1462462103.001244"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1462462106.001245"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the case that you tolerate `f` byzantine nodes, you would need, at a bare minimum, `f+1` attestations that a block was committed, or not",
+        "ts": "1462462188.001246"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You could on the other hand flip this a bit, and say that a VP is trusted to the NVPs it is talking to",
+        "ts": "1462462226.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And say that each VP only broadcasts the event to its connect NVPs",
+        "ts": "1462462250.001248"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sorry if I'm playing catch up, what is the relationship between the listener, and the VP?",
+        "ts": "1462462326.001249"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[And to jump back for a second, I'm still not sure what a block failure would be, outside of Sieve.  If a request is proposed for a particular block, and the network ends up not deciding to do that block, it's not like that request is gone, in general it will simply find its way into a later block]",
+        "ts": "1462462557.001250"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "if I want to run pbft with a single peer, are there any special configurations I need to set?",
+        "ts": "1462469781.001251"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: <@U0XR6J961>: Is the expert here, but I think setting `N` to 1, and `f` to 0 might do it",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1462471277.000000"
+        },
+        "ts": "1462470378.001252"
+    },
+    {
+        "user": "U11L89VHU",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U11L89VHU|posnerj> has joined the channel",
+        "ts": "1462494070.001254"
+    }
+]

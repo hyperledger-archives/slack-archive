@@ -1,0 +1,752 @@
+[
+    {
+        "type": "message",
+        "user": "U1H1WD4D7",
+        "text": "<@U11CP8FF1>: After the chaincode deployed to network, where to store the deployed chaincode? I think the <http:\/\/github.com|github.com> is the path to store the chaincode source code.",
+        "ts": "1466406450.000344"
+    },
+    {
+        "type": "message",
+        "user": "U10PFCC4R",
+        "text": "is there a way to utilize the hyperledger blockchain to store just some random value attached to an address similar to this <https:\/\/proofofexistence.com>",
+        "ts": "1466407215.000345"
+    },
+    {
+        "type": "message",
+        "user": "U10PFCC4R",
+        "text": "that's currently the use case that i'm after",
+        "ts": "1466407222.000346"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U1H1WD4D7>: If the peer runs with normal mode (i.e. without --peer-chaincodedev option), then \"peer\" process will spawn new container to run chaincode, and the new container will store the chaincode (source code) under $GOPATH folder, and build and execute it. If peer spawns the docker image it will come with the name similar to \"dev-&lt;peer-name&gt;-&lt;chaincode-id-name&gt;. You can inspect this docker contaier with \"docker exec\". For example, you can run \"ps -ef\" command like:\n```$ docker exec dev-vp0-ea192f54467d957e98a4973b74cb8093847deac9a362928fb07334ce096f9d851fb59027e79bdaa0f119d0585c2045a020424cedc312175f5d91f03e66c84c62 ps -ef\nUID        PID  PPID  C STIME TTY          TIME CMD\nroot         1     0  0 07:27 ?        00:00:00 \/opt\/gopath\/bin\/ea192f54467d957e98a4973b74cb8093847deac9a362928fb07334ce096f9d851fb59027e79bdaa0f119d0585c2045a020424cedc312175f5d91f03e66c84c62 -peer.address=172.17.0.3:30303\nroot        13     0  0 07:27 ?        00:00:00 bash\nroot        48     0  0 07:31 ?        00:00:00 ps -ef```",
+        "ts": "1466408042.000347"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "The chaincode runs with &lt;chaincode-id-name&gt; under \/opt\/gopath\/bin with peer address option.",
+        "ts": "1466408071.000348"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U10PFCC4R>, The URL shown looks to me a document digest. Not random, but probably the document with digital signature.",
+        "ts": "1466408353.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hi. I deployed example02 :   \n```\n \"chaincodeID\":{\n        \"path\":\"<http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02>\"\n    }\n```\nand I query it and it returns ```{\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"-884\"},\"id\":1}```\nbut in the code[1] it should return a JSON that says: ``` \"{\\\"Name\\\":\\\"\" + A + \"\\\",\\\"Amount\\\":\\\"\" + string(Avalbytes) + \"\\\"}\" ```\n\n[1]\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/chaincode_example02\/chaincode_example02.go#L175>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/chaincode_example02\/chaincode_example02.go#L175",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/chaincode_example02\/chaincode_example02.go#L175",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1466408638.000000"
+        },
+        "ts": "1466408625.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Anyone knows what I didn't do right?",
+        "ts": "1466408681.000353"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U0ZJZBJLF>. The chaincode print out message to stderr, so you need to inspect logs of chaincode docker running container. \n```$ docker logs dev-vp0-ea192f54467d957e98a4973b74cb8093847deac9a362928fb07334ce096f9d851fb59027e79bdaa0f119d0585c2045a020424cedc312175f5d91f03e66c84c62 2&gt;&amp;1 | grep Amount\nQuery Response:{\"Name\":\"a\",\"Amount\":\"49785\"}\nQuery Response:{\"Name\":\"b\",\"Amount\":\"50000\"}\nQuery Response:{\"Name\":\"a\",\"Amount\":\"51403\"}\nQuery Response:{\"Name\":\"a\",\"Amount\":\"51403\"}\nQuery Response:{\"Name\":\"b\",\"Amount\":\"50089\"}\n```",
+        "ts": "1466411635.000354"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "In rest interface or \"peer chaincode query\", it just returns array of bytes. (i.e. []bytes in golang).",
+        "ts": "1466411802.000355"
+    },
+    {
+        "user": "U1JC3SL9F",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JC3SL9F|jsank> has joined the channel",
+        "ts": "1466411884.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So, the \"message\" in the result is actually the array of bytes (evaluated as an int, I guess) ?",
+        "ts": "1466412845.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U11CP8FF1>:  thanks It worked!",
+        "ts": "1466415620.000358"
+    },
+    {
+        "user": "U1JC3768L",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JC3768L|harish.munagapati> has joined the channel",
+        "ts": "1466415656.000359"
+    },
+    {
+        "user": "U1JCHNKK2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JCHNKK2|desalt> has joined the channel",
+        "ts": "1466417725.000360"
+    },
+    {
+        "user": "U1JB7QCBD",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JB7QCBD|ashnur> has joined the channel",
+        "ts": "1466417834.000361"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "hi, i am trying to read up on fabric, where should I go for some kind of concise information?",
+        "ts": "1466417915.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what kind of information are you looking for?",
+        "ts": "1466420680.000363"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "yacovm:  technical mostly. research papers  instead of white papers",
+        "ts": "1466420731.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "have you read the PBFT paper already?",
+        "ts": "1466420774.000365"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "<http:\/\/pmg.csail.mit.edu\/papers\/osdi99.pdf> this?",
+        "ts": "1466420804.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1466420813.000367"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "not yet, it's in the queue",
+        "edited": {
+            "user": "U1JB7QCBD",
+            "ts": "1466420837.000000"
+        },
+        "ts": "1466420821.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Sorry I don't know any research papers on blockchain itself. There are papers on adjacent topics, go to [1] and scroll down to the references\n[1]\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/protocol-spec.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466420912.000370"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "yacovm: the general stuff like this PBFT paper I can find, I am more interested in stuff particularly about hyperledger or fabric (i wish i could even define what these two are, because an hour ago I thought I knew, but right now I am getting more and more confused :smile: )",
+        "ts": "1466420989.000372"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "the protocol spec link is good, thanks for that, i missed it",
+        "ts": "1466421013.000373"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "i am going through these though <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/README.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/README.md",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/README.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466421067.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1JB7QCBD>: what specifically are you seeking? high-level overview? user guide? operations guide? implementation details? Just curious (agree that docs need work!)",
+        "ts": "1466422340.000376"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "cbf: believe it or not, this was so far the closest to what i was expecting <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466422480.000377"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": ":smile:",
+        "ts": "1466422483.000379"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "I was lost, could not see what is part of this and what is not, what is there, what is just considered. From here I think I can go forward",
+        "ts": "1466422521.000380"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "a similar list with ALL the features not just the key features would be even better, but I should not be dissatisfied :slightly_smiling_face:",
+        "ts": "1466422617.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ah, well, we are just in the process of cutting the initial release (not a 1.0; just a first release to get the community used to the process etc)",
+        "ts": "1466423315.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks for the feedback; it is certainly valuable",
+        "ts": "1466423356.000383"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "Oh, I just realized who you are :slightly_smiling_face:",
+        "ts": "1466423434.000384"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "cbf: btw, as feedback, when I was watching this <https:\/\/www.youtube.com\/watch?v=VeihC3EBSOg>  Are you not afraid that running this way forward we will miss some stuff that will cause issues in the future? I am very new to blockchain, (started reading up on it ~2 weeks ago), but it seems that there is relatively few people working on analysing these networks, most of the people are trying to write up POCs and actual products.",
+        "edited": {
+            "user": "U1JB7QCBD",
+            "ts": "1466423704.000000"
+        },
+        "ts": "1466423686.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean by analyzing?",
+        "ts": "1466423730.000388"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "ugh, never before had to define that word, but fair enough. I mean that when you build a test network and see what happens, write up the parameters and the results and publish it",
+        "ts": "1466423820.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you mean on a technical level?",
+        "ts": "1466423861.000390"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "absolutely",
+        "ts": "1466423881.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what are you interested in specifically?",
+        "ts": "1466423918.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "message patterns?",
+        "ts": "1466423923.000393"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "I am fairly sure there are people doing this actively, I just can't find it",
+        "ts": "1466423925.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "scalability?",
+        "ts": "1466423929.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there is a lot of testing going on",
+        "ts": "1466423939.000396"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "that, and how networks respond to specific attacks",
+        "ts": "1466423942.000397"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "oh, i know everyone is testing :smile:, we are testing too",
+        "ts": "1466423951.000398"
+    },
+    {
+        "user": "U1JBVRNQ3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JBVRNQ3|virajkamat> has joined the channel",
+        "ts": "1466423983.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ashishkel: well if you have specific attacks in mind, i'm happy to talk about them",
+        "ts": "1466424015.000400"
+    },
+    {
+        "type": "message",
+        "user": "U1JB7QCBD",
+        "text": "this is the problem, as I said, I am very new to this field",
+        "ts": "1466424048.000401"
+    },
+    {
+        "type": "message",
+        "user": "U1JBVRNQ3",
+        "text": "Hey need some help on docker compose.yml",
+        "ts": "1466424059.000402"
+    },
+    {
+        "type": "message",
+        "user": "U1JBVRNQ3",
+        "text": "Is it possible to get 4 peers started with docker",
+        "ts": "1466424070.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with compose, yes",
+        "ts": "1466424084.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "fabric does that in bddtests",
+        "ts": "1466424092.000405"
+    },
+    {
+        "type": "message",
+        "user": "U1JBVRNQ3",
+        "text": "I was hoping to get some guidance on that",
+        "ts": "1466424100.000406"
+    },
+    {
+        "user": "U1JBWM58T",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JBWM58T|dmurray> has joined the channel",
+        "ts": "1466424184.000407"
+    },
+    {
+        "user": "U1JDN174H",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JDN174H|kayad> has joined the channel",
+        "ts": "1466425385.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "Do we have somewhere a technical document explaining the different parts of Hyperledger ?",
+        "ts": "1466427040.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "I mean not a simple .PPT but an architecture manual or something close",
+        "ts": "1466427073.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "I have a question behind this, is how Hyperledger manage transactions (i.e rollback between RockDB and the blockchain) ?",
+        "ts": "1466427489.000411"
+    },
+    {
+        "type": "message",
+        "user": "U18T2HJRM",
+        "text": "<@U0N4D2T61> i like this one the most, but it may be claimed as proprietary at some point: <https:\/\/new-console.ng.bluemix.net\/docs\/services\/blockchain\/ibmblockchain_overview.html>",
+        "ts": "1466427954.000412",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0N4D2T61"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let's talk in <#C0Y4PEU22>",
+        "ts": "1466427956.000413"
+    },
+    {
+        "type": "message",
+        "user": "U18T2HJRM",
+        "text": "<@U0N4D2T61> i did propose not to be tied to RockDB, but i'm not sure if that was considered",
+        "ts": "1466427996.000414"
+    },
+    {
+        "type": "message",
+        "user": "U18T2HJRM",
+        "text": "<@U0N4D2T61> i agree with <@U0XR6J961> for you to jump over to <#C0Y4PEU22> to get more detailed info",
+        "ts": "1466428054.000415",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0N4D2T61",
+                    "U1GN670VD"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "user": "U1JDMMRHC",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JDMMRHC|sebinbenjamin> has joined the channel",
+        "ts": "1466428451.000416"
+    },
+    {
+        "user": "U1JEYQX9Q",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JEYQX9Q|kevinstoodley> has joined the channel",
+        "ts": "1466432778.000417"
+    },
+    {
+        "user": "U1JDYKA7M",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JDYKA7M|mayurpabari> has joined the channel",
+        "ts": "1466436383.000418"
+    },
+    {
+        "user": "U1JGT9VC5",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JGT9VC5|dr_tes> has joined the channel",
+        "ts": "1466443568.000419"
+    },
+    {
+        "user": "U1JHA4NP9",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JHA4NP9|gbolo> has joined the channel",
+        "ts": "1466446190.000420"
+    },
+    {
+        "user": "U1JHMHW66",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JHMHW66|cloud.strife> has joined the channel",
+        "ts": "1466446349.000421"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "Hey All",
+        "ts": "1466446367.000422"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "is it possible to remove chaincode so that we can reduce the amount of docker containers, if the chaincode is no longer needed?",
+        "ts": "1466446415.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1JHMHW66>: you can do \u201cdocker rm\u2026.\u201d on the containers",
+        "ts": "1466446485.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there is no \u201cdestroy\u201d symmetric to \u201cdeploy\u201d currently",
+        "ts": "1466446531.000425"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "<@U0ULK2JPP>: yes this will remve the containers, but will the hyperledger peer have issues trying to connect to it for whatever reason?",
+        "ts": "1466446597.000426"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "or as long as the chaincode is not in use, it will be OK?",
+        "ts": "1466446612.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "on the next invoke\/query, hyperledger will\/should bring it up automatically",
+        "ts": "1466446630.000428"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "as in no request come in to invoke anything for that chaincode id",
+        "ts": "1466446631.000429"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "also what is the supported docker version? I see some errors in the docker logs: DEPRECATED: Setting host configuration options when the container starts is deprecated",
+        "ts": "1466446720.000430"
+    },
+    {
+        "type": "message",
+        "user": "U1JHMHW66",
+        "text": "<@U0ULK2JPP>: Thanks for answer",
+        "ts": "1466446772.000431"
+    },
+    {
+        "user": "U1JHMKC8H",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JHMKC8H|huxd> has joined the channel",
+        "ts": "1466447077.000432"
+    },
+    {
+        "user": "U1JHR4S8G",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JHR4S8G|peterinwestend> has joined the channel",
+        "ts": "1466449285.000433"
+    },
+    {
+        "user": "U1JJ6NLF4",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JJ6NLF4|chris-martin> has joined the channel",
+        "ts": "1466449375.000434"
+    },
+    {
+        "user": "U1JJ64P53",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JJ64P53|eugenn> has joined the channel",
+        "ts": "1466451002.000435"
+    },
+    {
+        "user": "U1JK24HE3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JK24HE3|nick.dawson> has joined the channel",
+        "ts": "1466456174.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "Announcing Hyperledger Fabric release v0.5-developer-preview \n<https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Fabric-Releases",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466460993.000437",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11CP8FF1",
+                    "U10PFCC4R"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "user": "U1JL20M37",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JL20M37|vlad> has joined the channel",
+        "ts": "1466463494.000439"
+    },
+    {
+        "user": "U1JJU464B",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JJU464B|njal26> has joined the channel",
+        "ts": "1466465570.000440"
+    },
+    {
+        "user": "U1JLHKTN2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JLHKTN2|scottjohnson> has joined the channel",
+        "ts": "1466471073.000441"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U0KN2SSKE>. Should we check out the branch ? \n&gt; $ git checkout v0.5-developer-preview",
+        "ts": "1466471374.000442"
+    },
+    {
+        "type": "message",
+        "user": "U10PFCC4R",
+        "text": "where do i submit a project proposal?",
+        "ts": "1466479006.000443"
+    },
+    {
+        "type": "message",
+        "user": "U10PFCC4R",
+        "text": "i'm working on a proposal for public test ledger ... would be happy to get some help with it <https:\/\/docs.google.com\/document\/d\/1YQ69FXUXAhw30LlJ4t5RFG4KxsCkvpu1oqpgqBZVr14\/edit?usp=sharing>",
+        "ts": "1466479577.000444"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U10PFCC4R|buhrmi> shared a file: <https:\/\/hyperledgerproject.slack.com\/files\/buhrmi\/F1JM5QU8N\/hippublictestledger|HIP: Public Test Ledger>",
+        "file": {
+            "id": "F1JM5QU8N",
+            "created": 1466479596,
+            "timestamp": 1466479596,
+            "name": "HIPPublicTestLedger",
+            "title": "HIP: Public Test Ledger",
+            "mimetype": "application\/vnd.google-apps.document",
+            "filetype": "gdoc",
+            "pretty_type": "GDocs Document",
+            "user": "U10PFCC4R",
+            "editable": false,
+            "size": 588,
+            "mode": "external",
+            "is_external": true,
+            "external_type": "gdrive",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/docs.google.com\/document\/d\/1YQ69FXUXAhw30LlJ4t5RFG4KxsCkvpu1oqpgqBZVr14\/edit?usp=drivesdk",
+            "thumb_64": "https:\/\/a.slack-edge.com\/66f9\/img\/files\/gdraw_64.png",
+            "thumb_360": "https:\/\/a.slack-edge.com\/272a\/img\/files\/gdoc_360.png",
+            "thumb_360_w": 360,
+            "thumb_360_h": 167,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/buhrmi\/F1JM5QU8N\/hippublictestledger",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "num_stars": 1
+        },
+        "user": "U10PFCC4R",
+        "upload": false,
+        "display_as_bot": false,
+        "username": "<@U10PFCC4R|buhrmi>",
+        "bot_id": null,
+        "ts": "1466479596.000445"
+    },
+    {
+        "user": "U1JM8MV8C",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1JM8MV8C|lawrencemah> has joined the channel",
+        "ts": "1466481934.000446"
+    },
+    {
+        "type": "message",
+        "user": "U10PFCC4R",
+        "text": "please add yourselves as sponsor if you can help in any shape or form or can throw in some resources",
+        "edited": {
+            "user": "U10PFCC4R",
+            "ts": "1466488212.000000"
+        },
+        "ts": "1466488203.000447"
+    }
+]

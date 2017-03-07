@@ -1,0 +1,683 @@
+[
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "so if I have my own custom fabric base-image and I run peer-docker it looks like the binary is built elsewhere before being pushed into the peer image (I edited its docker file) what sort of pipeline does it follow?",
+        "ts": "1479912038.003930"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "<@U0KPFAZNF> ^",
+        "ts": "1479913441.003931"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2TD4Q7NW>: not clear on what you are trying to do.  Can you elaborate?",
+        "ts": "1479913833.003932"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I assume you mean to ask where the build\/docker\/bin\/peer binary comes from before I stuff it?",
+        "ts": "1479913904.003933"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If so, it's all in the top level Makefile ",
+        "ts": "1479913945.003934"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Be happy to walk through it",
+        "ts": "1479913959.003935"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "<@U0KPFAZNF> hence my confusion build peer doesn't work (RHEL native) but build peer-docker does, at first I thought it was because it was all containerized and my centos container works fine, but then I see that build peer-docker calls build peer which doesn't work when I call it and got very confused.",
+        "ts": "1479916016.003936"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am reasonably confident that peer-docker does not call peer",
+        "ts": "1479916074.003937"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what makes you think that it does?",
+        "ts": "1479916085.003938"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "nevermind I suffer from stupid or maybe just too many tests running",
+        "ts": "1479916208.003939"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "peer: build\/bin\/peer\npeer-docker: build\/image\/peer\/.dummy",
+        "ts": "1479916210.003940"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "so its the dummy not the peer build.",
+        "ts": "1479916219.003941"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, and really that is just an alias",
+        "ts": "1479916900.003942"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "peer-docker == build\/image\/peer\/.dummy",
+        "ts": "1479916912.003943"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I'm kinda seeing it now, the ccenv and the javaenv right?",
+        "ts": "1479916913.003944"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah...the issue is two fold",
+        "ts": "1479916923.003945"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1) make only knows how to evaluate files, whereas docker images are not files",
+        "ts": "1479916940.003946"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "yeha this make -&gt; docker stuff is really odd to me. I'm not exactly a make wiz normally either.",
+        "ts": "1479916971.003947"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "2) phony-targets like \"peer-docker\" are bad to use in general since they always evaluate as needing to be rebuilt",
+        "ts": "1479916971.003948"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if I said \"foo: bar\" where bar is a phony target, \"foo\" will _always_ need to be rebuilt",
+        "ts": "1479916996.003949"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so its better to quickly translate into files asap",
+        "ts": "1479917015.003950"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then use those, so make can (more correctly) eval the system state",
+        "ts": "1479917030.003951"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. bar: build\/bar\/.dummy\\nfoo: build\/bar\/.dummy",
+        "ts": "1479917074.003952"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "would yield superior performance, if but a bit ugly",
+        "ts": "1479917089.003953"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ok so the dummy files are used to signal to make, the one I looked at was blank, should it contain a hash or somthing?",
+        "ts": "1479917096.003954"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "oh wait timestamp on the file",
+        "ts": "1479917105.003955"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, its based on timestamps",
+        "ts": "1479917112.003956"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but to that point, I do need to enhance them with the gitsha",
+        "ts": "1479917125.003957"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. build\/images\/peer\/.dummy-$sha",
+        "ts": "1479917150.003958"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because we have a problem right now where someone can change their git tree but make doesnt detect it needs to rebuild",
+        "ts": "1479917172.003959"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this materializes in .dummy being satisifed, but dependendies between docker containers are not",
+        "ts": "1479917221.003960"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i digress",
+        "ts": "1479917226.003961"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "neither here nor there",
+        "ts": "1479917230.003962"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "none of this would be a problem if docker-images surfaced as part of the posix filesystem",
+        "ts": "1479917263.003963"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but they dont, so I had to get clever",
+        "ts": "1479917268.003964"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "so right now I'm just trying to figure out next steps, that would be the javaenv and the ccenv, I guess I can leave the javaenv alone and not port it to redhat land",
+        "ts": "1479917272.003965"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "this is going to be so much easier if we convince RH management to just package all this crap for us in a special repo.",
+        "ts": "1479917305.003966"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me ask you this: aside from branding optics, what does it matter whats inside the container",
+        "ts": "1479917308.003967"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is there a technical reason too?",
+        "ts": "1479917316.003968"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "there are lots of people using rhel that face significant certification requirments for all software they run",
+        "ts": "1479917344.003969"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could convievably just run docker containers on RHEL\/CentOs without caring the contents",
+        "ts": "1479917347.003970"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "so... rhel, rhel everywhere.",
+        "ts": "1479917350.003971"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, I see",
+        "ts": "1479917352.003972"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, this makes sense",
+        "ts": "1479917354.003973"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "these are many of the same customers interested in blockchain\/hyperledger",
+        "ts": "1479917363.003974"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "\u00af\\_(\u30c4)_\/\u00af",
+        "ts": "1479917369.003975"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, I would very much like to stay in the loop with what you are doing in making multi $distro something we can support upstream if its reasonable to do so",
+        "ts": "1479917407.003976"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "ghaskins base image\/ peer took me all of 15 min once I figured out what I was doing really",
+        "ts": "1479917430.003977"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not quite sure what that might end up looking like, but lets work together",
+        "ts": "1479917437.003978"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "agreed",
+        "ts": "1479917443.003979"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we still have ubuntu-isms sprayed everywhere, but we can work on cleaning those up",
+        "ts": "1479917473.003980"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "the big problem is handling all the funky dependencies, over in rhel land we have to package them and sign off anyways so we can skip that problem downstream",
+        "ts": "1479917473.003981"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "but upstream I think we should move to put all the dependency handling into system agnostic scripts and then have components for the distro specific stuff",
+        "ts": "1479917514.003982"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah...i have long thought that using a higher-level provisioner (like puppet) might be easier to normalize the dependency specification than our current bash approach",
+        "ts": "1479917514.003983"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thoughts?",
+        "ts": "1479917516.003984"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "we're an ansible shop, but i can learn puppet, anything is better than bash in large quantities",
+        "ts": "1479917542.003985"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear, I just mean the stand-alone puppet thing that can process a manifest file, not a full scale client\/server setup",
+        "ts": "1479917542.003986"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not against ansible...i just dont know it",
+        "ts": "1479917558.003987"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive worked with puppet, so that was my go-to",
+        "ts": "1479917564.003988"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "to be honest puppet is probably better for this ansible can do cool things locally but its smarts are tied up doing remote admin",
+        "edited": {
+            "user": "U2TD4Q7NW",
+            "ts": "1479917597.000000"
+        },
+        "ts": "1479917593.003989"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think conceptually, any devop-like thing (puppet\/chef\/ansible) would get us closer to $distro neutral",
+        "ts": "1479917594.003990"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "+1",
+        "ts": "1479917605.003992"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have nothing against bash, and in fact favor it when I know $distro is not a factor",
+        "ts": "1479917628.003993"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its just simple and reliable",
+        "ts": "1479917636.003994"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "I often still don't understand bash parsing rules.  The issue is how messy it gets when you need to do more complicated stuff",
+        "ts": "1479917668.003995"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "but copy \/ install \/ build sure",
+        "ts": "1479917678.003996"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats probably true",
+        "ts": "1479917679.003997"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, long story short, id be interested in seeing if a $distro neutral approach could be adopted upstream, so lets hammer it out together so you dont end up with a one-off you have to maintain on the side",
+        "ts": "1479917729.003998"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "agreed, setup a meeting sometime after the holiday then? Or maybe just start passing around a gdoc?",
+        "ts": "1479917834.003999"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "either way",
+        "ts": "1479917844.004000"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though after the holiday either way",
+        "ts": "1479917864.004001"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im about T-45m away from kicking out for the week",
+        "ts": "1479917877.004002"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": ":wink:",
+        "ts": "1479917880.004003"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though knowing me, ill still be slack-lurking even through turkey dinner",
+        "ts": "1479917917.004004"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "have a good thanksgiving!",
+        "ts": "1479918003.004005"
+    },
+    {
+        "user": "U2NG5AX0A",
+        "text": "<@U2NG5AX0A|klorenz> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479918037.004006"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> ` T-45m away from kicking out for the week` \u2026 I was going to say \u2026hmmm :slightly_smiling_face:",
+        "ts": "1479918079.004007"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(Happy Thanksgiving!)",
+        "ts": "1479918090.004008"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty sir, likewise",
+        "ts": "1479918133.004009"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2TD4Q7NW> you too",
+        "ts": "1479918273.004010"
+    },
+    {
+        "user": "U2Y2V95D2",
+        "text": "<@U2Y2V95D2|alanlee> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479920338.004011"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "After cleanup I ended up with the below error , Unable to create the docker images\n`\"make: *** No rule to make target build\/bin\/orderer\" needed by 'orderer'.  Stop.\" `",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1479920758.000000"
+        },
+        "ts": "1479920697.004012"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "can some one help me how to get rid of this issue",
+        "ts": "1479920713.004013"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U13Q594J2> I am able to build images on latest commit using `make docker`",
+        "ts": "1479920892.004016"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U11HH3P7Y> I was able to generate too .. However after `make clean` it is not working any more and ended up with this error.\nnot really sure what is going wrong here",
+        "ts": "1479921233.004017"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hey guys, OTP but ill ping you back shortly",
+        "ts": "1479921567.004018"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U11MANG9G|jonathanlevi> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F35P1JPCY\/_build_nextroundofdockercrs.png|[BUILD]NextRoundOfDockerCRs Merged> and commented: BTW: I have just merged 3 of Greg\u2019s CRs to `master`, and for working with the latest, you might need to `vagrant destroy`, etc.\n\nGreg will send an email shortly with instructions.",
+        "file": {
+            "id": "F35P1JPCY",
+            "created": 1479929963,
+            "timestamp": 1479929963,
+            "name": "[BUILD]NextRoundOfDockerCRs.png",
+            "title": "[BUILD]NextRoundOfDockerCRs Merged",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U11MANG9G",
+            "editable": false,
+            "size": 101075,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F35P1JPCY\/_build_nextroundofdockercrs.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F35P1JPCY\/download\/_build_nextroundofdockercrs.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 23,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 30,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 45,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 60,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F35P1JPCY-e35317ce4e\/_build_nextroundofdockercrs_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 64,
+            "image_exif_rotation": 1,
+            "original_w": 2826,
+            "original_h": 178,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jonathanlevi\/F35P1JPCY\/_build_nextroundofdockercrs.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F35P1JPCY-8f26dacf78",
+            "channels": [
+                "C0YPYBVJM"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc36CEB3KM",
+                "created": 1479929963,
+                "timestamp": 1479929963,
+                "user": "U11MANG9G",
+                "is_intro": true,
+                "comment": "BTW: I have just merged 3 of Greg\u2019s CRs to `master`, and for working with the latest, you might need to `vagrant destroy`, etc.\n\nGreg will send an email shortly with instructions.",
+                "channel": ""
+            }
+        },
+        "user": "U11MANG9G",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U11MANG9G|jonathanlevi>",
+        "bot_id": null,
+        "ts": "1479929966.004019"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[ Thank you <@U0KPFAZNF> for working to get rid of vagrant, in the spirit of Thanksgiving, etc. Updated :wink: ]",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1479931353.000000"
+        },
+        "ts": "1479930071.004020"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, we arent quite there yet, but soon",
+        "ts": "1479931001.004021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one, I havent addressed behave",
+        "ts": "1479931012.004022"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "also, the \"peer chaincode\" CLI still needs native binaries, and the documentation needs to be updated",
+        "ts": "1479931036.004023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I will be working with <@U10LM0FFZ> on the doc after the holiday",
+        "ts": "1479931054.004024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, for the time being, certain use cases will still rely on vagrant (namely, CLI users)",
+        "ts": "1479931079.004025"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and behave",
+        "ts": "1479931088.004026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the biggest challenge is that we need docker v1.8.1 but the current vagrant baseimage ships v1.5.2",
+        "ts": "1479931113.004027"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thus the need for the destroy",
+        "ts": "1479931118.004028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, compose v1.8.1",
+        "ts": "1479931125.004029"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I have approved that too I think. Need another.",
+        "ts": "1479931318.004030"
+    },
+    {
+        "user": "U2UKSBLG5",
+        "text": "<@U2UKSBLG5|jjmiranda> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479943231.004032"
+    },
+    {
+        "user": "U1F1CU61Y",
+        "text": "<@U1F1CU61Y|ankitkamra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479955677.004033"
+    }
+]

@@ -1,0 +1,188 @@
+[
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "For all sbft-related work, let's please create issues in JIRA, link from the changesets, and update the JIRA status accordingly.",
+        "ts": "1484160010.001424"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "See the pinned item on this channel: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482424383001089>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482424383001089",
+                "fallback": "[December 22nd, 2016 8:33 AM] kostas: <@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+                "ts": "1482424383.001089",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0Y14MWA2>: Correct. Component `fabric-consensus`, label `sbft`, and the sprint during which this is tackled. Mark the issue as \"In Review\" when the changeset is posted, and mark as \"Done\" when it's merged. A bit of a process, but you quickly get used to it. (Thanks!)",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1484160021.001425"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3873\/>\n<@U0XPR4NP4>  You're saying there was the same file (well, almost the same) the whole time at 2 different places in the file tree?",
+        "ts": "1484161544.001427"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "After you run `make protos` you'll notice an untracked `attributes.pb.go` in `core`",
+        "ts": "1484161579.001428"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh so it was never checked in",
+        "ts": "1484161601.001429"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1484161604.001430"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but... the old one was in the wrong place right?",
+        "ts": "1484161648.001431"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it was used the whole time",
+        "ts": "1484161658.001432"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so why don't you delete it as part of the change set?",
+        "ts": "1484161669.001433"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I assume someone was linking to the attributes file",
+        "ts": "1484161684.001434"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So no.  You can see:\n\n```\ncommit 9ed9ce44b45d9c37d4fb1112061927cb5ccba5d7\nAuthor: Angelo De Caro &lt;adc@zurich.ibm.com&gt;\nDate:   Wed Dec 14 09:28:51 2016 +0100\n\n    core\/crypto\/primitives cleanup: second step\n    \n    This change-set continues the cleanup of the core\/crypto\/primitives\n    package. Refactoring has been applied to move methods and files under\n    the packages which need them.\n    \n    Change-Id: Icfe6adf938b9d96df9dfde3dfebf95f3004fcae7\n    Signed-off-by: Angelo De Caro &lt;adc@zurich.ibm.com&gt;\n```",
+        "ts": "1484161750.001435"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's core\/crypto\/primitives though.",
+        "ts": "1484161810.001436"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "&lt;\/nit-picking&gt;",
+        "ts": "1484161814.001437"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This changeset moved `attributes.proto` and `attributes.pb.go` from `fabric\/core\/crypto\/attributes\/proto` to `fabric\/accesscontrol\/attributes\/proto`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484161838.000000"
+        },
+        "ts": "1484161828.001438"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the `attributes.pb.go` was still correct from a compilation perspective, no need to really regen it just because the package moved (since its base package name stayed the same)",
+        "ts": "1484161894.001440"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, when `make protos` is run, it's writing any updates to `fabric\/core\/crypto\/attributes\/proto\/attributes.pb.go` which is not a tracked file anymore",
+        "ts": "1484161927.001441"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When the intent clearly, is to have `make protos` write to `fabric\/accesscontrol\/attributes\/proto\/attributes.pb.go` (the tracked file)",
+        "ts": "1484161956.001442"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"This changeset\" --&gt; adc's?",
+        "ts": "1484161987.001443"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1484161999.001444"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the new changeset simply fixes the `go_package` so that the updates get written to the tracked file in the new location, rather than the untracked in the old.  Nothing to delete.",
+        "ts": "1484162009.001445"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see. so when people did `make protos` a new file was added and no one paid attention",
+        "ts": "1484162058.001446"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, or, because `make protos` was broken, no one was running it, so they didn't get a new file",
+        "ts": "1484162082.001447"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Got it, thanks!",
+        "ts": "1484162107.001448"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Either way, just something small that slipped through the cracks, I noticed this new file in my untracked changes and wondered where it came from, so put that CR together",
+        "ts": "1484162108.001449"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No problem",
+        "ts": "1484162110.001450"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4> Thanks a lot for this. I haven't noticed that",
+        "ts": "1484205417.001451"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> You're quite welcome, you're not the first to miss this `go_package` directive.  Hopefully we will get some CI to test for this sort of mistake in the future.",
+        "ts": "1484206052.001452"
+    }
+]

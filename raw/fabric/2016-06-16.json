@@ -1,0 +1,340 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U12AHQ3NK>:   unfortunately this is a known gap right now.  it might be hidden in one of the closed issues and\/or PRs",
+        "ts": "1466087670.000154"
+    },
+    {
+        "type": "message",
+        "user": "U1CKTK86A",
+        "text": "Hi, I'm a newbie here. Trying to understand how transactions are implemented. I see that when a 'invoke' function is called, the args contain the data (or world state) that is written to the block. When a GET operation is done on the API : \/transactions\/{uuid}, the response contains a payload field which is hashed. What does this payload consist of? Is it the hash of the args sent when executing a chaincode function? How is this hash calculated? Is there any way to get the data from it?",
+        "ts": "1466092352.000155"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "me and <@U1CKTK86A> are trying to write a sample application where we are interested in tracking the historical changes for a particular value in a world state. Since apart from world state, older blocks don't keep the world state (but only hash of world state) we are kinda stuck there. All we want to do is plot the changes in the value against time while traversing the blocks. Also, we don't want to overload world state by keeping all the old data in world state itself. Any pointers?",
+        "edited": {
+            "user": "U126PEMNH",
+            "ts": "1466093392.000000"
+        },
+        "ts": "1466092655.000156"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "I came across this proposal, <https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Ledger-Architecture-Proposal#motivation> Which I think could help us",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Ledger-Architecture-Proposal#motivation",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Ledger-Architecture-Proposal#motivation",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466092814.000160"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "Especially Point 1.",
+        "ts": "1466092837.000162"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "&gt;Point in time queries - The ability to query chaincode state at previous blocks and easily trace lineage without replaying transactions",
+        "ts": "1466092863.000163"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "But until that happens is there any way around with existing impl?",
+        "ts": "1466092890.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U126PEMNH> and <@U1CKTK86A>  - it kind of depends on exactly how complex your chaincode logic is.  The actual payload of every transaction is stored within each transaction in a block (function invoked and parameters passed).  Depending on what your actual chaincode functions do, it is possible to either \"replay\" the transactions outside the chaincode just by parsing each block \/ set of transactions or depending on the payload itself (e.g. you are actually passing the updated state in the invoke), you could use that.  The other option would be to use the custom events (which I think are now committed) from within your chaincode to output the latest state at the end of a function invocation within chaincode.  These events would be available via the event API or should be available waiting the transaction metadata in the recorded blocks",
+        "ts": "1466093543.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(not optimal \/ ideal) but could \/ should work",
+        "ts": "1466093553.000167"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "<@U0PB67X4K>: thanks. The restful API endpoint *GET \/transactions\/{UUID}* returns only payload hash. I was trying to dig around code to see how this payload hash is calculated.",
+        "ts": "1466094741.000168"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "I presume the payload is converted into a byte array and then a hash is calculated on that byte array.",
+        "ts": "1466094983.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "should be base64 encoded actually",
+        "ts": "1466095361.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "at least transactions are base64 encoded on the blocks endpoint",
+        "ts": "1466095374.000174"
+    },
+    {
+        "type": "message",
+        "user": "U126PEMNH",
+        "text": "<@U0PB67X4K>: cool. :slightly_smiling_face:",
+        "ts": "1466095406.000175"
+    },
+    {
+        "user": "U1HG09QB1",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1HG09QB1|sajz> has joined the channel",
+        "ts": "1466099597.000176"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "I found this in core.yaml:     \n\ngolang:\n\n        # This is the basis for the Golang Dockerfile.  Additional commands will\n        # be appended depedendent upon the chaincode specification.\n        Dockerfile:  |\n            from hyperledger\/fabric-baseimage\n            #from utxo:0.1.0\n            COPY src $GOPATH\/src\n            WORKDIR $GOPATH\n    \nDoes that mean we can add something to the baseimage for the docker container the go code is running in?",
+        "ts": "1466106727.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U15LJGQPN>: yes, most likely",
+        "ts": "1466106797.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if this is a customization for your environment, you can just select a different image entirely if you like",
+        "ts": "1466106828.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(see the commented out utxo",
+        "ts": "1466106841.000180"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "So would that be a possible way to have oracle-like behaviour? Or would that be considered bad practice..",
+        "ts": "1466106870.000181"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "I mean, in theory you could maybe even run a light bitcoin node or connect to the ethereum network",
+        "ts": "1466106934.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you mean to place some other task in that container as an ENTRYPOINT type process?",
+        "ts": "1466107306.000183"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "Yeah, something like that... Would be kind of a hack and I don't know how it would play with the on-demand nature of the vm. Maybe it'd be better not to run a fullblown process but still it opens up possibilities.. Can we use the http library to make calls outside of the vm",
+        "ts": "1466107669.000184"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "?",
+        "ts": "1466107685.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now? yes.  Long term, no, that would be bad",
+        "ts": "1466108327.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now little is done to lock it down, but this needs to change",
+        "ts": "1466108343.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only thing chaincode should do is react to things coming from the peer, like invoke()\/query() requests",
+        "ts": "1466108370.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and those methods should be modeled on a pure function where the only persistence is the world-state",
+        "ts": "1466108397.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you reach outside the container, it will impact the determinism of your response",
+        "ts": "1466108425.000190"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "Right. That would be bad indeed. Is there any thought being put into how to handle the oracle problem? Or would it be less of an issue in a permissioned environment?",
+        "ts": "1466108493.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yes, system chaincode is part of that story",
+        "ts": "1466108630.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but there are still key parts missing",
+        "ts": "1466108636.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U15LJGQPN>  - <@U13TWBRBL> has been working on some oracle thoughts as well.  might be good for you to sync with him",
+        "ts": "1466114910.000194"
+    },
+    {
+        "user": "U1GNP6E7N",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GNP6E7N|pax> has joined the channel",
+        "ts": "1466122851.000195"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "<@U0PB67X4K> <@U1934J6RX> re: your discussion above about asset management example: it does not appear that the REST API alone can be used for this example given then need for certs in metadata, but running the [<https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app>] app does work",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466127100.000196"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "it requires a cluster of validating peers with security and privacy enabled (and probably something other than noops for consensus, but not totally sure if that\u2019s required)",
+        "ts": "1466127141.000198"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "you can set this up using the compose blueprints that are located somewhere in the codebase (the link to it has since broken)",
+        "ts": "1466127231.000199"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "(i\u2019ve been using this blueprint that i\u2019m developing, instead [<https:\/\/github.com\/cloudsoft\/brooklyn-hyperledger>])",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "cloudsoft\/brooklyn-hyperledger",
+                "title_link": "https:\/\/github.com\/cloudsoft\/brooklyn-hyperledger",
+                "text": "brooklyn-hyperledger - Brooklyn blueprint for Hyperledger Fabric deployment",
+                "fallback": "GitHub: cloudsoft\/brooklyn-hyperledger",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/831459?v=3&s=400",
+                "from_url": "https:\/\/github.com\/cloudsoft\/brooklyn-hyperledger",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466127263.000200"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "<@U18S877PU> a while back you asked if it\u2019s straightforward to set up (sorry for delay) \u2014 it is straightforward to set up using my blueprint, but developing it was tricky because i had trouble finding documentation for everything that was needed by it. it ended up being some trial end error wrt the environment variables passed to the containers.",
+        "edited": {
+            "user": "U196R0LA2",
+            "ts": "1466127393.000000"
+        },
+        "ts": "1466127343.000202"
+    },
+    {
+        "user": "U18S877PU",
+        "inviter": "U196R0LA2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U18S877PU|vinding> has joined the channel",
+        "ts": "1466127356.000203"
+    },
+    {
+        "type": "message",
+        "user": "U196R0LA2",
+        "text": "if anyone\u2019s curious to see it actually run, i made this video: <https:\/\/www.youtube.com\/watch?v=0HYzxmnP3bA>",
+        "attachments": [
+            {
+                "service_name": "YouTube",
+                "service_url": "https:\/\/www.youtube.com\/",
+                "title": "Cloudsoft AMP Simplifying Hyperledger Blockchain on Docker",
+                "title_link": "https:\/\/www.youtube.com\/watch?v=0HYzxmnP3bA",
+                "author_name": "YouTube Channel",
+                "author_link": "https:\/\/www.youtube.com\/channel\/UCpbLhvXrYWz8B_osUX6rn0Q",
+                "thumb_url": "https:\/\/i.ytimg.com\/vi\/0HYzxmnP3bA\/hqdefault.jpg",
+                "thumb_width": 480,
+                "thumb_height": 360,
+                "fallback": "YouTube Video: Cloudsoft AMP Simplifying Hyperledger Blockchain on Docker",
+                "video_html": "<iframe width=\"400\" height=\"225\" src=\"https:\/\/www.youtube.com\/embed\/0HYzxmnP3bA?feature=oembed&autoplay=1&iv_load_policy=3\" frameborder=\"0\" allowfullscreen><\/iframe>",
+                "video_html_width": 400,
+                "video_html_height": 225,
+                "from_url": "https:\/\/www.youtube.com\/watch?v=0HYzxmnP3bA",
+                "service_icon": "https:\/\/a.slack-edge.com\/2089\/img\/unfurl_icons\/youtube.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466127488.000205",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U196R0LA2>:  very nice! thanks for the post",
+        "ts": "1466128773.000207"
+    }
+]

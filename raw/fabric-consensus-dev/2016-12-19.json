@@ -1,0 +1,443 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0Y14MWA2>  -  ^^^^^",
+        "ts": "1482139638.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U2MCH9EEB> - please see the Castro-Liskov paper or any good textbook (such as <http:\/\/www.distributedprogramming.net|www.distributedprogramming.net>), using only f+1 would be wrong",
+        "ts": "1482140354.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U2MCH9EEB> - yes this is not sth that is explained in slack - pls see pointers by <@U0XV1HDL3>",
+        "ts": "1482140545.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that said,",
+        "ts": "1482140548.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "see also xft paper for when you could actually do with f+1 replicas in the loop",
+        "ts": "1482140618.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<http:\/\/vukolic.com\/xft-osdi2016.pdf>",
+        "ts": "1482140619.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and <https:\/\/blog.acolyer.org\/2016\/12\/12\/xft-practical-fault-tolerance-beyond-crashes\/> for some coverage",
+        "attachments": [
+            {
+                "service_name": "the morning paper",
+                "service_url": "http:\/\/blog.acolyer.org",
+                "title": "XFT: Practical fault-tolerance beyond\u00a0crashes",
+                "title_link": "https:\/\/blog.acolyer.org\/2016\/12\/12\/xft-practical-fault-tolerance-beyond-crashes\/",
+                "author_name": "adriancolyer",
+                "author_link": "https:\/\/blog.acolyer.org\/author\/adriancolyer\/",
+                "thumb_url": "https:\/\/i0.wp.com\/adriancolyer.files.wordpress.com\/2016\/12\/xft-table-1.png?fit=200%2C150&ssl=1",
+                "thumb_width": 200,
+                "thumb_height": 99,
+                "text": "XFT: Practical fault-tolerance beyond crashes Liu et al., OSDI 2016\nHere&rsquo;s something that&rsquo;s been bugging me for a while now. The state of the art in security has moved from the assumption of a secured perimeter and a trusted environment inside the firewall to a notion of perimeter-less security. It&rsquo;s pretty much impossible to keep track of all the bridged networks (e.g., from smartphones) and other ways of getting into a corporate network (connected printers, &hellip;), so the assumption becomes that all services &lsquo;live on the internet&rsquo; and it&rsquo;s necessary to secure them at the application level. At the same time, the system model on which pretty much all of our distributed systems are designed assumes a classic &lsquo;crash fault tolerance&rsquo; (CFT) model. In other words, these systems at their core are not designed to tolerate active adversaries &ndash; they come from the world of perimeter-based thinking. Can you spot the problem?\nThere does exist a strong body of research looking into Byzantine Fault-Tolerant (BFT) systems, but these aren&rsquo;t widely deployed because of the overheads involved. I was particularly pleased therefore to discover this paper from Liu et al., looking at a fault-tolerance model called cross fault tolerance (XFT) which sits somewhere between CFT and BFT, and seems very well matched to today&rsquo;s deployment scenarios. The best part is that it offers performance equivalent to CFT systems, but with much stronger protections.\n\nModern production systems increase the number of nines of reliability by employing sophisticated distributed protocols that tolerate crash machine faults as well as network faults&hellip; At the heart of these systems typically lies a crash-fault tolerant (CFT) consensus-based state-machine replication (SMR) primitive. [Think Paxos, Raft,&hellip;]. These systems cannot deal with non-crash (or Byzantine) faults, which include not only malicious adversarial behavior, but also arise from errors in the hardware, stale or corrupted data from storage systems, memory errors caused by physical effects, bugs in software,&hellip; and human mistakes.\n\nXFT is another fine example of questioning assumptions: are the preconditions for CFT met in modern deployments? (Increasingly, no), and exposing a false dichotomy (you can have CFT, or BFT).\n\nThe overhead of asynchronous BFT is due to the extraordinary power given to the adversary, which may control both the Byzantine faulty machines and the entire network in a coordinated way. In particular, the classical BFT adversary can partition any number of otherwise correct machines at will. In line with observations by practitioners, we claim that this adversary model is actually too strong for the phenomena observed in deployed systems.\n\nXFT is designed to provide correct service (i.e., safety and liveness) even when Byzantine faults do occur, as long as a majority of replicas are correct and can communicate with each other synchronously (a minority of the replicas are Byzantine-faulty, or partitioned due to a network fault). In return it uses only the same number of resources (replicas) as asynchronous CFT (typical BFT systems need more), and preserves all the reliability guarantees of asynchronous CFT systems.\n\nWhereas XFT always provides strictly stronger consistency and availability guarantees than CTF and always strictly stronger guarantees than BFT, our reliability analysis shows that, in some cases, XFT also provides strictly stronger consistency guarantees than BFT.\n\n\n(Click for larger view).\nThe authors envision XFT being particularly suitable for wide-area or geo-replicated systems, or any other deployment where an adversary cannot easily coordinate enough network partitions and Byzantine-faulty machine actions at the same time. Note however that many geo-replicated systems don&rsquo;t use even CFT consensus algorithms across regions (certainly not for the normal request processing path) due to the latencies involved, preferring stronger consensus within regions, and weaker consensus across regions. Another potential use case is permissioned blockchains.\nThe more formal definition of XFT is as follows:\nLet anarchy be a severe system condition in which there is at least one non-crash-faulty replica and the number of non-crash-faulty replicas + the number of crash-faulty replicas + the number of correct, but partitioned replicas is greater than some threshold t (t &le; (n-1)\/2) for n replicas.\nThen, protocol P is an XFT protocol if P satisfies safety in all executions in which the system is never in anarchy.\nXPaxos\nXPaxos is a Paxos derivative built using the XFT assumptions.\n\nXPaxos is a novel state-machine replication (SMR) protocol designed specifically in the XFT model. XPaxos specifically targets good performance in geo-replicated settings, which are characterized by the network being the bottleneck, with high link latency and relatively low, heterogenous link bandwidth.\n\nXPaxos has three main components:\nA common-case protocol which handles the replication and total ordering of requests across replicas. This looks much like phase 2 of Paxos, but hardened by the use of digital signatures.\nA view-change protocol that operates in a decentralized, leaderless fashion.\nA fault-detection mechanism which can help detect, when outside anarchy, non-crash faults that would leave the system in an inconsistent state in anarchy.\nIn the interests of space, I&rsquo;m going to concentrate here on the novel view-change protocol and the fault-detection mechanism.\n\n[The XPaxos] decentralized approach to view change stands in sharp contrast to the classical reconfiguration\/view-change in CFT and BFT protocols, in which only a single replica leads the view change and transfers the state from previous views. This difference is crucial to maintaining consistency across XPaxos views in the presence of non-crash faults (but in the absence of full anarchy).\n\nXPaxos enforces consistency across view changes using the ordered requests in the commit logs of correct replicas. Consider a view change moving from synchronous group i (sgi) to synchronous group i+1 (sgi+1). Every active replica in sgi+1 retrieves information about requests committed in previous views.\n\nIntuitively, with a correct majority of correct and synchronous replicas, at least one correct and synchronous replica from sgi+1 will contact (at least one) correct and synchronous replica from sgi and transfer the latest correct commit log to the new view i+1.\n\nA view change is initiated whenever a synchronous group is deemed not to be making progress or has suspicious activity. In particular, a view change can be initiated (by sending a SUSPECT message) by an active replica if any of the following conditions hold:\nit receives a message from another active replica that does not conform to protocol.\n\na retransmission timer expires.\n\n\na view change does not complete in a timely manner.\n\n\na SUSPECT message is received from another replica the current group\n\nEach active replica in the new view collects the most recent state and its proof (VIEW-CHANGE messages). An active replica in the new view waits for at least 2&Delta; time (timeout), and must collect at least n-t VIEW CHANGE messages within that window for a view change to succeed.\nThe fault detection (FD) subprotocol guarantees that if a machine p suffers a non-crash fault outside anarchy in a way that would cause inconsistency under anarchy then p will be detected as faulty.\n\nOur FD mechanism entails modifying the XPaxos view change as follows: in addition to exchanging their commit logs, replicas also exchange their prepare logs. Notice that in the case t = 1 only the primary maintains a prepare log. In the new view, the primary prepares and the follower commits all requests contained in transferred commit and prepared logs.\n\nTo violate consistency therefore, a fault would be needed in both commit and prepare logs&hellip;\n\nHowever,\u2026",
+                "fallback": "the morning paper Link: XFT: Practical fault-tolerance beyond&nbsp;crashes",
+                "from_url": "https:\/\/blog.acolyer.org\/2016\/12\/12\/xft-practical-fault-tolerance-beyond-crashes\/",
+                "service_icon": "https:\/\/secure.gravatar.com\/blavatar\/09326a066a08237015d6b84f026d36ae?s=114",
+                "id": 1
+            }
+        ],
+        "ts": "1482140643.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-474> seems: 1) moved to common (which is good) and 2) backlogged - does that mean we are not having it for v1?",
+        "ts": "1482142795.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is also related to <https:\/\/jira.hyperledger.org\/browse\/FAB-331>",
+        "ts": "1482142814.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and maybe a few more",
+        "ts": "1482142820.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XQ35CDD> <@U0XPR4NP4> ^^",
+        "ts": "1482142861.000872"
+    },
+    {
+        "user": "U2SCJN8F6",
+        "text": "<@U2SCJN8F6|zws> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482150062.000873"
+    },
+    {
+        "user": "U2WJPAAJV",
+        "text": "<@U2WJPAAJV|tzukru> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482152170.000874"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2515\/>",
+        "ts": "1482156218.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> ^^ since you previously +2ed and we only need that",
+        "ts": "1482159362.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "to get this 5-weeks old changeset in",
+        "ts": "1482159409.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0Y14MWA2> The numbers in the spreadsheet from Friday do show one instance of a  kind of saturation: For 32 broadcast\/deliver clients with 2K blobs, the deliver side can not keep up with broadcast, and takes about 10% longer to finish delivery than to finish broadcast in this example. In order to find the real maximum throughput I would need to upgrade my system; With 64 clients @ 2KB blobs each we saturate the 10Gb network interface of the server with all of the \u201cdeliver\u201d traffic. The benchmark code currently measures latency but does not report it yet in a user-friendly way.",
+        "ts": "1482161384.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "thanks = so you'd expect 256 bytes experiment to saturate at (very roughly) 8x the throughput of the 2k experiment?",
+        "ts": "1482163039.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(which would mean 80k tps)",
+        "ts": "1482163059.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Not sure; The throughput seems to be more a function of the # of clients. I can try that later today.",
+        "ts": "1482163317.000881"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we would need one more +2 here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2515\/>",
+        "ts": "1482163643.000882"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": ":smile: sorry for the repost",
+        "ts": "1482163658.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> 2515 is in",
+        "ts": "1482164671.000884",
+        "reactions": [
+            {
+                "name": "woo",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With respect to Deliver not scaling, please keep in mind that Deliver is backed by a toy ledger right now, something used to show correctness, but was never meant to scale.  Sprint 9 targets pulling in the 'real' ledger which has been developed in parallel.",
+        "ts": "1482164749.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also note that the Deliver API is simplified in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3271\/> which may yield performance improvements as well",
+        "ts": "1482165038.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; and takes about 10% longer to finish delivery than to finish broadcast in this example",
+        "ts": "1482169458.000887"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0N1D1UAE>: How do you define \"finish\" in both cases?",
+        "ts": "1482169478.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "For broadcast, finish means all ACKs received. For deliver, all TX delivered. (These tests broadcast\/deliver a (large) fixed number of TX)",
+        "ts": "1482169535.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I should also say that I have not tuned Kafka\/Java, so it may be that with some work we could get broadcast\/deliver rates to match",
+        "ts": "1482169625.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Thank you. So a naive question possibly:",
+        "ts": "1482169713.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; For 32 broadcast\/deliver clients with 2K blobs, the deliver side can not keep up with broadcast, and takes about 10% longer to finish delivery than to finish broadcast in this example.",
+        "ts": "1482169714.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This does not necessarily imply a saturation though, does it?",
+        "ts": "1482169727.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "How are you defining saturation?",
+        "ts": "1482169747.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Or rather, what kind of saturation do you talk about here?",
+        "ts": "1482169750.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ah, you beat me to it.",
+        "ts": "1482169753.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I meant saturation as delivery can not keep up with broadcast",
+        "ts": "1482169771.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "I think <@U0Y14MWA2> may have meant that we hadn\u2019t seen throughput roll-over, so we don\u2019t know what the max. really is",
+        "ts": "1482169802.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Got it, thank you.",
+        "ts": "1482169826.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482142795000869>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1482142795000869",
+                "fallback": "[December 19th, 2016 2:19 AM] vukolic: <https:\/\/jira.hyperledger.org\/browse\/FAB-474> seems: 1) moved to common (which is good) and 2) backlogged - does that mean we are not having it for v1?",
+                "ts": "1482142795.000869",
+                "author_subname": "vukolic",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-474> seems: 1) moved to common (which is good) and 2) backlogged - does that mean we are not having it for v1?",
+                "author_name": "Marko Vukolic",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/vukolic",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a52edd136bbd07ca069b9393ac60f675.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0006-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1482169879.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0Y14MWA2>: Anything that is not in for sprints 8 or 9 goes into backlog.",
+        "ts": "1482169928.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Whats the def of end of sprint 9?",
+        "ts": "1482177541.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This week and the next week are sprint 8.",
+        "ts": "1482179868.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The two weeks that follow are sprint 9, etc. ",
+        "ts": "1482179882.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So: Jan 15",
+        "ts": "1482180946.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "c'est trop compliqu\u00e9",
+        "ts": "1482181696.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "ne tuez pas le messager",
+        "ts": "1482182431.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3411\/>",
+        "ts": "1482184850.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hopefully brings arch document closer to real naming",
+        "ts": "1482184867.000910"
+    },
+    {
+        "type": "message",
+        "user": "U2MCH9EEB",
+        "text": "<@U0XV1HDL3> <@U0Y14MWA2> thanks",
+        "ts": "1482197512.000911"
+    },
+    {
+        "type": "message",
+        "user": "U2MCH9EEB",
+        "text": "one more question,looks the sftb test cases all not reach to checkpoint step,is it expected? or the checkpoint process step implementation not completed,so skip this step at this stage?",
+        "ts": "1482204678.000912"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1AU8DRQR>: I'm running the unit tests on the entire `orderer` package, and the `sbft` ones seem to run for well over a minute.",
+        "ts": "1482212514.000913"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0XQ35CDD|kostas> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F3H0455B7\/screen_shot_2016-12-20_at_00.38.44.png|Screen Shot 2016-12-20 at 00.38.44.png>",
+        "file": {
+            "id": "F3H0455B7",
+            "created": 1482212517,
+            "timestamp": 1482212517,
+            "name": "Screen Shot 2016-12-20 at 00.38.44.png",
+            "title": "Screen Shot 2016-12-20 at 00.38.44.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0XQ35CDD",
+            "editable": false,
+            "size": 61986,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3H0455B7\/screen_shot_2016-12-20_at_00.38.44.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3H0455B7\/download\/screen_shot_2016-12-20_at_00.38.44.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 67,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 89,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 133,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 177,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3H0455B7-903f6dccd9\/screen_shot_2016-12-20_at_00.38.44_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 189,
+            "image_exif_rotation": 1,
+            "original_w": 1050,
+            "original_h": 194,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F3H0455B7\/screen_shot_2016-12-20_at_00.38.44.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3H0455B7-a106d1313b",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0XQ35CDD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0XQ35CDD|kostas>",
+        "bot_id": null,
+        "ts": "1482212521.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "When you find some time,  could you please add the `Short()` check to them to make testing for everything else a bit faster?",
+        "ts": "1482212534.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Don't worry about the failure on the screenshot, I Ctrl+C'd after realizing it was taking longer than usual.)",
+        "ts": "1482212566.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U2MCH9EEB> which test cases? do you have a debug log of these runs?",
+        "ts": "1482219864.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "normally all nodes run through checkpoint phase",
+        "ts": "1482219878.000918"
+    }
+]

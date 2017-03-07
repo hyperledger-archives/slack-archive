@@ -1,0 +1,196 @@
+[
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "hi <@U1V9UML9E>",
+        "ts": "1479310151.000405"
+    },
+    {
+        "type": "message",
+        "user": "U1V9UML9E",
+        "text": "<@U1VT657T4> Good morning ( or whatever time of day you are in).",
+        "ts": "1479310173.000406"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "It is good evening here :slightly_smiling_face:",
+        "ts": "1479310193.000407"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "I have a small doubt",
+        "ts": "1479310206.000408"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "I am building my own transaction family",
+        "ts": "1479310232.000409"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "to store some values into the ledger",
+        "ts": "1479310257.000410"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "but I am getting Invalid signature error[15:27:06 WARNING client] operation failed with response: 400 OrderedDict([('error', 'invalid signature'), ('errorType', 'InvalidTransactionError'), ('status', 400L)])\nError: invalid signature",
+        "ts": "1479310306.000411"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "when I was debugging it,",
+        "ts": "1479310316.000412"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "I found my public_key and originator_public_key is different",
+        "ts": "1479310341.000413"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "but not able to understand the difference between public_key and originator_public_key",
+        "edited": {
+            "user": "U1VT657T4",
+            "ts": "1479310456.000000"
+        },
+        "ts": "1479310354.000414"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "basically, the error occurred in the check_valid function in journal.transaction.Tranaction",
+        "ts": "1479310407.000415"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "<@U1V9UML9E> ^^",
+        "ts": "1479310466.000417"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "The originator_public_key is recovered from the signature, while the public_key is sent along with the transaction. If they are different (and nobody tampered with the data) it means that the data changed. One way this happens is that the keys inside the Updates must be strict upper camel case so ObjectId not ObjectID. If you have something off it will change it and your data will have changed and so your key will fail signature verification.",
+        "ts": "1479310839.000418"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "Oh, I should ask, Are you subclassing UpdatesTransaction for your transaction family?",
+        "ts": "1479310891.000419"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "no, I am not subclassing UpdateTransaction",
+        "ts": "1479311065.000420"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "So it is just Transaction?",
+        "ts": "1479311097.000421"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "Yea",
+        "ts": "1479311102.000422"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "Hmm, I'll have to think more.",
+        "ts": "1479311120.000423"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "Ok",
+        "ts": "1479311145.000424"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "Do you have Update subclassing object like in IntegerKey transaction family?",
+        "ts": "1479311252.000425"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "Actually I was referring to Tic-Tac-Toe example to write my transaction family",
+        "ts": "1479311374.000426"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "the game was working perfectly for me",
+        "ts": "1479311389.000427"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "And you are using a subclass of SawtoothClient to send the transaction?",
+        "ts": "1479311463.000428"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "yea",
+        "ts": "1479311472.000429"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "Are you setting up any defaults on the client? If there are defaults they should be set on the client.",
+        "ts": "1479311504.000430"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "I created the keyfiles in the client before I sent the request to the server",
+        "ts": "1479311707.000431"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "I just mean with your data. Like in xo, if 'Name' not in update: update['Name'] = None, which matches the Transaction __init__ and dump().",
+        "edited": {
+            "user": "U1L6PRGTF",
+            "ts": "1479312424.000000"
+        },
+        "ts": "1479311850.000432"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "<@U1L6PRGTF> yes, I have set the updates in my client",
+        "ts": "1479312730.000435"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "xo_client.py",
+        "ts": "1479312745.000436"
+    },
+    {
+        "type": "message",
+        "user": "U1L6PRGTF",
+        "text": "When you are debugging, put a breakpoint at the end of dump() and see what it returns. It should be the same thing as what the client sent. Good luck. I am out of ideas.",
+        "ts": "1479312837.000437"
+    },
+    {
+        "type": "message",
+        "user": "U1VT657T4",
+        "text": "Ok thanks :slightly_smiling_face: ",
+        "ts": "1479312904.000438"
+    }
+]

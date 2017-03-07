@@ -1,0 +1,639 @@
+[
+    {
+        "user": "U115YGEH1",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U115YGEH1|mtakemiya> has joined the channel",
+        "ts": "1463646569.001717"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you around?",
+        "ts": "1463660684.001718"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> I am now ",
+        "ts": "1463663981.001719"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi",
+        "ts": "1463663986.001720"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i forgot what i wanted to ask",
+        "ts": "1463664006.001721"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something about testing",
+        "ts": "1463664008.001722"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to write a test without creating a whole network",
+        "ts": "1463664017.001723"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, hmm, could be done, but also seems likely to be very verbose ",
+        "ts": "1463664102.001724"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but way less finnicky",
+        "ts": "1463664175.001725"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we could get rid of that goroutine",
+        "ts": "1463664189.001726"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and have a state machine...",
+        "ts": "1463664198.001727"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I find so long as `processContinually` is avoided, the current network tests are pretty reliable, though I agree about moving to the state machine ",
+        "ts": "1463664354.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i think `idleChannel()` doesn't work as expected",
+        "ts": "1463664447.001729"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think to do this properly, the dispatch would have to only write to idleChan if the select would block otherwise",
+        "ts": "1463664483.001730"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(and no timers are running)",
+        "ts": "1463664488.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So `idleChannel`is probably misleading, the promise is if the same thread writes to a pbft channel, then blocks on the `idleChan` you know the pbft thread has finished processing the event you first delivered. It's entirely possible there are other events pending. ",
+        "ts": "1463664695.001732"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the case of the mock network code, because it is the thread which delivers the message to the pbft thread, that when `idleChan` unblocks, that message has been processed. ",
+        "ts": "1463664796.001733"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(so, not a true measure of idleness, but I'm not sure what a clearer name would be, and I also couldn't find a cleaned way to detect the 'message has been processed' state) ",
+        "ts": "1463664883.001734"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no you are not guaranteed that",
+        "ts": "1463664893.001735"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the main routine may as well serve the idlechannel first",
+        "ts": "1463664905.001736"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "select{} order is not priority",
+        "ts": "1463664913.001737"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They're all unbuffered channels",
+        "ts": "1463664918.001738"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you write to one, then read from another, you know that the thread leaves the select in between ",
+        "ts": "1463664946.001739"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(because the write blocks until the select 'chooses it') ",
+        "ts": "1463665010.001740"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1463665010.001741"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh!",
+        "ts": "1463665016.001742"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1463665022.001743"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now i understand",
+        "ts": "1463665028.001744"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": ":simple_smile: ",
+        "ts": "1463665058.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bah, this coupling between batch and pbft core makes testing tricky",
+        "ts": "1463665149.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ideally i should mock the pbft core",
+        "ts": "1463665159.001747"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wow you made the custodian very verbose",
+        "ts": "1463665832.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "was there a bug in there?",
+        "ts": "1463665839.001749"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There was ",
+        "ts": "1463666030.001750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The verbosity was more for my understanding, we could probably back it down ",
+        "ts": "1463666072.001751"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And calling it a bug may be disingenuous, but the behavior was not what the other side seemed to be expecting ",
+        "ts": "1463666104.001752"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1463666179.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The custodian removed things as their timers expired, then the other side expected them to be there on `Restart` and they were not there, so, modified the custodian to re-register on expiration until manually removed ",
+        "ts": "1463666182.001754"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1463666196.001755"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we should change the docs and name",
+        "ts": "1463666219.001756"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to reflect either way",
+        "ts": "1463666225.001757"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Really, that custodian thread needs to go away too, I think there can be races ",
+        "ts": "1463666243.001758"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes it needs to",
+        "ts": "1463666251.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I thought I updated the docs, sorry if I missed some ",
+        "ts": "1463666261.001760"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if all is an assembly of state machines, it will be much better",
+        "ts": "1463666264.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and timeouts should be handled by the state machine engine",
+        "ts": "1463666282.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly ",
+        "ts": "1463666324.001763"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmmm",
+        "ts": "1463667398.001764"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think there is some bug with the complainer re-adding requests into custody",
+        "ts": "1463667427.001765"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i didn't think the custodian should keep requests around",
+        "ts": "1463667553.001766"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do you prefer this behavior?",
+        "ts": "1463667575.001767"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think you've traded one bug for another",
+        "ts": "1463667664.001768"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now there is a race condition where briefly the custodian claims that a request is not under custody, but then is again in custody",
+        "ts": "1463667901.001769"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which can race with another thread removing the request",
+        "ts": "1463667997.001770"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i need to revert that",
+        "ts": "1463668010.001771"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but for that i need to understand what bug you addressed with that",
+        "ts": "1463668024.001772"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, I was considering, that yes, the request probably needs to be added while the lock is retained",
+        "ts": "1463668724.001773"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, the problem is, that the callback from the custodian sends a view change, but does nothing to retain the request which expired",
+        "ts": "1463668826.001774"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could revert to the old behavior, but, then `Complain` would actually need to store the complaint that fired, and process it after the view change",
+        "ts": "1463668866.001775"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, maybe to be more clear:\n\nvp1 takes req1 into custody\nreq1 custody timer expires, is removed from custodian and calls `Complain`\nvp1 gets complaint, initiates a view change\nvp1 is new primary, goes to process everything in its complaint store, which is now empty\nreq1 no longer has any references",
+        "ts": "1463668954.001776"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But yes, I agree, there is a race, the `Register` needs to take place with the mutex held to avoid a race, though I think as a real world race, this one is extremely unlikely.  It's extremely likely that that thread will have woken up by the time a view change is completely processed and a new view is accepted",
+        "ts": "1463669092.001777"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, complaints are not retained, that is on purpose",
+        "ts": "1463669102.001778"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the original custody holder can resubmit them on view change",
+        "ts": "1463669122.001779"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the custodian keeps custody requests until they are successful",
+        "ts": "1463669152.001780"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it doesn't keep complaints",
+        "ts": "1463669158.001781"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I see, hmmm, maybe the re-register should go away then, I see that it's being done in `custodyTimeout`",
+        "ts": "1463669279.001782"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm trying to remember if there were any other fixes that went into `custodian.go` or not",
+        "ts": "1463669347.001783"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wait, how does the notifyRoutine get called again?",
+        "ts": "1463669360.001784"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```if !obj.canceled {\n\t\texpired = &amp;CustodyPair{obj.id, obj.data}\n\t} else {\n\t\tc.resetTimer()\n\t}\n```",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1463669386.000000"
+        },
+        "ts": "1463669375.001786"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "woops",
+        "ts": "1463669378.001787"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`notifyRoutine` is called from a go routine from `resetTimer`",
+        "ts": "1463669460.001790"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463669565.001791"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then notifyRoutine will have to call resetTimer again",
+        "ts": "1463669577.001792"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not only if the request wasn't cancelled",
+        "ts": "1463669598.001793"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, vice versa",
+        "ts": "1463669609.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not only if the request was cancelled",
+        "ts": "1463669614.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there's a bug there",
+        "ts": "1463669642.001796"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That should probably be converted back to a for loop",
+        "ts": "1463669669.001797"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "```\n        for {\n                select {\n                case &lt;-c.timer.C:\n                        break\n                case &lt;-c.stopCh:\n                        c.stopCh = nil\n                        return\n                }\n                c.lock.Lock()\n                var expired []CustodyPair\n                for _, obj := range c.seq {\n                        if obj.deadline.After(time.Now()) {\n                                break\n                        }\n                        if !obj.canceled {\n                                expired = append(expired, CustodyPair{obj.id, obj.data})\n                        }\n                        delete(c.requests, obj.id)\n                        c.seq = c.seq[1:]\n                }\n                c.resetTimer()\n                c.lock.Unlock()\n\n                for _, data := range expired {\n                        c.notifyCb(data.ID, data.Data)\n                }\n        }\n```\n\nThat is what the original implementation looked like",
+        "ts": "1463669766.001798"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1463669952.001799"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it might be worth reverting the changes to the `notifyRoutine` and the tests which rely on the re-register behavior",
+        "ts": "1463670016.001800"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah, scrum",
+        "ts": "1463670048.001801"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The original implementation looks correct to me now,",
+        "ts": "1463670071.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": ":smile:",
+        "ts": "1463670071.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":smile:",
+        "ts": "1463670102.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I'm putting together a patch to restore the bulk of your original custodian stuff, it breaks the BatchCustody test, will track it down though",
+        "ts": "1463671698.001805"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, so i think this is what's going on, and why my changeset 'fixed' it.  The problem is that whenever the length of `expired` is more than 1, then we get back to back complaint callbacks, which basically triggers back to back view change messages, and calling `Restart` does nothing to prevent this, because the `expired` slice is already built.",
+        "ts": "1463672299.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, along with the bugs that my changes introduced, it only ever processes one expired at a time, spawning a new go routine to handle the next, which seems to give the rest of the code time to call `Restart` and get things cleaned up.",
+        "ts": "1463672351.001807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And I guess what I was trying to do, with the go routine that doesn't loop, is to stop more callbacks until someone called into `Register` again,  (of course, I introduced later introduced a race by calling back into `Register` from the `notifyRoutine`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1463672820.000000"
+        },
+        "ts": "1463672806.001808"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Any thoughts on how to handle this? Also, custody expirations only broadcast a complaint, it seems like it should also register the complaint with itself, so that it can contribute a view change message, is there a reason why it does not?",
+        "ts": "1463673854.001810"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aaaah",
+        "ts": "1463675398.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, all good points",
+        "ts": "1463675429.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: I'm also confused as to where the 'resubmitting requests' you referred to exists.  I did modify the `Restart` routine to return both the requests in custody as well as the complaints, so that the new primary would process the outstanding complaints it knew about.  But, I don't see anywhere that the backup resubmits its requests on view change.",
+        "ts": "1463675433.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `outstandingReqs` in PBFT needed to be zero-ed out on view change, because it is looking for exact batch messages, and really only gets populated on the primary",
+        "ts": "1463675467.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so many bugs in so little code",
+        "ts": "1463675472.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1463675473.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So it doesn't solve the back to back view change things, but I'm thinking these two changes are correct:\n\n1.  When a backup complains, it should register the complaint with itself, so that when it expires, it sends a view change\n2.  When the backup calls `Restart`, it should loop through all the requests in its custody, and for those which it hasn't complained about (because the new primary should already have that complaint) it should resubmit those to the primary.",
+        "ts": "1463675770.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As to fixing the back to back view change problems, what would you think of adding some additional metadata to the request, basically, what view it was taken into custody\/complaint.  On `Restart`, you could supply the view that things are restarting in.  And, then through the callback, you could filter out expirations which are not for your current view. Thoughts <@U0XR6J961>?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1463676018.000000"
+        },
+        "ts": "1463676010.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1463676082.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll think about it some more",
+        "ts": "1463676090.001821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this sounds pretty complicated",
+        "ts": "1463676096.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, I'll head back off into state transfer land then, let me know if you want to talk more about it",
+        "ts": "1463676223.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1463676307.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "thanks",
+        "ts": "1463676308.001825"
+    }
+]

@@ -1,0 +1,367 @@
+[
+    {
+        "user": "U2PUXAJKY",
+        "text": "<@U2PUXAJKY|reachk.raj> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476631555.002939"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Just want to clear up my understanding of chaincode. If I\u2019m running Docker (in my case Docker In Docker on Kubernetes\u2026) and I want to register a chaincode to run on it, I need to `go build` that chaincode on the same architecture that the Docker image will be running, which I\u2019m assuming is linux-amd64. Will I be able to cross compile from an OS X machine using `GOOS` and `GOARCH` and then register that chaincode? Seems you have to run the built chaincode to do the actual registration, so I\u2019d still need a linux box or vm to register?",
+        "ts": "1476632473.002940"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I realise this isn\u2019t a problem if I\u2019m using vagrant :slightly_smiling_face:",
+        "ts": "1476632511.002941"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BGFAHC7> the peer will do the `go build` and package for docker. Everthing else you say above would appear the follow from that",
+        "ts": "1476632760.002942"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`\u2014peer-chaincodedev` is the only mode wher  the user would have to do `go build` of the chaincode",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1476632926.000000"
+        },
+        "ts": "1476632806.002943"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "With all the SDK work, the ground might shift but the above is w.r.t to current release",
+        "ts": "1476632888.002945"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0ULK2JPP> Thanks for the reply :slightly_smiling_face: Still a bit confused though.. Say I\u2019ve got 5 peers running using PBFT on kubernetes, each in a linux based docker image. I have docker in docker running on that same kubernetes rig. I have some local chaincode on my OS X box and a `peer` built locally. How do I get that source code to run on the docker in docker container? Do I have to transfer the source code to one of the remote peers? Sorry, just a bit confused by the docs:\n<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/#running-the-chaincode>",
+        "ts": "1476633218.002947"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no worries! I understand its not as clear as it could\/should be\u2026 let me look up the link to get the context first",
+        "ts": "1476633296.002948"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right . if you check `--peer-chaincodedev` is used in all the examples there",
+        "ts": "1476633365.002949"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that\u2019s the dev mode where the  responsible for building and starting the chaincode",
+        "ts": "1476633407.002950"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "when that flag is not used, the deploy transaction would be used by the peer to build and constructe chaincode docker image and run it in a docker container. And as any normal transaction process, the deploy transaction is distributed from the peer to which it was sent to to all others in the chain who will do the the identical processing",
+        "ts": "1476633593.002952"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as an example,  you should see no mention of `\u2014peer-chaincodedev` in this <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup>",
+        "ts": "1476633650.002953"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "So my local OSX peer must be running and have awareness of at least one peer node in the remote kubernetes rig? What\u2019s the actual sequence of commands to get my local chaincode running locally, and then deployed to all other peers? Feels like that bit is missing from the page you linked.",
+        "ts": "1476633798.002954"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right. let me take chaincode stored remotely as a simpler starting point (the problem is with the \u201clocal\u201d chaincode on filesystem which we can take as next step)",
+        "ts": "1476633928.002955"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you use `CORE_PEER_ADDRESS=myknownpeer:7051 peer chaincode deploy -p <https:\/\/github.com\/me\/mychaincode>`",
+        "ts": "1476633987.002956"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you point myknowpeer to code on a remote github which it pulls on the fly and builds",
+        "ts": "1476634017.002957"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and that transaction is sent to all peers",
+        "ts": "1476634032.002958"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ahh, remote github links for code deployment to docker. I think my brain had skipped that part...",
+        "ts": "1476634046.002959"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not at all",
+        "ts": "1476634052.002960"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you are absolultely on the  right track..bear with me for a bit",
+        "ts": "1476634070.002961"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I introduced the <https:\/\/github> just to clear the way",
+        "ts": "1476634084.002962"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the problem is if its on your \u201clocal\u201d system (as opposed to remote github for CORE_PEER_ADDRESSed peer to pull the chaincode from)",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1476637692.000000"
+        },
+        "ts": "1476634114.002963"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then the obvious approach is to treat your local box as a a \u201cnon-validating peer\u201d (which will go away - at least as of now - in v1.0) and use it just to construct the transaction with the chaincode to be distributed to the actual \u201cvalidating\u201d peers",
+        "ts": "1476634218.002964"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Or",
+        "ts": "1476634228.002965"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you could package that common code into each of the peer\u2019s filesystem and use the \u201cdeploy\u201d to access it directly on the filesystem (as opposed to pulling it from <https:\/\/github.com>) and then proceed to   package for docker as usual",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Build software better, together",
+                "title_link": "https:\/\/github.com",
+                "text": "GitHub is where people build software. More than 15 million people use GitHub to discover, fork, and contribute to over 38 million projects.",
+                "fallback": "GitHub: Build software better, together",
+                "image_width": 1200,
+                "image_height": 1200,
+                "from_url": "https:\/\/github.com",
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1476634332.002966"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ok, thank you very much! That clears up my understanding a lot! I prefer the first of the two options for now.",
+        "ts": "1476634398.002968"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "btw the last is precisely what happens with all the canned examples shipped with the fabric",
+        "ts": "1476634398.002969"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure thing. thanks for hanging in there :slightly_smiling_face:",
+        "ts": "1476634415.002970"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the <https:\/\/github.com> has to be public (no creds) for now",
+        "ts": "1476634436.002971"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but much of this would be streamlined by SDK in the 1.0 work",
+        "ts": "1476634460.002972"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Will there be a Go SDK as well, or is a node.js install going to be mandatory?",
+        "ts": "1476634492.002973"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there was talk of that \u2026 let me refer you to <@U0PB67X4K> <@U0KPFAZNF> <@U0KM61BCP> <@U13TWBRBL>",
+        "ts": "1476634521.002974"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ok, many thanks for the answers :slightly_smiling_face: Much appreciated!",
+        "ts": "1476634540.002975"
+    },
+    {
+        "type": "message",
+        "user": "U0MRY2LKY",
+        "text": "+1 on Go SDK ",
+        "edited": {
+            "user": "U0MRY2LKY",
+            "ts": "1476634560.000000"
+        },
+        "ts": "1476634547.002976",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and if you like that\u2019s a great area for contribution too",
+        "ts": "1476634549.002977"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Will have a look at the node.js code and see if it is a big job :slightly_smiling_face:",
+        "ts": "1476634588.002979"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "understand :slightly_smiling_face:",
+        "ts": "1476634614.002980"
+    },
+    {
+        "type": "message",
+        "user": "U0MRY2LKY",
+        "text": ":)",
+        "ts": "1476634627.002981"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Yeah, I have a go sdk in the works",
+        "ts": "1476634826.002983",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U2BGFAHC7",
+                    "U2C55KE65"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "too many other things atm",
+        "ts": "1476634847.002984"
+    },
+    {
+        "user": "U2Q0HP4HY",
+        "text": "<@U2Q0HP4HY|rickr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476640227.002986"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well given that we are supposed to be writing comprehensive Go tests for all components we should be able to actually end with most of the functions required for Go SDK for v1",
+        "ts": "1476642258.002987"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2BGFAHC7> <@U0MRY2LKY> head over to the channel <#C25AQBS4B|fabric-sdk-dev>, a number of contributors are collaborating on java sdk and a python sdk. GO has been brought up but so far no code has been written. <@U0KM61BCP> I didn\u2019t know you were looking, has this (GO SDK) been brought up to TSC yet?",
+        "ts": "1476645195.002988"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Not yet... have code separated but still working through some initial testing",
+        "ts": "1476655516.002990"
+    },
+    {
+        "type": "message",
+        "user": "U11RW82PM",
+        "text": "Hey Gang.. In the membersrvc.yaml file, how are the Certs for *server.tls.cert.file* and *server.tls.key.file* generated.  I\u2019m new to this crypto stuff.",
+        "ts": "1476658718.002992"
+    },
+    {
+        "user": "U2NNLN56V",
+        "text": "<@U2NNLN56V|conghonglei> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476667055.002994"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U11RW82PM> I'm not sure if there are any special considerations for Fabric, but I suspect you want to create a self-signed TLS certificate.  You can Google on how to do this.  Here is an article explaining the process that was near the top of my search results:",
+        "ts": "1476681619.002997"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<https:\/\/msol.io\/blog\/tech\/create-a-self-signed-ssl-certificate-with-openssl\/>",
+        "ts": "1476681621.002998"
+    },
+    {
+        "user": "U2Q3HUR1Q",
+        "text": "<@U2Q3HUR1Q|kite> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476682458.002999"
+    },
+    {
+        "type": "message",
+        "user": "U2Q3HUR1Q",
+        "text": "How to link peer service and member service? (Peer service deploy on machine 1, member service deploy on machine 2).",
+        "ts": "1476682710.003000"
+    },
+    {
+        "type": "message",
+        "user": "U2Q3HUR1Q",
+        "text": "Peer service and member service are start up by pull image.",
+        "ts": "1476682864.003001"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I am currently trying to document crypto mechanisms involved in Fabric in different areas and processes of the ledger activity. I was sweeping through the source code in \/master\/core\/crypto and I found references to : (1) client_confidentiality.go (2) node_tca.go (3) hash.go (4) ecdsa.go (5) x509.go. There's more references to cryptographic mechanisms in \/fabric\/core\/crypto. Unfortunately, none of these pieces of code are documented or commented and therefore, I do not know what they serve for and in what order should I analyze them. Can anyone help me understanding what is used and when?",
+        "edited": {
+            "user": "U1P1ZV6RF",
+            "ts": "1476687491.000000"
+        },
+        "ts": "1476687433.003002"
+    }
+]

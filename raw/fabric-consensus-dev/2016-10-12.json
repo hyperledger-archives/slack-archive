@@ -1,0 +1,555 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XQ35CDD> as discussed a few times before this solution to reconfiguring consenters needs to clearly spell out that assumptions on the trust\/availability of an old configuration need to be maintained until the last peer transitions to the next configuration",
+        "ts": "1476258919.001930"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0Y14MWA2> Yes. (And IIRC, last time we discussed this, we also talked about a possible transition period that would allow us to move to a new view with a clean slate - i.e. no transactions from the old regime and the new regime.) How do you deal with the case that Yacov points out when a peer is slow on purpose and takes forever to transition on purpose?",
+        "ts": "1476274558.001931"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "We may not have guarantees for very slow peers",
+        "ts": "1476274619.001932"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So it is not \"all\" peers then, right?",
+        "ts": "1476274665.001933"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "In that case my wording above needs to be modified to hold for any correct and \"reasonably fast\" peer for some conservative def of reasonably fast",
+        "ts": "1476274680.001934"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "It is never all peers",
+        "ts": "1476274689.001935"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Just all correct peers :slightly_smiling_face: ",
+        "ts": "1476274721.001936"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Wonderful, that's what I have in mind as well. As an ordering service you give a sufficient warning for all \"reasonably fast\" peers to catch up.",
+        "ts": "1476274766.001937"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1B5DPRLG> What is your checkpoint period `K` set to in this scenario?",
+        "ts": "1476274771.001938"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Even without that knowledge, I'd note that the scenario seems asymmetric, i.e. for an earlier identical case you expect `vp1` @ transaction 40+10 to have the same value as the rest of the network @ transaction 40, but for `vp2` you expect it to have the same value @ transaction 60+10, as the rest of the network @ transaction 50 (not 60). So if it were symmetric, you should be looking for a response of `200` on value `a`. ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1476276612.000000"
+        },
+        "ts": "1476274974.001939"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But let's start with the checkpoint period value. Then we can use the algorithm to figure out exactly what the expected value should be.",
+        "ts": "1476275033.001940"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "K=2 in this scenario. I expected that vp1 would catch up to vp0 and vp3 when vp2 was stopped. Instead I receive `200` from vp0 and vp3 and `210` from vp1 on line 71 of executing this scenario.",
+        "ts": "1476282648.001944"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm working on this with <@U1B5DPRLG>. With these parameters, the expectations from the BDD test need to be adjusted, we'll post an update.",
+        "ts": "1476293385.001945",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1B5DPRLG"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I must say, that BDD test is one convoluted way to show that someday  \/ some way peers will catch up  :wink:",
+        "ts": "1476293826.001946"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct, the test may well end at line 59 (with a different expectation) to show that. I trust that the team has its reasons for doing a second pass during lines 60-90.",
+        "ts": "1476294174.001947"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I have been working with <@U1AU8DRQR> on debugging some sbft problems.  The root cause of one is an interesting one that perhaps we can get broader comments on.  The bug is arising in a test where the primary crashes and restarts before it has received a checkpoint certificate for seqNo=3.  When it restarts, the network connections establish, and the backup replicas report that their last checkpoint cert was seqNo=2 (which is correct at the time), however, in flight on the wire are checkpoint messages for seqNo=3, which the backups then receive, and complete their execution for seqNo=3.  Now the network is in a state where the primary has only executed to 2, and the backups have all executed to 3, and despite the Hello, the primary does not know it is behind.",
+        "ts": "1476296197.001948"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XPR4NP4> getting the following error from the SOLO orderer after sending a broadcast: Error: {\"created\":\"@1476296174.715561000\",\"description\":\"EOF\",\"file\":\"..\/src\/core\/lib\/iomgr\/tcp_posix.c\",\"file_line\":235,\"grpc_status\":14}",
+        "ts": "1476296253.001949"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "any idea what might be causing it?",
+        "ts": "1476296257.001950"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I've spoken with <@U0Z81GL6S> about this",
+        "ts": "1476296313.001951"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is happening when the sdk is hanging up on the gRPC connection, but the orderer is trying to read a new message from that client stream",
+        "ts": "1476296337.001952"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To clarify, is this error making it back to the client, or is it simply being emitted in the orderer log?",
+        "ts": "1476296420.001953"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "the client is being notified via the \u201cerror\u201d event",
+        "ts": "1476296443.001954"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So an error of \"EOF\" just means there was a connection hangup, is this a problem?",
+        "ts": "1476296600.001955"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(A hangup in response to the hangup sent to the orderer)",
+        "ts": "1476296613.001956"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok, i see. likely not a problem.",
+        "ts": "1476296668.001957"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> what's a higher level problem here",
+        "ts": "1476296675.001958"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "primary should be changed in the worst case",
+        "ts": "1476296692.001959"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[And, as a side note, if you are running solo, I'd recommend pulling from <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1479\/> as it has a bug fix in it around empty transactions (also thanks to <@U0Z81GL6S> for pointing it out to me)]",
+        "ts": "1476296694.001960"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> The thing that made us turn to look at this, was that a test was failing non-deterministically.  This occurred because sometimes the in flight messages were delivered before the hello (passes) and sometimes after (fails).  If we are designing a Hello mechanism in order to allow a node rejoining the network to properly catch up, if it fails whenever there is traffic on the network (ie, almost always) then this seems like a problem.",
+        "ts": "1476296781.001961"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so can you shed some light on \"hello\" mechanism?",
+        "ts": "1476296832.001962"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This was <@U0XR6J961>'s invention, but essentially, whenever a new connection is made between two replicas, they exchange the last (weak? strong? I need to check) checkpoint they have.  In this way, the joining replica can immediately know if it needs to state transfer, or if it can execute from where it is currently at.",
+        "ts": "1476296932.001963"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(BTW I consider what you outlined so far - as nothing to be fixed :slightly_smiling_face: )",
+        "ts": "1476296935.001964"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Yes, I realize, having f failed nodes is not against protocol)",
+        "ts": "1476296952.001965"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I told simon this is only optimistic",
+        "ts": "1476296956.001966"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and suggested a different way of catching up",
+        "ts": "1476296967.001967"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which is, in fact, rather straightforward",
+        "ts": "1476296976.001968"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "a replica could do that hello on restart - but this is only optimistic",
+        "ts": "1476296991.001969"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "to try to catch up without incurring much traffic it should simply adopt the sequence number and the view number when it gets a weak checkpoint cert that is ahead of its own time",
+        "ts": "1476297036.001970"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is no state transfer here",
+        "ts": "1476297053.001971"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as there is no state to transfer",
+        "ts": "1476297060.001972"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and the log replication (to serve the clients) can be done lazily",
+        "ts": "1476297075.001973"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "now",
+        "ts": "1476297077.001974"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is when we do not have consenter reconfig - with consenter reconfig things do get more involved",
+        "ts": "1476297096.001975"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so example",
+        "ts": "1476297132.001976"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am in view number 5, seqno 9",
+        "ts": "1476297140.001977"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I hear about veak checkpoint cert for view number 7 seqno =11",
+        "ts": "1476297156.001978"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I immediatelly go there",
+        "ts": "1476297160.001979"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you may ask the question how bug us the buffer for future checkpoint msgs",
+        "ts": "1476297239.001980"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "FYI, I do think we're going to need 'consenter reconfig' to a limited extent out of the box.  But it is the easy sort of reconfig, namely changing the membership of what certs are allowed to inject traffic (ie, peer CA membership) .  I don't think this should happen often, and I think we can include a \"the config changed last at seqNo=X\" in the hello so that the replica knows whether it actually does need to state transfer before resuming, or if it can be lazy as you indicated.",
+        "ts": "1476297267.001981"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and this is where we can have some sort of watermark but we can discuss this later on",
+        "ts": "1476297280.001982"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so you see - this reconfig info is the only state of our service except view number seqno and prevhash",
+        "ts": "1476297327.001983"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, in order to support unordered-ness across streams, we will still need some limited watermarking, but not as sophisticated as true pbft.",
+        "ts": "1476297330.001984"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "exactly",
+        "ts": "1476297337.001985"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so what I strongly argue for",
+        "ts": "1476297357.001986"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in order for simple bft to be really simple",
+        "ts": "1476297365.001987"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it should leverage the fact that the state is lightweight",
+        "ts": "1476297381.001988"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so once we hear (by eavesdropping) that a checkpoint weak cert says: this is the state (prevhash, seqno, viewno)",
+        "ts": "1476297417.001989"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we just adopt it",
+        "ts": "1476297420.001990"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "modulo reconfig - you can start processing the very next preprepare",
+        "ts": "1476297439.001991"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there will be of course some reordering fun here - but the point is it can never be worse then saying stop I am going to transfer the RL before I actually start ordering next requests",
+        "ts": "1476297490.001992"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no need to do that",
+        "ts": "1476297494.001993"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this should be done lazily",
+        "ts": "1476297498.001994"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, exactly, so long as the state is sufficiently light (and changes sufficiently infrequently) it becomes a non-issue in almost all cases",
+        "ts": "1476297547.001995"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this does not mean that you cannot pull here and there this info",
+        "ts": "1476297555.001996"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but doing this too often would just drown the network and in the presence of traffic a replica will just never catch up",
+        "ts": "1476297575.001997"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "with a pull based method",
+        "ts": "1476297581.001998"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1AU8DRQR> ^^^ gabor pls see if this makes sense to you?",
+        "ts": "1476297810.001999"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "now in <https:\/\/jira.hyperledger.org\/browse\/FAB-359>  ... <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476211735001921>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476211735001921",
+                "fallback": "[October 11th, 2016 11:48 AM] jeffgarratt: <@U0KN2SSKE> <@U0S5KF44D> <@U0PB67X4K> <@U0XQ35CDD> <@U0UGH3X7X> <@U0XPR4NP4> <@U1KDAMDJ7> Here is a shot at the feature file for bootstrap",
+                "ts": "1476211735.001921",
+                "author_subname": "jeffgarratt",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U0KN2SSKE> <@U0S5KF44D> <@U0PB67X4K> <@U0XQ35CDD> <@U0UGH3X7X> <@U0XPR4NP4> <@U1KDAMDJ7> Here is a shot at the feature file for bootstrap",
+                "author_name": "Jeff Garratt",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jeffgarratt",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/9804aef51ff2b9a2166d0383f2cf81ea.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0005-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1476299688.002000"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0Y14MWA2> sorry I am from mobile and not such an expert of the protocol as you. :) so not sure I totally get it. Do you mean using a hello on restart and taking weak checkpoints?",
+        "ts": "1476302125.002002"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok this is a TL;DR",
+        "ts": "1476302188.002003"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "- the hello mechanism is a nice to have (maybe) - but it cannot solve the problem of catching up",
+        "ts": "1476302222.002004"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "- catching up by pull (hello-like) in cases with lot of load will incur traffic and cannot be guaranteed to make the replica catch up",
+        "ts": "1476302263.002005"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "- cacthing up should be done by eavesdropping a weak checkpoint  cert and lazily replicating the raw ledger hole afterwards",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1476302314.000000"
+        },
+        "ts": "1476302280.002006"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "------",
+        "ts": "1476302284.002007"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Now, there is no functionality in sbft for such replication so I will have to implement one, I guess ",
+        "ts": "1476302385.002009"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is another thing who implements it but we are just trying to get to the same page",
+        "ts": "1476302417.002010"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "on implementation pls sync with <@U0XPR4NP4> but let me know what's your decision there as I'd like to be following that more closely",
+        "ts": "1476302468.002011"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Will this eavesdropping thing always work?  Can't there be such a situation where we see no weak certs? Just thinking ",
+        "ts": "1476302608.002012"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you are cut of from the network (partitioned replica) it might temporarily not work",
+        "ts": "1476302636.002013"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but then a replica is rightfully behind",
+        "ts": "1476302644.002014"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I will try to write this eavesdropping more precisely",
+        "ts": "1476302734.002015"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so we are on the same page",
+        "ts": "1476302739.002016"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(pseudocode)",
+        "ts": "1476302748.002017"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I need to look at the code to see how sbft currently increments seqnos",
+        "ts": "1476302797.002018"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "let me try to address that tmw",
+        "ts": "1476302810.002019"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Yes we are :relaxed: btw thanks for the help ",
+        "ts": "1476302982.002020"
+    }
+]

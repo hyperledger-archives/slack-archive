@@ -1,0 +1,237 @@
+[
+    {
+        "type": "message",
+        "user": "U1KFBBWG1",
+        "text": "<https:\/\/hangouts.google.com\/hangouts\/_\/bqyxlr6u25epjpn4iayws5kksue>",
+        "ts": "1484146900.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13TWBRBL> what knob (if any) exists to utilize dev-mode deployments in the new SDK",
+        "ts": "1484149863.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1484149864.000123"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3Q78GVFE\/-.php|Untitled> and commented: Trying to do a devmode deployment like this (sans the chaincode path) but its throwing an error",
+        "file": {
+            "id": "F3Q78GVFE",
+            "created": 1484149890,
+            "timestamp": 1484149890,
+            "name": "-.php",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "php",
+            "pretty_type": "PHP",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 436,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3Q78GVFE\/-.php?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3Q78GVFE\/download\/-.php?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3Q78GVFE\/-.php",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3Q78GVFE-dbc69ad8bb",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3Q78GVFE\/-.php\/edit",
+            "preview": "function deploy() {\r\n    tx_id = utils.buildTransactionID({length:12});\r\n    nonce = utils.getNonce();\r\n\r\n    \/\/ send proposal to endorser\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>function deploy() {<\/pre><\/div>\n<div><pre>    tx_id = utils.buildTransactionID({length:12});<\/pre><\/div>\n<div><pre>    nonce = utils.getNonce();<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>    \/\/ send proposal to endorser<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 18,
+            "lines_more": 13,
+            "preview_is_truncated": false,
+            "channels": [
+                "C29512UHF"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3QR9NYQ7",
+                "created": 1484149890,
+                "timestamp": 1484149890,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Trying to do a devmode deployment like this (sans the chaincode path) but its throwing an error",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1484149891.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i know in the v0.6 SDK I had to set some option at the chain-level",
+        "ts": "1484149923.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is there an equivalent here?",
+        "ts": "1484149930.000126"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U1KFBBWG1>, I found the gulp test file:",
+        "ts": "1484151424.000127"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "$ cat test.js\n'use strict';\n\nvar gulp = require('gulp');\nvar tape = require('gulp-tape');\nvar tapColorize = require('tap-colorize');\nvar istanbul = require('gulp-istanbul');\n\ngulp.task('pre-test', function() {\n        return gulp.src(['hfc\/lib\/**\/*.js','hfc-cop\/lib\/**\/*.js'])\n                .pipe(istanbul())\n                .pipe(istanbul.hookRequire());\n});\n\ngulp.task('test', ['pre-test'], function() {\n        \/\/ use individual tests to control the sequence they get executed\n        \/\/ first run the ca-tests that tests all the member registration and\n        \/\/ enrollment scenarios (good and bad calls). then the rest of the\n        \/\/ tests will re-used the same key value store that has saved the\n        \/\/ user certificates so they can interact with the network\n        return gulp.src([\n                \/\/ 'test\/unit\/ca-tests.js',\n                'test\/unit\/chain-fabriccop-tests.js',\n                'test\/unit\/endorser-tests.js',\n                'test\/unit\/orderer-tests.js',\n                'test\/unit\/orderer-chain-tests.js',\n                'test\/unit\/end-to-end.js',\n                'test\/unit\/headless-tests.js'\n        ])\n        .pipe(tape({\n                reporter: tapColorize()\n        }))\n        .pipe(istanbul.writeReports());\n});",
+        "ts": "1484151426.000128"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "Thanks anyway :slightly_smiling_face:",
+        "ts": "1484151462.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what do devs use for editors and\/or emacs settings on the SDK files",
+        "ts": "1484164452.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my default emacs setup is not happy with the tabbing\/indent that is there, making mods difficult",
+        "ts": "1484164467.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13TWBRBL> ^^^",
+        "ts": "1484164677.000132"
+    },
+    {
+        "type": "message",
+        "user": "U1KFBBWG1",
+        "text": "I use Eclipse",
+        "ts": "1484165382.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1KFBBWG1> do you know if there is an adopted coding standard as far as indent rules, etc?",
+        "ts": "1484168606.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am finding my default emacs setup is very different from the way the checked in code was written, which makes mods difficult",
+        "ts": "1484168631.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1KFBBWG1",
+        "text": "yes, we run the gulp to check",
+        "ts": "1484168638.000136"
+    },
+    {
+        "type": "message",
+        "user": "U1KFBBWG1",
+        "text": "which uses eslint",
+        "ts": "1484168747.000137"
+    },
+    {
+        "type": "message",
+        "user": "U1KFBBWG1",
+        "text": "see build\/tasks\/eslint.js",
+        "ts": "1484168811.000138"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF> sorry for the late response (traveling in Tokyo this week), for your question above on devmode, we have a story to add support for that (so it\u2019s not supported yet)",
+        "ts": "1484174049.000139"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i personally use Sublime. the eslint.js file has the coding style checking rules",
+        "ts": "1484174157.000140"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "run `gulp` in the project root folder to check coding rules compliance",
+        "ts": "1484174186.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13TWBRBL> no problem, is there a JIRA?",
+        "ts": "1484174233.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just wrote support for devmode here locally :wink:",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1484174320.000000"
+        },
+        "ts": "1484174236.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "would be happy to submit the CR against the JIRA for your review",
+        "ts": "1484174251.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i need to sort out the tabbing discrepancy first",
+        "ts": "1484174269.000145"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF> <https:\/\/jira.hyperledger.org\/browse\/FAB-929>, thanks for making the contribution",
+        "ts": "1484174497.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, you havent seen the code yet",
+        "ts": "1484174515.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe it sucks :wink:",
+        "ts": "1484174520.000149"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": ":wink: I\u2019m sure it\u2019s good",
+        "ts": "1484174554.000150"
+    },
+    {
+        "user": "U38DC9CCF",
+        "text": "<@U38DC9CCF|yedendra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484189797.000151"
+    }
+]

@@ -1,0 +1,76 @@
+[
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "Another issue of the above stress test is, after I setup 4 peer nodes and use jmeter to send requests to a peer,  there are two nodes whose logs would increase continuously without stopping, even if the stress test only last for a few seconds: peer0,peer1,peer2,peer3,   the logs of peer0 and peer2 keep increasing for hours, and have reaches to tens of gigabytes.  Peer2 is the node accepting jmeter requests.   \n\n\nHere are some log snippets of peer0 and peer2:\n\n```\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53762 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4184 to 4184, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53763 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4183 to 4183, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53764 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4182 to 4182, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53765 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4181 to 4181, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53766 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4180 to 4180, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53767 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4179 to 4179, as current correlationId = 4982702\n07:41:42.648 [peer] beforeSyncBlocks -&gt; WARN 1d53768 Ignoring SyncBlocks message with correlationId = 4982701, blocks 4178 to 4178, as current correlationId = 4982702\n07:41:42.649 [consensus\/statetransfer] tryOverPeers -&gt; WARN 1d53769 name:\"vp1\"  in tryOverPeers loop trying name:\"vp0\"  : name:\"vp1\"  got block 4188 from name:\"vp0\"  with hash 1458528567ed10981616468b50bc1754416e4388a871a848431b5e4bcf7e0470a5aaee4c978fc57d59db3c3e5adf8a407444f3210f0f304740ea2984ebcdf3f9, was expecting hash ffc3496f8d3cec47fa664a848dff85a4b05f0de8d2dd76594d920680a831faa45af0d955ca2892462623d78883fcbfca05346add57a7cff84f7492238f5d705d\n07:41:42.650 [consensus\/statetransfer] tryOverPeers -&gt; WARN 1d5376a name:\"vp1\"  in tryOverPeers loop trying name:\"vp2\"  : name:\"vp1\"  got block 4188 from name:\"vp2\"  with hash 1458528567ed10981616468b50bc1754416e4388a871a848431b5e4bcf7e0470a5aaee4c978fc57d59db3c3e5adf8a407444f3210f0f304740ea2984ebcdf3f9, was expecting hash ffc3496f8d3cec47fa664a848dff85a4b05f0de8d2dd76594d920680a831faa45af0d955ca2892462623d78883fcbfca05346add57a7cff84f7492238f5d705d\n07:41:42.651 [consensus\/statetransfer] tryOverPeers -&gt; WARN 1d5376b name:\"vp1\"  in tryOverPeers loop trying name:\"vp3\"  : name:\"vp1\"  got block 4188 from name:\"vp3\"  with hash 1458528567ed10981616468b50bc1754416e4388a871a848431b5e4bcf7e0470a5aaee4c978fc57d59db3c3e5adf8a407444f3210f0f304740ea2984ebcdf3f9, was expecting hash ffc3496f8d3cec47fa664a848dff85a4b05f0de8d2dd76594d920680a831faa45af0d955ca2892462623d78883fcbfca05346add57a7cff84f7492238f5d705d\n```",
+        "ts": "1465717525.000003"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U142E5N0P> Is this pbft batch? What these messages indicate, is that vps0,2,3 all agree on the hash `1458528567ed10981616468b50bc1754416e4388a871a848431b5e4bcf7e0470a5aaee4c978fc57d59db3c3e5adf8a407444f3210f0f304740ea2984ebcdf3f9` for block 4188, but for some reason, vp1 believes the hash to be `ffc3496f8d3cec47fa664a848dff85a4b05f0de8d2dd76594d920680a831faa45af0d955ca2892462623d78883fcbfca05346add57a7cff84f7492238f5d705d`, this is causing the peer to try and retry and retry and so forth to retrieve that block, and constantly fail, which is causing the error flood you see in the logs\n\nIn order to figure out why vp1 believe in the wrong hash, I would need to see logs from earlier on",
+        "ts": "1465751659.000004"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Also, for stress testing of pbft batch, I highly suggest you include PR 1798, as this fixes some known bugs which are related to stress.",
+        "ts": "1465751766.000005"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XPR4NP4>:  it's pbft classic",
+        "ts": "1465778539.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U142E5N0P>: could you give us debug logs ? Or show us how we can set up a client to reproduce the test you ran? And can you create an issue for this?",
+        "ts": "1465780053.000007"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0UGH3X7X>: the logs are discarded since the disk was full..   I will create an issue and attach the jmeter file",
+        "ts": "1465780218.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U142E5N0P>: pbft classic is pending deprecation, please use batch with a batch size of 1 to emulate classic",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1465781134.000000"
+        },
+        "ts": "1465781118.000009"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XPR4NP4>:  got it, thanks~",
+        "ts": "1465781153.000011"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XPR4NP4>: I applied PR 1798, and set config to `pbft batch` with batch size of `2`, and reproceed the stress testing,  the above issue does not appear any more. \n\nI just use jmeter to send around 290K invoke requests to chaincode through REST api in around 30 seconds, here's the output of jmeter:\n\n```\nroot@75df16cca62c:\/# jmeter -n -t fabric.jmx\nCreating summariser &lt;summary&gt;\nCreated the tree successfully using fabric.jmx\nStarting the test @ Mon Jun 13 03:49:54 UTC 2016 (1465789794744)\nWaiting for possible shutdown message on port 4445\nsummary +  37166 in     5s = 7869.2\/s Avg:   107 Min:     0 Max:   320 Err:     0 (0.00%) Active: 2000 Started: 2000 Finished: 0\nsummary + 260766 in  30.2s = 8633.8\/s Avg:   230 Min:   179 Max:   443 Err:     0 (0.00%) Active: 2000 Started: 2000 Finished: 0\nsummary = 297932 in    35s = 8580.2\/s Avg:   214 Min:     0 Max:   443 Err:     0 (0.00%)\n```\nAround 8000 TPS.  However, these requests had been accumulated for half an hour to be processed.  Peer0-3, Peer0 is the `CORE_PEER_DISCOVERY_ROOTNODE`, while Peer3 is the node accepting jmeter requests.   Logs from both these two nodes have reached up to 3GB and the log level is set to INFO, logs for the other two nodes are only around 40M",
+        "edited": {
+            "user": "U142E5N0P",
+            "ts": "1465792411.000000"
+        },
+        "ts": "1465792010.000012"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "The average TPS is around 30 per node, because although 290K requests were sent to a single node, only 22K requests had been successfully processed, others are discarded due to buffer's full,  and it took 10min for those 22k requests to be processed.",
+        "ts": "1465793316.000015"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "When I adjust the batch size of pbft from 2 to 1000, the above performance metric does not change a lot.",
+        "ts": "1465794187.000016"
+    }
+]

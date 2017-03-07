@@ -1,0 +1,155 @@
+[
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "2nd time it went fine: ok  \t<http:\/\/github.com\/hyperledger\/fabric\/tools\/dbutility|github.com\/hyperledger\/fabric\/tools\/dbutility>\t0.651s\tcoverage: 31.9% of statements\nStopping peer..",
+        "ts": "1472367692.000589"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "weird, got another error, even after reloading vagrant vm: FAIL\t<http:\/\/github.com\/hyperledger\/fabric\/consensus\/pbft|github.com\/hyperledger\/fabric\/consensus\/pbft>\t63.609s\nerror: exit status 1\npanic: EOF\n\ngoroutine 1 [running]:\npanic(0x544960, 0xc82000a170)\n\t\/opt\/go\/src\/runtime\/panic.go:464 +0x3e6\nmain.main()\n\t\/opt\/gopath\/src\/github.com\/AlekSi\/gocov-xml\/gocov-xml.go:60 +0x177\nStopping peer..\nmake: *** [unit-test] Error 2\nvagrant@hyperledger-devenv:v0.0.11-a087441:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$",
+        "ts": "1472370822.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you post the whole thing? the entire tests output <@U1P1ZV6RF>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472372367.000000"
+        },
+        "ts": "1472372355.000591"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I ran \"make behave\" tests with following results - anything I should be worried about before going further with a deployment of development environment: Failing scenarios:\n  peer_basic.feature:582  chaincode example02 with 4 peers and 1 membersrvc, issue #680 (State transfer) -- @1.1 Consensus Options\n  peer_basic.feature:1081  chaincode example02 with 4 peers, stop and start alternates, reverse\n  peer_basic.feature:1380  chaincode authorizable_counter with 4 peers, two stopped, bring back both -- @1.1 Consensus Options\n  peer_basic.feature:1381  chaincode authorizable_counter with 4 peers, two stopped, bring back both -- @1.2 Consensus Options\n  peer_logging.feature:12  Invoke is attempted after deploy in Dev Mode\n  peer_logging.feature:22  Query is attempted after deploy in Dev Mode\n  peer_logging.feature:32  Invoke is attempted before deploy in Dev Mode\n  peer_logging.feature:40  Query is attempted before deploy in Dev Mode\n\n3 features passed, 2 failed, 3 skipped\n30 scenarios passed, 8 failed, 8 skipped\n451 steps passed, 8 failed, 292 skipped, 0 undefined\nTook 36m24.137s\nmake: *** [behave] Error 1",
+        "ts": "1472396352.000593"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "out of curiosity (and really because I am kinda lazy) - what is the Docker version being used inside of the Vagrant environment?   1.11.x?   (I am lazy in that I don't actually run Vagrant)",
+        "ts": "1472408104.000594"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "also, is there a reason we don't delete the *.pb.go when doing `make clean`  ?",
+        "ts": "1472409031.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "no we should now",
+        "ts": "1472411262.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "probably need a target proto-clean",
+        "ts": "1472411281.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0PB67X4K>  I think a specific version isn't enforced",
+        "ts": "1472411926.000598"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "okay.  I was building on OSX (with the the Docker 1.12 version for OSX) and I get an odd error when building images with bzip2 files.   Was wondering if it is a 1.12 error or just an OSX error.",
+        "ts": "1472412008.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what error?",
+        "ts": "1472412054.000600"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "let me run it again -",
+        "ts": "1472412104.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "```\nBuilding docker src-image\ndocker build -t hyperledger\/fabric-src build\/image\/src\nSending build context to Docker daemon 12.15 MB\nStep 1 : FROM hyperledger\/fabric-baseimage:latest\n ---&gt; a613da086834\nStep 2 : ADD gopath.tar.bz2 $GOPATH\/src\/github.com\/hyperledger\/fabric\nError processing tar file(bzip2 data invalid: bad magic value in continuation file): \nmake: *** [build\/image\/src\/.dummy] Error 1\n```",
+        "ts": "1472412243.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if I just create a tar file instead (remove the -j option), then things work fine",
+        "ts": "1472412265.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I saw somewhere that this can happen with the bzip2 go package - hence my question on Docker version",
+        "ts": "1472412305.000604"
+    },
+    {
+        "user": "U24J6JYVC",
+        "text": "<@U24J6JYVC|benbooth> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472412621.000605"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The script runs `apt-get install -y linux-image-extra-3.13.0-93-generic apparmor docker-engine` to install docker.",
+        "ts": "1472413150.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "It says: `vagrant@ubuntu-1404:~$ docker --version`\n`Docker version 1.12.1, build 23cf638`",
+        "ts": "1472413163.000607"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(I ran vagrant up)",
+        "ts": "1472413173.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hmm - interesting.  must be something specific on the OSX version then",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1472413399.000000"
+        },
+        "ts": "1472413388.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "has it worked before?",
+        "ts": "1472413882.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - I am pretty sure that last week I was running `make peer` and `make peer image` natively on OSX",
+        "ts": "1472413974.000612"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That error doesn't come from a platform specific code, so maybe it's worth to create that bz on a linux machine (maybe the magic numbers there are different than OSX or something?), copy it to your machine and then test? I'm just shooting in the dark",
+        "ts": "1472414110.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - odd indeed.  the error comes from the bzip2 package (which is of course used by Docker).  But a quick hex dump of the the `go path.tar.bz2` files shows that the first 2 bytes are `BZ` which is what the bzip2 package checks for before throwing that error.  I don't know.  Not going to waste too much time on it.  I can work around it for now",
+        "ts": "1472414988.000614"
+    }
+]

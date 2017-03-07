@@ -1,0 +1,71 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP> and everybody about <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2037\/> and unit testing: I am creating tests for connection.go, persist.go, crypto.go. main.go is tested in the next commit.1218 lines are already covered with tests (see backend test, and the next commit, and the rest are config files, structs, protos). however, I won't write tests for functions which are just calling grpc.Dial.",
+        "ts": "1478592166.003446",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "the issue is when the Server comes up from a \"stop\". the logs of all 4 peers   shows \"H\" stay within the SeqNo befor it comes down.  It's when it comes back up again where update.seqNo\/instance.seqNo    causing the LOOP.  the issue might be which value to use. the code  has   \"instance.lastExec = update.seqNo from the ckpt  but not   instance.seqNo.",
+        "ts": "1478603288.003447"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U294C6FDW> With respect to FAB-707, this is expected behavior.  The `stateUpdatedEvent` does deliberately loop when the state update comes back with with a state update which it too farin the past.  I think you will find that `instance.seqNo` is only used when the peer is the new PBFT primary, where it is appropriately set after a view change, so this is not necessary to set after state transfer.",
+        "ts": "1478613414.003448"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "please review these: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2065\/> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2037\/>",
+        "ts": "1478620801.003449"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XPR4NP4>  so, back to the multi-channel support API design, since aso said the primitives I require will be there, can we keep the PKI-id in the method signature? That *really* simplifies things to me",
+        "ts": "1478621233.003450"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What about instead a\n\n```\nCertByPKIid(pki PKidType) identity []byte\n```\n\nprovided by the crypto folks, and then a:\n\n```\nAuthorized(chainID []byte, identity []byte)\n```\n\nProvided by the orderer originated lib",
+        "ts": "1478621643.003451"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "was on the phone with adc and aso. \nidentity you mean cert?",
+        "ts": "1478623661.003452"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if yes then sure",
+        "ts": "1478623667.003453"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "With respect to FAB-707,   This issue might not  be related to  pbft.  with two quick change to the  pbft-core.go  seems to correct the looping and able to continue to create blocks.  my concerns if this was in production, and one of the VP is in this loop how do we correct the issue before the second, third  one decided to bring there peer down because of DR testing or weekend outage?",
+        "ts": "1478629216.003454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U294C6FDW> The design of PBFT is such that it tolerates up to f peers being out of sync.  If another peer were to fail (here where f=1, n=4), then the network would resync and the failed 'looping' peer would pick back up and function normally.",
+        "ts": "1478629341.003455"
+    }
+]

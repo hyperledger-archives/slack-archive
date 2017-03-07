@@ -1,0 +1,119 @@
+[
+    {
+        "user": "U1FBDMBMG",
+        "text": "<@U1FBDMBMG|ryokawawork> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478070737.000858"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "Hi",
+        "ts": "1478070993.000859"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "Our system had been working for three months, and today suddenly stopped accepting transactions.",
+        "ts": "1478071096.000860"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "with these error messages:",
+        "ts": "1478071154.000861"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "5:17:06.792 [crypto] Error -&gt; ERRO 3661 [client.test_user0]  No valid TCert was sent\n05:17:06.792 [crypto] Errorf -&gt; ERRO 3662 [client.test_user0] Failed to obtain a (not yet used) TCert [Failed loading TCerts from TCA].\n05:17:06.792 [rest] processChaincodeInvokeOrQuery -&gt; ERRO 3664 Error when querying chaincode: Failed loading TCerts from TCA",
+        "ts": "1478071161.000862"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "and I found that TCA.cert, ECA.cert, TLSCA.cert, and ECerts are expired yesterday.",
+        "ts": "1478071229.000863"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "openssl x509 -text -noout -in eca.cert        Validity\n            Not Before: Aug  3 05:24:49 2016 GMT\n            Not After : Nov  1 05:24:49 2016 GMT",
+        "ts": "1478071261.000864"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "Is there any way to extend the valid dates and propagate it to all the clients and validators?",
+        "ts": "1478071334.000865"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "```$ openssl x509 -days 365 -signkey eca.priv -in eca.cert -out eca.cert.new -keyform PEM\nGetting Private key\nunable to load Private key\n140431200245400:error:0906D06C:PEM routines:PEM_read_bio:no start line:pem_lib.c:701:Expecting: ANY PRIVATE KEY\n```",
+        "ts": "1478074545.000866"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "I tried the usual command above to extend the valid period, but the private key was not accepted.",
+        "ts": "1478074628.000867"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "Any comments, pointers, or hints are appreciated.",
+        "ts": "1478074664.000868"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "We are using Hyperledger v0.5-based image (commit: 346f9fb)",
+        "ts": "1478075167.000869"
+    },
+    {
+        "user": "U15BL856W",
+        "text": "<@U15BL856W|ds> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478106377.000870"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "I found a work-around. I replaced tca.cert, tca.priv, and tca.pub in \/var\/hyperledger\/production\/.membersrvc\/ to the new ones, which were obtained from another membersrvc recently installed.",
+        "ts": "1478140179.000871"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "I also replaced tca.cert.chain in \/var\/hyperledger\/production\/crypto\/validator\/YOUR_VP_NAME\/ks\/raw\/ and \/var\/hyperledger\/production\/crypto\/client\/ENROLLMENT_ID\/ks\/raw\/ with the tca.cert",
+        "ts": "1478140316.000872"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "for all the users and VPs. Fortunately, I am not using HFC. In the case of HFC clients, I suppose one need to convert PEM format -&gt; byte buffer -&gt; hex string and update the key files \/tmp\/keyValStore, but I haven't tried yet.",
+        "ts": "1478140424.000873"
+    },
+    {
+        "type": "message",
+        "user": "U1FBDMBMG",
+        "text": "thanks.",
+        "ts": "1478140428.000874"
+    },
+    {
+        "user": "U2Y2V95D2",
+        "text": "<@U2Y2V95D2|alanlee> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478142040.000875"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Dear all, I have a question: if we want to have a read\/write access control for different users on different transactions? Is current membership service support?",
+        "ts": "1478142272.000876"
+    }
+]

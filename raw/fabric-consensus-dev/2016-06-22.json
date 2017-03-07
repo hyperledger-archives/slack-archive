@@ -1,0 +1,656 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you around?",
+        "ts": "1466603344.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am",
+        "ts": "1466603351.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm looking at some traces from <#C113WK2A1>",
+        "ts": "1466603508.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "first, we need to drop requests",
+        "ts": "1466603522.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "people submit 1000s of requests per second...",
+        "ts": "1466603546.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, completely agree",
+        "ts": "1466603551.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But we need a way to signal rejection",
+        "ts": "1466603566.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "second, i see a request being re-queued",
+        "ts": "1466603568.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i never see it being added in the first place",
+        "ts": "1466603585.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure what you mean",
+        "ts": "1466603596.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how is that possible?",
+        "ts": "1466603597.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`ESC[36m11:00:01.440 [consensus\/obcpbft] leaderProcReq -&gt; DEBU 12e07aESC[0m Batch primary 0 queueing new request qqlXTMDzm805n6gLNiVkjHKC2d\/5Nji7qxZ3iuWV+fcwx9u\/nRtoiJXqvI4RxSyxqAcihidLrbAILI9MrLWCKQ== `",
+        "ts": "1466603615.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i never see this request being added to the outstanding request store before?",
+        "ts": "1466603640.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, the ingress path is slightly different for the leader which we may want to fix.",
+        "ts": "1466603709.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`ESC[36m11:04:25.054 [consensus\/obcpbft] startTimer -&gt; DEBU 2c2fe3ESC[0m Replica 0 starting new view timer for -1012918h58m43.28654848s: new view change`",
+        "ts": "1466603709.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "LOL",
+        "ts": "1466603711.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oops... that seems like a bug",
+        "ts": "1466603728.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm tempted to set K&amp;L=1",
+        "ts": "1466603775.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and basically disable parallelism",
+        "ts": "1466603785.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and instead use batches",
+        "ts": "1466603797.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that thing probably has absorbed  a million requests, but didn't advance past h=10",
+        "ts": "1466603841.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When the leader receives a request from a backup, it immediately adds it to the current batch, and shortly thereafter sends it off to PBFT.  The leader doesn't add it to outstanding requests in this path, but probably should.  The counter argument is that it's a nonbyzantine primary, so why bother tracking it, it has submitted it appropriately for ordering.",
+        "ts": "1466603864.000505"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that if something happens and there is a view change, it can complain about the new primary?",
+        "ts": "1466603920.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, it will lead to warning messages that it is executing stuff not in its outstanding requests",
+        "ts": "1466603920.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know",
+        "ts": "1466603923.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it's a bug, it should be fixed",
+        "ts": "1466603930.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah hm, out of sequence numbers",
+        "ts": "1466603956.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "could it be that we cannot include a null request sequence number on view change?",
+        "ts": "1466603970.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no, we don't have to include a null request",
+        "ts": "1466603987.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, we first need a way to reject this amount of requests",
+        "ts": "1466604057.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the traces we get that way are completely useless",
+        "ts": "1466604072.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i think we need to ration the number of requests any replica can have outstanding",
+        "ts": "1466604096.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I think so too",
+        "ts": "1466604108.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To do that we need to differentiate incoming transactions from consensus messages.  The problem we have today is that it all comes through RecvMsg, and by the time our thread gets a chance to look at it, we've already accepted it.",
+        "ts": "1466604138.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466604172.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think consensus messages, which will be dropped if they come in too fast via the buffered channel sitting in front of them, should continue to be accepted the way they are today.",
+        "ts": "1466604172.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well no, we could return an error in recvmsg",
+        "ts": "1466604187.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "New incoming chain transactions should come in via another call which returns an error if there are more than X outstanding.",
+        "ts": "1466604190.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which will be passed back to the rest",
+        "ts": "1466604192.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could.  I dislike the idea of doing logic in RecvMsg though.",
+        "ts": "1466604221.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but yea, we should split the interface",
+        "ts": "1466604233.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "like i did months ago",
+        "ts": "1466604239.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "request and receive",
+        "ts": "1466604247.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that won't protect us against a byzantine replica just blasting out requests",
+        "ts": "1466604271.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but there it is more difficult to protect against",
+        "ts": "1466604336.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah! So I had an idea about this that I was discussing a bit with <@U0XQ35CDD>",
+        "ts": "1466604357.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The original PBFT design calls for clients to submit a request, and wait for the result before submitting a new request.  This fixes the censorship problem, but really poses a significant throughput problem per client.  The problem is amplified in the fabric, because only replicas are clients, so, if you followed that model strictly.  You could only ever have up to n requests outstanding.",
+        "ts": "1466604480.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, my thought was, this 'submit one and wait' model should be the goal, because it's been formally proven to be valid.  What we could do though, is basically have up to 'm' slots per replica for outstanding requests, say, for instance 10.  When vp1 receives a request, it first checks to see if it has any unoccupied request slots, if so, it picks one, and broadcasts the request to the network, indicating that this new request should be assigned to slot 2 (for instance).  The network then stores this request as the outstanding request from vp1's slot 2, and waits for the request to be executed.  Once executed, that slot is freed, and a new request may be submitted for that slot.",
+        "ts": "1466604712.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The primary cannot censor any request, because each slot is being monitored for censorship.  You could essentially think of it like 'virtual clients'.",
+        "ts": "1466604789.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466604904.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If a replica sent a request for a slot that was already occupied, the slot can be safely overridden (assuming the timestamp has incremented), because the sending replica will only do this once it's confident that that request has been submitted for ordering.",
+        "ts": "1466604910.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do we only allow one outstanding request per virtual client?",
+        "ts": "1466604932.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1466604936.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha",
+        "ts": "1466604943.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1466604944.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so this is just for tracking",
+        "ts": "1466604948.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nice",
+        "ts": "1466604949.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so submission overrides",
+        "ts": "1466604965.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that is equivalent to just giving a replica a list of 10 outstanding requests, no?",
+        "ts": "1466604985.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if it proposes a new one, the oldest one is discarded",
+        "ts": "1466604999.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, not the oldest one",
+        "ts": "1466605010.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it doesn't prevent the massive submission of requests though",
+        "ts": "1466605014.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When it proposes a new one, by including the slot number, it indicates which old one should be discarded.",
+        "ts": "1466605035.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you simply discard the oldest, then the primary may censor, by never ordering the oldest",
+        "ts": "1466605056.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A replica could send you a flood of requests, but it would essentially be censoring itself, because the requests would be overwritten before they had been ordered.",
+        "ts": "1466605209.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well",
+        "ts": "1466605354.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what if it waits for a pre-prepare",
+        "ts": "1466605361.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then sends again",
+        "ts": "1466605366.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it needs to wait for a prepare quorum cert before it can be confident that the request won't be censored",
+        "ts": "1466605385.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it could sort of game the system",
+        "ts": "1466605385.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but not too much",
+        "ts": "1466605390.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, but typically requests don't get censored",
+        "ts": "1466605398.000555"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but if the number of outstanding requests is less than the batch size, it will have to wait for batch creation",
+        "ts": "1466605420.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I don't really see 'sending too many requests' as abusive, so long as they are all getting processed.  We want to make sure requests are not censored.  I guess you could argue that one replica getting an unfair proportion of requests through is almost like censorship.",
+        "ts": "1466605529.000557"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i don't care about censorship",
+        "ts": "1466605582.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If we wanted to get really clever, we could keep a counter of the number of pending requests per replica, and use that as a weight when picking which replica's request to order next.  But I'm not really convinced that this is a problem yet.",
+        "ts": "1466605583.000559"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now",
+        "ts": "1466605587.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i care about limiting number of requests being ingressed by the system",
+        "ts": "1466605599.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I agree a peer could cheat a little by sending new requests once it sees its own in a pre-prepare, but I don't know that this really buys them much.  Unless the outstanding size is greater than the batch size, it cannot use this to prevent other requests from executing.",
+        "ts": "1466605678.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, right now i'm just worried about system overload",
+        "ts": "1466605929.000563"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, okay. So, I think this helps to keep another replica from sending you a ton of requests and overloading the system, but obviously it does nothing to address something like the REST API from flooding you with a ton of requests.",
+        "ts": "1466605969.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466605979.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's a two step thing",
+        "ts": "1466605983.000566"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "correct client rejecting extra requests",
+        "ts": "1466605990.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and system protecting against byzantine flooding peers",
+        "ts": "1466606017.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll head outside to catch some (rare) sun",
+        "ts": "1466606054.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "after that i will integrate the telemetry stuff",
+        "ts": "1466606062.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that we can start seeing drops and queue sizes",
+        "ts": "1466606085.000571"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we split the recvmsg path",
+        "ts": "1466606096.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good, I may not get around to it today, but I can work on the 'virtual client' stuff",
+        "ts": "1466606123.000573"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Assuming you're on board",
+        "ts": "1466606131.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's just a fixed array, no?",
+        "ts": "1466606140.000575"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep, I don't anticipate it will be horribly complicated",
+        "ts": "1466606152.000576"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1466606155.000577"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do think needs to be done for the release?",
+        "ts": "1466606167.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think we can get this limiting done",
+        "ts": "1466606173.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For 0.5?",
+        "ts": "1466606182.000580"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, urgent stuff",
+        "ts": "1466606224.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There were the three PRs I submitted yesterday, adding back in the deduplication, the view change resend, and the broadcaster ordering.  The peer bouncing reeconnect stuff I think <@U0XQ35CDD> has a handle on.  Those were the only big outstanding things I was aware of.  Certainly we need to rate limit incoming transactions, you can kill the system just by submitting too many transactions, but I don't think that fits.",
+        "ts": "1466606331.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so for 0.5  , fixes for #1874, bishop's #1857",
+        "ts": "1466606452.000583"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "74 is handled by jeff and kostas, 57 - jason?",
+        "ts": "1466606492.000584"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "1857 jason's PRs, yes",
+        "ts": "1466606522.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "plus  if scottz and co. find any regressions but that would be case by case",
+        "ts": "1466606606.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As best as I can tell 1857 is fixed.  The caveat is that sometimes, there will be a failure if null requests are not enabled (and not a true failure by pbft definitions, just by people's expectations)",
+        "ts": "1466606631.000587"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great",
+        "ts": "1466606644.000588"
+    },
+    {
+        "user": "U1KC1TAHE",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1KC1TAHE|brendan> has joined the channel",
+        "ts": "1466624539.000589"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "just catching up on this thread -- I'm a fan of the virtual clients idea",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1466633655.000000"
+        },
+        "ts": "1466633524.000590"
+    },
+    {
+        "user": "U1CPB11D0",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1CPB11D0|dianfu> has joined the channel",
+        "ts": "1466638933.000594"
+    }
+]

@@ -1,0 +1,422 @@
+[
+    {
+        "user": "U3KJCRRAN",
+        "text": "<@U3KJCRRAN|gaotong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482998703.002326"
+    },
+    {
+        "user": "U3KGH29A7",
+        "text": "<@U3KGH29A7|yongxinq> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483000509.002327"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U3BH74NH0> - I'll  give the shortest version of the answer for now (as we continue with the v1.0 release additional operational documentation will be added as we implement the v1.0 architecture \/ design).  I'm not going to answer in the context of v0.6 as that version is based on a prior architecture and we are adding any new capabilities there nor will running that version in production actually be supported moving forward.\n\n\nHere's the v1.0 \"highlights\"\n\n*chain data*\n\neach *endorsing\/committing peer* basically \"stores\" the following:\n\n1.  *file-based ledger* - we store the _blocks_ (each block contains transactions which create\/update _keys_ in the system) using a file-based structure persisted on each peer's local file system.  You can of course \"back\" this file up but there is also the ability for a peer to \"recover\" the ledger by communicating with other peers and\/or ordering nodes to retrieve the entire ledger as well\n2.  *state store* - the state store holds the latest _value_ for each _key_ .  The default state store is LevelDB  (goLevelDB to be precise).  We are also working on an optional CouchDB-based state store as well.   Of course you can back this up as well, but think of the state store as more of a cache which can be rebuilt from the file-based ledger\n3.  *identity* - cryptographic material used by each peer to identify itself (typically be signing messages which flow through the system).  The default provider is X509-based so you would typically need to minimally backup the private key (or store it in an HSM).  You would also back up the X509 public key although technically you could generate a new certificate request using the private key  \n\n*ordering nodes*\n\nThe default ordering service for v1.0 is crash fault tolerant and based on Kafka so we can leverage best practices for deploying a CFT cluster of Kafka nodes.  Additionally, there are _shim_ nodes which provide the external interface(s) for the ordering service and each of them maintains a file-based ledger of \"blocks\" as well.  This is basically the same thing as the file-based ledger above for the peers \n\n*certificate data* \n\nin the v1.0 architecture, we have removed the \"dependency\" between peer nodes and fabric-cop (which takes the place of membersrvcs).  fabric-cop supports fault tolerant deployments (e.g. multiple nodes) but again you'd need to minimally back up things like the certificate signing pair, revocation lists and if you use transaction certificates there are certain pieces of info which need to be backed up.  The good news is that the storage for this info is actually a database (e.g. MySQL, Postgres) so you would simply follow standard procedures there.  \n\n There is also a bunch of crypto material which is actually distributed via the blockchain itself to all of the peer nodes (e.g. channel membership, trusted toot authorities, etc) so all of that information persisted to the chains themselves\n\nMore to come, but hopefully this gives you the basic idea",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1483004842.000000"
+        },
+        "ts": "1483003413.002328",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3KAS13FG",
+                    "U3HS0S61K",
+                    "U3K3Z604B",
+                    "U3K7RUJ3T",
+                    "U3NCZ14DV"
+                ],
+                "count": 5
+            }
+        ]
+    },
+    {
+        "user": "U3KM4077E",
+        "text": "<@U3KM4077E|prabhatsharma> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483004143.002330"
+    },
+    {
+        "user": "U3L9LNTV4",
+        "text": "<@U3L9LNTV4|utzenstorf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483006098.002332"
+    },
+    {
+        "user": "U3KMHCN2G",
+        "text": "<@U3KMHCN2G|abhijeet.jaswal> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483008168.002333"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "Hi, when i was trying to run \"go build\" command inside the chaincode_example02 i got the following error",
+        "ts": "1483008471.002334"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": ".\/chaincode_example02.go:37: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:74: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:91: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:148: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:165: undefined: shim.ChaincodeStubInterface",
+        "ts": "1483008489.002336"
+    },
+    {
+        "type": "message",
+        "user": "U3BH74NH0",
+        "text": "<@U0PB67X4K> Thanks so much for taking the time to explain.  I have tried to build the latest V1 images, but I\u2019m having some trouble and multiple tests are failing.  Are there any pre-built docker images like with the v0.6?",
+        "ts": "1483008535.002338"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U3BH74NH0> - unfortunately that is a work in progress - hopefully we'll start publishing soon.  There's a lot of active development and many changes going on prior to the holiday so timing was not quite right in terms of publishing images.   But it should be much easier to build images.  BTW - can we move this chat over to the <#C0Y4PEU22|fabric> and\/or <#C0YPYBVJM|fabric-dev> channel since this is a general channel for all of Hyperledger?",
+        "ts": "1483009069.002339"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "when i was trying to run \"go build\" command inside the chaincode_example02 i got the following error\n\n.\/chaincode_example02.go:37: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:74: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:91: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:148: undefined: shim.ChaincodeStubInterface\n.\/chaincode_example02.go:165: undefined: shim.ChaincodeStubInterface",
+        "ts": "1483009674.002340"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "please help me with the above error. And also inside my \"fabric\" folder (I pulled this from gerrit) there is no \"build\" folder created.",
+        "ts": "1483009834.002341"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Go is not able to resolve the dependencies.  How does your folder structure look?",
+        "ts": "1483011491.002342"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U1SHFS1Q9> .. \"\/$GOPATH\/src\/github.com\/chaincode_example02\"",
+        "ts": "1483012789.002343"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "And do you have the hyperledger\/fabric folder under \/$GOPATH\/src\/github.com?",
+        "ts": "1483012852.002344"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "in otherwords chaincode_example02 folder and hyperledger folder should be at the same level",
+        "ts": "1483012906.002345"
+    },
+    {
+        "user": "U3KNDNRRT",
+        "text": "<@U3KNDNRRT|dhimrich> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483013153.002348"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U1SHFS1Q9>   yes I have \"hyperledger\/fabric\" &amp; \"chaincode_example02\" folders are in the same folder path. But after pulling \"fabric\" from gerrit I am unable to run \"go build\" and also there is no \"build\" folder inside fabric by default.",
+        "ts": "1483013425.002350"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "I don\u2019t think you will see a build folder inside fabric folder.  The errors you posted are because of the package resolution failures. Did you make any changes to the example code?",
+        "ts": "1483013748.002351"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U1SHFS1Q9> \n\nI just deleted fabric and chaincode_example02 and pulled those two again.\n\nmkdir -p $GOPATH\/src\/github.com\/chaincode_example02\/\ncd $GOPATH\/src\/github.com\/chaincode_example02\ncurl --request GET <https:\/\/raw.githubusercontent.com\/hyperledger\/fabric\/master\/examples\/chaincode\/go\/chaincode_example02\/chaincode_example02.go> &gt; chaincode_example02.go\n\n\nmkdir -p $GOPATH\/src\/github.com\/hyperledger\ncd $GOPATH\/src\/github.com\/hyperledger\ngit clone <http:\/\/gerrit.hyperledger.org\/r\/fabric>\n\ncd $GOPATH\/src\/github.com\/chaincode_example02\ngo build\n\nSurprisingly it came up with a new error for \"go build\" . previous errors didn't come up\n\n..\/hyperledger\/fabric\/core\/util\/utils.go:28:2: cannot find package \"<http:\/\/github.com\/hyperledger\/fabric\/metadata|github.com\/hyperledger\/fabric\/metadata>\" in any of:\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/hyperledger\/fabric\/metadata (vendor tree)\n\t\/opt\/go\/src\/github.com\/hyperledger\/fabric\/metadata (from $GOROOT)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/metadata (from $GOPATH)",
+        "ts": "1483015671.002355"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "can you navigate to chaincode_example02 and run the command : go build .\/",
+        "ts": "1483019048.002356"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U1SHFS1Q9> go: unknown subcommand \"build.\/\"\nRun 'go help' for usage.",
+        "ts": "1483020574.002357"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "there should be a space between build and .\/",
+        "ts": "1483021229.002358"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U1SHFS1Q9>  .. same issue with \"go build .\/\" .. can't i add missing package from somewhere?",
+        "edited": {
+            "user": "U3KA645M0",
+            "ts": "1483021542.000000"
+        },
+        "ts": "1483021476.002359"
+    },
+    {
+        "user": "U3KM32GRG",
+        "text": "<@U3KM32GRG|yuanzhao> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483023347.002361"
+    },
+    {
+        "user": "U3LC1C6ET",
+        "text": "<@U3LC1C6ET|raji> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483023707.002362"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "All the peer is running for some time and stopping with \"ERROR: Couldn't connect to Docker daemon at <http+docker:\/\/localunixsocket> - is it running?\n\nIf it's at a non-standard location, specify the URL with the DOCKER_HOST environment variable.\n\" this error, any idea what would be the issue",
+        "ts": "1483026976.002363"
+    },
+    {
+        "user": "U3LCQBVMM",
+        "text": "<@U3LCQBVMM|fabian_hinsenkamp> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483027990.002364"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "i ran docker-compose --debug up cmd to see the more logs and i found \"docker.auth.auth.load_config: File doesn't exist\"",
+        "ts": "1483029193.002365"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "can some one please help me to resolve the issue i tried many things but still its not resloved",
+        "ts": "1483029242.002366"
+    },
+    {
+        "user": "U3LDPMT0E",
+        "text": "<@U3LDPMT0E|lynchjw> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483036080.002367"
+    },
+    {
+        "user": "U3KP6E1D0",
+        "text": "<@U3KP6E1D0|amedesai> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483036396.002368"
+    },
+    {
+        "user": "U3KMDNP43",
+        "text": "<@U3KMDNP43|tvojamama> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483037895.002369"
+    },
+    {
+        "type": "message",
+        "user": "U12KFP7JN",
+        "text": "<@U1SHFS1Q9>  not sure which version of the fabric you are running. However, in either case 0.6 or  1.0, I was able to build the example02.go that comes by default. In the version you have curled, you have some issues ...stub.GetFunctionAndParameters undefined (type shim.ChaincodeStubInterface has no field or method GetFunctionAndParameters)",
+        "ts": "1483038142.002370"
+    },
+    {
+        "type": "message",
+        "user": "U12KFP7JN",
+        "text": "<@U1SHFS1Q9>  .. can you try and build the default example02 under the <#C0Y4PEU22|fabric>\/examples directory",
+        "ts": "1483038188.002371"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U3KA645M0>, Not really sure why you had to delete the whole fabric folder. To build chaincode_example02 you would need all the depndent libs which are available in fabric.\n\nInstead of building the chaincode from this folder `$GOPATH\/src\/github.com\/chaincode_example02`, can you try building from this folder `$GOPATH\/src\/github.com\/fabric\/examples\/chaincode\/go\/chaincode_example02`",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1483040093.000000"
+        },
+        "ts": "1483040083.002372"
+    },
+    {
+        "user": "U3KSCB0PN",
+        "text": "<@U3KSCB0PN|dragan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483042334.002374"
+    },
+    {
+        "user": "U3KTDA42H",
+        "text": "<@U3KTDA42H|sanyaade> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483047704.002375"
+    },
+    {
+        "user": "U3K4N8J80",
+        "text": "<@U3K4N8J80|tab> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483053128.002376"
+    },
+    {
+        "user": "U3LH78T9D",
+        "text": "<@U3LH78T9D|liujinlong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483064659.002378"
+    },
+    {
+        "type": "message",
+        "user": "U3GNVAM4P",
+        "text": "Hell everyone:\n\n   I start 4 vp for a test enviroment for hyperledger\/fabric and deploy one chaincode.\n   \n   I called randdom function in the invoke function to produce a random number in the chaincode.The code is as following:\n   \n   I tried to run them in the 4 VP test enviroment. I found the random result is different on each of VP, but the 4 vp test enviroment did not report any error and let chaincode run\n   \n   My quesiton is:\n   1. Why consencus In hyperledger can reach agreement to let chaincode to run successfully although the chaincode the random value is different on different VP?\n   2. What is concrete transanction process?\n   \n   Who can help to answer it?\n   \nThanks\njia qinggang   \n   \n...\nfunc GetRandomInt(len int) (int, error) {\n\trnd, err := <http:\/\/rand.Int|rand.Int>(rand.Reader, big.NewInt(100))\n\tif err != nil {\n\t\tfmt.Printf(\"<http:\/\/rand.Int|rand.Int>() error : %v \\\\n\", err)\n\t}\n\tfmt.Printf(\"<http:\/\/rand.Int|rand.Int>() : %v \\\\n\", rnd)\n\treturn int(rnd.Int64()), nil\n}\n\nfunc (t *HelloWorldChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {\n\tfmt.Printf(\"HelloWorld - Invoke called with function %s!\\n\", function)\n\n\tif args[0] == \"randInt\" {\n\t\trdInt, _ := GetRandomInt(0)\n\t\tstub.PutState(\"randInt\", []byte(strconv.Itoa(rdInt)))\n\t\thelloLogger.Debug(\"get random int=\" + strconv.Itoa(rdInt))\n\t\tfmt.Printf(\"get random int=\" + strconv.Itoa(rdInt))\n\t\treturn nil, nil\n\n\t} \n\treturn nil, nil\n}\n\n.....",
+        "ts": "1483067115.002379"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U12KFP7JN>, Thanks for the post.  I am able to run.  It is <@U3KA645M0> who ran into issues.  Hope he saw your message.",
+        "ts": "1483069553.002380"
+    },
+    {
+        "type": "message",
+        "user": "U34TJFSCB",
+        "text": "I am trying to deploy my chaincode within a service I created in the IBM Bluemix Blockchain.  It seems to take a very long time before my node.js app times out waiting for the chaincode to deploy.   Thus, failing to delpoy the chaincode and getting back a chaincode ID.  I created a service a few days ago trying to do the same thing and it worked instantly.  Have other's experienced similar issues when deploying to Bluemix IBM Blockchain?",
+        "ts": "1483070789.002382"
+    },
+    {
+        "type": "message",
+        "user": "U3E300R6Z",
+        "text": "Hi,\n\nI saw  sample on youtube relates with Hyperledger for art auction.\nI want to deploy to my local machine.Please provide me a proper installation guide for it.\nI tried github sample but i am much confused related what additional softwares like vagrant,node .js installation for ubuntu.\nplease took a king consideration.",
+        "ts": "1483071049.002383"
+    },
+    {
+        "user": "U3LH9V41L",
+        "text": "<@U3LH9V41L|babedev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483071500.002384"
+    },
+    {
+        "type": "message",
+        "user": "U3D8PEQ1F",
+        "text": "hello people",
+        "ts": "1483073169.002385"
+    },
+    {
+        "type": "message",
+        "user": "U3D8PEQ1F",
+        "text": "I found out that Certificate Authority (CA) server which the membersrvc was not available?",
+        "ts": "1483073267.002386"
+    },
+    {
+        "type": "message",
+        "user": "U3D8PEQ1F",
+        "text": "I cannot execute \"make membersrvc\"",
+        "ts": "1483073297.002387"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "Hello All, when ran go build for example02 am getting \".\/chaincode_example02.go:38: stub.GetFunctionAndParameters undefined (type shim.ChaincodeStubInterface has no field or method GetFunctionAndParameters)\n.\/chaincode_example02.go:75: stub.GetFunctionAndParameters undefined (type shim.ChaincodeStubInterface has no field or method GetFunctionAndParameters)\n.\/chaincode_example02.go:193: cannot use new(SimpleChaincode) (type *SimpleChaincode) as type shim.Chaincode in argument to shim.Start:\n        *SimpleChaincode does not implement shim.Chaincode (wrong type for Init method)\n                have Init(shim.ChaincodeStubInterface) ([]byte, error)\n                want Init(shim.ChaincodeStubInterface, string, []string) ([]byte, error)\n\" this error",
+        "ts": "1483077210.002388"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "i see both peer and member containers are running",
+        "ts": "1483077262.002389"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U36HLH8SC|madhava> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/madhava\/F3KV9S90U\/-.txt|Untitled>",
+        "file": {
+            "id": "F3KV9S90U",
+            "created": 1483077274,
+            "timestamp": 1483077274,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U36HLH8SC",
+            "editable": true,
+            "size": 414,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3KV9S90U\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3KV9S90U\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/madhava\/F3KV9S90U\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3KV9S90U-914b0c856e",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/madhava\/F3KV9S90U\/-.txt\/edit",
+            "preview": "CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS              PORTS               NAMES\r\n51b56c11f8bc        hyperledger\/fabric-peer         \"sh -c 'sleep 10; pee\"   18 minutes ago      Up 18 minutes                           peer\r\n24ad2e034c2c        hyperledger\/fabric-membersrvc   \"membersrvc\"             18 minutes ago      Up 18 minutes                 ",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>CONTAINER ID        IMAGE                           COMMAND                  CREATED             STATUS              PORTS               NAMES<\/pre><\/div>\n<div><pre>51b56c11f8bc        hyperledger\/fabric-peer         &quot;sh -c 'sleep 10; pee&quot;   18 minutes ago      Up 18 minutes                           peer<\/pre><\/div>\n<div><pre>24ad2e034c2c        hyperledger\/fabric-membersrvc   &quot;membersrvc&quot;             18 minutes ago      Up 18 minutes                 <\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 3,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U36HLH8SC",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U36HLH8SC|madhava>",
+        "bot_id": null,
+        "ts": "1483077274.002390"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "please help me to reslove the issue",
+        "ts": "1483077410.002391"
+    },
+    {
+        "type": "message",
+        "user": "U3KA645M0",
+        "text": "<@U12KFP7JN> <@U13Q594J2> <@U1SHFS1Q9>  .. i tried $GOPATH\/src\/github.com\/fabric\/examples\/chaincode\/go\/chaincode_example02 .. same issue",
+        "ts": "1483077485.002392"
+    },
+    {
+        "user": "U3K72QKT3",
+        "text": "<@U3K72QKT3|paultwa2006> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483077697.002393"
+    },
+    {
+        "type": "message",
+        "user": "U3K72QKT3",
+        "text": "hi",
+        "ts": "1483078788.002394"
+    },
+    {
+        "type": "message",
+        "user": "U3E300R6Z",
+        "text": "hi <@U3K72QKT3>",
+        "ts": "1483078915.002395"
+    }
+]

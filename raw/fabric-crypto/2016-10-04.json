@@ -1,0 +1,907 @@
+[
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I see, yes we would need to make transaction structure simpler for these cases.",
+        "ts": "1475574102.000017"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Wondering if it would make sense that we have a special type of proposal called {orderer-reconfig}, that contains information on the new configuration (or parts of its) of the ordering service. Endorsement for this would be null. So overall, the client\/orderer-service admin, would need to sign a transaction that has one proposalAction, with proposal header (as is now) and with payload this new configuration file. No EndorsedActions henceforth, just the external transaction signature coming from the orderer-service admin (some sort of simplified fabric-client here).",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475574605.000000"
+        },
+        "ts": "1475574459.000018"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The committing peers would need to run some sort of VSCC in this case, that is, make sure that is the defined admin who signed the tx based on the latter configuration, and apply the configuration changes but giving it as input to some sort of  reconfig function.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475574833.000000"
+        },
+        "ts": "1475574750.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Asking <@U26T99AQ4>, and <@U0ZR63HLK> on this, as we have been discussing a couple of ideas there, also considering re-using our existing chaincode-infrastructure, and endorsement logic. In this case, you would assume  system chaincode proposal that is endorsed with the simulation results (reconfigured orderer-system variables) by the administrator node (priviledged) node. ESCC would be naturally a signature from the latter. And VSCC would be signature checking and direct application of system state updates.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475574975.000000"
+        },
+        "ts": "1475574797.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U1BC5A0F9> but orderer reconfig needs a (separate) set of signatures to show authorization",
+        "ts": "1475579248.000025"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475579269.000000"
+        },
+        "ts": "1475579260.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "meaning that in the case where one implements this reconfig mechanism by reusing our infrastructure\" then configuration would include a CA, potentially and an admin certtificate taht should be providing the endorsement throughout ESCC.",
+        "ts": "1475579349.000028"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "not sure how this is to run. But assuming that ordering service is separate from the rest of the networks. Shouldnt there be some admin of its? Is it all distributed ?",
+        "ts": "1475579404.000029"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "How would i (i = blockchain developer) know who to pay for this service if we assume that this is offered as service.",
+        "ts": "1475579432.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "What would the business model be in this case?",
+        "ts": "1475579468.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no idea how the business angle is",
+        "ts": "1475579469.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but last time i talked with binh, the reconfiguration design was:",
+        "ts": "1475579488.000033"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "cause this would help much in bootstrapping and designing reconfiguration opearations",
+        "ts": "1475579491.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "orderer network requires a multisig for reconfiguration",
+        "ts": "1475579508.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is entirely independent of the fabric network",
+        "ts": "1475579525.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "multisig coming from t out of n orderers?",
+        "ts": "1475579531.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, from authorized people",
+        "ts": "1475579545.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "cool",
+        "ts": "1475579553.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "creation of a signed reconfiguration happens offline",
+        "ts": "1475579561.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the reconfiguration can of course change the multisig required to do the next reconfiguration",
+        "ts": "1475579586.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "from reconfiguration request perspective it may not be different if you have one or more signatures required. if they come from the client side (assuming a n off-badn way of producing it).",
+        "ts": "1475579616.000042"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Meaning that the system could treat this request in the same way.",
+        "ts": "1475579654.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i expect the format to be \"N out of these following certificates need to sign\"",
+        "ts": "1475579669.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course you could automate the reconfiguration by using some sort of reconfiguration endorsement chaincode",
+        "ts": "1475579747.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i'd be very careful about this",
+        "ts": "1475579758.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the security of the chain hinges on the orderer configuration",
+        "ts": "1475579772.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if somebody can reconfigure it at will, the whole network can be taken over",
+        "ts": "1475579792.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "well this refers to the case where you trust onen or a few selective endorsers of course",
+        "ts": "1475585577.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "otherwise you would still need t out of n endorsers to endorse this ...",
+        "ts": "1475585594.000050"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "There needs to be \"multisig\" when invoking this system chaincode. Now the question is, who should be executing this invocation tx.",
+        "ts": "1475585688.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "- option 1: selective priviledged endorsers, that provide endorser signatures (known to orderer infrastructure for endorsing system chainocde invocations) and VSCC does what in our chancdes VSCC does: endorser signature check, certificate validation, version checks, and application of state changes.",
+        "ts": "1475585768.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "- option 2: ESCC is not needed, but VSCC does the execution using peers (orderers) current state. Assuming this is a system chaincode, executed after  the tx is totally ordered, there may not be serious problems there(?) Wdyt?",
+        "ts": "1475585825.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Again, without considering channels.",
+        "ts": "1475585832.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "The answer to the question here depends on how modular one wants to make the \"orderers\" (providing the consensus service but not state). If a 3rd party lib can be plugged in (i believe some folks are looking at Apache Kafka), this must be independent. If considering a self-built consensus service (for reconfig re-using our infrastructure), it *may* use such support; but it would be more modular to construct it first independently, not assuming such explicit interaction with the blockchain peers and requests. I recommend to keep the two separated, keep in mind the possible link, but only link them later.",
+        "ts": "1475586169.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U1BC5A0F9> I don't understand what you're saying",
+        "ts": "1475586347.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think the configuration of the orderer network should be tied to anything in the fabric \"network\"",
+        "ts": "1475586378.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "it should not",
+        "ts": "1475586401.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "they have their own CA\/certificates etc..",
+        "ts": "1475586408.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "reconfiguration requirements are defined as a property of the orderer config",
+        "ts": "1475586413.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but to some extend if orderers are removed, e.g., fabric endorsers should know no?",
+        "ts": "1475586438.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "orderer reconfig is authorized towards the fabric network because the orderers sign the batch which contains the reconfig",
+        "ts": "1475586459.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so the client-tx",
+        "ts": "1475586470.000063"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sorry the client-proposal",
+        "ts": "1475586483.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1475586485.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "proposal is fabric stuff",
+        "ts": "1475586494.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "orderers do not need to know about proposals",
+        "ts": "1475586507.000067"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Not sure about this.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475586541.000000"
+        },
+        "ts": "1475586520.000068"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Meaning again, it does not have to be chaincode proposal like",
+        "ts": "1475586602.000070"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but it is a form of a proposal. It is some message that upon advertized to the fabric endorser, will cause some internal state to change.",
+        "ts": "1475586627.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not only endorser",
+        "ts": "1475586669.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "fabric peer.",
+        "ts": "1475586677.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to all consumers of the orderer output",
+        "ts": "1475586679.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct.",
+        "ts": "1475586688.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so in a way it is a management message originating from the ordering service",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1475586707.000000"
+        },
+        "ts": "1475586700.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But what is not clear to me, is the following. Do orderers already have a protocol in place that would enable them to validate reconfiguration messages among them?",
+        "ts": "1475586740.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we don't have code for that yet",
+        "ts": "1475586774.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but essentially a reconfiguration request\/message which does not bear the right signatures would be discarded",
+        "ts": "1475586795.000080"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Right. So, since there are many common points (the way is see it) from security perspective with the proposal messaging, and state updates, etc. why cant we reuse what we have",
+        "ts": "1475586820.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "?",
+        "ts": "1475586821.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if it contains the right signatures, it gets ordered and applied after ordering",
+        "ts": "1475586827.000083"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Correct.",
+        "ts": "1475586835.000084"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So this is option 2",
+        "ts": "1475586846.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "(from the list above).",
+        "ts": "1475586868.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we can reuse what we have if that code is simple and does not introduce extra dependencies",
+        "ts": "1475586880.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "checking these signatures does not require a CA and tcerts and whatnot",
+        "ts": "1475586905.000088"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right",
+        "ts": "1475587052.000089"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But, to a large extend this should be hte case for our transactions.",
+        "ts": "1475587102.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "As membership service moves to a library.",
+        "ts": "1475587109.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How would that be the case with membership services moving to a library?",
+        "attachments": [
+            {
+                "fallback": "[October 4th, 2016 9:18 AM] elli: But, to a large extend this should be hte case for our transactions.",
+                "ts": "1475587102.000090",
+                "author_subname": "elli",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "But, to a large extend this should be hte case for our transactions.",
+                "author_name": "Elli",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/elli",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/8a94917afbdbd7e1bd944f484dc05cfe.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0022-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1475587102000090",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1475587596.000092"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "What i mean is that membership service code will become a library, for ppl to use it as they wish.",
+        "ts": "1475587707.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Many ppl already have the requirement of adding their own certificates etc.",
+        "ts": "1475587721.000094"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, we have to face the same problem in transactions.",
+        "ts": "1475587729.000095"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "We need to make the structure generic enough to capture potentially different types of certificates than our",
+        "ts": "1475587748.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ECerts\/TCerts.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475587785.000000"
+        },
+        "ts": "1475587753.000097"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "transaction\/proposal etc meaning.",
+        "ts": "1475587769.000099"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, for me it does exist some ordering service root CA, and some fabric network root CA.",
+        "ts": "1475587908.000102"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "And both networks need to know both of them.",
+        "ts": "1475587923.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Perhaps there is some deployment scenario I am not thinking of, but I don't anticipate the orderer service needing a CA",
+        "ts": "1475587950.000104"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "(or more than one)",
+        "ts": "1475587953.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "For keeping the orderer service modular, it must not know of transactions, only broadcast requests; there will be a special request that triggers its reconfiguration, just like here : <http:\/\/www.di.fc.ul.pt\/~bessani\/publications\/dsn14-bftsmart.pdf>, page 3. From the orderer service, a CA is not strictly needed, a list of identities can be enough.",
+        "ts": "1475587958.000106"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "CA or certificates of the peers.",
+        "ts": "1475587966.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "certificates = public keys, you mean?",
+        "ts": "1475587976.000108"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475587986.000000"
+        },
+        "ts": "1475587981.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "(they are called ceritificates, but they are not really certificates that need an anchor with a CA cert)",
+        "ts": "1475587999.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "ok",
+        "ts": "1475588000.000112"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "agreed.",
+        "ts": "1475588011.000113"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0XV1HDL3>, well from what i understood from latter discussions is that the orderers would need to assess client signature on the transactions.",
+        "ts": "1475588090.000114",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1GN670VD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Also orderers are not to accept messages from anyone, there has to be some authentication, especially when it comes to submitting messages to different channels.",
+        "ts": "1475588120.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "yes, but maybe they can call some component to keep it modular: orderer asks component: is this a valid message to broadcast?",
+        "ts": "1475588146.000116"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Will though need to check the kafka channels access control there.",
+        "ts": "1475588147.000117"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Exactly. Which is the part associated to ordering service configuration management.",
+        "ts": "1475588179.000118"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "(in the fabric)",
+        "ts": "1475588183.000119"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Sorry, the other way round.",
+        "ts": "1475588203.000120"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Which is the part associated to fabric network authentication mechanisms.",
+        "ts": "1475588236.000121"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But not clear what is the business model here.",
+        "ts": "1475588265.000122"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":disappointed:",
+        "ts": "1475588311.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "?",
+        "ts": "1475588333.000124"
+    },
+    {
+        "type": "message",
+        "user": "U1GN670VD",
+        "text": "Hi Elli, In this text \"client signature on the trans..\", the client signature would be coming from the client SDK right? additionally, do you except both the cert and the sign digest... or does fabric have a public ledger of participants public keys?",
+        "attachments": [
+            {
+                "fallback": "[October 4th, 2016 2:34 PM] elli: <@U0XV1HDL3>, well from what i understood from latter discussions is that the orderers would need to assess client signature on the transactions.",
+                "ts": "1475588090.000114",
+                "author_subname": "elli",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "<@U0XV1HDL3>, well from what i understood from latter discussions is that the orderers would need to assess client signature on the transactions.",
+                "author_name": "Elli",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/elli",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/8a94917afbdbd7e1bd944f484dc05cfe.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0022-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1475588090000114",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1475589227.000125"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi, so the \"client signature on the trans..\" refers indeed to the client-sdk produced one, correct.",
+        "ts": "1475589343.000127",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1GN670VD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The transaction structure, has already a field in its header referring to a \"creator\", that should be matching the signature included in the transaction.",
+        "ts": "1475589373.000128"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Where by transaction structure, i refer to the one in the .pdf that Angelo posted :slightly_smiling_face:",
+        "ts": "1475589398.000129"
+    },
+    {
+        "type": "message",
+        "subtype": "file_mention",
+        "text": "<@U1BC5A0F9|elli> mentioned a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2JKXGXEU\/protobufmessagesandflow.pdf|ProtobufMessagesAndFlow.pdf>.",
+        "file": {
+            "id": "F2JKXGXEU",
+            "created": 1475506254,
+            "timestamp": 1475506254,
+            "name": "ProtobufMessagesAndFlow.pdf",
+            "title": "ProtobufMessagesAndFlow.pdf",
+            "mimetype": "application\/pdf",
+            "filetype": "pdf",
+            "pretty_type": "PDF",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 824792,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2JKXGXEU\/protobufmessagesandflow.pdf?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2JKXGXEU\/download\/protobufmessagesandflow.pdf?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2JKXGXEU\/protobufmessagesandflow.pdf",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2JKXGXEU-66a1d1cac6",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2JJF8RPV",
+                "created": 1475506254,
+                "timestamp": 1475506254,
+                "user": "U0ZR63HLK",
+                "is_intro": true,
+                "comment": "Hi All, this file contains the protobuf messages and the relative flow with the security checks to put in place. This a joint effort with <@U1BC5A0F9> and <@U26T99AQ4>.",
+                "channel": ""
+            },
+            "reactions": [
+                {
+                    "name": "+1",
+                    "users": [
+                        "U1GN670VD"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        "user": "U1BC5A0F9",
+        "ts": "1475589424.000131"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "There is no assumption for the certificates being publicly available somewhere, especially cause that certificate could be anonymous. Enrollment certificates could make sense to be publicly available.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1475589591.000000"
+        },
+        "ts": "1475589523.000133"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "What is publicly available and inserted in some form in the blockchain, is the root ca that signs peers\/clients' certificates.",
+        "ts": "1475589572.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> Another case I thought of for supporting a secondary transaction format.  I am thinking of the case where a group of parties wants to put an assertion on the chain, but actually modifying state does not make sense.  For instance, with a side-chain, the participants might want to push a hash onto the main chain, asserting that everyone agrees with the current state of the side-chain.  You could of course implement this as a custom chaincode that creates a random key and assigns the hash to it, but that's a little indirect and almost obfuscated.  It seems like there are other cases where the transaction is just a group attestation (which has no meaning to anyone not involved)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1475589843.000000"
+        },
+        "ts": "1475589807.000136"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Aha, so you are saying that there may be needs, where ResponsePayload does not need to have extensions.",
+        "ts": "1475589884.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I would argue that ProposalResponsePayload would be empty in these cases",
+        "ts": "1475590041.000139"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "no epoch",
+        "ts": "1475590050.000140"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "?",
+        "ts": "1475590053.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I guess there is an epoch and hash buried in there, so it would just be the extensions",
+        "ts": "1475590191.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why is the ProposalHash and Epoch in that submessage instead of in the ProposalResponse?",
+        "ts": "1475590215.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, I see, because that is what is actually signed",
+        "ts": "1475590244.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But it's confusing to me then, that `ProposalResponse.Response` is not included in the signature",
+        "ts": "1475590280.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can we use ASN1 DER for all messages that are referenced by the root hash?",
+        "ts": "1475592948.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Root hash? My concern is that these messages must necessarily be allowed to occur later in the chain as well.  If we use ASN1 DER, it seems like we need to have an envelope which types the encoding",
+        "ts": "1475593979.000147"
+    },
+    {
+        "user": "U2B3A70TX",
+        "text": "<@U2B3A70TX|soldat> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475608457.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1BC5A0F9> <@U0XV1HDL3>: Kafka does indeed keep it pluggable here -- they just define an `Authorizer` interface. (They also ship with a basic implementation of it that they call `SimpleAclAuthorizer`.)",
+        "attachments": [
+            {
+                "fallback": "[October 4th, 2016 9:35 AM] elli: Will though need to check the kafka channels access control there.",
+                "ts": "1475588147.000117",
+                "author_subname": "elli",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "Will though need to check the kafka channels access control there.",
+                "author_name": "Elli",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/elli",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/8a94917afbdbd7e1bd944f484dc05cfe.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0022-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1475588147000117",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1475626018.000000"
+        },
+        "ts": "1475625590.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "When the broker starts up, it constructs the Authorizer object and initializes it with a config. The ACLs are posted in the ZooKeeper ensemble. When the first request comes in, the broker checks its auth cache -- it's empty, so it requests it from ZK and caches it for all subsequent requests.",
+        "ts": "1475625708.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If you want to dive into more detail, KIP-11 makes for a good starting point: <https:\/\/cwiki.apache.org\/confluence\/display\/KAFKA\/KIP-11+-+Authorization+Interface>",
+        "ts": "1475625758.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And this post provides step-by-step directions for hands-on experimentation: <http:\/\/www.confluent.io\/blog\/apache-kafka-security-authorization-authentication-encryption\/> ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1475629719.000000"
+        },
+        "ts": "1475625862.000152"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Thanks much <@U0XQ35CDD>!",
+        "ts": "1475649402.000157"
+    }
+]

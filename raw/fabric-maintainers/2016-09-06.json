@@ -1,0 +1,737 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what do we want to do with these kind of errors: <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/914\/console>\nthose test resources seem to be problematic as they are used by multiple branches and pending Gerrit changesets that need different settings",
+        "ts": "1473147122.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean by settings?",
+        "ts": "1473150437.000025"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I mean that main and feature\/convergence need different chaincode interfaces to be implemented in the test code so only one of them will work. on the other side, if you upload a new gerrit changeset, and change something related to that test you will have to create a PR to the Github of fabric-resources and 1) if that is merged your changeset will pass the tests but master and feature will most probably fail 2) your changeset will fail the tests",
+        "ts": "1473150818.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1473151163.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "people usually work this around by having forks of fabric resources but that leads to source pointing to non-official repos",
+        "ts": "1473151256.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea that test isn't good",
+        "ts": "1473151612.000029"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we should somehow find ways to permanently fix that",
+        "ts": "1473151641.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "any ideas?",
+        "ts": "1473152759.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not fetch from http?",
+        "ts": "1473154130.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961>  - the test that fails is actually the one which tests the ability to deploy chaincode from a remote repository so unfortunately not fetching from http is not an option for this particular test.   \n\n(BTW - <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/901\/>  puts in a temporary fix for this on the master branch - basically points master at a different remote repo for the chaincode)\n\nThe fact that these tests are failing is actually good IMHO because (and I know I sound like a broken record) we have got to find a way to version packages \/ interfaces for different releases of the fabric.",
+        "ts": "1473154467.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, fetch from a locally created http server",
+        "ts": "1473154498.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if you take a look at the \"fix\" I attempted, the idea was that we could use something like <http:\/\/gopkg.in|gopkg.in> in conjunction with branching \/ tagging",
+        "ts": "1473154510.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - possible but that server would need to implement the github metadata",
+        "ts": "1473154529.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i never found that interface useful tho",
+        "ts": "1473154534.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you should ship your own code",
+        "ts": "1473154544.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not have the server fetch it from somewhere",
+        "ts": "1473154550.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "\"go get\" only supports specific remote locations and they are all source code control systems - so a straight http download does not work",
+        "ts": "1473154561.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you're not guaranteed that the server will actually produce the same files",
+        "ts": "1473154563.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we need to test whether go get can fetch from http?",
+        "ts": "1473154587.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the other option for chaincode specifically is that we move to a model where you always vendor the dependencies",
+        "ts": "1473154594.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or from git",
+        "ts": "1473154595.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we know that it can",
+        "ts": "1473154599.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "We are testing the end to end deployment of chaincode from a remote repository - I think the test is valid if we are going to support the functionality.  Personally, I think we can (and should) remove deployment of chaincode from remote repositories in v1 since we now have the SDK which can deploy chaincode from your local system",
+        "ts": "1473154713.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i agree",
+        "ts": "1473154738.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT - it still does not solve the problem of breaking interfaces across releases.  We need a strategy for properly packaging and versioning the chaincode package",
+        "ts": "1473154794.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Go 1.7 offers the ability (its experimental) to actually ship packages as binaries - that might be interesting to look at as well when it comes to creating a proper SDK\/package for developing chaincode",
+        "ts": "1473154877.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think the shim needs to be broken out and versioned",
+        "ts": "1473154932.000050",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> where is your fix attempt?",
+        "ts": "1473155191.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I like the idea of this versioning",
+        "ts": "1473155632.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it has been merged already on master  --   <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/901\/>",
+        "ts": "1473155666.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "oh so I gave +2 because I also liked it when I reviewed it :smile:",
+        "ts": "1473155756.000054"
+    },
+    {
+        "user": "U14DA4NAD",
+        "text": "<@U14DA4NAD|jchenibm> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473155940.000055"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "how exactly will we use this? when should one increase the version number?",
+        "ts": "1473158451.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR> - in many ways that is the question of the hour.  Here's my take \/ proposal:\n\n1) We actually need to start cutting releases - I propose we have release branches (perhaps we can also use tags as well)\n\n2) Each time we cut a release branch we increment the version of the master branch\n\n3) Currently it looks like \"version\" is set via an environment variable in the Makefile (which will work) but perhaps if we have a coordinated version strategy we can actually at least put the major version in the metadata package",
+        "ts": "1473159183.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT - we have an issue with the convergence branch right now - what version to give it?",
+        "ts": "1473159227.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on the other hand, we could start to version individual packages as well if we can get a proper package \/ module structure in place for v1",
+        "ts": "1473159258.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in any case, this topic needs some serious thought and discussion ASAP",
+        "ts": "1473159301.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> okay so lets suppose we use versions you described. but what if I work on master and I want to create a new change which breaks the test and I also want to fix the test in that change such that the test passes",
+        "ts": "1473159401.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think introducing breaking changes on master is ok (of course as you mention we need to fix \/ update the tests) once we actually get a stable version strategy in place.   Once we have \"stable\" releases (or simply releases) we can point folks who simply want to build fabric applications to those release versions.   If you want to live on the bleeding edge and use the \"master\" version of the fabric, you'll simply need to keep up with changes",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1473159614.000000"
+        },
+        "ts": "1473159592.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so as long as we have say fabric v0.6 and a chaincode shim package v0.6 (the main external culprit), we'll be ok.  We can version our samples, interfaces, etc",
+        "ts": "1473159672.000064"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do you mean that it OK if a change intentionally breaks that test on master and then another change in fabric-test-resouces fixes it?",
+        "ts": "1473159701.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this will take some planning and coordination, but is certainly doable",
+        "ts": "1473159702.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR> - yes",
+        "ts": "1473159713.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "with the assumption that we properly version fabric-test-resources as well",
+        "ts": "1473159725.000068"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "wouldn't there be a solution where master could go from a clean state to a clean state? one where while developing the change in Gerrit master would be okay, and the change in Gerrit would also pass the tests and after merging the change master would also pass the tests?",
+        "ts": "1473159870.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Definitely",
+        "ts": "1473159982.000070"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "you mean there is one?",
+        "ts": "1473160655.000071"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "with your solution, I think the following would happen:\n- I upload a change to Gerrit that breaks the test\n- master works because it downloads the test files from some proper version. OK\n- my change fails because it needs a modified version of the tests. what should I do? if I modify the current version that breaks master. if I don't that makes my change fail the Jenkins tests",
+        "ts": "1473160816.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR>  - are you talking specifically about this clash we currently have with the convergence branch not really having a version?",
+        "ts": "1473161013.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "an alternative to what I did in 901 would have been to use a separate repo for the external chaincode for the convergence branch until such time as it becomes master.  The same would hold true for feature branches",
+        "ts": "1473161098.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> : no, I am talking about the situation when one wants to create a change on master (in Gerrit) and wants the test to pass (e.g. they need to be changed)\nIn such a situation the tests needs to be changed separately from the ones used by master, and when the Gerrit change is merged then those new tests needs to be used by master.",
+        "ts": "1473161261.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Ok.  Sorry - now I see what you are saying.   in that case, I guess we would have to actually \"version\" the external resource(s) independently of the version of the fabric.    So let's say that a test on master currently uses \"fabric-test-resources\/example_chaincode01 version 3\" .   You make a change which requires you to modify \"example_chaincode01\".  So you'd need to push a new version of \"fabric-test-resources\/example_chaincode01 version 4\".  So you push that change and now in your local version of the fabric you modify the test to use \"fabric-test-resources\/example_chaincode01 version 4\".  Things pass locally and now you are ready to submit your change to master.   Shouldn't this work?   Basically the subtle difference is that \"fabric-test-resources\/example_chaincode01\" is versioned independently of the fabric version",
+        "ts": "1473162254.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this sounds good",
+        "ts": "1473163310.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe it is a bad idea but it would also work if we used multiple subversions: branchversion.currentlyusedsubversion",
+        "ts": "1473164142.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on a different note (but kinda related)   <@U0KM61BCP> <@U0KPFAZNF>  -  when will we be calling the v0.6 branch an actual release (meaning we close it for merging in any new features and stabilize it)?",
+        "ts": "1473164415.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we have a v0.6 branch?",
+        "ts": "1473164547.000080",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Actually, the idea of testing from a locally deployed httpd is feasible. Create a git 'server' - we do this for buildpacks in CF. Fairly simple really. Of course, it is a bit clunky to set up.",
+        "ts": "1473164887.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961> keep up;-)",
+        "ts": "1473164898.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0PB67X4K>: we really need some test feedback and to identify the issues we need fixed ",
+        "ts": "1473164947.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "or implemented as the case may be",
+        "ts": "1473164962.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "figured as much but just wanted to make sure",
+        "ts": "1473165008.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP> : so the could would be in the fabric repo (that now resides in fabric-test-resources) and the test itself would start a git server, right?",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1473165102.000000"
+        },
+        "ts": "1473165089.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we even have to test this?",
+        "ts": "1473165179.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand",
+        "ts": "1473165184.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what specifically in our code is being tested here",
+        "ts": "1473165200.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1AU8DRQR>: yes",
+        "ts": "1473165223.000091"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "isn't it some kind of end-to-end test? to see if the system works with go get? or...?",
+        "ts": "1473165244.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "that we can deploy from http",
+        "ts": "1473165245.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KM61BCP> I would be happy either with yours or with <@U0PB67X4K> 's solution :slightly_smiling_face: just let me know what I can help and implement to make it work",
+        "ts": "1473165341.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but can't we just do a \"go get\" on the local sources?",
+        "ts": "1473165599.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "doesn't matter what go does",
+        "ts": "1473165617.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "whether it fetches the sources, or whether it sees that they are present",
+        "ts": "1473165631.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does it?",
+        "ts": "1473165633.000098"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think we can suppose that go get works fine",
+        "ts": "1473165703.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1473165742.000100"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what to do then? :slightly_smiling_face:",
+        "ts": "1473165938.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, what do we want to test?",
+        "ts": "1473166109.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "whether we call \"go get\" correctly?",
+        "ts": "1473166115.000103"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "simon, I agree, just asking the others (e.g. <@U0KM61BCP> and <@U0PB67X4K> ) to say something if they like the idea of dumping this test or not. or maybe I\/we could begin implementing one of the other ideas.",
+        "ts": "1473166273.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we can turn it off, we added it because at one point, someone broke the capability",
+        "ts": "1473166330.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - I think you might be missing the point.  The functionality we are testing is the ability to specify a git URL for the chaincode when you deploy it (meaning you don't need to have the chaincode source on your local machine)",
+        "ts": "1473166343.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, yes",
+        "ts": "1473166355.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you can still do that, just without requiring go get to go to the network",
+        "ts": "1473166387.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and if you look at the code, we do a few odd things like set a different GOPATH, etc",
+        "ts": "1473166389.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1473166399.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "of course, we still have the issue <@U0PB67X4K> raised: how to handle versioning properly",
+        "ts": "1473166425.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "number of aspects",
+        "ts": "1473166475.000112"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "those version tags sound good",
+        "ts": "1473166482.000113"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "at least for me",
+        "ts": "1473166487.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "chaincode stub api",
+        "ts": "1473166489.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "go get which doesn't support it",
+        "ts": "1473166510.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "govendor which does",
+        "ts": "1473166523.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we could make containerizing required;-)",
+        "ts": "1473166555.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "sdk 2 fabric version detection",
+        "ts": "1473166651.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "rest api",
+        "ts": "1473166672.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "grpc",
+        "ts": "1473166678.000121"
+    },
+    {
+        "user": "U0V86V3QR",
+        "text": "<@U0V86V3QR|gordonj> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473167903.000122"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Do we need this? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/871\/>",
+        "ts": "1473170165.000123",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Do we need to enable node sdk tests in the feature\/convergence branch?",
+        "ts": "1473170193.000124"
+    },
+    {
+        "user": "U0NLP5909",
+        "text": "<@U0NLP5909|hanhzf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473173354.000125"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "in which part of the new architecture are there tasks to be done where I can help? <@U0KM61BCP> <@U0KN2SSKE> \nit seems that consensus, ledger and chaincode are covered.",
+        "ts": "1473183695.000126"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1AU8DRQR>: Yes, we do need 871",
+        "ts": "1473184189.000127"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okay then I will synch with Ramesh. we were guessing if it is still needed or not",
+        "ts": "1473184312.000130"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, thank you.",
+        "ts": "1473184323.000131"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Re: 931:\n\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/913\/3\/peer\/chaincode\/common.go>",
+        "ts": "1473184329.000132"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but there is some error in connection with git cloning in sdk that needs to be wroked around {871}",
+        "ts": "1473184352.000133"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "This comment from Gari: *Gari Singh 6:40 AM The code looks fine but I think I missed the requirement this is trying to address?*",
+        "ts": "1473184356.000134"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Kk",
+        "ts": "1473184385.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "just answered :slightly_smiling_face:",
+        "ts": "1473184437.000136",
+        "reactions": [
+            {
+                "name": "woo",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U24PWBB97",
+        "text": "<@U24PWBB97|vkandy> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473187570.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel> we\u2019re going to be pretty careful\/persnicketty with merges to the v0.6 branch. Nothing that isn\u2019t tagged in Jira and cleared by me and <@U0KN2SSKE> should be merged",
+        "ts": "1473194654.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "if you believe that a bug needs to be fixed, please let\u2019s discuss via slack or email",
+        "ts": "1473194692.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> roger",
+        "ts": "1473200858.000140",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

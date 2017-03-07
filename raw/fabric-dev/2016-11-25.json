@@ -1,0 +1,94 @@
+[
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "hi i am facing following issue while deploying chaincode :-\n\nvp0_1  | 09:16:17.441 [dockercontroller] deployImage -&gt; ERRO 025 Error building images: Post <http:\/\/172.17.0.1:2375\/build?t=dev-vp0-0f5b1d65041bc6d500bd0f1cab50eb6154c291ef0f4596d64b6797e8ef8f7c34a179b5a2cea82253ff3d74e768512fe0481503eadcf13d18f9761bbb8133efd0>: dial tcp 172.17.0.1:2375: getsockopt: no route to host\nvp0_1  | 09:16:17.441 [dockercontroller] deployImage -&gt; ERRO 026 Image Output:\nvp0_1  | ********************\nvp0_1  |\nvp0_1  | ********************\nvp0_1  | 09:16:21.453 [dockercontroller] Start -&gt; ERRO 027 start-could not recreate container Post <http:\/\/172.17.0.1:2375\/containers\/create?name=dev-vp0-0f5b1d65041bc6d500bd0f1cab50eb6154c291ef0f4596d64b6797e8ef8f7c34a179b5a2cea82253ff3d74e768512fe0481503eadcf13d18f9761bbb8133efd0>: dial tcp 172.17.0.1:2375: getsockopt: no route to host\nvp0_1  | 09:16:21.453 [chaincode] Launch -&gt; ERRO 028 launchAndWaitForRegister failed Error starting container: Post <http:\/\/172.17.0.1:2375\/containers\/create?name=dev-vp0-0f5b1d65041bc6d500bd0f1cab50eb6154c291ef0f4596d64b6797e8ef8f7c34a179b5a2cea82253ff3d74e768512fe0481503eadcf13d18f9761bbb8133efd0>: dial tcp 172.17.0.1:2375: getsockopt: no route to host",
+        "ts": "1480066058.004037"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "any help",
+        "ts": "1480066071.004038"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "?",
+        "ts": "1480066072.004039"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Hi All. When we deploy chaincode it prepares some deployment package and on deployment it creates docker image inside peer, right? So the question: what is included in deployment package? and what is requirement for the instance which makes a deployment? I mean if I deploy using NodeSDK to remote peer - what dependencies should be installed on this host: my chaincode, go dependencies, peer images - and why?",
+        "ts": "1480070661.004040"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0N4P17ND>  -  when you deploy chaincode from the NodeSDK (or in the future any of the client SDKs), the \"deployment package\" is basically a tarball which contains the information for being able to create an image using the Docker Remote API  (so basically a Dockerfile and any contents which are needed to run \"build image\").   The default Dockerfile created by the SDKs (currently) requires that you include the source for your chaincode as well as any external dependencies (which also includes the fabric src) packaged in the vendor folder of your chaincode directory in order to deploy",
+        "ts": "1480082407.004041"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "<@U0PB67X4K> thanks. It make sense - but what we phased yesterday (based on v06) deploying from remote NodeSDK to the peer is that it caused chaincode start error on peer before we have not pulled docker images on NodeSDK, which was a bit odd.. is it expected to pull docker images on NodeSDK to deploy chaincode or did we mixed something?",
+        "edited": {
+            "user": "U0N4P17ND",
+            "ts": "1480084408.000000"
+        },
+        "ts": "1480083563.004042"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "And another related question - can we add node dynamically while running with PBFT enabled? So the question is we are running on few different physical instances (so running instance one by one with different docker-compose) and it works but we have not enabled PBFT yet. Crossing fingers and will try now - but should we expect any issues or not really?",
+        "ts": "1480084990.004044"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Sorry, for the 1st question docker images not needed on NodeSDK - rechecked - my mistake, so go dependencies were missed...",
+        "ts": "1480086673.004045"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0N4P17ND> - in v0.6 with PBFT you cannot dynamically add a validating peer \/ node",
+        "ts": "1480097499.004046"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Hi <@U0PB67X4K> , will v1.0 allow \"PBFT while allowing dynamically add validating peer\"?  This is quite important features in live expansion of nodes. Thank you.",
+        "ts": "1480128096.004047"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U2Y2V95D2> v1.0 drastically reorganizes the various fabric components.  Suggest you got to <https:\/\/wiki.hyperledger.org\/community\/fabric-design-docs> )",
+        "ts": "1480130099.004048"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Thanks <@U0UGH3X7X>",
+        "ts": "1480131032.004049"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2Y2V95D2>: This is in our radar, but there is no timeline for when this will be ready, and no code to show for the dynamic addition of BFT ordering nodes at this time either. ",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1480134958.000000"
+        },
+        "ts": "1480134436.004050"
+    },
+    {
+        "type": "message",
+        "user": "U2Y2V95D2",
+        "text": "Thanks @kos'",
+        "ts": "1480147133.004052"
+    }
+]

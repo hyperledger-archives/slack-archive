@@ -1,0 +1,264 @@
+[
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "I am getting error while try to interact two  peers like this :Error: http2Client.notifyError got notified that the client transport was broken EOF.\n09:23:45.257 [peer] chatWithPeer -&gt; ERRO 031 Error establishing chat with peer address 192.168.1.117:7051: rpc error: code = 13 desc = transport is closing",
+        "ts": "1479375293.000773"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0ULK2JPP> <@U0KN2SSKE> <@U13TWBRBL> <@U0ZR63HLK> <@U0XPR4NP4> <@U0Z541B3P>  and all - Do we have an algorithm implemented yet for txid?  I believe the intent is still to hash the transaction itself to form the txid.  Should the txid be included in the transaction protos and sent with the transaction to ordering, or leave it up to each component to derive it each time it is needed?  Would be nice to see the txid in the protos, if nothing else for troubleshooting\/traceability purpose.",
+        "ts": "1479384832.000774"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "And another question while I have you - do we have serialization\/deserialization implemented for the new block structure yet?  I believe that was the last piece needed before ledger switched from Block2 to the new Block.",
+        "ts": "1479384884.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I remember there has been a discussion about txid and how to generate it. Tamas brought up the issue to avoid crypto related fields (creator, signature, etc.) because they can have ambiguous representations and I agreed with that consideration.",
+        "ts": "1479385285.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1KFCPFQA> `Should the txid be included in the transaction protos and sent with the transaction to ordering, or leave it up to each component to derive it each time it is needed?  Would be nice to see the txid in the protos, if nothing else for troubleshooting\/traceability purpose.`",
+        "ts": "1479387577.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1KFCPFQA> I like txid being in the Transaction. There are couple of options (1) endorser can set it on proposal response or (2) SDK can set it\u2026",
+        "ts": "1479387736.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U13TWBRBL> <@U0KQ9QKH6> also had some thoughts about TID",
+        "ts": "1479387754.000781"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1KFCPFQA> <@U0ULK2JPP> <@U0KQ9QKH6> we\u2019d prefer for the SDK to set it, so that in the case of a transaction processing failure and the status is in an unknown state (think of the orderer or committer failures after successful submission but they could not send out the error before crashing), the application can catch the timeout on that and re-send the transaction with the same ID, this is the idea of idempotent design",
+        "ts": "1479394327.000784",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1KFCPFQA> will checking for TID uniqueness be a performance hit ? I think it makes sense to check for it at both endorsement and commit time",
+        "ts": "1479394583.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>  - well we'll need a deterministic way of creating non-colliding transactions id across clients",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479394609.000000"
+        },
+        "ts": "1479394592.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but in the end, you can only track once you send to the ordering service anyway",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479394682.000000"
+        },
+        "ts": "1479394640.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so why not have the endorser(s) create it for you?",
+        "ts": "1479394651.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> right\u2026 so to rephrase my above q\u2026 it\u2019ll be good to (1) have a deterministic way of creating (2) have a inexpensive way of checking at endorments and ommit time",
+        "ts": "1479394664.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "having he endorser creating it would be good \u2026 however how about this case `end client (send TID) -&gt; SDK (sets TID) -&gt; endorser (verifies uniqueness)`",
+        "ts": "1479394730.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in this case SDK delegates it to end client\u2026 do we want to support that ?",
+        "ts": "1479394749.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or do we want to only support  `end client (does not generate TID) -&gt; SDK (sends proposal without TID)-&gt; endorser (sets TID)`",
+        "ts": "1479394847.000794"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "on the validation\/commit question, it would not be a significant perf hit to check that the txid hasnt been used previously during validation\/commit time, since we have an index in LevelDB on txid already (for now just a stub until the real txid is determined).  The index makes it a very fast lookup from LevelDB.  If we find a matching txid already on the ledger, we\u2019d mark the new tran as invalid.",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1479395305.000000"
+        },
+        "ts": "1479395281.000795"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U1KFCPFQA> would we need to check across chains?",
+        "ts": "1479396480.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "ie ledgers",
+        "ts": "1479396487.000798"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U0PB67X4K> <@U0ULK2JPP> <@U1KFCPFQA> <@U13TWBRBL> : I tried to capture our thoughts in <https:\/\/jira.hyperledger.org\/browse\/FAB-792> for the txid generation. The proprosal\/endorsement phases are not shown",
+        "ts": "1479399520.000799"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> the expected interaction in the idempotent design is to have the client (browser, mobile app) first request the TxID from the server (running the app using the SDK), then use it to initiate the transaction (proposal then transaction). this 2-step flow pushes the state to the client to manage and allows it to re-initiate the transaction if it believes the server has failed in unknown ways (server didn\u2019t give a definitive yes or no event). we could have the orderer do that but it means the orderer would need new APIs to support the generation of txID (given the payload content) plus this doesn\u2019t feel like part of the orderer responsibilities.",
+        "ts": "1479405554.000800"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "also, if the client sets it and it\u2019s guaranteed unique (like a UUID generator), then it\u2019ll be deterministic by default since it\u2019s only calculated by one source (the submitting client) right?",
+        "ts": "1479405625.000801"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0UKTPMG8> The transaction is scoped to a channel and I assume the channelid would be one of the items hashed upon to generate the txid, therefore I don\u2019t think we\u2019d need to check all the chains for prior existence of this txid, just the one chain associated with the targeted channel.",
+        "ts": "1479408855.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>  - I did not want the orderer to create the transaction id - I was thinking that the endorser could actually do it and return it as part of a proposal response",
+        "ts": "1479410240.000803"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> ah my bad, mis-read your comment above. i guess we could rely on the Proposal step to generate the tx id, and the app can then return that to the client. if the app (where the SDK runs) or the endorser crashed and the client never got the response, it can always re-submit the proposal without causing any harm (the proposal API is idempotent by nature). then the client will have the tx ID in hand when it\u2019s ready to call the orderer to send in the transaction for processing, so that if the backends failed at this step, it\u2019ll be able to use this tx ID to re-construct a new transaction, thus making the whole process idempotent",
+        "ts": "1479410670.000804"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "in this case, we do need a deterministic generation tx ID algo since all endorsers are calculating it",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1479410722.000000"
+        },
+        "ts": "1479410708.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but I'm ok with the client generating it as well - was just a suggestion to eliminate having to do it on the client side although I can see the advantage of doing it on the client side as well",
+        "ts": "1479410763.000807"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "well thanks man :grinning:",
+        "ts": "1479410804.000808",
+        "reactions": [
+            {
+                "name": "stuck_out_tongue_winking_eye",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "do you know if UUID is unique enough across all channels?",
+        "ts": "1479410839.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think most implementations of UUIDv4 take into account the host they are generated on so typically there should not be any collision",
+        "ts": "1479410895.000810"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "hash(proposal payload + timestamp + channel) may not be unique enough i\u2019m afraid",
+        "ts": "1479410909.000811"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok great",
+        "ts": "1479410912.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "So <@U1KFCPFQA> <@U13TWBRBL> <@U0KQ9QKH6> <@U0PB67X4K> \u2026. seems like we want to have a TID in the Transaction and the remaining question is should it be set by Endorser or SDK",
+        "ts": "1479417202.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "correct ?",
+        "ts": "1479417210.000814"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "correct. we are leaning toward having the SDK generate it instead of the endorsers to avoid having to worry about deterministic algos",
+        "ts": "1479417313.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but then then the fabric still have to make sure the TID is unique",
+        "ts": "1479418889.000816"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Could we not potentially use the tx hash?",
+        "ts": "1479436994.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "we discussed this at length before \u2014 the tx-id should be generated by the client app when it calls the sdk to initiate the transaction (to overcome issues mentioned in fab-792);  the method is up to the client app, but the tx-id must be globally unique.",
+        "ts": "1479438663.000818"
+    }
+]

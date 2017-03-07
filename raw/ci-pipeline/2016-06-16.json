@@ -1,0 +1,221 @@
+[
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U0KPFAZNF>: Hey Greg, I've ignored discussions for a week or two since we worked together last, heads down on some development items... I learned from <@U11HH3P7Y>  that we are now pushing to dockerhub, or we were till <@U0UHG4VP1> disabled jenkins?",
+        "ts": "1466089388.000075"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "how does that work with baseimage:latest and platform\/arch taging? is that described somewhere already? or on slack somewhere that I can scroll back to maybe?",
+        "ts": "1466089450.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U10Q62R8X>: actually, i dont know..i wasnt involved there and didnt realize that was already happening",
+        "ts": "1466091536.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it looks like only baseimage is on dockerhub",
+        "ts": "1466091580.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "unless an alternate namespace is being used",
+        "ts": "1466091588.000079"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF>: Just for testing we are pushing x86 peer and membersrvc images to `hyperledgergithub` docker hub account",
+        "ts": "1466092810.000080"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0KPFAZNF>: Yes, we got dockerhub pushes working. They currently only run on merges to master that successfully build. Images are pushed as `hyperledgergithub\/fabric-peer:$arch-$sha`",
+        "ts": "1466105351.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "where $arch is either `x86_64` or `s390x`",
+        "ts": "1466105365.000082",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U10Q62R8X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool!",
+        "ts": "1466105365.000083"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<https:\/\/hub.docker.com\/r\/hyperledgergithub\/fabric-peer\/tags\/>",
+        "ts": "1466105406.000084"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "Looks like we've successfully pushed images 6 times. :slightly_smiling_face:",
+        "ts": "1466105434.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "(You can thank Ramesh!)",
+        "ts": "1466105441.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one thing we will need to think about (or perhaps you already have) is the peripheral images like -src and -ccenv",
+        "ts": "1466105484.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, one cannot just \u201cdocker pull hyperledgergithub\/fabric-peer\u201d, as that will also need other images to actually run",
+        "ts": "1466105526.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(namely baseimage and ccenv",
+        "ts": "1466105539.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure what the right solution is, honestly,  but we should discuss",
+        "ts": "1466105557.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one idea: you could in theory modify the core.yaml from things like \u201chyperledger\/fabric-baseimage\u201d to \u201chyperledgergithub\/fabric-baseimage:$specific-tag",
+        "ts": "1466105686.000091"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "I believe we were just starting with pushing peer and membersrvc for testing.",
+        "ts": "1466105774.000092"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "Assuming <@U0UHG4VP1> doesn't already have them, if whoever is in charge of <https:\/\/hub.docker.com\/u\/hyperledger> can securely provide <@U0UHG4VP1> with the username, password, and email, he can update the jobs to push the images there instead.",
+        "ts": "1466105920.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1BC5NF2S>: I do own that repo, but I don\u2019t know anything about pushing to it",
+        "ts": "1466105975.000094"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0UHG4VP1>: Oh, good! There are masked password fields in the global Jenkins configuration you can update to change which repo they go to.",
+        "ts": "1466106064.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1BC5NF2S>: is this a webhook I need to set up or will it be pushing as me?",
+        "ts": "1466106092.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0UHG4VP1>: See `include-raw-docker-image-deploy.sh` in the ci-management repo for the job. It gets pushed as the `DOCKER_HUB_USERNAME` defined in ENV",
+        "ts": "1466106148.000097"
+    },
+    {
+        "type": "message",
+        "user": "U11HTMW0H",
+        "text": "i just hope we arent making things too complicated with all the images.  in <@U11HH3P7Y> dockerhub there is simply membersrvc and peer ...and it is very simply to script to have a network up and running with security.  maybe for dev the other images are needed though.",
+        "ts": "1466106217.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "bramwelt: excellent",
+        "ts": "1466106312.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11HTMW0H>: point taken on the complexity and I agree\u2026i think the problem stems from the fact that the peer needs to create its own containers in response to deployment requests\u2026so the question is: how did your environment deal with that?",
+        "ts": "1466106594.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U1BC5NF2S>: I added hyperledgergithub user to the hyperledger repo on dockerhub in support of <http:\/\/gerrit.hyperledger.org\/r\/193> instead of creating a new user",
+        "ts": "1466107618.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5NF2S",
+        "text": "<@U0UHG4VP1>: I'd rather get rid of the hyperledgergithub user. Is there a reason you can't switch out the credentials for the hyperledger user?",
+        "ts": "1466107959.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "resetting password",
+        "ts": "1466108139.000105"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>:  you have to create `fabric-peer` and` fabric-membersrvc` repo's in `hyperledger `namespace  before merge <http:\/\/gerrit.hyperledger.org\/r\/193> or before enable Jenkins",
+        "ts": "1466112714.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "could someone with proper access turn on travis support for hyperledger\/fabric-chaintool?",
+        "ts": "1466129749.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it should already be prepared to integrate, as I was running travis on it in the original location, i just lack authority under the hyperledger namespace",
+        "ts": "1466129787.000108"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF>: I forked fabric-chaintool repo and ran travis build",
+        "ts": "1466131511.000109"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<https:\/\/travis-ci.org\/rameshthoomu\/fabric-chaintool\/builds\/138257127>",
+        "ts": "1466131512.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1466131995.000111"
+    }
+]

@@ -1,0 +1,215 @@
+[
+    {
+        "type": "message",
+        "user": "U2GEM7JCT",
+        "text": "core\/container\/util\/writer.go creates a tarball for the chaincode. Does anyone know where the untarring occurs in the code, when deploying the tarball at the endorser? I have not been able to find it in the sourcetree.",
+        "ts": "1481641437.000056"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2GEM7JCT> `core\/chaincode\/chaincode_support.go: launchAndWaitForRegister()`, then it\u2019s handed to the container interface to build docker image from, see `core\/container\/dockercontroller\/dockercontroller.go: deployImage()`",
+        "ts": "1481644925.000057"
+    },
+    {
+        "type": "message",
+        "user": "U2GEM7JCT",
+        "text": "I see, thanks",
+        "ts": "1481645212.000058"
+    },
+    {
+        "type": "message",
+        "user": "U2GEM7JCT",
+        "text": "so it's in `BuildImage()` in the go-dockerclient package",
+        "edited": {
+            "user": "U2GEM7JCT",
+            "ts": "1481645260.000000"
+        },
+        "ts": "1481645239.000059"
+    },
+    {
+        "type": "message",
+        "user": "U2GEM7JCT",
+        "text": "<@U13TWBRBL> That is actually very useful.  Do you also know where\/how I can get such a tarball (e.g., for one of the example chaincodes)?",
+        "ts": "1481645744.000061"
+    },
+    {
+        "type": "message",
+        "user": "U2GEM7JCT",
+        "text": "(if you have the information already, no need to look for it otherwise)",
+        "ts": "1481645775.000062"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2GEM7JCT> I believe <@U13Q594J2> has one checked into github somewhere that he uses to test things",
+        "ts": "1481647062.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Who's mostly responsible for writing `peer\/node\/start.go`?",
+        "ts": "1481647277.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XQ35CDD> I\u2019m at least partly responsible having been in that a bit :slightly_smiling_face:",
+        "ts": "1481647664.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ULK2JPP>: Cool. You have a reference to the `static` bootstrapper there (that I'll have to edit anyway because of this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3201\/>). Why do you need the genesis block though?",
+        "ts": "1481648308.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Ideally all the packages would import from their own base package and the `fabric\/common` one only.",
+        "ts": "1481648336.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let me check...",
+        "ts": "1481648390.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that was <@U1HFNJB50> temporary refactor so he can use `deliverService.JoinChannel(commit, block)` to \u201cjoin\u201d the **TEST_CHAINID** while we are waiting for the true join",
+        "ts": "1481648503.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and alternative could be to provide a `deliverService.JoinTESTCHAINID(commit)`",
+        "ts": "1481648549.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the above code will not be needed when the block is supplied by SDK and CLI to join the channel",
+        "ts": "1481648597.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(so, temporary)",
+        "ts": "1481648604.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but will hand over to <@U1HFNJB50>...",
+        "ts": "1481648618.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "Well, <@U0ULK2JPP> described the picture pretty well",
+        "ts": "1481648774.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I need the genesis block in `start.go` simply because that\u2019s how to best of my knowledge chain created and this suppose to be a trigger to see how is the leader to connect to ordering service with delivery client.",
+        "ts": "1481648855.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Gotcha. As long as it's temporary, we're good. Thank you both.",
+        "ts": "1481648974.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "always welcome",
+        "ts": "1481648985.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "just wanted to reuse that peace of code, since doing same thing twice didn\u2019t make much sense to me",
+        "ts": "1481649018.000078"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "and I\u2019m also not sure about the \n&gt; Ideally all the packages would import from their own base package and the `fabric\/common` one only.\nsince sometimes you do want to reuse useful functionality which one did earlier\nprobably in such cases common functionality should be abstracted in some common place",
+        "ts": "1481649097.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks for checking <@U0XQ35CDD> \u2026(thanks, <@U1HFNJB50> )",
+        "ts": "1481649331.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1HFNJB50>: That's what I meant. If it's common, it needs to be moved to `fabric\/common`. (Or `fabric\/protos\/utils`. I suspect that could have worked as well in this case w\/o issues.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1481649614.000000"
+        },
+        "ts": "1481649405.000081",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1HFNJB50"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1BC5A0F9> I just realized I made further comments (as I claimed above) to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2875> but never published them. Just posted to the gerrit changeset. thanks!",
+        "ts": "1481650841.000083"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "oh ok :slightly_smiling_face:",
+        "ts": "1481650866.000084"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U13TWBRBL> another patch has been submitted :slightly_smiling_face:",
+        "ts": "1481665901.000085"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1BC5A0F9> thanks, the update looks good to me, just +1'ed",
+        "ts": "1481685160.000086"
+    },
+    {
+        "user": "U1B9E51R8",
+        "text": "<@U1B9E51R8|xixuejia> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481690950.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U1HFNJB50> <@U0XQ35CDD> <@U0ULK2JPP> re genesis discussion above,  look in protos\/utils\/blockutils.MakeConfigurationBlock",
+        "ts": "1481691533.000088",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

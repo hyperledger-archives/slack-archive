@@ -1,0 +1,519 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "where does it say that &gt;= 20 is optimal?",
+        "ts": "1474617381.000977",
+        "reactions": [
+            {
+                "name": "heavy_plus_sign",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should we expose null requests to the \"application\"?",
+        "ts": "1474630559.000978"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. should null requests be empty batches, or no batch at all",
+        "ts": "1474630582.000979"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if they are no batch, we somehow need to persist all data related to it outside of the chain",
+        "ts": "1474630608.000980"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "basically a batch with signatures, just without hash chain",
+        "ts": "1474630630.000981"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "might as well just use an empty batch instead?",
+        "ts": "1474630644.000982"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961>  - what do we do for censorship of requests (i.e., request liveness) currently in sBFT?",
+        "ts": "1474631436.000983"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nothing",
+        "ts": "1474632917.000984"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we could hook up the request timer",
+        "ts": "1474632940.000985"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then we limit ourselves to one outstanding request at a time",
+        "ts": "1474632953.000986"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I thought about this on the plane a lot",
+        "ts": "1474633119.000987"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we need a mechanism that is essentially independent of a BFT\/XFT protocol",
+        "ts": "1474633132.000988"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for: 1) reliable broadcast of client's request, 2) liveness\/termination, and possibly 3) elimination of (some) duplicate requests",
+        "ts": "1474633200.000989"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I have an idea how to design such a thing - but let's discuss first in person it is easier",
+        "ts": "1474633236.000990"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also filtering invalid requests",
+        "ts": "1474633590.000991"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that is also needed but is separate from this",
+        "ts": "1474633646.000992"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "BTW - I spoke to folks from a company very interested in using HL",
+        "ts": "1474633679.000993"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "they do not want to know invalid transactions that appear on RL",
+        "ts": "1474633701.000994"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "they MUST know about them",
+        "ts": "1474633710.000995"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so for example they have a requirement that consensus does not \"swallow\" invalid tx",
+        "ts": "1474633742.000996"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but only those that are signed?",
+        "ts": "1474633747.000997"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sure - malformed requests could\/should be dropped",
+        "ts": "1474633768.000998"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but semantically invalid transactions - they need to know about",
+        "ts": "1474633799.000999"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "BTW - that mechanism for reliable\/broadcast and request liveness should also incorporate flow control",
+        "ts": "1474633971.001000"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and then",
+        "ts": "1474633978.001001"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "one can easily change protocols - but this thing would stay - hopefully irrespective of the protocol",
+        "ts": "1474634003.001002"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean by flow control?",
+        "ts": "1474634155.001003"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "among other things - avoiding DoS from clients drowning the consenters\/primary with requests",
+        "ts": "1474634222.001004"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I wonder can this even be a library that is called by consensus protocols",
+        "ts": "1474634363.001005"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that would require more design...",
+        "ts": "1474634373.001006"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, that would be nice",
+        "ts": "1474634680.001007"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in that case a consensus protocol does not communicate with clients at all",
+        "ts": "1474634729.001008"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but fetches requests from the flow control component",
+        "ts": "1474634741.001009"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(obviously every replica runs locally the flow control component)",
+        "ts": "1474634762.001010"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and on commit from the consensus protocol - there is an event to flow control component which does with committed requests what it needs to do",
+        "ts": "1474634790.001011"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "view change interaction is less obvious and maybe protocol dependent",
+        "ts": "1474634807.001012"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but I'd like we eventually have such a component",
+        "ts": "1474634820.001013"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and doing this for every protocol specifically is a nonsense",
+        "ts": "1474634964.001014"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it must be as generic as possible",
+        "ts": "1474634972.001015"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1474634998.001016"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you intend to flow control clients?",
+        "ts": "1474635009.001017"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it needs to be deterministic",
+        "ts": "1474635017.001018"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "let's discuss over whiteboard and then later forward here if meaningful",
+        "ts": "1474635037.001019"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1474635130.001020"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0Y14MWA2> <@U0XPR4NP4> <@U0XQ35CDD> <@U1KDAMDJ7>  are you guys in building 500 today ?  should we try for a consensus face to face before marko has to fly away ?",
+        "ts": "1474636397.001021"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "marko is already in zurich...",
+        "ts": "1474636530.001022"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "had to fly away yesterday evening",
+        "ts": "1474636543.001023"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "what !? didn't even have a chance to say bye ... oh well, back to virtual mode",
+        "ts": "1474636592.001024"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm, how do i detect that i am out of date?",
+        "ts": "1474636604.001025"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i could collect all checkpoints",
+        "ts": "1474636613.001026"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is that i might have N-1 checkpoints for different seqnos from N-1 replicas",
+        "ts": "1474636858.001027"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i think the better solution is:",
+        "ts": "1474636880.001028"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if i receive a seqno i think is wrong, i drop the connection",
+        "ts": "1474636900.001029"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "when i reconnect, there is a handshake, and the other side gives me a set of signatures for its last checkpointed batch",
+        "ts": "1474636964.001030"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then i do a state transfer",
+        "ts": "1474636994.001031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i continue",
+        "ts": "1474636999.001032"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am not following",
+        "ts": "1474637139.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in general (not PBFT specific) one could always take f+1st highest (per block height) checkpoint message",
+        "ts": "1474637234.001034"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and figure out one is late",
+        "ts": "1474637242.001035"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this means at least one correct replica has a commit at that height",
+        "ts": "1474637275.001036"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474637285.001037"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you are (sufficiently) behind",
+        "ts": "1474637291.001038"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you can start looking for state transfer",
+        "ts": "1474637298.001039"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "other policies are imaginable...",
+        "ts": "1474637335.001040"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but this is one example",
+        "ts": "1474637340.001041"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0XR6J961> : this is what I assumed from the paper. I am simply curious, where are we with regards to limits of PBFT-driven network scalability which would not affect residual performance in terms of tx\/s.",
+        "ts": "1474637580.001042"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the less replicas the higher performance",
+        "ts": "1474637600.001043"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "obviously but this is a technical explanation. From business perspective, I can imagine that over time founding members of the business network allow newcomers to join and for different reasons, these would like to become qualified members (NVPs\/VPs). If a functional requirement of members is to maintain 100s tx\/s then at some point this will hit a wall due to a growing number of replicas. Therefore, an architectural decision would assume that new participants to the network would not be qualified to become full members but rather consume blockchain indirectly, through APIs.",
+        "ts": "1474638128.001044"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474638451.001045"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "anyone here? I have a question regarding the block commit validation policy",
+        "ts": "1474646241.001046"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(next arch, of course)",
+        "ts": "1474646250.001047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one of the things that are interesting here and in other distributed networks (thinking dynamo) is they often have the desirable performance properties that they converge on the fastest nodes in the network (rather than the slowest)",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1474646304.000000"
+        },
+        "ts": "1474646289.001048"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "isn't dynamo using sharding\/consistent hashing?",
+        "ts": "1474646340.001050"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, you absolutely want to use discretion in the admittance policy, but the good news is a small degree if mistakes can be tolerated",
+        "ts": "1474646357.001051"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>  i am not referring to that aspect of the system",
+        "ts": "1474646384.001052"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "purely that something like PBFT or dynamo protocol tend to operate at the speed of the faster portion of the network that meets minimum quorum",
+        "ts": "1474646423.001053"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "rather than the weakest link",
+        "ts": "1474646433.001054"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you mean the speed of progress is the speed of the fastest write-quorum available",
+        "ts": "1474646456.001055"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(or read, in the case of dynamo at least)",
+        "ts": "1474646473.001056"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but yes",
+        "ts": "1474646477.001057"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though I suppose that is likely also true elsewhere",
+        "ts": "1474646490.001058"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what i mean is the admittance risk is reduced by the virtue of admitting one node (or a small number of nodes) doesn\u2019t necessarily expose the network to an unanticipated reduction in throughput per se",
+        "ts": "1474646598.001059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the slow nodes will be the ones disregrarded",
+        "ts": "1474646606.001060"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "doesn\u2019t mean you shouldn\u2019t be concerned, monitor, and\/or enforce",
+        "ts": "1474646628.001061"
+    }
+]

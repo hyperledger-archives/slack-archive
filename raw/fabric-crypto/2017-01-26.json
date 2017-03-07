@@ -1,0 +1,256 @@
+[
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Hi, all. Maybe a bit silly question but: how consensus work when confidentiality is enabled? \nAs if it is set I guess that other peers will receive encrypted transaction payload, right? If they don't have appropriate keys they will not be able to decrypt them and execute the transaction? Or do I mess up the things peers will always have needed keys to decrypt\/encrypt and only enrolled user will miss them (which I guess is not the case as peer also has enrolled user, so has only some subset of certificates, right?)?\nMy question is based on v06 but I guess it would be similar for v1 if we are talking in context of single channel?",
+        "edited": {
+            "user": "U0N4P17ND",
+            "ts": "1485423778.000000"
+        },
+        "ts": "1485423280.001355"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "When confidentiality is on transactions are encrypted on the sdk side using a chain-specific public (encryption) key. The corresponding decryption key in V0.6 is given to all validators that can decrypt transactions and execute them accordingly.",
+        "ts": "1485432241.001358"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "It is only the payload of trnasactions that is encrypted, so all the rest of information, i..e, signing certificate, nonce, are in the clear.",
+        "thread_ts": "1485432286.001359",
+        "reply_count": 1,
+        "replies": [
+            {
+                "user": "U2UU1LKTR",
+                "ts": "1485485960.001392"
+            }
+        ],
+        "ts": "1485432286.001359"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "In v1 there is no fabric encryption capabilities yet.",
+        "ts": "1485432304.001360"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "thanks <@U1BC5A0F9> just to double check my understanding - so let's say I invoke transaction: \"transfer A 1 to B\" which will be stored in encrypted way in ledger but during execution time all peers see raw data, right?",
+        "ts": "1485432817.001361"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct",
+        "ts": "1485432835.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "if so, is not there an option for some sort of \"man in the middle attack\" so if I listen to VM bytecode execution on the peer - I technically can grab all raw data?",
+        "ts": "1485432867.001363"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "so the data stored to the ledger is encrypted - this is fine but there still seems to be a gap when some sensistive data can be read or do I misunderstood it?",
+        "ts": "1485432915.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not sure why it's a gap?   of course you need to protect your own peer if you don't want people interfering with its internal operations",
+        "ts": "1485442066.001365"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "my own peer - yes but let's say the idea is that if I have 3 banks (A, B and C)  and I want that they see only transactions  addressed to each other. This is possible to manage using enrolled users, right? so data in ledger is encrypted and only users with correct attributes can encrypt it, right? So as soon as transaction is stored to the ledger, if I have correct permissions I can decrypt it, otherwise - no. \nBut during execution each peer see raw content, so technically bank C can monitor transactions between A and B is not it an issue? Or do I get things wrong?",
+        "ts": "1485445002.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "This question is about v06 and I realize that in v1 there will be channels, which should some sort of address this issue but even having channels question seems to be still valid.",
+        "ts": "1485445252.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Any thoughts on this? Is my understanding correct or do I miss something?",
+        "ts": "1485454087.001368"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So in v0.6 we have validators doing the ordering of transactions and afterwards the execution \/ commitment of transaction results. If banks A, B, C have no validators and have only clients in that blockchain network, then a technique similar to what you way can be leveraged, i.e., have client of Bank A encrypt its transaction, send it to the validators for execution and give bank B the keys to decrypt the transaction payload\/and chaincode state if they are given the ledger.",
+        "ts": "1485454766.001369"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "However execution of chaincode that takes place within a peer and if its infrastructure is properly secured no leakage should come from there.",
+        "ts": "1485454834.001370"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "Thanks. So to summarize this: \n1. If A, B and C all are validators - they will see raw data anyway, right?\n2. I understand that if peer is protected it will work - but the idea here, that A and B want to hide their transactions from C and C has also validating peer, so this means that technically C can read the data during transaction execution, right? And confusing thing here is that owning membership service I can grant correct users to A, B and C so as a client they will have limited access to sensitive data but owning a peer they actually have full access... right?\n\nFor me logical might be following behavior: if peer can't decrypt the data for some reason it would say - I can't validate, I would not take part in consensus and as the data is not mine I don't care - I'll accept data from other peers... \n\nAlso what I actually want is some sort of subledgers\/chains which we'll have in v1, right?",
+        "edited": {
+            "user": "U0N4P17ND",
+            "ts": "1485455266.000000"
+        },
+        "ts": "1485455207.001371"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "In v0.6 we do not support confidentiality of contracts against validators. If A, or B, or C have validating peers, they will see the plaintext of all transactions advertised in the chain.",
+        "ts": "1485455661.001373"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "In v1.0 we move to an architecture that would allow for finer-grained of encryption-based confidentiality. However, this is not yet supported.",
+        "ts": "1485455699.001374"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "In v1.0 pairwise business logic can be supported at the level of two-party participant channel.",
+        "ts": "1485455761.001375"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That is A, and B can have their own channel, and B, and C can have their own channel. All of them so far however need to trust orderers to see their transactions.",
+        "ts": "1485455797.001376"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U1BC5A0F9> My understanding is that orderers are agnostic to the contents of the transaction, they are just ordering the transactions they receive..... so in normal operations would an orderer be seeing encrypted transaction contents?  Of course I may be completely misunderstanding things!",
+        "ts": "1485457797.001377"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "If the content is encrypted, no they would not be able to.",
+        "ts": "1485457880.001378"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But in v1.0 as of now we do not offer encryption-based confidentiality.",
+        "ts": "1485457894.001379"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hence you can protect your data of collaboration with organization X if yyou and X have a channel restricted only within the two of you. Because transactions in that channel are ordered through the orderers, the orderers would see the content of your transactions but not endorsers, e.g., belonging to other organizations outside your restricted channel.",
+        "ts": "1485457971.001380"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U1BC5A0F9> thanks!  so to make sure i've understood.... an orderer will serve multiple organizations, beyond the subset that are in your restricted chain...   so if you have orgs A B C X Y Z in your network,  even if X Y have their own \"private\" channel,   the orderers service A B C X Y Z?",
+        "ts": "1485458293.001381"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct, and by \"service offered by orderers\" I mean \"order transactions on behalf of different channels owned by a combination\/any subset of A B C X Y Z\".",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1485458416.000000"
+        },
+        "ts": "1485458404.001382"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U1BC5A0F9> Say in my example with 6 orgs,  and suppose each org stood up their own orderer service.   Do these orderers \"talk amongst themselves\" before settling on a batch to send back to the committers?  I suppose they'd have to.",
+        "ts": "1485458657.001384"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct",
+        "ts": "1485458825.001385"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "the set of orderers need to jointly agree on the order of all transactions advertised in each channel",
+        "ts": "1485458864.001386"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so they see all the transactions",
+        "ts": "1485458877.001387"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U1BC5A0F9>  got it!  Thank you very much.",
+        "ts": "1485458949.001388"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0YJUECE8> sure!",
+        "ts": "1485458967.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "thanks <@U1BC5A0F9> !",
+        "ts": "1485463247.001390"
+    },
+    {
+        "user": "U0YK3KKCY",
+        "text": "<@U0YK3KKCY|harrijk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485464281.001391"
+    },
+    {
+        "type": "message",
+        "user": "U2UU1LKTR",
+        "text": "Hi <@U1BC5A0F9> how can we decrypt the payload? We also observed the chaincode id is also encrypted",
+        "thread_ts": "1485432286.001359",
+        "parent_user_id": "U1BC5A0F9",
+        "ts": "1485485960.001392"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U3X6RA34J>",
+        "ts": "1485493081.001394"
+    },
+    {
+        "user": "U3X6RA34J",
+        "inviter": "U0ZJZBJLF",
+        "text": "<@U3X6RA34J|archivebot> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485493087.001395"
+    },
+    {
+        "user": "U1NGC2X9D",
+        "text": "<@U1NGC2X9D|dinesh_rivankar> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485493125.001396"
+    },
+    {
+        "type": "message",
+        "user": "U1NGC2X9D",
+        "text": "What is the maximum lifetime for the certificates in ver 0.6 ?",
+        "ts": "1485493187.001397"
+    }
+]

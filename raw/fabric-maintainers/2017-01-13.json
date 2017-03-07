@@ -1,0 +1,531 @@
+[
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3761\/> needs some love please",
+        "ts": "1484316151.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "one q for <@U0KPFAZNF> regarding the the above <@U0KM61BCP> \u2026 <@U0KPFAZNF> does busybox come with \u201cvi\u201d do you know ? (trying to remember)",
+        "ts": "1484316530.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I was thinking perhaps its a useful thing to have ?",
+        "ts": "1484316565.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP> yes, it does",
+        "ts": "1484316580.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "cbf$ docker run -it hyperledger\/fabric-busybox \/bin\/sh\n\/ # which vi\n\/bin\/vi\n\/ #",
+        "ts": "1484316619.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>, all, regarding our current busybox approach in general, I discovered a serious flaw last night",
+        "ts": "1484316625.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1484316634.000445"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "is that the dns one?",
+        "ts": "1484316635.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks much",
+        "ts": "1484316637.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah",
+        "ts": "1484316638.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "oops",
+        "ts": "1484316640.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "lol",
+        "ts": "1484316642.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1484316644.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, I didnt notice until I was trying to get peer to talk to orderer in a composition via a link",
+        "ts": "1484316663.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the peer was failing to see the orderer, and then I couldnt see it via the (busybox) shell either",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1484316773.000000"
+        },
+        "ts": "1484316686.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I was thinking it was a problem with docker\/compose\/links",
+        "ts": "1484316695.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it turns out, docker is fine:  the way I have linked the peer\/busybox binaries against glibc is I think the culprit",
+        "ts": "1484316722.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(its apparently a known limitation in glibc + static linking",
+        "ts": "1484316745.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, i am formulating a fix, but it isnt trivial",
+        "ts": "1484316782.000458"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R71RVDY\/-.txt|Untitled> and commented: Good summary of the symptom",
+        "file": {
+            "id": "F3R71RVDY",
+            "created": 1484316881,
+            "timestamp": 1484316881,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 868,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3R71RVDY\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3R71RVDY\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R71RVDY\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3R71RVDY-09697c01f8",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R71RVDY\/-.txt\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.2.2-0889373:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/test$ docker run -it --rm alpine nslookup cnn.com\r\nnslookup: can't resolve '(null)': Name does not resolve\r\n\r\nName:      cnn.com\r\nAddress 1: 151.101.128.73\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vagrant@hyperledger-devenv:v0.2.2-0889373:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/test$ docker run -it --rm alpine nslookup cnn.com<\/pre><\/div>\n<div><pre>nslookup: can't resolve '(null)': Name does not resolve<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>Name:      cnn.com<\/pre><\/div>\n<div><pre>Address 1: 151.101.128.73<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 22,
+            "lines_more": 17,
+            "preview_is_truncated": false,
+            "channels": [
+                "C28CXQXD5"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3RTCCHKR",
+                "created": 1484316881,
+                "timestamp": 1484316881,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "Good summary of the symptom",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1484316881.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I will incorporate some aspect of this into UAT so we would catch it going forward",
+        "ts": "1484316913.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im partially inclined to start deriving our \"runtime\" image from alpine and let the P\/Z folks worry about how they would optimize size independently",
+        "ts": "1484316984.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. we could have x86 base come from alpine and P\/Z could fall back to baseimage",
+        "ts": "1484317013.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/bugs.debian.org\/cgi-bin\/bugreport.cgi?bug=757941>",
+        "ts": "1484317042.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "?",
+        "ts": "1484317044.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "aside from the fact that alpine has already solved this issue, it would also be forward looking for when we need a light weight JVM container too",
+        "ts": "1484317058.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> I havent seen that particular report, but at first blush, i think thats the same issue",
+        "ts": "1484317115.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "basically, we are compiling peer\/orderer\/busybox on ubuntu, so the static link is picking up whatever libc is naturally there",
+        "ts": "1484317151.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in this case, glibc",
+        "ts": "1484317161.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im looking at a bunch of options",
+        "ts": "1484317176.000469"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3633\/>",
+        "ts": "1484317258.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "glibc claims fixed",
+        "ts": "1484317454.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps I just need to update the v0.2.2 baseimage",
+        "ts": "1484317553.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "which busybox are you using?",
+        "ts": "1484317607.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, 1.25.1 is whats in the CR but I have a latest (1.26.2) in an unpushed patch locally",
+        "ts": "1484317634.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "didnt make a difference",
+        "ts": "1484317637.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(plus, it wouldnt solve the statically linked peer\/orderer",
+        "ts": "1484317648.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "which glibc are we using?",
+        "ts": "1484317652.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me look",
+        "ts": "1484317657.000478"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R58BHHR\/-.txt|Untitled>",
+        "file": {
+            "id": "F3R58BHHR",
+            "created": 1484317718,
+            "timestamp": 1484317718,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 333,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3R58BHHR\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3R58BHHR\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R58BHHR\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3R58BHHR-2f97c21088",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3R58BHHR\/-.txt\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.2.2-0889373:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/test$ docker run -it --rm hyperledger\/fabric-baseimage:x86_64-0.2.2\r\nroot@c05988aae299:\/# apt search glibc\r\nSorting... Done\r\nFull Text Search... Done\r\nlinux-libc-dev\/now 4.4.0-53.74 amd64 [installed,local]\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vagrant@hyperledger-devenv:v0.2.2-0889373:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/test$ docker run -it --rm hyperledger\/fabric-baseimage:x86_64-0.2.2<\/pre><\/div>\n<div><pre>root@c05988aae299:\/# apt search glibc<\/pre><\/div>\n<div><pre>Sorting... Done<\/pre><\/div>\n<div><pre>Full Text Search... Done<\/pre><\/div>\n<div><pre>linux-libc-dev\/now 4.4.0-53.74 amd64 [installed,local]<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 6,
+            "lines_more": 1,
+            "preview_is_truncated": false,
+            "channels": [
+                "C28CXQXD5"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1484317719.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "here are some options I am exploring",
+        "ts": "1484317746.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1) perhaps there is a newer glibc for ubuntu and I just need to apt-get upgrade and be done",
+        "ts": "1484317769.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "2) ubuntu has some support for musl, not sure how easy it will be to get go\/busybox to link with it",
+        "ts": "1484317792.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "3) switch bases for runtime (e.g. alpine)",
+        "ts": "1484317803.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(3) does have the advantage that it will be easy to build a micro-jre container (thinking chaintool and the java chaincode)",
+        "ts": "1484317848.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the disadvantage is I would be leaving P\/Z out in the cold",
+        "ts": "1484317859.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the workaround for them is they could use standard ubuntu until someone optimizes for size)",
+        "ts": "1484317884.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so not like they wouldnt work, they just wouldnt be optimized containers",
+        "ts": "1484317894.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, there is an update for that package",
+        "ts": "1484318116.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill try getting baseimage updated and see if that fixes it (for option (1))",
+        "ts": "1484318134.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> as a rule of thumb, perhaps we want to take a hit and \"apt-get upgrade\" baseimage during the build?",
+        "ts": "1484318523.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure this will address this particular problem, but just thinking about general CVE type things",
+        "ts": "1484318545.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on one hand, the notion of a non-deterministic operation bothers me a little...on the other, the fact that we are based on an LTS image somewhat mitigates the negative aspects of non-determinism",
+        "ts": "1484318599.000492"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3QH1JW3B\/-.c|Untitled> and commented: <@U0KM61BCP> running a build with this patch now",
+        "file": {
+            "id": "F3QH1JW3B",
+            "created": 1484319092,
+            "timestamp": 1484319092,
+            "name": "-.c",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "c",
+            "pretty_type": "C",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 416,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3QH1JW3B\/-.c?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3QH1JW3B\/download\/-.c?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3QH1JW3B\/-.c",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3QH1JW3B-7b86ce7d0a",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3QH1JW3B\/-.c\/edit",
+            "preview": "Greg:fabric-busybox ghaskins$ git diff\r\ndiff --git a\/Makefile.busybox b\/Makefile.busybox\r\nindex aeb1a3e..d29113f 100644\r\n--- a\/Makefile.busybox\r\n+++ b\/Makefile.busybox\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-variable\">Greg<\/span>:<span class=\"cm-variable\">fabric<\/span><span class=\"cm-operator\">-<\/span><span class=\"cm-variable\">busybox<\/span> <span class=\"cm-variable\">ghaskins$<\/span> <span class=\"cm-variable\">git<\/span> <span class=\"cm-variable\">diff<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">diff<\/span> <span class=\"cm-operator\">--<\/span><span class=\"cm-variable\">git<\/span> <span class=\"cm-variable\">a<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">Makefile<\/span>.<span class=\"cm-variable\">busybox<\/span> <span class=\"cm-variable\">b<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">Makefile<\/span>.<span class=\"cm-variable\">busybox<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-variable\">index<\/span> <span class=\"cm-variable\">aeb1a3e<\/span>..<span class=\"cm-variable\">d29113f<\/span> <span class=\"cm-number\">100644<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-operator\">---<\/span> <span class=\"cm-variable\">a<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">Makefile<\/span>.<span class=\"cm-variable\">busybox<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-operator\">+++<\/span> <span class=\"cm-variable\">b<\/span><span class=\"cm-operator\">\/<\/span><span class=\"cm-variable\">Makefile<\/span>.<span class=\"cm-variable\">busybox<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 13,
+            "lines_more": 8,
+            "preview_is_truncated": false,
+            "channels": [
+                "C28CXQXD5"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3RTKA7NJ",
+                "created": 1484319092,
+                "timestamp": 1484319092,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "<@U0KM61BCP> running a build with this patch now",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1484319092.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "will see if that changes anything at least w.r.t. busybox DNS",
+        "ts": "1484319102.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> no dice",
+        "ts": "1484319354.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "same behavior with latest glibc (on xenial, at least) and v1.26.2",
+        "ts": "1484319390.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "hmmm",
+        "ts": "1484319435.000497"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "could somebody review this? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3633\/> I had two +2s but had to rebase",
+        "ts": "1484319491.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> heres another possibility I am exploring",
+        "ts": "1484320356.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/sourceware.org\/glibc\/wiki\/FAQ#Even_statically_linked_programs_need_some_shared_libraries_which_is_not_acceptable_for_me.__What_can_I_do.3F>",
+        "ts": "1484320356.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. we can control the linker, so I might be able to specifically link nss_files\/dns and we are good to go",
+        "ts": "1484320390.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill take this over to fabric-dev",
+        "ts": "1484320633.000502"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0ZR63HLK> is <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2983\/> still work-in-progress (it\u2019s marked as such in the title), if so what\u2019s left to do? once this gets finalized I can start implementing the client side",
+        "ts": "1484375184.000503"
+    }
+]

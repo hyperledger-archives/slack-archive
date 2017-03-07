@@ -1,0 +1,879 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> I'd like to talk with you about ACLs and signature formats when it is convenient",
+        "ts": "1477406929.000474"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi, sure",
+        "ts": "1477406946.000475"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Finishing up with <@U0ZR63HLK>. <@U26T99AQ4> the membership service abstract interface. Then can ping you.",
+        "ts": "1477406993.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, thanks!",
+        "ts": "1477406998.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, actually, a nice sanity check would be to check that the membership services API fits well with your policy framework",
+        "ts": "1477407172.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "do you implement \"verify\"  :wink:",
+        "ts": "1477407193.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "The idea is that once is time to verify signature, the call is redirected to the membership service that is able to handle multiple schemes, potentially",
+        "ts": "1477407206.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah, at the end, it is a verify",
+        "ts": "1477407215.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "All signature verification will require a network call to membership services? This sounds problematic to me",
+        "ts": "1477407444.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no no, sorry",
+        "ts": "1477407523.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "verify a signature will not require a remote call",
+        "ts": "1477407537.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but verify a signature is something related to an identity",
+        "ts": "1477407553.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's the reason why we associated it to the membership services",
+        "ts": "1477407566.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "there will a Verify method that will do what is necessary to verify a signature, locally in most of the cases",
+        "ts": "1477407602.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Now I think I am lost again.  If a signature is representative of agreement from X, then it should have a chain of trust which derives from X, why do we need member services to tell us this?",
+        "ts": "1477407737.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "my fault, sorry. Membership services will give us the algorithms to check that chain of trust, for example",
+        "ts": "1477407819.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why this? Because we might have different ways to enforce different chains of trust depending on the way identities are managed in the network",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477407897.000000"
+        },
+        "ts": "1477407855.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So is the algorithm something that's retrieved once, and then applied many times? I'm trying to think of a signature check which would not be tied to identity",
+        "ts": "1477407931.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "correct",
+        "ts": "1477407949.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "an example being an ECDSA signature that is verified against the verification key in a x509 certificate",
+        "ts": "1477407981.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we need to think about this.  I still want to have ZERO dependency on having to call to a remote server for use of crypto stuff.",
+        "ts": "1477408001.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no remote calls",
+        "ts": "1477408013.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "just Verify algorithms",
+        "ts": "1477408025.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ok - so we can set the the \"parameters\" (hash, key length, algorithm, etc) directly from within the code which consumes the component?",
+        "ts": "1477408070.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1477408080.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool!!!",
+        "ts": "1477408085.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "a parallel can be drawn with the BCCSP",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477408173.000000"
+        },
+        "ts": "1477408094.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "just wanted to make sure",
+        "ts": "1477408097.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we will have something that is higher level than BCCSP that exposes a more generalized way to handle signatures, their verification and generation",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477408138.000000"
+        },
+        "ts": "1477408129.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep - makes sense.   I just wanted to make sure that peers, ordering service, etc did not have to call out to a server to get the crypto policy   (so I assume similar settings to what we have in core.yaml today?)",
+        "ts": "1477408220.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it can go there but it can also go to the VSCC or ESCC",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477408274.000000"
+        },
+        "ts": "1477408264.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - I just meant that the peer today gets its config locally.  We are on the same page  :wink:",
+        "ts": "1477408328.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right :slightly_smiling_face:",
+        "ts": "1477408337.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How large are these? To me, this sounds like something that should be encoded into the chain config?",
+        "ts": "1477408386.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And therefore in reconfiguration, and in genesis)",
+        "ts": "1477408398.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1BC5A0F9> <@U0ZR63HLK> I'm having trouble mapping my temporary configuration transaction stuff to the 'next' protos that were just merged.  How can we verify that an endorsement is over the same transaction header when the the transaction header is not bytes (and we cannot marshal deterministically)",
+        "ts": "1477425155.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> `when the the transaction header is not bytes` can you expand on that ?",
+        "ts": "1477425247.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the `fabric_transaction.proto` the `Transaction` contains repeated `TransactionActions` which contain `TransactionHeader`s",
+        "ts": "1477425330.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since the `TransactionHeader` is expressed as a type, and not as bytes, it's not clear how to check any signature or hash against it",
+        "ts": "1477425413.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> ^",
+        "ts": "1477425498.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4> - are you looking at fabric_next.proto?",
+        "ts": "1477425703.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1977\/2\/protos\/next\/fabric_transaction.proto>",
+        "ts": "1477425729.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This was merged, with my vote, earlier as I wanted to start moving the configuration stuff onto the 'real' transaction format.",
+        "ts": "1477425832.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My plan was to define a new transaction type in `fabric_transaction_header.proto` called CONFIGURATION, then use a subset of the `ConfigurationEntry` proto from ab.proto as the `Proposal` `Payload`, and then use `Endorsement` over the marshaled `Proposal`, but it seems to me like this gives me two copies of the `TransactionHeader`, which I have to compare field by field to make sure they are the same.  Which seems wrong.",
+        "ts": "1477425996.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "adding <@U26T99AQ4>",
+        "ts": "1477426185.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Basically, I don't see how you can confirm that the `TransactionAction.header` is the same as the `Proposal.header` without doing a field by field comparison.  The `ProposalResponsePayload.proposalHash` is over the `Proposal.header`, but since we don't have deterministic marshaling, I don't see how that helps.",
+        "ts": "1477426435.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> one of the things we talked about IIRC was that we want a Type in Transaction and the Type in TransactionHeader would have to be that",
+        "ts": "1477426442.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in other words, you\u2019d need to unpack the header (even if it was bytes) so you can take a look at the Type",
+        "ts": "1477426477.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> Yes, we did discuss this as an option, though technically, it doesn't have to be bytes and a type flag (it could just be bytes), but the type flag would be more flexible.",
+        "ts": "1477426507.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I now recall not being able to follow the whole conversation on this - where can I read about what the heck these fields actually mean?  I'll be honest - the inline descriptions are not very clear.  This looks to be some very ugly messaging",
+        "ts": "1477426791.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and if the transaction action.header is supposed to be the same as the proposal.header why do we have both?",
+        "ts": "1477426839.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so <@U0PB67X4K> one thing\u2026 the  `fabric\/protos\/next\/*.proto` will replace `fabric\/protos\/fabric_next.proto` \u2026",
+        "ts": "1477427037.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "except I don't see any service definition(s) in next\/*\/proto ?  unless I missed it",
+        "ts": "1477427069.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right. the only service definition is Endorser",
+        "ts": "1477427096.000532"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "maybe this helps <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2JKXGXEU\/protobufmessagesandflow.pdf>",
+        "ts": "1477427115.000533"
+    },
+    {
+        "type": "message",
+        "subtype": "file_mention",
+        "text": "<@U26T99AQ4|aso> mentioned a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2JKXGXEU\/protobufmessagesandflow.pdf|ProtobufMessagesAndFlow.pdf>.",
+        "file": {
+            "id": "F2JKXGXEU",
+            "created": 1475506254,
+            "timestamp": 1475506254,
+            "name": "ProtobufMessagesAndFlow.pdf",
+            "title": "ProtobufMessagesAndFlow.pdf",
+            "mimetype": "application\/pdf",
+            "filetype": "pdf",
+            "pretty_type": "PDF",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 824792,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2JKXGXEU\/protobufmessagesandflow.pdf?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2JKXGXEU\/download\/protobufmessagesandflow.pdf?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F2JKXGXEU\/protobufmessagesandflow.pdf",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2JKXGXEU-66a1d1cac6",
+            "channels": [
+                "C2GE7GXM1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2JJF8RPV",
+                "created": 1475506254,
+                "timestamp": 1475506254,
+                "user": "U0ZR63HLK",
+                "is_intro": true,
+                "comment": "Hi All, this file contains the protobuf messages and the relative flow with the security checks to put in place. This a joint effort with <@U1BC5A0F9> and <@U26T99AQ4>.",
+                "channel": ""
+            },
+            "reactions": [
+                {
+                    "name": "+1",
+                    "users": [
+                        "U1GN670VD"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        "user": "U26T99AQ4",
+        "ts": "1477427115.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and so some consolidation needs to happen (was going to work on it)",
+        "ts": "1477427120.000535"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "also, with <@U0ULK2JPP> 's help I'm working on the peer code that handles those messages from a security standpoint, I hope I'll be able to make some progress on the code quickly",
+        "ts": "1477427166.000536"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I could write a separate document with a short description of what the fields are and how they are supposed to be used",
+        "ts": "1477427198.000537"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I suggested to binh that we might want modify Next-Consensus-Architecture-Proposal.md to reflect these protobufs and explain what they are supposed to be doing in the grand scheme of things",
+        "ts": "1477427265.000538"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "which I'd be also happy to do",
+        "ts": "1477427276.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe a separate document is unavoidable, but my vote would be to keep the doc in the proto, much easier to reference that way",
+        "ts": "1477427450.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> one thing",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1477427480.000000"
+        },
+        "ts": "1477427467.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "&gt; I don't see how you can confirm that the `TransactionAction.header` is the same as the `Proposal.header` without doing a field by field comparison.",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1477427600.000000"
+        },
+        "ts": "1477427502.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(sorry for bad quotes but you get the idea :slightly_smiling_face: )",
+        "ts": "1477427528.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "where do you see proposal.header ?",
+        "ts": "1477427537.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "FYI <@U0ULK2JPP> you can use a `&gt;` before some text, and it will turn it into a quote, like this:\n\n&gt; where do you see proposal.header ?",
+        "ts": "1477427572.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah",
+        "ts": "1477427587.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks",
+        "ts": "1477427588.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1977\/2\/protos\/next\/fabric_proposal.proto>",
+        "ts": "1477427637.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It contains a message named `Proposal` with a `header` field which is a `TransactionHeader`",
+        "ts": "1477427652.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1477427653.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which is, presumably, the same header in `TransactionActions`?",
+        "ts": "1477427686.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that was my understanding",
+        "ts": "1477427696.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well if they are the same thing, we should not be duplicating them.  I also think that it's confusing to separate proposal and transaction but yet then include a data structure from one within the other",
+        "ts": "1477427710.000555"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That seems a little sloppy to me, why are we encoding the same information twice? [edit: oops, Gari beat me to it]",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477427754.000000"
+        },
+        "ts": "1477427710.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Proposal is sent to the endorser, and Transaction is sent to the Orderer\u2026 the same header from Proposal is taken and placed into Transaction  and sent right \u2026 is the header in two places in Transaction ?",
+        "ts": "1477427873.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I don't think the thing in the proposal is the same as in the transaction - just the same data structure",
+        "ts": "1477428030.000559"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I thought that the `Proposal` could be included, or some limited representation, in the `ProposalResponse`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477428077.000000"
+        },
+        "ts": "1477428032.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but it's unclear - guess I need to look through the PDF above - it seems to have a lot of detail",
+        "ts": "1477428088.000566"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok. my head is spinning now :slightly_smiling_face: let me read the protos again \u2026.",
+        "ts": "1477428090.000567"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U0PB67X4K> the header in the tx has to be the same as the header in the proposal, or else the checks on slide 23 would fail",
+        "ts": "1477428096.000568"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "this is on purpose to enforce a number of security reqs such as accountability",
+        "ts": "1477428128.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well then we have the same header repeated multiple times?   one for each transaction action, plus one for each proposal?",
+        "ts": "1477428162.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "alright - let me review again",
+        "ts": "1477428199.000571"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "one header per action - a tx might have multiple actions",
+        "ts": "1477428213.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "On slide 23, \"ProposalResponsePayload links to the ProposalHeader and chaincodeProposalPayload through proposalHash\"",
+        "ts": "1477428223.000573"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "but a single header per action",
+        "ts": "1477428224.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, so it sounds like no duplication, but how do we know the hash of the ProposalHeader? Unless we have some custom hashing scheme for it? (As we cannot marshal and hash, because of non-determinism in protobuf)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477428297.000000"
+        },
+        "ts": "1477428283.000575"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "right, I think we'll be forced to unmarshal and hash the contatenation of each of the fields - ugly I know, but not unheard of",
+        "ts": "1477428393.000577"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "this might actually be problematic if we have a lot of nesting",
+        "ts": "1477428438.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think that needs to be very explicit then, exactly how we are supposed to hash a TransactionHeader",
+        "ts": "1477428438.000579"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "yeah, definitely",
+        "ts": "1477428445.000580"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "do you guys have time to have a chat on the phone tomorrow to hash out these important details?",
+        "ts": "1477428479.000581"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I'd do it now but it's almost 11pm over here and I don't trust myself anymore :slightly_smiling_face:",
+        "ts": "1477428513.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "of course",
+        "ts": "1477428560.000583"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Fair enough, enjoy what's left of your evening.  I'm not certain if a call is necessary, I would think doing this in slack\/JIRA\/googledoc would be better for posterity's sake",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477428577.000000"
+        },
+        "ts": "1477428562.000584",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U26T99AQ4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'll read the PDF again for sure",
+        "ts": "1477428594.000586"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "I'll get with <@U0ZR63HLK> tomorrow and take a first stab at adding some more comments in the proto files",
+        "ts": "1477428664.000587"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "as to the role of the various fields and some description of the flows",
+        "ts": "1477428685.000588"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool - that way I won't have to roll out the comprehensive PDF every time I forget  :wink:",
+        "ts": "1477428709.000589",
+        "reactions": [
+            {
+                "name": "joy",
+                "users": [
+                    "U26T99AQ4"
+                ],
+                "count": 1
+            },
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "point well taken",
+        "ts": "1477428731.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I was going to move the next\/*proto to fabric\/ and work on the consolidation \u2026. can I a go ahead with that ?",
+        "ts": "1477428749.000591"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and we do any adjustment after that ?",
+        "ts": "1477428761.000592"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "sure thing",
+        "ts": "1477428766.000593"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "we can work on our local copies and rebase\/merge later",
+        "ts": "1477428783.000594"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "it's just comments anyway",
+        "ts": "1477428788.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> <@U0XPR4NP4> your votes ?",
+        "ts": "1477428789.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "well these only comments discussions have been know to take an interesting turn :slightly_smiling_face: but I take your point re rebasing",
+        "ts": "1477428827.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP>  - does this mean you'll be eliminating the extraneous protos and then modifying the peer code to use these?",
+        "ts": "1477428862.000598"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes",
+        "ts": "1477428869.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we'll somehow need to sync with <@U13TWBRBL>  too on the SDK side",
+        "ts": "1477428886.000600"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "good point...",
+        "ts": "1477428908.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(especially for the thing I pinged some of you via DM for next week)",
+        "ts": "1477428930.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> I think you are setting yourself up to do some extra work, if there is any fallout in the form of proto changes from our discussions, but, I do think it could also be a valuable exercise to see where the protos do and don't work for the fabric (just as I've been trying to do with the orderer)",
+        "ts": "1477428937.000603",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> that\u2019s exactly what I was hoping to do",
+        "ts": "1477428964.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "only by actually doing it will we really know",
+        "ts": "1477428979.000605",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and I may find its going to take more work",
+        "ts": "1477428994.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in which case better start early",
+        "ts": "1477429001.000607"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "how about this",
+        "ts": "1477429007.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I start on this and at least TRY to get it to a state where I can push so we can review ?",
+        "ts": "1477429037.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good to me",
+        "ts": "1477429173.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok. will do that",
+        "ts": "1477429208.000611"
+    },
+    {
+        "user": "U11RW82PM",
+        "text": "<@U11RW82PM|david.acton> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477435348.000612"
+    }
+]

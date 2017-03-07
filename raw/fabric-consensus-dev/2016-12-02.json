@@ -1,0 +1,146 @@
+[
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "Hyperledger fabric v 0.6 do not synchronize block data after adding a new vp peer to the existing network ?",
+        "ts": "1480681471.004612"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well as mentioned before, v0.6 does not claim to support adding a new validating peer to an existing network.   I believe that you had tried to start a 4 peer network configured with N=5 and then start the 5th peer after the first 4.  In theory, if you then invoke a bunch of transactions the 5th peer *might* catch up.   I don't know that we ever tested \/ tried that scenario",
+        "ts": "1480683404.004613",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Someone told me the other day that the minimum blob size for ordering was looking like 100KB, up to 1MB. Can anyone confirm\/explain\/deny this rumor?",
+        "ts": "1480689674.004614"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sorry - that was an error on my part in a conversation with kostas .  the intent was to talk about the average range for the largest stuff the we've seen rather than the average size of transactions overall",
+        "ts": "1480689845.004615"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Thanks Gari, that is reassuring.",
+        "ts": "1480689964.004616"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "To date I have only tested the ordering service with synthetic blobs. If anyone has run real workloads with endorsements and signatures I would be very interested to know the range of blob sizes that are being handled.",
+        "ts": "1480690135.004617"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I would second that, esp. as we're adding cut-by-filesize block logic, and we'll need to have sensible defaults there.",
+        "ts": "1480690304.004618"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I know that for <@U13TWBRBL> 's demo we had to bump the max. filesize to 10 (15?) MB though. What is that transaction that's so big?",
+        "ts": "1480690367.004619"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0XQ35CDD> it\u2019s the chaincode deploy, not sure exactly how big but it\u2019s more than 1MB (kafka default)",
+        "ts": "1480690656.004624"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "Yes, it was a deploy tx , and it was 7.3 MB",
+        "ts": "1480690671.004625"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "it\u2019s already much smaller than v0.6 because we don\u2019t have to send the whole fabric source tree any longer",
+        "ts": "1480690681.004626"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And IIRC we're doing it this way (and not just point to a Github repo and build from there, same as you'd do with a Dockerfile for instance) because we want to support private chaincodes?",
+        "ts": "1480690712.004627"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "even then the deploy could be arbitrarily large if the chaincode has external dependencies that the fabric-ccenv base image doesn\u2019t already have",
+        "ts": "1480690744.004628"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Interesting. I am not familiar with the mechanics of this at all, but my initial thought would be the same; why aren't all of these (even the dependencies) instructions that the receiving peer would parse, i.e. why isn't a deploy transaction the equivalent of a Dockerfile.",
+        "ts": "1480690836.004629"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "that\u2019s right, don\u2019t want to make assumption about Peer\u2019s access to a devops service (aka github or any other source code repos)",
+        "ts": "1480690844.004630",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "Would it be possible to fragment a tx?",
+        "ts": "1480690872.004631"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i remember seeing a slideshare from a linkedin engineer about fragmenting messages on the kafka side",
+        "ts": "1480690925.004632"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i can dig that up",
+        "ts": "1480690946.004633"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "after my scrums call",
+        "ts": "1480690953.004634"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I guess there's the fine line of trying to figure out the right defaults for these types of things, but in the end they will likely need to be dynamically configurable",
+        "ts": "1480692239.004635"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Now - there's really no need for these massive chaincode deploy archives.  we should really start measuring some file sizes there.",
+        "ts": "1480692319.004636"
+    }
+]

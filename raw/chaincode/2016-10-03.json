@@ -1,0 +1,160 @@
+[
+    {
+        "user": "U0Z43A52T",
+        "text": "<@U0Z43A52T|aalbanes> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475480710.001199"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0ULK2JPP>, <@U0NCW1DPX> - yes `db_test_exports.go` is meant to expose the functions for tests only. \n<@U0NCW1DPX> - I am not sure if I understand when you say  - \u201cI think the test code depends on another one is not a good idea\u201d\u2026 in the setup, you have to remove folders, startDB etc.. So, dependency is natural. One way is to exposed a common function at one place and other is off course, perform this on your own. However, IMO, doing custom steps to set up is more implicit dependency e.g., if something changes in db package, the custom stuff would have more chance to break.",
+        "ts": "1475482632.001203"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0KM61BCP> i tried to invoke a chaincode method and i got this error\nChaincode handler FSM cannot handle message (ERROR) with payload size (23) while in state: ready",
+        "ts": "1475483144.001205"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0NCW1DPX> <@U0Z541B3P> I think part of the confusion is the thought that `CleanDB(t)` is part of a \u201ctest\u201d. Its just a helper function for tests and not part of a test itself. \u2026by the way the \u201ctest\u201d parameter is optional (used only to log)",
+        "ts": "1475483498.001206"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0ULK2JPP> can u tell me what is wrong and why i got the above error",
+        "ts": "1475484245.001211"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U22RH7VGT> that by itseld does not tell much\u2026 we\u2019d need to look at the peer log, chaincode log and the series of transactions leading up to the problem",
+        "ts": "1475484853.001212"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "thanks i will try to chk with the logs what is the problem",
+        "ts": "1475485354.001213"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0ULK2JPP>   this is the chaincode log i am getting",
+        "ts": "1475490806.001215"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "10:28:10.508 [shim] DEBU : [64274f87]Received TRANSACTION, invoking transaction on chaincode(Src:ready, Dst:transaction)\n10:28:10.508 [message] DEBU : Invoke...\n10:28:10.509 [message] DEBU : Invoke...done!getOne\n10:28:10.510 [shim] DEBU : [64274f87]Sending INVOKE_QUERY\n10:28:10.511 [shim] DEBU : [64274f87]Received message ERROR from shim\n10:28:10.511 [shim] DEBU : [64274f87]Handling ChaincodeMessage of type: ERROR(state:transaction)\n10:28:10.511 [shim] DEBU : [64274f87]before send\n10:28:10.512 [shim] DEBU : [64274f87]after send\n10:28:10.512 [shim] DEBU : [64274f87]Error received from validator ERROR, communicated(state:ready)\n10:28:10.512 [shim] ERRO : [64274f87]Received ERROR.\n10:28:10.512 [message] DEBU : Invoke...done!\n10:28:10.512 [shim] ERRO : [64274f87]Transaction execution failed. Sending ERROR\n10:28:10.513 [shim] DEBU : [64274f87]Move state message ERROR\n10:28:10.513 [shim] DEBU : [64274f87]Handling ChaincodeMessage of type: ERROR(state:ready)\nError starting Message: Error handling message: [64274f87-55ba-4895-b455-4963a955a906]Chaincode handler FSM cannot handle message (ERROR) with payload size (23) while in state\n\n\n\n\n10:28:09.377 [crypto] InitClient -&gt; INFO 094 Initializing client [admin]...\n10:28:09.503 [crypto] InitClient -&gt; INFO 095 Initializing client [admin]...done!\n10:28:09.504 [crypto] closeClientInternal -&gt; INFO 096 Closing client [admin]...\n10:28:09.523 [rest] processChaincodeInvokeOrQuery -&gt; INFO 097 Successfully submitted invoke transaction with txid (64274f87-55ba-4895-b455-4963a955a906)\n10:28:09.523 [rest] ProcessChaincode -&gt; INFO 098 REST successfully submitted invoke transaction: {\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"64274f87-55ba-4895-b455-4963a955a906\"},\"id\":1}\n10:28:10.514 [chaincode] processStream -&gt; ERRO 099 Got error: [64274f87-55ba-4895-b455-4963a955a906]Chaincode handler FSM cannot handle message (ERROR) with payload size (23) while in state: ready",
+        "ts": "1475490812.001216"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U22RH7VGT> I wonder if you are doing a \u201cSetState\u201d in your query ?",
+        "ts": "1475496976.001218"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0ULK2JPP>  i am not doing any set state but i am querying another chaincode for value and trying to store some values in an array which has dynamic struct(interface)",
+        "ts": "1475497205.001219"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so there\u2019s another chaincode too\u2026 is there logs from that ?",
+        "ts": "1475497265.001220"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "no its not hitting that chaincode i suppose",
+        "ts": "1475497330.001221"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but before that\u2026 let me make sure of the flow",
+        "ts": "1475497331.001222"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "invoke -&gt; Chain A -&gt; Query -&gt; Chaincode B",
+        "ts": "1475497355.001223"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "?",
+        "ts": "1475497357.001224"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "i am invoking the chain A which is again trying to query the chain B",
+        "ts": "1475497418.001225"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "can using interface be an issue",
+        "ts": "1475497453.001226"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not sure\u2026 beore that, u r not in \u2014peer-chaincodedev mode right ?",
+        "ts": "1475497500.001227"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "no i am not in that but from other system i tried in chaincodedev also it was not querying the another chaincode",
+        "ts": "1475497545.001228"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1475497622.001229"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you do `docker ps` to make sure you see both chaincodes running",
+        "ts": "1475497652.001230"
+    },
+    {
+        "user": "U1SQR7ADT",
+        "text": "<@U1SQR7ADT|theofilis> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475501359.001231"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U0ULK2JPP> yeah I followed the logic but it's not clear to me exactly what's going on - somehow the binary asset_management_with_roles is being executed via the test file ?",
+        "ts": "1475519689.001234"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "or it's more that it's able to find that type \"AssetManagementChaincode\" which is defined in asset_management_with_roles.go",
+        "ts": "1475520031.001235"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok it's starting to make sense",
+        "ts": "1475520051.001236"
+    }
+]

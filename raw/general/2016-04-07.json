@@ -1,0 +1,1002 @@
+[
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0XRC0KLH>: pruning of transaction log is addressed in Satoshi's whitepaper, the first thing you should read before critizising Bitcoin. <https:\/\/bitcoin.org\/bitcoin.pdf> Section 8.",
+        "ts": "1460016227.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "It is the most important by-product of the UTXO model, that transactions that are referenced can be removed from the transaction log while preserving audit-ability.",
+        "ts": "1460017020.000470"
+    },
+    {
+        "user": "U0YMV8FNH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YMV8FNH|pierre_h> has joined the channel",
+        "ts": "1460018442.000471"
+    },
+    {
+        "user": "U0YN2LNAV",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YN2LNAV|tingey> has joined the channel",
+        "ts": "1460019224.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tamas: but that means that the blockchain (with utxo \"metadata\") can not infinitely used for historical information",
+        "ts": "1460023144.000473"
+    },
+    {
+        "user": "U0YNKETFB",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YNKETFB|cattoire> has joined the channel",
+        "ts": "1460023789.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0XR6J961> Pruning is optional and can be selective by any external criteria. E.g. a node might decide to keep entire log for transactions it is involved in, while pruning all unrelated and already referenced transactions.",
+        "ts": "1460026528.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "makes sense",
+        "ts": "1460026608.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "Tamas, this is true for -bitcoin-.  It's true b\/c in bitcoin, inputs are -consumed-.",
+        "ts": "1460027864.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "but in OBC&lt; they're -not-",
+        "ts": "1460027868.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "So the possibility of refernce to past trans  in the log intrinsically implies no ability to prune.",
+        "ts": "1460027905.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "even in BTC, if you allow reference to STXOs, you cannot prune without changing application behaviour",
+        "ts": "1460027927.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0XRC0KLH>: yes it is true for Bitcoin but not because - as you said - they would not understand databases. yes it is not true for OBC, maybe because they do not understand blockchain?",
+        "ts": "1460028265.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "jokes by side. I think OBC misses an important design decision here. We will I hope fix.",
+        "ts": "1460028360.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0MT4CBHB> we can disagree on this, but I claim that what <@U0MRSJL1Z> is asking for, is arbitrary historical look-back at trans.  In BTC it would b e\"please show me all trans over $10000, paid by chet\".  BTC's log-pruning is precisely the same as any reclamation in a log-structured store -- trans whose results are superseded, may be removed.  But those results aren't superseded for <@U0MRSJL1Z>'s purposes.",
+        "ts": "1460028833.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "at least, that's my claim",
+        "ts": "1460028842.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, the decision on pruning here is dictated by the application",
+        "ts": "1460028951.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "What is reclaimed is not defined by Bitcoin, rather how you reclaim while preserving audit-ability.",
+        "ts": "1460028985.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and given that the application here is the chaincode, which needs to execute deterministically, this implies that pruning needs to be done consistently across all nodes",
+        "ts": "1460029032.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or, if you don't want to limit yourself that way, have the chaincode maintain its own history state",
+        "ts": "1460029061.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "<@U0XR6J961> I disagree with the notion, that the application was defined by chaincode. Chaincode is a building block for the application, quite similar to stored procedures.",
+        "ts": "1460029086.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, that's semantics of what is the application.  in general I agree that the application exists outside and inside the chaincode, and these components communicate via the fabric",
+        "ts": "1460029270.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what I wanted to get to is that for a given chaincode, all nodes need to prune their logs the same way.  Now you could create some complex interface that allowed the chaincode to configure this pruning for its own data, or you could just tell chaincode developers that they have to persist their own historical data.",
+        "ts": "1460029442.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and I guess that's where your preserving auditability point comes in - in pure UTXO, the data structure retains auditability of all history items (those that have not been pruned), while chaincode copying data to a history \"table\" loses this direct data-based auditability",
+        "ts": "1460029613.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "I do not see why nodes using same chaincode would have to prune same transactions. Bitcoin's script is a chaincode, as we demonstrated on the Hackathon, the decision which tx can be pruned is not linked to that.",
+        "ts": "1460029821.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I think what is required for \"auditability\" may vary a lot for different parties in different jurisdictions.  To me, it seems inevitable that some off-blockchain persistence of data or events will be required.",
+        "ts": "1460029932.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "One of the selling points of a blockchain is audit-ability. The blockchain has to hold proofs, not necessarily the data itself. The block chain storage can however be pruned (trimmed) of transactions you do not care, such that these deletions do not break the proofs.",
+        "ts": "1460030071.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tamas: yes, because you store the UTXO information as state",
+        "ts": "1460030074.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but doesn't that already break the simple auditability?",
+        "ts": "1460030137.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0MT4CBHB",
+        "text": "UTXO is implied by the log even if log is pruned. UTXO storage is merely a cache if it exists at all.",
+        "ts": "1460030184.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "As a thought experiment, are there categories of events that must not be recorded in the blockchain, but must be auditable later? what about something like failed transactions: you need a record of why they weren't executed, or similar.",
+        "ts": "1460030266.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right.  in fabric, you can only prune a prefix, but not the sides (merkle tree for UTXO) of the blockchain",
+        "ts": "1460030307.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the UTXO transactions are opaque data in the chain",
+        "ts": "1460030339.000501"
+    },
+    {
+        "user": "U0YP7KFGQ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YP7KFGQ|gennady.laventman> has joined the channel",
+        "ts": "1460032432.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019m really encouraged by the great level of engagement I am beginning to see here in Slack!",
+        "ts": "1460033669.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0KM0C3M3>: This could be accommodated. It is very well possible to have a \"Raw Ledger\" (RL) which would contain, e.g., information about failed transactions and such a RL would be made auditable. Blockchain (the \"real\" ledger) could be then seen as a filtered version of the RL, once system-level events and failed-transactions are filtered out.",
+        "ts": "1460034307.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "cbf: did we get a slackin by now?  the whole invite thing makes it feel a bit elitist",
+        "ts": "1460035077.000505"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961> the LF team are working on it",
+        "ts": "1460035101.000506",
+        "reactions": [
+            {
+                "name": "simple_smile",
+                "users": [
+                    "U0Q7KRNSJ"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "fantastic!",
+        "ts": "1460035174.000507"
+    },
+    {
+        "user": "U0YNFB22X",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YNFB22X|satheesh> has joined the channel",
+        "ts": "1460036974.000508"
+    },
+    {
+        "user": "U0YNLG611",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YNLG611|mccox> has joined the channel",
+        "ts": "1460037857.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<https:\/\/github.com\/IntelLedger>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Distributed Ledger",
+                "title_link": "https:\/\/github.com\/IntelLedger",
+                "text": "Experimental Distributed Ledger",
+                "fallback": "GitHub: Distributed Ledger",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/5545289?v=3&s=280",
+                "from_url": "https:\/\/github.com\/IntelLedger",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "ts": "1460039664.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nice",
+        "ts": "1460039748.000512"
+    },
+    {
+        "user": "U0YQK8WSV",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YQK8WSV|pvishnum> has joined the channel",
+        "ts": "1460039886.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Regarding <https:\/\/github.com\/IntelLedger> ... Thanks for the great questions in the TSC call this morning.",
+        "ts": "1460039994.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Feel free to send more questions on the intel ledger slack...",
+        "ts": "1460040026.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "ping <mailto:markx.ford@intel.com|markx.ford@intel.com> to be added.",
+        "ts": "1460040034.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<https:\/\/inteldl.slack.com>",
+        "ts": "1460040064.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "Or of course reach out to any of the intel folks in the HL TSC.",
+        "ts": "1460040078.000518"
+    },
+    {
+        "user": "U0YQT4Q7L",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YQT4Q7L|rittickgupta> has joined the channel",
+        "ts": "1460040172.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "another slack!? oh noes",
+        "ts": "1460040217.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "They can't be stopped.  :wink:",
+        "ts": "1460040269.000521",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U0YQKHG3A",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YQKHG3A|wkulhanek_ibm> has joined the channel",
+        "ts": "1460040993.000522"
+    },
+    {
+        "user": "U0YQQRNU8",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YQQRNU8|amundson> has joined the channel",
+        "ts": "1460041806.000523"
+    },
+    {
+        "user": "U0YR44350",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YR44350|mrshah> has joined the channel",
+        "ts": "1460041866.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "Would it make sense to consolidate all these slacks into channels here? Save on the invites and cross orgs ",
+        "ts": "1460042800.000525",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0TFEHX8E"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it would",
+        "ts": "1460042825.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0KM61BCP>: could you add @es.ibm.com to this slack? Should we setup an \u2018invite\u2019 channel where we can post additional domains we need to add until the LF has the invite process in place?",
+        "ts": "1460043197.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0J038AJK>: ^^ thanks",
+        "ts": "1460043251.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I set up <#C0YQV9B7G>",
+        "ts": "1460043351.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I also set up <#C0YMWRX19> for those who would like to participate\/contribute to getting our infrastructure tooling set up and running smoothly",
+        "ts": "1460043420.000530"
+    },
+    {
+        "user": "U0YRACW1X",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YRACW1X|vaniprasad_dtcc> has joined the channel",
+        "ts": "1460043785.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<@U0TFEHX8E>: done",
+        "ts": "1460043886.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0MRSJL1Z",
+        "text": "<@U0XRC0KLH> <@U0MT4CBHB> <@U0XR6J961> <@U0KM0C3M3>: thanks for the reply and discussion! A few thoughts:\n\n1) In my tokenized assets application I only need the history of a single chaincode, not the entire blockchain. I think this is a very common case.\n\n2) In my view, auditabiltiy is pretty much the whole point of the blockchain. The Merkel tree provides proof in plain sight of all the participants of the derivation of the current state. Thus everyone can agree on it. Other functions layer atop this one main function that the Merkel tree provides.\n\n3) I haven't thought this through completely, but I've been mulling over whether it would be useful to have some kind of heirarchical auditabiltiy, where a useful proof can be performed for only the subset of the tree relating to the interests of a subset of participants. Thus these participants can convince themselves of the correctness of their state without needing to audit the entire tree. And without looking into everyone else's business.\n\nConsider an architecture where each chaincode has it's own Merkel tree. The state transitions for that chaincode could be audited without reference to transactions or states of other chaincodes. Thus a chaincode's entire history could be derived, rather than relying on a saved DB.\n\nHashes on this chaincode Merkel tree would be posted to the main tree. In fact, the main tree could consist solely of hashes without any transaction content. Fully proving any chaincode state up to the current blockchain hash would require only this relatively compact global tree.",
+        "ts": "1460044360.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "interesting",
+        "ts": "1460044498.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0J025UP9",
+        "text": "<@U0TFEHX8E>: <http:\/\/es.ibm.com|es.ibm.com> has been added",
+        "ts": "1460044557.000535",
+        "reactions": [
+            {
+                "name": "simple_smile",
+                "users": [
+                    "U0Z3BE0F5"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "I've put the project lifecycle and proposal template on the wiki",
+        "ts": "1460046914.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U0ULX737C>: you may want to have a quick glance to check that I didn't screw up any formatting in the process <https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Proposal-Template-for-a-Hyperledger-Improvement-Project-%28HIP%29>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/hyperledger",
+                "title_link": "https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Proposal-Template-for-a-Hyperledger-Improvement-Project-%28HIP%29",
+                "text": "Hyperledger Project is a new Collaborative Project at The Linux Foundation. The technical community is just getting started and will be adding code to the repository in the coming weeks. Check hype...",
+                "fallback": "GitHub: hyperledger\/hyperledger",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/hyperledger\/wiki\/Proposal-Template-for-a-Hyperledger-Improvement-Project-%28HIP%29",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "ts": "1460046992.000537"
+    },
+    {
+        "user": "U0YS0MWP3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YS0MWP3|dan-z> has joined the channel",
+        "ts": "1460047673.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "I'm a bit confused on Hyperledger call schedules and calendar. There doesn't seem to be a calendar on the community page, and each meeting is not announced to email lists with an advance agenda each week like the other standards organizations I work with.",
+        "ts": "1460048725.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "This resulted in this morning being late for the TSC call.",
+        "ts": "1460048738.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "I'm trying to set up a first call for an Identity WG using a Doodle ( <https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t> ) but I don't know what times are already reserved by other Hyperledger calls, and once we set a time, where to post it so that others don't choose the time we set :wink:",
+        "attachments": [
+            {
+                "title": "Doodle: Initial Hyperledger Identity WG",
+                "title_link": "https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t",
+                "text": "This doodle is to help us determine the best time for an initial phone call. Agenda for the first call is to introduce ourselves, focus on what can be a deliverable, and make a decision on how to collaborate asynchronously (slack, email list, etc.)",
+                "fallback": "Doodle: Initial Hyperledger Identity WG",
+                "image_url": "http:\/\/doodle.com\/graphics\/static\/facebookSharingThumbnail.png",
+                "from_url": "https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t",
+                "image_width": 300,
+                "image_height": 200,
+                "image_bytes": 6864,
+                "id": 1
+            }
+        ],
+        "ts": "1460048819.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thanks <@U0P2GSA8Z> !",
+        "ts": "1460049088.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0MRSJL1Z>: Good question. We pondered that same idea (a merkle tree per chaincode) a long time ago, but I believe it was discarded due to potential performance concerns. I\u2019m open to exploring again though. <@U0XRC0KLH> usually challenges the need for a merkle tree. If everyone has the same transaction log via the blockchain, (and we know the contract is deterministic) why would you not trust your node to have the correct state?",
+        "ts": "1460049315.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess it is about other nodes trusting the data they get from you",
+        "ts": "1460049395.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. how could a new node trust the state you hand over, if that state is not part of the block chain?",
+        "ts": "1460049425.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with mvcc, that may be different, and a node could just play forward all deltas (slow)",
+        "ts": "1460049451.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "yup, was going to suggest that but it could be slow",
+        "ts": "1460049462.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XRC0KLH>: gave another solution which I forget \u2026 maybe he could chime in with his solution",
+        "ts": "1460049489.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0UFDAS91> your idea for a calendar is a good one, especially now that we are starting to have more subgroups with calls\/meetings. <@U0PTU8XN3> Is there a google calendar that people might have read-only access to see what is going on when and use for planning?",
+        "ts": "1460050843.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "I definitely urge WG chairs to create advance agendas and call information and at least send to the appropriate email list. I know it can be repetitive, but it is best practice from other standard orgs. Event notifications require multiple channels.",
+        "ts": "1460053222.000552"
+    },
+    {
+        "user": "U0YRF326P",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YRF326P|jmeis> has joined the channel",
+        "ts": "1460053562.000553"
+    },
+    {
+        "type": "message",
+        "user": "U0RSTB2DB",
+        "text": "<@U0KN2SSKE>: <@U0KPFAZNF>:  As fabric is only one incubator project, and there will likely be others, I think we need a way to carve out namespaces on docker, vagrant, launchpad, etc. for multiple incubation projects (if they are going to be in a hyperledger namespace). For example hyperledger\/fabric. Thoughts?",
+        "ts": "1460056713.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0RSTB2DB>: overall agree, though I struggle to understand where you see the docker\/vagrant\/launchpad stuff being broken out from the current fabric incubator",
+        "ts": "1460056898.000555"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "possibly the vagrant part, as that is what OBC had originally too (obc-peer.git and obc-dev-env.git)",
+        "ts": "1460056920.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it seems the docker parts are somewhat integral",
+        "ts": "1460056932.000557"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I would also mention that a few things got easier on the fabric\/devenv front once we integrated peer+devenv, so I wouldnt be a huge fan of seeing them split back out again",
+        "ts": "1460056999.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh\u2026(lightbulb goes off)",
+        "ts": "1460057048.000559"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think I see what you are getting at now",
+        "ts": "1460057053.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you arent talking about <http:\/\/github.com|github.com> namespaces, rather, the image hosting services",
+        "ts": "1460057070.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, i agree",
+        "ts": "1460057077.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry for being obtuse",
+        "ts": "1460057089.000563"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes \u201chyperledger\/baseimage\u201d on atlas is probably not fine grained enough",
+        "ts": "1460057117.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am working on that patch right now, so open to suggestion",
+        "ts": "1460057130.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "So as well all come together to collaborate in Hyperledger, we each bring with us words and languages from our communities of origin that are often different than that used by other communities. Some words are completely different, but in some cases there is the equivalent of \"100 words for snow\" problem where one group bundles the complexity into a single word or phrase, whereas other expose the complexity by having different words for everything.",
+        "ts": "1460057152.000566"
+    },
+    {
+        "text": "wonders if atlas\/dockerhub have a hierarchical namespace",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1460057165.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "I personally found quite a few differences in language during the F2F, as well as different underlying mental models. For instance the words verification, validation, and confirmation where not all used the same way. What were the words or models that you found you had to learn or translate for others?",
+        "ts": "1460057250.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "Some other words \u2014 I interpreted \"incubation\" a different way than it appears to be how we use it. Even words that we think are in common like decentralize appear to have some subtle differences from the different communities that are collaboration.",
+        "ts": "1460057411.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<@U0UFDAS91>: I think some defined nomenclature for the various roles in the system would be good as well",
+        "ts": "1460057616.000570",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UFDAS91"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "for instance, we often use transactor, validator, and observer",
+        "ts": "1460057639.000571"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "in bitcoin that would be a light wallet, a miner, and a full node",
+        "ts": "1460057657.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "+1 <@U0N3AJSSU> Is there a glossary for the IntelLedger? There is one for Fabric at <https:\/\/github.com\/hyperledger\/fabric\/blob\/7c348242a5ee8c8d08a7e8c95a5393bdce7b277d\/docs\/glossary.md>. It would be great to try to merge some of these terms into a common glossary or matrix if possible",
+        "edited": {
+            "user": "U0TFEHX8E",
+            "ts": "1460057762.000000"
+        },
+        "ts": "1460057757.000573"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<@U0TFEHX8E>: there is not, but probably something we should add to the ever-growing todo list",
+        "ts": "1460058225.000576"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0RSTB2DB>: <!channel> any thoughts regarding hyperledger\/fabric \u201cbaseimage\u201d names under the hyperledger namespace on atlas\/dockerhub?",
+        "ts": "1460058681.000577"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now i have a prototype as \u201chyperledger\/baseimage\u201d but to <@U0RSTB2DB>\u2019 point, that isn\u2019t specific enough to allow other projects to coexist",
+        "ts": "1460058733.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: Not 100% sold on the idea, but `-` seems to be allowable in docker images, could it be \"hyperledger\/fabric-baseimage\" etc.?",
+        "ts": "1460058890.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "propose hyperledger\/fabric-baseimage",
+        "ts": "1460058897.000580",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0TFEHX8E",
+                    "U0Q7KRNSJ",
+                    "U0NCW1DPX"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "<@U0KPFAZNF> how about \"proposal1\" or \"incubated1\"",
+        "ts": "1460058906.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "opps, sorry <@U0XPR4NP4> crossed messages, heh",
+        "ts": "1460058909.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0VKPD6A2>: not a bad idea to incorporate status, though might be helpful to have more context like project name (e.g. hyperledger\/proposal1-fabric-baseiamge",
+        "ts": "1460058984.000583"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as I suspect there will be other repos that arent strictly \u201cfabric\u201d proposals",
+        "ts": "1460058999.000584"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, that toolchain I am working on could conceivably be something like hyperledger\/hlcc\u2026i would imagine other proposals might be similar where they are adjunct to the fabric",
+        "ts": "1460059070.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "Hi All, what was the issue with the hyperledger namespace on docker\/docker hub?",
+        "ts": "1460059604.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "I don't believe Digital Asset controls it but happy to look into it and relinquish, if so",
+        "ts": "1460059668.000587"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0J3M8K96>: in this context, I was asked to rebrand some of the obc stuff we had: e.g. <https:\/\/atlas.hashicorp.com\/obc\/boxes\/baseimage> to <https:\/\/atlas.hashicorp.com\/hyperledger\/boxes\/baseimage>",
+        "ts": "1460059969.000588"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we also had this dockerhub <https:\/\/hub.docker.com\/r\/openblockchain\/baseimage\/>, but couldnt move it over to \u201chyperledger\u201d because the org already existed",
+        "ts": "1460060009.000589"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure who controls it",
+        "ts": "1460060013.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as a secondary discussion, we are also trying to sort out the best name under the hyperledger namespace, as \u201cbaseimage\u201d is too generic when there might be other proposals under the hyperledger umbrella",
+        "ts": "1460060072.000591"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "hmm",
+        "ts": "1460060078.000592"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "Joined March 2016",
+        "ts": "1460060084.000593"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "Don't think that's us, could just be a squatter after the announcement, or someone with good intentions",
+        "edited": {
+            "user": "U0J3M8K96",
+            "ts": "1460060124.000000"
+        },
+        "ts": "1460060108.000594"
+    },
+    {
+        "type": "message",
+        "user": "U0J3M8K96",
+        "text": "Will check with our team though",
+        "ts": "1460060131.000596"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1460060139.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on the atlas front, i created the org and assigned ownership to <@U0TFEHX8E>.  I\u2019ll leave it to the TSC to sort out additional roles",
+        "ts": "1460060182.000598"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im happy to stay on to help curation, also understand if that is deemed inappropriate",
+        "ts": "1460060199.000599"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Until Docker understands machine architecture, I would like to see all Docker images tagged with their architecture, e.g., x86-fabric-baseimage. ARM, POWER, and Z are all first-class architectures, there\u2019s more to the world than X86.",
+        "ts": "1460060300.000600"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0N1D1UAE>: excellent point, ill incorporate that into the patch being worked on",
+        "ts": "1460060332.000601"
+    },
+    {
+        "user": "U0YTYB7LG",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YTYB7LG|wizard> has joined the channel",
+        "ts": "1460060336.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least to lay the ground-work to tag x86",
+        "ts": "1460060345.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not necessarily to generate all the other $arch :wink:",
+        "ts": "1460060355.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "Yes, those of advocating the others can do that work",
+        "ts": "1460060375.000605"
+    },
+    {
+        "user": "U0YTUU2T0",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YTUU2T0|paulojrmoreira> has joined the channel",
+        "ts": "1460060691.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0J025UP9",
+        "text": "I have contacts at Docker if someone is squatting on the Docker hub",
+        "ts": "1460061838.000607",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0KPFAZNF>: <@U0XPR4NP4> any issue with hyperledger\/fabric\/baseimage?  Or is single slash only allowed?",
+        "ts": "1460063681.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it doesnt appear to support hierarchy",
+        "ts": "1460063706.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "shoot, then the ..-... model may need to suffice",
+        "edited": {
+            "user": "U0UKTPMG8",
+            "ts": "1460063735.000000"
+        },
+        "ts": "1460063721.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least, not on atlas",
+        "ts": "1460063723.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure about dockerhub",
+        "ts": "1460063728.000612"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i understand <@U0VKPD6A2>\u2019s point about the incubator\/proposal status, but I am inclined to vote for \u201chyperledger\/fabric-baseimage\u201d\u2026we already have precedent for that namespace in both github and slack",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1460063805.000000"
+        },
+        "ts": "1460063789.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0VKKEGKB",
+        "text": "Hi, I've sent a question on hlp-discuss mailinglist, although the question might be preliminary, would appreciate some feedback from you guys : )",
+        "ts": "1460078056.000616"
+    },
+    {
+        "type": "message",
+        "user": "U0UFDAS91",
+        "text": "The Doodle calendar poll at <https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t> for the first Identity WG call appears to be settling on 11am PDT next Friday April 15th. However, I'm not sure give the interface if some people may be confused and not realize the time is 2pm EDT. So if you are interested in attending but were confused on time zone, go back and edit your Doodle answer. Thanks!",
+        "attachments": [
+            {
+                "title": "Doodle: Initial Hyperledger Identity WG",
+                "title_link": "https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t",
+                "text": "This doodle is to help us determine the best time for an initial phone call. Agenda for the first call is to introduce ourselves, focus on what can be a deliverable, and make a decision on how to collaborate asynchronously (slack, email list, etc.)",
+                "fallback": "Doodle: Initial Hyperledger Identity WG",
+                "image_url": "http:\/\/doodle.com\/graphics\/static\/facebookSharingThumbnail.png",
+                "from_url": "https:\/\/doodle.com\/poll\/dp6xqqpm75e6za2t",
+                "image_width": 300,
+                "image_height": 200,
+                "image_bytes": 6864,
+                "id": 1
+            }
+        ],
+        "ts": "1460086145.000617"
+    }
+]

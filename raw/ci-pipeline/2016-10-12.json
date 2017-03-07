@@ -1,0 +1,206 @@
+[
+    {
+        "type": "message",
+        "user": "U12V3D2P2",
+        "text": "<@U0UHG4VP1> could you please add one more Power node into the node list?",
+        "ts": "1476278047.001480"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U12V3D2P2>: do you have the information for the new node? IP address, etc?",
+        "ts": "1476280342.001481"
+    },
+    {
+        "type": "message",
+        "user": "U12V3D2P2",
+        "text": "<@U0UHG4VP1> yes",
+        "ts": "1476280384.001482"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Ok could you send me email? <mailto:rjones@linuxfoundation.org|rjones@linuxfoundation.org>",
+        "ts": "1476280441.001483"
+    },
+    {
+        "type": "message",
+        "user": "U12V3D2P2",
+        "text": "yes,thx",
+        "ts": "1476280460.001484"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U0KM61BCP> regarding PR 1671, I had discussion with <@U0KPFAZNF> and here is the summary of it.. (please bear with it as its quite descriptive)\n\nwith the initial changes suggested by <@U0KPFAZNF> to generalize and use fabric-baseimage &amp; openjdk8 in <http:\/\/Dockerfile.in|Dockerfile.in>, we see a build issue on x86. This is because we are using Ubuntu 14.04 for x86 baseimage which doesn't have Java8. But that is a pre-req for Java Shim.\n\nSo approach with very little deviation would be to use baseimage for Power and z as they use Ubuntu 16.04 for baseimage and continue with existing code for x86 until we bump the base OS to 16.04 for x86. This was agreed by <@U0KPFAZNF> provided you are in agreement too.\n\nNow the point is either to go with my first patchset-1 or use 2 <http:\/\/Dockerfiles.in|Dockerfiles.in> based on your last comment. In the latter case, we would still need to have ARCH condition in Makefile so leaves it no different than my approach in patchset-1. Moreover, having two Dockerfiles with almost same contents will lead to violation of DRY \/ proliferation of code and doesn\u2019t help getting rid of ARCH condition check in Makefile.\n \n<@U0KPFAZNF> is convinced either ways. So request your consent on the initial approach.",
+        "ts": "1476315043.001485"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The only part I don't agree with is I think the conditional could be replaced with a filespec ",
+        "ts": "1476315325.001486"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "E.g. \"cat Dockerfile.in.$(ARCH)\"",
+        "ts": "1476315361.001487"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Which I think is cleaner than a conditional, though the DRY implications are still a concern either way",
+        "ts": "1476315392.001488"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "so this would mean we rename existing <http:\/\/Dockerfile.in|Dockerfile.in> to Dockerfile.in.x86_64 and have 2 more files (with same content) as Dockerfile.in.s390x and Dockerfile.in.ppc64le ?",
+        "ts": "1476315526.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "power and z already on 16.04?",
+        "ts": "1476315759.001490"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "yes",
+        "ts": "1476315770.001491"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "are these IBM base images?",
+        "ts": "1476315781.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I thought that the 16.04 and go1.7 changes were pending",
+        "ts": "1476315808.001493"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> ?",
+        "ts": "1476315819.001494"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "these are hyperledger\/fabric-baseimage",
+        "ts": "1476315820.001495"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "excerpt from fabric\/images\/base\/Makefile ```DOCKER_BASE_x86_64=ubuntu:trusty\nDOCKER_BASE_s390x=s390x\/ubuntu:xenial\nDOCKER_BASE_ppc64le=ppc64le\/ubuntu:xenial```",
+        "ts": "1476315944.001496"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "did not realize that thanks",
+        "ts": "1476316167.001497"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "even more reason to have arch specific builds",
+        "ts": "1476316191.001498"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so yes, copy the <http:\/\/Dockerfile.in|Dockerfile.in> and tweak the power one",
+        "ts": "1476316230.001499"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "Ok. And for s390x have same copy as that of power ?",
+        "ts": "1476316285.001500"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "ok. got it. will just modify for power and keep it same for x86 and s390x as-is",
+        "ts": "1476316909.001501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> yes, x86 will be on 16.04 soon, but currently only targetting master\/convergence",
+        "ts": "1476317820.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i believe the P\/Z teams are trying to get v0.6 supported",
+        "ts": "1476317837.001503"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, one possibly solution is to just backport the new baseimage to v0.6, which I kind of suspect we will need to to enable P\/Z anyway",
+        "ts": "1476317862.001504"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>: could you grant <@U10Q62R8X> and <@U11NUTP4L> access to the Jenkins sandbox so we can debug P\/Z support?",
+        "ts": "1476322402.001505"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF> <@U10Q62R8X> added, let me find <@U11NUTP4L> \u2019s LFID",
+        "ts": "1476322877.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "found, added.",
+        "ts": "1476322909.001507"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U0UHG4VP1> its SriramaSharma",
+        "ts": "1476322939.001508"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U0UHG4VP1> thanks I am in",
+        "ts": "1476322970.001509"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty <@U0UHG4VP1>",
+        "ts": "1476323021.001510"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11NUTP4L> you should be able to log in now",
+        "ts": "1476323026.001511"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1> I have submitted patch to create power baseimage jobs.. could you please review this and approve <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1709\/>",
+        "ts": "1476329291.001512"
+    },
+    {
+        "type": "message",
+        "user": "U11NUTP4L",
+        "text": "<@U0UHG4VP1> thanks! it works for me now",
+        "ts": "1476330135.001513"
+    }
+]

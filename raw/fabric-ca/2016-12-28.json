@@ -1,0 +1,150 @@
+[
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U3955QSBD> (Fabian) - please define *soft-logout*...",
+        "ts": "1482912742.000216"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I think that fabric-cop has a few more useful features when it comes to \u201clogging-out\u201d by revoking a certificate and validity period.",
+        "ts": "1482912865.000217"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "While I don\u2019t control the schedule, I believe we are about a sprint away from having these resolved:",
+        "ts": "1482912901.000218"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-142>",
+        "ts": "1482912902.000219"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-116>",
+        "ts": "1482912923.000220"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-145>",
+        "ts": "1482912971.000221"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "As you can see on JIRA, <@U0S5KF44D>, <@U1BC5A0F9>, <@U0PB67X4K> and I were and are pushing and giving these a priority - there is already related code that was pushed and is under review [I am waiting for others to get back from hols next week - so to answer your question - it\u2019s happening]",
+        "ts": "1482913233.000226"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Still curious to learn about the term *soft-logout*. When I, as an admin, actively log someout out - it is rarely softly :wink:",
+        "ts": "1482913278.000227"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "That is, if I do it due to misbehavior, or due to him\/her abusing previously granted rights - I would like to \u201chard-block him\/her\u201d in most cases\u2026.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1483453239.000000"
+        },
+        "ts": "1482913326.000228"
+    },
+    {
+        "user": "U3D5886CB",
+        "text": "<@U3D5886CB|ruslan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482913808.000229"
+    },
+    {
+        "user": "U1HBFGDPV",
+        "text": "<@U1HBFGDPV|silentspark> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482915087.000230"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[just thinking\/talking from a security point of view]",
+        "ts": "1482916069.000231"
+    },
+    {
+        "type": "message",
+        "user": "U3955QSBD",
+        "text": "<@U11MANG9G> soft-logout: Im thinking of the following:\n- user has a username and password\n- user has logged in\n- user now wants to inform fabric-cop to log user out\n- later on, user wants to provide the exact same username and password, to log back in\n- in event that user has forgotten the username and \/ or password, user has no way to log back in",
+        "ts": "1482916724.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U3955QSBD>  - yes - please do define what you mean.\n\nBased on previous questions of this nature, I'll assume for now that your question is based on  how security works with the REST API (\/registrar endpoint) and\/or CLI (login) in v0.6.\n\nIt is important to understand that there really is no such concept of \"logging in\" or \"logging out\" within normal Fabric operations.   Fabric transactions are signed using public\/private key pairs and within Fabric information from the public X509 key can be used to make authorization decisions (e.g. if you sign with enrollment certificates we can extract the enrollID \/ common name and if you sign with transaction certificates we can optionally extract attributes).\n\nIn v0.6 the enrollment material and\/or transaction certificates are obtained by registering with membership services.   In v1 you can get these materials from fabric-cop (although you can also generate X509-compliant material from other providers as well).\n\nWith v0.6, if you use the CLI to \"login\" what really happens under the covers is that the CLI communicates with membersrvcs, \"enrolls\" you using one time password (enroll secret) and then downloads your enrollment material locally (under the covers there is a file-based \"ID\" vault where the material is stored by enrollID).  After that, that same crypt material is now used to sign transactions you send via the CLI (basically CLI checks the \"ID\" value for material matching the enrollID and if it exists it uses it).\n\nWhen you use REST with v0.6, similar thing happens except that the peer with which you communicate actually now acts as a \"wallet\" and registers and downloads the crypto material on behalf of the user.  So you end up with the same \"ID\" vault being stored local to the peer and then for subsequent invoke requests to the REST API the peer then acts as a client on behalf of the user and uses the material in the \"ID\" vault.   Of course the issue here is that an enrollSecret is a one-time password so only the initial peer on which the \"\/registrar\" endpoint was called has access to this material and therefore you would need to continue to make REST calls to only that peer if you want to use the same enrollID.\n\nWhen you use the Node and Java SDK, you actually have more control over the \"ID\" vault yourself but are still responsible for managing it.",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1482916939.000000"
+        },
+        "ts": "1482916808.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Bottom line:   there is not a real concept of a session-based login for Fabric.  You obtain cryptographic enrollment material and use it to sign transactions.  The Fabric will \"accept\" transactions signed by this material as long as the Fabric \"trusts\" the issuer of the material and in the future as long as the material has not been revoked (similar to what <@U11MANG9G> is describing above)",
+        "ts": "1482917026.000235"
+    },
+    {
+        "user": "U22RH7VGT",
+        "text": "<@U22RH7VGT|ranjan008> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482925826.000236"
+    },
+    {
+        "user": "U1CS08EP3",
+        "text": "<@U1CS08EP3|ashishkel> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482926984.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3557\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3559\/>\ntwo new commits, pls help to review.",
+        "ts": "1482935635.000238"
+    },
+    {
+        "user": "U0NLP5909",
+        "text": "<@U0NLP5909|hanhzf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482935777.000239"
+    },
+    {
+        "user": "U11G06X52",
+        "text": "<@U11G06X52|shsedghi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482956009.000242"
+    },
+    {
+        "user": "U15KME666",
+        "text": "<@U15KME666|dayu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482972474.000243"
+    },
+    {
+        "user": "U0YK3KKCY",
+        "text": "<@U0YK3KKCY|harrijk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482982567.000244"
+    }
+]

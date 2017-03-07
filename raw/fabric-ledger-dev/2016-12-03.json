@@ -1,0 +1,212 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hey folks - I know I can probably find this is the requirements or in one of the docs, but figured it might be quicker to ask.  When it comes to \"ledger per chain\" for the multi-chain feature, I imagine we'll of course have a separate physical file ledger for the \"blocks\" but I assume that we will also have separate physical data files when using goleveldb as well?   Clearly we can use the database concept within couchdb",
+        "ts": "1480801207.000416"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0PB67X4K> Yes, the first choice is to use separate goleveldb database (in a separate file system directory) for each ledger.  However, we have concerns about the number file handles that will be required to maintain N goleveldbs concurrently. Therefore we are starting some stress testing to determine the system impact.",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1480805442.000000"
+        },
+        "ts": "1480805412.000002"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "If it turns out to be more efficient to have a single large goleveldb (in a single file system directory), do you have concerns?",
+        "ts": "1480805483.000004"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "We asked the CouchDB experts the same question - they said it is efficient to have N databases in CouchDB, so no problem there to have a DB per ledger (within one CouchDB process instance)",
+        "ts": "1480805565.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I could see that it is more efficient to have a single goleveldb.  I guess we would go with namespace (column family ?) of {chain||chaincodeID}?  I think as long as the file ledgers are separate (which they have to be) that's the most important thing.",
+        "ts": "1480806424.000006"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "yep, chain|chaincodeId namespace would be the backup plan",
+        "ts": "1480806469.000007"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0PB67X4K> if you look at my latest chaincode interaction proposal, you\u2019ll see I also recommend to add objectType to PutState() to create object namespaces within chaincode.  So it would be chain|chaincodeId|objectType",
+        "ts": "1480806619.000008"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<https:\/\/jira.hyperledger.org\/secure\/attachment\/10250\/Chaincode_TableToJSON.pptx>",
+        "ts": "1480806623.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - saw that as well",
+        "ts": "1480806643.000010"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Ok, please discuss with others in NY",
+        "ts": "1480806660.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "seems reasonable (well at least seems like a good option)",
+        "ts": "1480806663.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "on the compositeKey thingy, is there any reason why we would have to use JSON structures?  Looks like as long as you can pass in the stuff you want in the compositeKey there's really not a limitation on what you could store in the value?  Or did I read the code wrong?",
+        "ts": "1480806725.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(don't get me wrong - I am a big fan of JSON \/ NoSQL data models)",
+        "ts": "1480806743.000014"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "dont have to use JSON\u2026 can still use binary blobs if you prefer",
+        "ts": "1480806752.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "cool",
+        "ts": "1480806756.000016"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "the other thing in the last slide was the question of whether to have dedicated APIs for JSON vs binary",
+        "ts": "1480806774.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - I like the fact that you created some higher level functions around the \"range\" functions (which is basically how all the table stuff worked anyway).  Seems like a much more practical model and still has the same level of function (possibly even more)",
+        "ts": "1480806826.000018"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "exactly, and some helper functions will guide people how to use it",
+        "ts": "1480806857.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think having dedicated JSON ones makes sense - I think we'd have to have a flag on the db option to indicate whether or not JSON is supported?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480806873.000000"
+        },
+        "ts": "1480806861.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "not really necessary,  if JSON is not supported we could just store the json as blob",
+        "ts": "1480806901.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but that's just me  :wink:",
+        "ts": "1480806902.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "true",
+        "ts": "1480806907.000024"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "but it may be nice to indicate that with json it opens up the query capabilities",
+        "ts": "1480806924.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "right - I was thinking more on the read\/query side than the write side",
+        "ts": "1480806946.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "yep",
+        "ts": "1480806952.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "sounds like you are in sync with everything i was thinking\u2026 so we just need to finalize exact decisions this week",
+        "ts": "1480806991.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "For whatever thats worth.  :wink:   yeah - it all made sense to me - no surprises",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480807037.000000"
+        },
+        "ts": "1480807026.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "at least I read your stuff :wink:",
+        "ts": "1480807056.000031"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "cool.  the minions in my house are demanding food now",
+        "ts": "1480807068.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'm outta here too",
+        "ts": "1480807079.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'm demanding food myself (except from myself as well)",
+        "ts": "1480807095.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "laters",
+        "ts": "1480807097.000035"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ha yep, cya",
+        "ts": "1480807100.000036"
+    }
+]

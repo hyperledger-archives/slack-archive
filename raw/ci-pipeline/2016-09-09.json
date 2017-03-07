@@ -1,0 +1,1401 @@
+[
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>: I have updated this",
+        "ts": "1473429254.000326"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Also, <@U1AU8DRQR> reviewed <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/961\/> (grpcio package upgrade) patchset and he is ok with these changes.",
+        "ts": "1473429467.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "merged merged",
+        "ts": "1473429642.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I will still need to rebuild the images today to roll the GPRCIO change out",
+        "ts": "1473429688.000329"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "ok.. Also I am seeing merge builds are failing after disable behave tests..",
+        "ts": "1473429919.000330"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "After running `make unit-test`, seems membesrvc image is not creating..",
+        "ts": "1473429975.000331"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF> : any inputs",
+        "ts": "1473430014.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11HH3P7Y> this was by design: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/Makefile#L90>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/Makefile#L90",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/Makefile#L90",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1473430755.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the unit tests dont need the membersrvc-image",
+        "ts": "1473430764.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if another task requires it, i would recommend making it explicit",
+        "ts": "1473430785.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "what happened? seems like there is a dependency",
+        "ts": "1473437708.000337"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes I have submitted a patch in CI to build membersrvc image",
+        "ts": "1473437834.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "kk",
+        "ts": "1473437995.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0UHG4VP1> please add <@U0PB67X4K> to the list of fabric and f-t-r maintainers",
+        "ts": "1473438398.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/975\/>",
+        "ts": "1473438417.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KM61BCP> invites sent.",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1473439647.000000"
+        },
+        "ts": "1473439139.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> the overall issue is that the jenkins \u201cimage push\u201d task has an implicit dependency on image creation that was being satisfied by the behave tests running",
+        "ts": "1473439522.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "once behave was removed from the equation, the image was no longer being built",
+        "ts": "1473439549.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the correct solution (IMO) is one of two options I\u2019ve discussed with Ramesh",
+        "ts": "1473439570.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "option 1 - the jenkins flow is \u201ctest building\u201d (by building everything), \u201crun unit-tests\u201d, and \u201cpush images\"",
+        "ts": "1473439602.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "option 2 - \u201crun unit tests\u201d (ensuring unit-test deps are met), and \u201cpush images\u201d (ensuring image pushing deps are met",
+        "ts": "1473439639.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but for the short term, Ramesh just explicitly builds the membersrvc-image in the unit-test step just to satisfy the current implicit dep",
+        "ts": "1473439696.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to put it another way, i do not think we should support implicit dependencies except for one possible mode: and that is, if all dependencies are known to be built anyway",
+        "ts": "1473439754.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(i.e. option 1)",
+        "ts": "1473439766.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(personally I think even for option 1, the \u201cpush images\u201d task should still express its dependencies (e.g. \u201cmake images\u201d should run first)",
+        "ts": "1473439875.000352"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the build should do a no-op if there is no work to do",
+        "ts": "1473439886.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> i know you are super busy, but I am wondering if we can push the ball a little further on the \u201cvagrant in jenkins\u201d work",
+        "ts": "1473440331.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure what the environment is like or if its conducive to a non LF person coming in, but if you gave me proper access to at least a jenkins task to configure, i could play",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1473440380.000000"
+        },
+        "ts": "1473440371.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive used jenkins before, i think I could get fairly far with just a blank project that I could point at a git tree and fire off runs",
+        "ts": "1473440424.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "we have a jjb sandbox for this let me add you",
+        "ts": "1473440440.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(obviously if I run into issues with the worker not having the right stuff installed, that is a different matter",
+        "ts": "1473440444.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, cool",
+        "ts": "1473440458.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "are you able to log in here? <https:\/\/jenkins.hyperledger.org\/sandbox\/>",
+        "ts": "1473440491.000361"
+    },
+    {
+        "text": "checks",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1473440496.000362"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2A35CFSL\/screen_shot_2016-09-09_at_1.01.58_pm.png|Screen Shot 2016-09-09 at 1.01.58 PM.png>",
+        "file": {
+            "id": "F2A35CFSL",
+            "created": 1473440542,
+            "timestamp": 1473440542,
+            "name": "Screen Shot 2016-09-09 at 1.01.58 PM.png",
+            "title": "Screen Shot 2016-09-09 at 1.01.58 PM.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0KPFAZNF",
+            "editable": false,
+            "size": 25786,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2A35CFSL\/screen_shot_2016-09-09_at_1.01.58_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2A35CFSL\/download\/screen_shot_2016-09-09_at_1.01.58_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 138,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 184,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2A35CFSL-ac7e15d341\/screen_shot_2016-09-09_at_1.01.58_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 276,
+            "image_exif_rotation": 1,
+            "original_w": 803,
+            "original_h": 308,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2A35CFSL\/screen_shot_2016-09-09_at_1.01.58_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2A35CFSL-75dbe3d195",
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1473440545.000363"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "try again?",
+        "ts": "1473440691.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep, im in",
+        "ts": "1473440709.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok to create a job or two?",
+        "ts": "1473440715.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes",
+        "ts": "1473440730.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it gets wiped once a week IIRC",
+        "ts": "1473440737.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty, ill let you know how far I get",
+        "ts": "1473440737.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, good to know, and no problem",
+        "ts": "1473440743.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "there is apparently a command line way for you to manage it which I am unfamiliar with",
+        "ts": "1473440765.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is the worker backend the same\/comparable to the production queue?",
+        "ts": "1473440781.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i only know the UI methods",
+        "ts": "1473440802.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes, we only have the one set of slaves. I\u2019m not sure if those are configured correctly",
+        "ts": "1473440807.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is fine, I am comfortable with the UI job interface",
+        "ts": "1473440815.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y> what did you learn about the command line tools?",
+        "ts": "1473440826.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, we shall soon see",
+        "ts": "1473440832.000377"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I think to get to the actual yaml you need, you need to use the command line tool in the end to inject the yaml",
+        "ts": "1473440855.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I may be way off base",
+        "ts": "1473440860.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the sandbox was completely set up and tested before the outage, and was one of the reconstructed systems, so we may well run into rough patches",
+        "ts": "1473440893.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "could you install the git plugin?",
+        "ts": "1473440903.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i want to pull the src from github",
+        "ts": "1473440910.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont seem to have permissions to mod the plugins (no surprise)",
+        "ts": "1473440928.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if this works the way I expect, I think I can have jenkins just clone the repo (which will have the yaml already in it)",
+        "ts": "1473441019.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I apologize, but you\u2019ll need to log in once more (the plugins required a restart)",
+        "ts": "1473441084.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, not a problem",
+        "ts": "1473441151.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "OK. that ran on master",
+        "ts": "1473441277.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, basic stuff in place, now I need to work on prereqs",
+        "ts": "1473441279.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/job\/baseimage-experiment\/1\/console>",
+        "ts": "1473441281.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I need to stitch together the openstack part",
+        "ts": "1473441293.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I assume the job doesnt have sudo\/root perms (e.g. I cant just do \u201capt-get install jq\"",
+        "ts": "1473441318.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1473441327.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "not on that machine",
+        "ts": "1473441333.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what is the best path forward to get the prereqs set up?",
+        "ts": "1473441345.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "1) let me get jenkins talking to openstack so we\u2019re actually using the image we already have",
+        "ts": "1473441368.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1473441377.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "2) find what is missing from that image and we\u2019ll work through building a better one",
+        "ts": "1473441385.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perfect, thanks <@U0UHG4VP1>",
+        "ts": "1473441395.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im going to grab lunch, bbiab",
+        "ts": "1473441399.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "BTW: I added you as a collaborator on that repo",
+        "ts": "1473441462.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just in case \/ because, not asking you to do any work there",
+        "ts": "1473441473.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at some point, we may want to import it or whatever",
+        "ts": "1473441498.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U11HH3P7Y> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/979\/> looks like a copy\/paste of the other stanzas, right?",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1473448470.000000"
+        },
+        "ts": "1473448446.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/jenkins.hyperledger.org\/view\/fabric\/> shows the new jobs",
+        "ts": "1473448567.000405"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0UHG4VP1>:new jobs are to perform behave tests and skip vote to gerrit",
+        "ts": "1473449354.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF> I\u2019m running through the last bits of tying up to openstack. I promise you I\u2019m doing more than drinking tea :slightly_smiling_face:",
+        "ts": "1473450060.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, i never doubted that, but thank you",
+        "ts": "1473450133.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "an extra difficulty is the sandbox is running the very latest Jenkins with a new, spiffy UI, whereas the production one a major release back",
+        "ts": "1473450261.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m going to limit sandbox to spawning one builder if that\u2019s OK",
+        "ts": "1473450311.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<@U0KPFAZNF> let\u2019s see how this goes. <https:\/\/jenkins.hyperledger.org\/sandbox\/computer\/>",
+        "ts": "1473450846.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I just provisioned two boxes, they should live for 60 seconds and be collected",
+        "ts": "1473450861.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1> yes i think that is fine",
+        "ts": "1473451336.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill give it a whirl",
+        "ts": "1473451340.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just kick a new build off?",
+        "ts": "1473451344.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or do I need to re-create job?",
+        "ts": "1473451357.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool, looks like jq was found this tmie",
+        "ts": "1473451414.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "assign it to hyp=fabric-x86-64 or whatever",
+        "ts": "1473451419.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "now its missing vagrant",
+        "ts": "1473451419.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "how do I do that?",
+        "ts": "1473451433.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/computer\/hyp-x86_64-1630\/> wait for this to come up",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1473453568.000000"
+        },
+        "ts": "1473451449.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1473451461.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "copy and paste the stuff from the ci-management repo for one of the fabric jobs",
+        "ts": "1473451471.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it shows the params",
+        "ts": "1473451475.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I always just click \u201cbuild now\u201d, how do you direct to a specific place?",
+        "ts": "1473451480.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "by tagging the build for a builder type",
+        "ts": "1473451527.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "look here <https:\/\/build.allseenalliance.org\/ci\/job\/android-verify\/configure-readonly\/>",
+        "ts": "1473451570.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "be sure to click all the \u201cadvanced\u201d buttons to unfurl the proper decorations",
+        "ts": "1473451584.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, i see \u201clabel expression\"",
+        "ts": "1473451608.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I apologize for being abrupt but my hair is on fire for the next 20 minutes",
+        "ts": "1473451608.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill look for that",
+        "ts": "1473451610.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, no worries",
+        "ts": "1473451614.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "1630 is up now, and I set the reap timeout to 10 minutes to speed your cycles",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1473453543.000000"
+        },
+        "ts": "1473451630.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "can you get here? <https:\/\/jenkins.hyperledger.org\/sandbox\/computer\/hyp-x86_64-1630\/script>",
+        "ts": "1473451664.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "if not no big deal",
+        "ts": "1473451669.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, ill try it again",
+        "ts": "1473451698.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "looks like it was directed to 1630 properly, but missing jq",
+        "ts": "1473451743.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but go put out the other fire",
+        "ts": "1473451749.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is not high priority",
+        "ts": "1473451753.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty",
+        "ts": "1473451761.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and no, cant load the \/script URL)",
+        "ts": "1473451780.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "are you able to install jq? you should have sudo access in those jobs",
+        "ts": "1473453165.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i didnt try",
+        "ts": "1473455298.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me try that",
+        "ts": "1473455300.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is it ubuntu?",
+        "ts": "1473455307.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "14.04",
+        "ts": "1473455317.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1473455334.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "when I did this I had to grab vagrant source via wget and build it",
+        "ts": "1473455340.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "feel free to mess around a bit, I am trying to get you a more interesting image to play witrh",
+        "ts": "1473455366.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so heres a problem",
+        "ts": "1473455406.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i attached a label to 1630 previously, but that node since went offline",
+        "ts": "1473455419.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is there a way we can label these with something more persistent?",
+        "ts": "1473455432.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "perhaps \u201cvagrant-builder\"",
+        "ts": "1473455439.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "use the label hyp-fabric-x86_64",
+        "ts": "1473455460.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, perfect",
+        "ts": "1473455471.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it will attach to whatever hyp-fabric-x86_64 you have running",
+        "ts": "1473455474.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh it looks like I did that already",
+        "ts": "1473455487.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "didnt realize",
+        "ts": "1473455488.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so thats all set",
+        "ts": "1473455491.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "do you want a longer reap time on them?",
+        "ts": "1473455500.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seemed to come up quick",
+        "ts": "1473455509.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I figured 10 minutes was enough but I guess not",
+        "ts": "1473455511.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "OK",
+        "ts": "1473455512.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i think its fine",
+        "ts": "1473455516.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it only went away because i switched tasks",
+        "ts": "1473455525.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "now I need to refigure how I built vagrant",
+        "ts": "1473455549.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if I have sudo, i can probably install it in the job script",
+        "ts": "1473455571.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "right now I\u2019m baking an image with gprc 1.0 so I figured I would add vagrant for you",
+        "ts": "1473455592.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "disk space is approximately free",
+        "ts": "1473455600.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am not quite sure what this error is saying",
+        "ts": "1473455618.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/job\/baseimage-experiment\/5\/console>",
+        "ts": "1473455619.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im guessing its indirectly related to my attempt to sudo",
+        "ts": "1473455629.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the current image has Ubuntu 14.04.4 - fabric - DOCKER 1.8 PROTOC 3.0",
+        "ts": "1473455639.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool, that might be enough as long as I have sudo to install more",
+        "ts": "1473455659.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "tell me what you need, exactly. jq at least",
+        "ts": "1473455685.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "vagrant of a recent vintage",
+        "ts": "1473455692.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "which also meant vbox etc",
+        "ts": "1473455697.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "jq vagrant and packer come to mind",
+        "ts": "1473455698.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, vbox",
+        "ts": "1473455701.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it\u2019s compiling rocksdb. I really should make these machines 64\/64 when I\u2019m doing this",
+        "ts": "1473455725.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "why leave cores to spare?",
+        "ts": "1473455731.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1473455737.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats my motto",
+        "ts": "1473455740.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what machine is compiling rocksdb though?",
+        "ts": "1473455754.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, this is your custom build",
+        "ts": "1473455760.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "we\u2019re drawing from one pool, so I\u2019d hate to starve the real jenkins",
+        "ts": "1473455770.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mistook it for a fabric build",
+        "ts": "1473455771.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yeah, you can check out our vagrant stuff in ci-management. I\u2019m doing vagrant up right now, waiting for vagrant ssh to become available",
+        "ts": "1473455811.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see",
+        "ts": "1473455828.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "you\u2019d need to set up your own blah blah blah since you won\u2019t have the exact images we use",
+        "ts": "1473455854.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1473455861.000495"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im thinking, if this POC proves out, we\u2019d end up with 4 basic jobs",
+        "ts": "1473455880.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1 for vagrant (implicitly x86_64)",
+        "ts": "1473455889.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and 3 for docker (x86, Z, ppcle)",
+        "ts": "1473455902.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "each would trigger on a new commit to the repo",
+        "ts": "1473455913.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "you are quite optimistic!",
+        "ts": "1473455924.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(we might also want to have a different tier for validating gerrit PRs",
+        "ts": "1473455934.000501"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the main difference between the two types of jobs are, the commit-monitors would push to atlas\/dockerhub on completion, whereas the others would just report the CI failure to the PR",
+        "ts": "1473455961.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(yeah, I know",
+        "ts": "1473455965.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1473455967.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "even if I can just get vagrant + x86 docker working, I would be super happy",
+        "ts": "1473455981.000505"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we can roll in the other $arch after that",
+        "ts": "1473455992.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jq 1.3 OK?",
+        "ts": "1473456030.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> making good progress with <@U0UHG4VP1> on the baseimage pipeline",
+        "ts": "1473472559.000508"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "have both a vagrant and docker build going right now",
+        "ts": "1473472567.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/job\/baseimage-docker-experiment\/2\/console>",
+        "ts": "1473472569.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/jenkins.hyperledger.org\/sandbox\/job\/baseimage-experiment\/16\/console>",
+        "ts": "1473472584.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019ll add cbf to the group so he can see that :slightly_smiling_face:",
+        "ts": "1473472586.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, hahah",
+        "ts": "1473472591.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, didnt think of that",
+        "ts": "1473472595.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but yes,  pls add him",
+        "ts": "1473472604.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "long story short, this looks very viable",
+        "ts": "1473472633.000516"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the remaining hurdles are less complex than the ones already solved",
+        "ts": "1473472648.000517"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "cbf is added to the sandbox",
+        "ts": "1473472764.000518"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ty",
+        "ts": "1473472769.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "is it fatal if every single merge job doesn\u2019t completely push to dockerhub? I assume the next push contains the tip of master, which would include previous stuff",
+        "ts": "1473472894.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be honest, I dont think any of the stuff we push to dockerhub from the CI pipeline is currently useable in any form",
+        "ts": "1473473302.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(yet)",
+        "ts": "1473473305.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I am working on that",
+        "ts": "1473473308.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, long story short, I doubt it matters much regarding those failures (yet)",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1473473349.000000"
+        },
+        "ts": "1473473332.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might eventually",
+        "ts": "1473473335.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the reason is that, fabric-peer cant really stand on their own anyway..not until we start addressing the chaincode side of the story",
+        "ts": "1473473396.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok. should we delete all that stuff at dockerhub then? or stop pushing to it?",
+        "ts": "1473473497.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I should be careful\u2026let me rephrase: I can\u2019t see how its usable in any form\u2026that said, people seem to be making use of it somehow",
+        "ts": "1473473527.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, not sure what they are doing, but I dont think we can get rid of it completely",
+        "ts": "1473473548.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "lets just wait until we have the real pipeline in place and then we can reevaluate",
+        "ts": "1473473565.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "kk",
+        "ts": "1473473569.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the issue right now is, fabric-peer currently relies on fabric-baseimage:latest, which we (intentionally) do not push to dockerhub",
+        "ts": "1473473590.000533"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only way to really get a complete suite is to download the code and build the images locally",
+        "ts": "1473473606.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the stuff on dockerhub isnt complete (thats what we need to fix)",
+        "ts": "1473473615.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, there does seem to be a subset of users (I think particularly in the bluemix crowd) that are somehow making use of whats there",
+        "ts": "1473473639.000536"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure how\u2026perhaps they are manually augmenting the baseimage in their environment",
+        "ts": "1473473655.000537"
+    },
+    {
+        "text": "shrugs",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0UHG4VP1",
+        "ts": "1473473674.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "let them be, I suppose.",
+        "ts": "1473473683.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, cant hurt",
+        "ts": "1473473689.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "well, it does.",
+        "ts": "1473473729.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, i suppose thats true",
+        "ts": "1473473738.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "certainly dockerhub storage, and lf bandwidth",
+        "ts": "1473473751.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it wastes our resources doing pointless builds, slowing verify builds",
+        "ts": "1473473755.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "nobody seems to watch the merge jobs.",
+        "ts": "1473473791.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i hope to have the missing pieces solved shortly though, so perhaps it wont be wasteful much longer",
+        "ts": "1473473797.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "sure.",
+        "ts": "1473473806.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I\u2019m rambling, I apologize",
+        "ts": "1473473814.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the merge jobs are the only ones that try to push, right?",
+        "ts": "1473473823.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IOW, the PR jobs just build\/run UTs",
+        "ts": "1473473847.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes, the merge jobs push",
+        "ts": "1473473870.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I don\u2019t know if ramesh has designs to change that.",
+        "ts": "1473473916.000552"
+    }
+]

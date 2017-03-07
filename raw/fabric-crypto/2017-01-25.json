@@ -1,0 +1,909 @@
+[
+    {
+        "user": "U2JK6JCTZ",
+        "text": "<@U2JK6JCTZ|alankhlim> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485349828.001211"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U13TWBRBL> <@U2Q0HP4HY> <@U0ZR63HLK> Since <#C0YPYBVJM|fabric-dev> seems a little busy, can we move the ASN.1 discussion here? \n\n&gt; I'm still trying to understand why the SDK ever needs to compute this hash",
+        "ts": "1485358583.001212"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sure,",
+        "ts": "1485359925.001213"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0XPR4NP4>, may you join the discussion here",
+        "ts": "1485359938.001214"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep, I'm here",
+        "ts": "1485360008.001215"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, I don't want to stress on using ASN.1",
+        "ts": "1485360189.001216"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "The block header has the headerNumber",
+        "ts": "1485360194.001217"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is used for cryptographic objects",
+        "ts": "1485360201.001218"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but it might be avoided in certain case",
+        "ts": "1485360209.001219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, it is still encoded as protobuf, but when we compute the hash, we marshal it to ASN.1",
+        "ts": "1485360216.001220"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "expecially if there is a signature that authenticate everything",
+        "ts": "1485360222.001221"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2Q0HP4HY> You do not need to understand ASN.1 to simply read the block header",
+        "ts": "1485360229.001222"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We are only encoding to ASN.1 when computing the hash",
+        "ts": "1485360236.001223"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I'm seeing a need for that some time in the future",
+        "ts": "1485360269.001224"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is the need?",
+        "ts": "1485360287.001225"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "in case of an eventHub looking at blocks on a fail over we don't want to process the same block again",
+        "ts": "1485360350.001226"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2Q0HP4HY> I do not follow.  With only protobuf, and no ASN.1, you can read the block number from the block header.",
+        "ts": "1485360379.001227"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "y",
+        "ts": "1485360433.001228"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "we can unmarshal it  as regular protobuf",
+        "ts": "1485360449.001229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, the block structure is protobuf",
+        "ts": "1485360495.001230"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "if it's encoded it in ASN.1 then we need libaries to handle that .   That would would mean the same for any other toolkit \/languse",
+        "ts": "1485360497.001231"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is not encoded in ASN.1",
+        "ts": "1485360502.001232"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "ok maybe I missed that",
+        "ts": "1485360513.001233"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When we compute the _hash_ of the block header, to get the bytes to compute the hash over, we temporarily encode the header via ASN.1 to bytes deterministically.  We then compute the hash over these temporary bytes, and store the hash normally in the proto structures.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1485360583.000000"
+        },
+        "ts": "1485360565.001234"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "ok so when it comes to the toolkit doing the verification so we can trust it .. does it not need to do the same ?",
+        "ts": "1485360617.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It depends on how you are establishing trust.  My understanding, was that the toolkit does not retain the entire blockchain, but simply queries against a peer to get ledger state.  Is that correct?",
+        "ts": "1485360669.001237"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "From the eventHub  we get block events .   One block at a time .",
+        "ts": "1485360770.001238"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And how do you ensure that the eventHub is sending you real blocks?",
+        "ts": "1485361503.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2Q0HP4HY> This is my ignorance, but I'm not sure where the difference is between the peer and the SDK.  If the SDK needs the full blockchain, and needs to validate the full blockchain, then it seems to me like it is acting exactly as a peer.  So it seems like that cannot be the case to me. If you are querying the blocks from the peers, and trusting the peer to reply with the correct block requested, then I do not what computing the block header hash could be useful for.",
+        "ts": "1485361762.001240"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U0XPR4NP4>  Probably my ignorance.  As of the moment I only think we need verify each block we get from the event hub",
+        "ts": "1485361876.001241"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What does it mean to verify a block from the SDK perspective?",
+        "ts": "1485361969.001242"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U0KQ9QKH6> To verify each block we get from the eventhub stream what signature  and across which bytes will we need to verify against ?",
+        "ts": "1485362134.001243"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2Q0HP4HY> <@U0XPR4NP4> <@U0KQ9QKH6> i don\u2019t know if the SDK needs to do any verification of blocks",
+        "ts": "1485362586.001244"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "it needs to be hooked up to a trusted event source (a trusted peer) in the first place",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1485362624.000000"
+        },
+        "ts": "1485362608.001245",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4",
+                    "U0KQ9QKH6"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If the SDK trusts its peer, then I don't foresee any reason why the SDK needs to recompute the block header hash",
+        "ts": "1485362643.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And therefore, no ASN.1 is needed at the SDK side)",
+        "ts": "1485362652.001248"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "if that assumption is not true, then many things start falling apart",
+        "ts": "1485362657.001249"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U13TWBRBL> Then why the need for verification anywhere else ?",
+        "ts": "1485362689.001250"
+    },
+    {
+        "user": "U1GRJD9NC",
+        "text": "<@U1GRJD9NC|yuki.k> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485362922.001251"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2Q0HP4HY> the only other place that SDK is doing verification is when it receives proposal responses from endorsers, and that check is needed because endorsers from other orgs are not to be trusted",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1485364137.000000"
+        },
+        "ts": "1485364106.001252",
+        "reactions": [
+            {
+                "name": "+1::skin-tone-2",
+                "users": [
+                    "U2Q0HP4HY"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i should say \u201c\u2026 that SDK needs to do verification ....\u201d (because node.js hasn\u2019t done that yet and as far as i know neither does Java SDK) :wink:",
+        "ts": "1485364212.001254"
+    },
+    {
+        "user": "U0YP7KFGQ",
+        "text": "<@U0YP7KFGQ|gennady.laventman> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485364216.001255"
+    },
+    {
+        "type": "message",
+        "user": "U3DHKV84C",
+        "text": "Hey guys, I want to change keys and certificate in fabric\/msp\/sampleconfig\/.\n\nSomebody generate private key (elliptical curve) for CA and different Intermediate key for peers using openssl\n\nfabric\/msp\/sampleconfig\/admincerts\/admincert.pem\nfabric\/msp\/sampleconfig\/cacerts\/cacert.pem\nfabric\/msp\/sampleconfig\/keystore\/key.pem\nfabric\/msp\/sampleconfig\/signcerts\/peer.pem",
+        "edited": {
+            "user": "U3DHKV84C",
+            "ts": "1485365167.000000"
+        },
+        "ts": "1485364950.001256"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "did not get your q .",
+        "ts": "1485365139.001257"
+    },
+    {
+        "type": "message",
+        "user": "U3DHKV84C",
+        "text": "I want start network with different keys for each peer",
+        "ts": "1485365196.001259"
+    },
+    {
+        "type": "message",
+        "user": "U3DHKV84C",
+        "text": "now, cop isn\u2019t work with peer and peer have local msp, right?",
+        "edited": {
+            "user": "U3DHKV84C",
+            "ts": "1485365256.000000"
+        },
+        "ts": "1485365244.001260"
+    },
+    {
+        "user": "U1P1ZV6RF",
+        "text": "<@U1P1ZV6RF|matanyahu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485371737.001262"
+    },
+    {
+        "user": "U3LU3AQM8",
+        "text": "<@U3LU3AQM8|sukrit> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485380010.001263"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so continuing the discussion on <#C1K16MW77|fabric-pr-review> re: importing private keys.",
+        "ts": "1485380430.001264"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U221LL03Z> <@U13TWBRBL> current BCCSP only needs the SKI",
+        "ts": "1485380439.001265"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U10Q62R8X> says:\n\n- get private key pem file, parse\n   - if a SKI PEM header, great, how we should do it\n   - else try to import key into currernt\/default csp",
+        "ts": "1485380444.001266"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "no need for a path",
+        "ts": "1485380474.001267"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "but that requires the bccsp impl of getKey(ski) to know how to work with an arbitrary external key store",
+        "ts": "1485380474.001268"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "right",
+        "ts": "1485380488.001269"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "which I don\u2019t know how that\u2019s possible unless it\u2019s pkcs11",
+        "ts": "1485380492.001270"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "that is part of bccsp initialization",
+        "ts": "1485380495.001271"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "but there\u2019s no equivalent spec for software based key stores right?",
+        "ts": "1485380505.001272"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "it is file based AFAIK for SW based system.",
+        "ts": "1485380511.001273"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "the sw bccsp initialization takes a directory location for keystore",
+        "ts": "1485380515.001274"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "but that happens only at initialization",
+        "ts": "1485380531.001275"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "so , if you have .p12 or java keystore ,it is not going to work.",
+        "ts": "1485380541.001276"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "it does but how to actually do the look up with the keystore given the ski, that\u2019s all implementation-specific",
+        "ts": "1485380549.001277"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so in the end a bccsp impl can only work with one specific keystore",
+        "ts": "1485380563.001278"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "well.. that would mean another bccsp perhaps if you want a java keystore..",
+        "ts": "1485380565.001279"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "in other words, the private key must exist in the bccsp\u2019s own key store",
+        "ts": "1485380578.001280"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yes.",
+        "ts": "1485380588.001281"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4397\/8>",
+        "ts": "1485380597.001282"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "have a look at the testdata directory",
+        "ts": "1485380609.001283"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I've created a sw keystore and imported it so that the test cases had something static to run against",
+        "ts": "1485380640.001284"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "the sw keystore (<@U0ZR63HLK> 's invention) stores keys by ks\/&lt;ski&gt;_&lt;type&gt;",
+        "ts": "1485380679.001285"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "given an `ski []byte` it will do a directory lookup for `ks\/&lt;ski&gt;_*`",
+        "edited": {
+            "user": "U10Q62R8X",
+            "ts": "1485380729.000000"
+        },
+        "ts": "1485380722.001286"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "suppose i have java-based tool that does the CA enrollment for my app, so the private key is stored in a `keystore` file in my jvm folder",
+        "ts": "1485380747.001288"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "how am i to find those keys from node.js SDK?",
+        "ts": "1485380767.001289"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "!",
+        "ts": "1485380784.001290"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "now its getting interesting! :smile:",
+        "ts": "1485380790.001291"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i would have to code up an \u201cadapter\u201d of some sort that understands jvm keystores",
+        "ts": "1485380796.001292"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and this goes on for every different kinds of keystores",
+        "ts": "1485380812.001293"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "from Node , you cannot read java key store.",
+        "ts": "1485380826.001294"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so what i\u2019m saying is instead this could be done using the procedure i was describing earlier, as a one-time import",
+        "ts": "1485380836.001295"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "you need to convert java key store to p12 and then read from node.",
+        "ts": "1485380851.001296"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U221LL03Z> exactly what i\u2019m saying (well i suppose you could have node call java to read, etc.) but the point is you\u2019d have to write code to do that, vs. doing a manual \u201cexport -&gt; import\u201d procedure that\u2019s a one-time deal",
+        "ts": "1485380915.001297"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Jim , you are out of luck with using existing key store in bccSP for SW based system.",
+        "ts": "1485380946.001298"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "that might improve in future.",
+        "ts": "1485380969.001299"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "A bit confused about the situation.. java tool that handles enrollment?",
+        "ts": "1485380980.001300"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "could any other kind of tool that enrolls with a CA that\u2019s not fabric-ca",
+        "ts": "1485381008.001301"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "cant we have a golang tool? :smile:",
+        "ts": "1485381010.001302"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "that uses BCCSP? :smile:",
+        "ts": "1485381021.001303"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "just using java as an example to illustrate the point",
+        "ts": "1485381022.001304"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "but it has to be done natively in SDK , I guess.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1485381062.000000"
+        },
+        "ts": "1485381050.001305"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I was talking to Jeff earlier, he was showing me the boostrap feature he is working on.. got me thinking how it would integrate with BCCSP. Its CLEARLY a problem :disappointed:",
+        "ts": "1485381148.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why?",
+        "ts": "1485381181.001308"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "well.. he creates pem files with private keys",
+        "ts": "1485381192.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "using openssl?",
+        "ts": "1485381197.001310"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "python I think",
+        "ts": "1485381204.001311"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "perhaps that calls openssl?",
+        "ts": "1485381211.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "might be",
+        "ts": "1485381215.001313"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U10Q62R8X> before moving on to another topic, can you first give +1 to <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4787\/>?",
+        "ts": "1485381219.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what's wrong with that?",
+        "ts": "1485381227.001315"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "sounds like you are agreeing with the code itself",
+        "ts": "1485381235.001316"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "yep",
+        "ts": "1485381240.001317"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "(but how to use it is still up for debate)",
+        "ts": "1485381244.001318"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "(<@U13TWBRBL> done)",
+        "ts": "1485381335.001319"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "(thanks!)",
+        "ts": "1485381337.001320"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U0ZR63HLK> secrets in pem files only work with SW bccsp. Well, technically I got it to work with PKCS11 BCCSP, but @tvi tells me key import is disabled for FIPS lvl&gt;3",
+        "ts": "1485381425.001321"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "a 'fairly transparent' interface is to use the same option that specifies the key-pem for actually reading in a SKI, which is then used to load from default bccsp keystore",
+        "edited": {
+            "user": "U10Q62R8X",
+            "ts": "1485381534.000000"
+        },
+        "ts": "1485381514.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ah but then I would say that for behave tests, the best you can hope is to use SoftHSM no?",
+        "ts": "1485381661.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "actually, we should move the fabric to digest SKIs directly",
+        "ts": "1485381675.001325",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U10Q62R8X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "without having to do key import, no?",
+        "ts": "1485381686.001326"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "yep",
+        "ts": "1485381700.001327"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "wont happen immediatelly",
+        "ts": "1485381706.001328"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "so import it is for now",
+        "ts": "1485381711.001329"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "but we need to move that way",
+        "ts": "1485381720.001330"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "(I would certainly want to be able to run behave with actual crypto card)",
+        "ts": "1485381741.001331"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<@U13TWBRBL> <https:\/\/developers.yubico.com\/yubico-piv-tool\/YKCS11_release_notes.html>",
+        "ts": "1485381899.001332"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "since some people might run nodejs on their own machines..",
+        "ts": "1485381924.001333"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "using yubico for them to store their certs.. through Gong's pkcs11 implementation.. that would be very neat.",
+        "ts": "1485381957.001334"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "we are probably nearly there too",
+        "ts": "1485381967.001335"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "(not sure if you've heard of yubico before..)",
+        "ts": "1485381985.001336"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "I have one that I use for my password manager and email..",
+        "ts": "1485382015.001337"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U10Q62R8X> so i think you and <@U0ZR63HLK> are essentially proposing to have bccsp be based on pkcs11 so it\u2019ll have a standard protocol with private key management via SKI, and thus can delegate the storage to different keystore impls (software or hsm), do i understand it right?",
+        "edited": {
+            "user": "U13TWBRBL",
+            "ts": "1485382349.000000"
+        },
+        "ts": "1485382320.001338"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "right on \"private key management via SKI, and thus can delegate the storage to different keystore impls\", but disagree with \"bccsp be based on pkcs11\"",
+        "ts": "1485382398.001340"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "not completely",
+        "ts": "1485382409.001341"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "just for the key storage part",
+        "ts": "1485382421.001342"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "well.. current SW bccsp has two keystore already.. FileBasedKeystore and a DummyKeyStore.. we could probably add a few more",
+        "ts": "1485382476.001343"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "as part of SW bccsp configuration, one can specify which keystore to use, so we could acomodate JKS and P12 perhaps? the point is, apart from SKI, the 'developer' should not care about how the key is stored",
+        "ts": "1485382571.001344"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "the FileBasedKeystore actually stores things are pem files (back to where we started? :smile: )",
+        "ts": "1485382608.001345"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "you can store PEM files as concatented form. But that requires BCCSP to change.",
+        "ts": "1485383107.001346"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "actually, if you want to change the way crypto objects are stored, you just need to provide a new implementation of the KeyStore interface",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1485383549.000000"
+        },
+        "ts": "1485383532.001347"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's it",
+        "ts": "1485383534.001348"
+    },
+    {
+        "type": "message",
+        "user": "U10Q62R8X",
+        "text": "<https:\/\/github.com\/pavel-v-chernykh\/keystore-go> :wink:",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "pavel-v-chernykh\/keystore-go",
+                "title_link": "https:\/\/github.com\/pavel-v-chernykh\/keystore-go",
+                "text": "keystore-go - A Go (golang) implementation of Java KeyStore encoder\/decoder",
+                "fallback": "GitHub: pavel-v-chernykh\/keystore-go",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/526266?v=3&s=400",
+                "from_url": "https:\/\/github.com\/pavel-v-chernykh\/keystore-go",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1485386242.001350"
+    },
+    {
+        "type": "message",
+        "user": "U2UU1LKTR",
+        "text": "Hi <@U0PB67X4K> <@U184J2R7S> <@U13TWBRBL> , do you know who I can get advice\/assistance about the encryption\/decryption of the block\/transaction information (chaincode id, payload, etc. ) ?",
+        "attachments": [
+            {
+                "fallback": "[January 24th, 2017 10:54 PM] jonathan.tan: Hi everyone , does anyone know where can I find information about encrypting and decrypting transactions\/payload? I tried setting to confidential:true and transactions are now encrypted but how do I decrypt the transaction information like payload ?",
+                "ts": "1485269646.001209",
+                "author_subname": "jonathan.tan",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "Hi everyone , does anyone know where can I find information about encrypting and decrypting transactions\/payload? I tried setting to confidential:true and transactions are now encrypted but how do I decrypt the transaction information like payload ?",
+                "author_name": "Jonathan Tan",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jonathan.tan",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/a1174343fd5aa071737d6ea9383fea56.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0022-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1485269646001209",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1485399528.001352"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2UU1LKTR> i see that you are in Singapore, you can contact the solution team in IBM China Research Lab, i\u2019ll send you a few contact names via DM",
+        "ts": "1485400648.001353"
+    },
+    {
+        "type": "message",
+        "user": "U2UU1LKTR",
+        "text": "thanks <@U13TWBRBL>",
+        "ts": "1485400675.001354"
+    }
+]

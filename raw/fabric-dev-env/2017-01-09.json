@@ -1,0 +1,262 @@
+[
+    {
+        "user": "U3GLPV06R",
+        "text": "<@U3GLPV06R|bkimminich> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483977909.000756"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "Hi all! I'm trying to get the Vagrant `devenv` running while sitting behind a corporate web proxy. I configured Vagrant for that proxy, but run into this error after all:\n\n```\nStep 14 : RUN core\/chaincode\/shim\/java\/javabuild.sh\n ---&gt; Running in 5d80a4f1513b\n\nFAILURE: Build failed with an exception.\n\n* Where:\nBuild file '\/root\/core\/chaincode\/shim\/java\/build.gradle' line: 30\n\n* What went wrong:\nError resolving plugin [id: 'com.google.protobuf', version: '0.8.0']\n&gt; Could not GET '<https:\/\/plugins.gradle.org\/api\/gradle\/2.12\/plugin\/use\/com.google.protobuf\/0.8.0>'.\n   &gt; Connect to {my proxy}:443 [{my proxy}\/{ip}] failed: Connection timed out (Connection timed out)\n\n* Try:\nRun with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output.\nThe command '\/bin\/sh -c core\/chaincode\/shim\/java\/javabuild.sh' returned a non-zero code: 1\nMakefile:196: recipe for target 'build\/image\/javaenv\/.dummy-x86_64-0.7.0-snapshot-a5b12f2' failed\n```\n\nAny hint is welcome... Adding <http:\/\/gradle.org|gradle.org> to my SSH-config didn't work out...",
+        "ts": "1483978081.000757"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3GLPV06R> do you have the vagrant plugin for proxy?",
+        "ts": "1483978844.000758"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "Yes, I do.",
+        "ts": "1483978854.000759"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "It failed waaay before back when I didn't... :wink:",
+        "ts": "1483978874.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, ok",
+        "ts": "1483978908.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my understanding are the touchpoints are two levels",
+        "ts": "1483978940.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1) the vagrant proxy stuff (which you seem to have)",
+        "ts": "1483978950.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and 2), the .\/docker-env.mk stuff reflects the proxy envvars through to docker",
+        "ts": "1483978974.000764"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "I have working HTTP_PROXY and HTTPS_PROXY settings as well.",
+        "ts": "1483979000.000765"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you have both of those in place, it _should_ work, though we admittedly do not work with the java subsystem",
+        "ts": "1483979004.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KRRM29Z> any thoughts on ^^^",
+        "ts": "1483979032.000767"
+    },
+    {
+        "user": "U0KRRM29Z",
+        "inviter": "U0KPFAZNF",
+        "text": "<@U0KRRM29Z|ecblseg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483979036.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my understanding is that the stuff in (2) went in as a direct response to allowing gradle to see your proxy",
+        "ts": "1483979074.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but perhaps I misunderstood and there are other steps",
+        "ts": "1483979085.000770"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "And gradle in general works locally for me when downloading stuff.",
+        "ts": "1483979091.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I know <@U0KRRM29Z> spent some time looking at this",
+        "ts": "1483979094.000772"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "I'm trying to run gradle for the `\/fabric\/core\/chaincode\/shim\/java` directly on checked out code, lets see...",
+        "ts": "1483979137.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "<@U0KPFAZNF> <@U3GLPV06R> - that looks like the exact the problem the recent patches were meant to correct. Can we confirm that you're using the patched versions?",
+        "edited": {
+            "user": "U0KRRM29Z",
+            "ts": "1483979338.000000"
+        },
+        "ts": "1483979319.000774"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "I just pulled this afternoon (from `master`)",
+        "ts": "1483979351.000776"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "When I run the `javabuild.sh` locally the connection works. It fails later, but that's because I'm on a Windows machine. So, through Vagrant it _should_ work just the same.",
+        "ts": "1483979402.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the make runs in docker, perhaps it's a docker-DNS issue?",
+        "ts": "1483979541.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "Yeah is _should_ work the same ... famous last words",
+        "ts": "1483979715.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "I'm not sure I have an easy way to test on a Windows machine.",
+        "ts": "1483979764.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "Let me at least confirm it still works as expected behind our lab proxy",
+        "ts": "1483979784.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "<@U3GLPV06R>: Things are dog slow for me at the moment. While we wait can you locally patch your javabuild.sh to dump $JAVA_OPTS:",
+        "ts": "1483983072.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "I'm guessing there may be a problem in how the script generates the address and port from the HTTP[S]_PROXY envvars.",
+        "ts": "1483983218.000784"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KRRM29Z|ecblseg> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ecblseg\/F3ND1Q62V\/-.txt|Untitled>",
+        "file": {
+            "id": "F3ND1Q62V",
+            "created": 1483983833,
+            "timestamp": 1483983833,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KRRM29Z",
+            "editable": true,
+            "size": 500,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3ND1Q62V\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3ND1Q62V\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ecblseg\/F3ND1Q62V\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3ND1Q62V-2c00d251c8",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ecblseg\/F3ND1Q62V\/-.txt\/edit",
+            "preview": "--- a\/core\/chaincode\/shim\/java\/javabuild.sh\r\n+++ b\/core\/chaincode\/shim\/java\/javabuild.sh\r\n@@ -35,6 +35,7 @@ function getProxyPort {\r\n [ -n \"$HTTP_PROXY\" ] && JAVA_OPTS=\"$JAVA_OPTS -Dhttp.proxyHost=$(getProxyHost $HTTP_PROXY) -Dhttp.proxyPort=$(getProxyPort $HTTP_PROXY)\"\r\n [ -n \"$HTTPS_PROXY\" ] && JAVA_OPTS=\"$JAVA_OPTS -Dhttps.proxyHost=$(getProxyHost $HTTPS_PROXY) -Dhttps.proxyPort=$(getProxyPort $HTTPS_PROXY)\"\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>--- a\/core\/chaincode\/shim\/java\/javabuild.sh<\/pre><\/div>\n<div><pre>+++ b\/core\/chaincode\/shim\/java\/javabuild.sh<\/pre><\/div>\n<div><pre>@@ -35,6 +35,7 @@ function getProxyPort {<\/pre><\/div>\n<div><pre> [ -n &quot;$HTTP_PROXY&quot; ] &amp;&amp; JAVA_OPTS=&quot;$JAVA_OPTS -Dhttp.proxyHost=$(getProxyHost $HTTP_PROXY) -Dhttp.proxyPort=$(getProxyPort $HTTP_PROXY)&quot;<\/pre><\/div>\n<div><pre> [ -n &quot;$HTTPS_PROXY&quot; ] &amp;&amp; JAVA_OPTS=&quot;$JAVA_OPTS -Dhttps.proxyHost=$(getProxyHost $HTTPS_PROXY) -Dhttps.proxyPort=$(getProxyPort $HTTPS_PROXY)&quot;<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 10,
+            "lines_more": 5,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KRRM29Z",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KRRM29Z|ecblseg>",
+        "bot_id": null,
+        "ts": "1483983834.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "<@U3GLPV06R> FWIW master still builds OK in our lab behind a proxy.",
+        "ts": "1483992207.000787"
+    },
+    {
+        "user": "U3MB5BH42",
+        "text": "<@U3MB5BH42|fbenhamo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483992249.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "I\u2019m a bit mystified - the proxy appears to be working OK for you earlier in the make when the javaenv is built. So docker build appears to deal with basics of the proxy OK.",
+        "ts": "1483992278.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0KRRM29Z",
+        "text": "<@U3GLPV06R> - If you can let me know the values you have set for HTTP[S]_PROXY and maybe what the patched javabuild.sh script spits out for JAVA_OPTS I\u2019ll keep digging. (I\u2019m traveling tomorrow but might have reasonable wifi on the train.)",
+        "ts": "1483992631.000790"
+    },
+    {
+        "user": "U3E300R6Z",
+        "text": "<@U3E300R6Z|abhinav.garg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484032125.000791"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "<@U0KRRM29Z> - My proxy vars are both set to `<http:\/\/%PROXY_SERVER>%:%PROXY_PORT%` with PROXY_SERVER and PROXY_PORT as separate vars.",
+        "ts": "1484033337.000792"
+    },
+    {
+        "type": "message",
+        "user": "U3GLPV06R",
+        "text": "I'll patch the shell script and send you its dump. Thanks for the support, even from train! :slightly_smiling_face:",
+        "ts": "1484033374.000793"
+    }
+]

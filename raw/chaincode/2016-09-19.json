@@ -1,0 +1,454 @@
+[
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "<@U1SLE9PJN> I was having a similar message when I tried to deploy with the rest api.  Do you also see \"user runs chaincode, not deploying chaincode\"  According to my understaning of the source deploying through the rest when in development mode is not allowed, but please correct me if I am wrong.",
+        "ts": "1474290290.000599"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "<@U1SLE9PJN> what worked for me is to register the chaincode in development mode on the  command line. with:  CORE_CHAINCODE_ID_NAME=mychaincode CORE_PEER_ADDRESS=172.17.0.4:7051 .\/chaincode",
+        "ts": "1474291266.000600"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Than calling a deploy on the chaincode with the rest api with the  appropriate init function. ````{u'id': 0,\n u'jsonrpc': u'2.0',\n u'method': u'deploy',\n u'params': {u'chaincodeID': {u'name': 'myreport'},\n             u'ctorMsg': {u'args': [u'1', u'2', u'3', u'4'],\n                          u'function': u'init'},\n             u'secureContext': u'jim',\n             u'type': 1}}````",
+        "edited": {
+            "user": "U2CFEGHV3",
+            "ts": "1474291456.000000"
+        },
+        "ts": "1474291424.000601"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "<@U1SLE9PJN> sorry misread you are using vagrant with the peer command. I am using the docker images.",
+        "ts": "1474291538.000603"
+    },
+    {
+        "type": "message",
+        "user": "U1SLE9PJN",
+        "text": "<@U2CFEGHV3> Thanks!! I couldn't make it work from the command line. But garisingh suggested me to look into unit tests for the NODESDK. I was able to replicate them to my application and made it work.",
+        "ts": "1474291708.000604"
+    },
+    {
+        "type": "message",
+        "user": "U1SLE9PJN",
+        "text": "Also, I was trying to pass metadata (user certificates) during deploy and invoke, so nodesdk was a better choice to pass those data to the application.",
+        "ts": "1474291802.000605"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "<@U1SLE9PJN> Ok good to hear you got it working.",
+        "ts": "1474291991.000606"
+    },
+    {
+        "user": "U2D62LCQJ",
+        "text": "<@U2D62LCQJ|dsanchezseco> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474292596.000607"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "Hi all!\n\nI'm testing the platform and I'm trying to deploy a chaincode on non-develop mode and with pbft enabled.\n\nThe thing is that I only got it working on develop+NOOPS, neither on develop+pbft nor non-develop+NOOPS.\nIn both cases it responds with ```Error: Error querying chaincode: rpc error: code = 2 desc = Error:Failed to launch chaincode spec(Could not get deployment transaction for mycc - LedgerError - ResourceNotFound: ledger: resource not found)```\n\nIm following the docs to deploy the chaincode_example02 of the go folder, on a single validator peer. Here is the compose used to start the peer: \n\n```vp0:\n  container_name: hyper_peer_0\n  image: hyperledger\/fabric-peer\n  environment:\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375>\n    - CORE_LOGGING_LEVEL=DEBUG\n    # - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft\n    # - CORE_PBFT_GENERAL_MODE=batch\n  command: peer node start\n```\n\nI suppose that I'm missing something, because on develop+NOOPS when i deploy the chaincode the window executing ``` CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:30303 .\/chaincode_example02``` has movement but when not in develop has no movement at all.\n\nThanks in advance for the help.",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474294582.000000"
+        },
+        "ts": "1474294234.000608"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "don't you have to use the hash of the chaincode to call it in non develop mode?",
+        "ts": "1474294544.000611"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "<@U2CFEGHV3> and which is the flag to put the hash??",
+        "ts": "1474294754.000613"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i suppose that the hash is the one returned on tht deploy in the line : ``` Deploy chaincode: 08b92258b871... ```",
+        "ts": "1474294805.000614"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "yes correct",
+        "ts": "1474294816.000615"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "according to the error you calling with mycc",
+        "ts": "1474294838.000616"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i've replaced mycc with the hash returned and doesn't work",
+        "ts": "1474295276.000617"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "here the commands i'd launched",
+        "ts": "1474295287.000618"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "term1 ```cd examples\/chaincode\/go\/chaincode_example02 &amp;&amp; go build &amp;&amp; CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=0.0.0.0:7051 .\/chaincode_example02\n```\nterm2 ```\ncd examples\/chaincode\/go\/chaincode_example02 &amp;&amp; peer chaincode deploy -n mycc -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}' -p .\n\npeer chaincode invoke -l golang -n 08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868 -c '{\"Function\": \"invoke\", \"Args\": [\"a\", \"b\", \"10\"]}'\npeer chaincode query -l golang -n 08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868 -c '{\"Function\": \"query\", \"Args\": [\"b\"]}'\n\n```",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474295362.000000"
+        },
+        "ts": "1474295326.000619"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "the init is still with mycc?",
+        "ts": "1474295396.000623"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "deploy",
+        "ts": "1474295404.000624"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "so i should remove the -n from the deploy, shouldn't I?",
+        "ts": "1474295450.000625"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "I think use the hast",
+        "ts": "1474295474.000626"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "hash",
+        "ts": "1474295478.000627"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "and check in the output of term1 one if init is called",
+        "ts": "1474295512.000628"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "it isn't been called",
+        "ts": "1474295552.000629"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "term1 gets hung with this ```14:31:26.357 [shim] DEBU : Peer address: 0.0.0.0:7051\n14:31:26.358 [shim] DEBU : os.Args returns: [.\/chaincode_example02]\n14:31:26.358 [shim] DEBU : Registering.. sending REGISTER\n14:31:26.359 [shim] DEBU : []Received message REGISTERED from shim\n14:31:26.359 [shim] DEBU : []Handling ChaincodeMessage of type: REGISTERED(state:created)\n14:31:26.359 [shim] DEBU : Received REGISTERED, ready for invocations\n ```",
+        "ts": "1474295592.000630"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "are there any messages from the peer when trying to call the init function?",
+        "ts": "1474295751.000631"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "oh sorry I dont think it works that way in the vagrant setup",
+        "ts": "1474295817.000632"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "this ```peer chaincode deploy -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}' -p .            \n14:31:28.438 [logging] LoggingInit -&gt; DEBU 001 Setting default logging level to DEBUG for command 'chaincode'\n14:31:34.616 [chaincodeCmd] chaincodeDeploy -&gt; INFO 002 Deploy result: type:GOLANG chaincodeID:&lt;path:\".\" name:\"08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868\" &gt; ctorMsg:&lt;args:\"init\" args:\"a\" args:\"100\" args:\"b\" args:\"200\" &gt; \nDeploy chaincode: 08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868\n14:31:34.616 [main] main -&gt; INFO 003 Exiting..... ```",
+        "ts": "1474295827.000633"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "im not using vagrant",
+        "ts": "1474295838.000634"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i'm using the docker image",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474295862.000000"
+        },
+        "ts": "1474295852.000635"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "but you also have a peer running receive the commands isnt that the case?  `peer node start --peer-chaincodedev`",
+        "ts": "1474296023.000637"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "yes i have one running, the thing is that with --peer-chaincodedev everything works smoothly",
+        "ts": "1474296075.000638"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "the problems comes when running the peer without --peer-chaincodedev",
+        "ts": "1474296094.000639"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "can you paste or use a pastebin the output of the peer of the moment you do the peer chaincode deploy command?",
+        "ts": "1474296551.000640"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "one sec",
+        "ts": "1474296591.000641"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "this is the peer : <https:\/\/gist.github.com\/anonymous\/4f70375359686e8c196e54d44cde5345>\n\nthe term1: <https:\/\/gist.github.com\/anonymous\/61dc25eeec86963f842eb1fcb4fd4b7d>\n\nterm2: <https:\/\/gist.github.com\/anonymous\/e40546061ab56ab803fa312246c2fcf1>\n\nall this is on one peer on non-develop + NOOPS",
+        "ts": "1474297061.000642"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "First thin I see this in the peer",
+        "ts": "1474297242.000643"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Running in chaincode development mode",
+        "ts": "1474297244.000644"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "line 3",
+        "ts": "1474297274.000645"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i see too, but i hadn't put the flag",
+        "ts": "1474297302.000646"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "when i use the flag theres no errors",
+        "ts": "1474297319.000647"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "o i see it multiple sessions",
+        "ts": "1474297412.000648"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "can you explain that?",
+        "ts": "1474297474.000649"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "no sorry.  i got no quick answers.",
+        "ts": "1474297523.000650"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "```14:50:32.040 [consensus\/noops] processTransactions -&gt; DEBU 04b\u001b[0m Executing batch of 1 transactions with timestamp seconds:1474296632 nanos:40453612 \n\u001b14:50:32.040 [chaincode] Deploy -&gt; DEBU 04c\u001b[0m user runs chaincode, not deploying chaincode\n\u001b14:50:32.040 [state] TxBegin -&gt; DEBU 04d\u001b[0m txBegin() for txId []\n\u001b14:50:32.040 [chaincode] sendInitOrReady -&gt; DEBU 04e\u001b[0m handler not found for chaincode \n\u001b14:50:32.040 [chaincode] Launch -&gt; ERRO 04f\u001b[0m sending init failed(handler not found for chaincode )\n\u001b14:50:32.040 [chaincode] Launch -&gt; ERRO 050\u001b[0m stop failed chaincode name not set(Failed to init chaincode(handler not found for chaincode ))\n\u001b14:50:32.040 [chaincode] Launch -&gt; DEBU 051\u001b[0m sending init completed\n\u001b14:50:32.040 [chaincode] Launch -&gt; DEBU 052\u001b[0m LaunchChaincode complete\n\u001b14:50:32.040 [state] TxFinish -&gt; DEBU 053\u001b[0m txFinish() for txId [], txSuccessful=[false]\n\u001b14:50:32.040 [state] GetHash -&gt; DEBU 054\u001b[0m Enter - GetHash()\n\u001b14:50:32.040 [buckettree] ComputeCryptoHash -&gt; DEBU 055\u001b[0m Enter - ComputeCryptoHash()\n\u001b14:50:32.040 [buckettree] ComputeCryptoHash -&gt; DEBU 056\u001b[0m Returing existing crypto-hash as recomputation not required\n\u001b14:50:32.040 [state] GetHash -&gt; DEBU 057\u001b[0m Exit - GetHash()\n\u001b14:50:32.040 [consensus\/noops] processTransactions -&gt; DEBU 058\u001b[0m Committing TX batch with timestamp: seconds:1474296632 nanos:40453612 \n\u001b14:50:32.040 [state] GetHash -&gt; DEBU 059\u001b[0m Enter - GetHash()\n\u001b14:50:32.040 [buckettree] ComputeCryptoHash -&gt; DEBU 05a\u001b[0m Enter - ComputeCryptoHash()\n\u001b14:50:32.040 [buckettree] ComputeCryptoHash -&gt; DEBU 05b\u001b[0m Returing existing crypto-hash as recomputation not required\n\u001b14:50:32.040 [state] GetHash -&gt; DEBU 05c\u001b[0m Exit - GetHash()\n\u001b14:50:32.041 [indexes] addIndexDataForPersistence -&gt; DEBU 05d\u001b[0m Indexing block number [1] by hash = [ed7c72c953c5ce69e717cc4b7ee72429aa94a55f0c3f67ee3fbdcefa4ac4b2038bf7e3b8313c793e336c930f4b8933aea250f86479187dac0524781973db97da]\n\u001b14:50:32.041 [state] AddChangesForPersistence -&gt; DEBU 05e\u001b[0m state.addChangesForPersistence()...start\n\u001b14:50:32.041 [state] AddChangesForPersistence -&gt; DEBU 05f\u001b[0m Adding state-delta corresponding to block number[1]\n\u001b14:50:32.041 [state] AddChangesForPersistence -&gt; DEBU 060\u001b[0m Not deleting previous state-delta. Block number [1] is smaller than historyStateDeltaSize [500]\n\u001b14:50:32.041 [state] AddChangesForPersistence -&gt; DEBU 061\u001b[0m state.addChangesForPersistence()...finished\n\u001b14:50:32.041 [ledger] resetForNextTxGroup -&gt; DEBU 062\u001b[0m resetting ledger state for next transaction batch\n\u001b14:50:32.041 [buckettree] ClearWorkingSet -&gt; DEBU 063\u001b[0m Enter - ClearWorkingSet()\n\u001b14:50:32.041 [ledger] CommitTxBatch -&gt; DEBU 064\u001b[0m There were some erroneous transactions. We need to send a 'TX rejected' message here. ```",
+        "ts": "1474297553.000651"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "For the error on line 256 `eeuser runs chaincode, not deploying chaincode` see my comments earlier",
+        "ts": "1474297642.000654"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "*\u001b14:50:32.040 [chaincode] sendInitOrReady -&gt; DEBU 04e\u001b[0m handler not found for chaincode \n\u001b14:50:32.040 [chaincode] Launch -&gt; ERRO 04f\u001b[0m sending init failed(handler not found for chaincode )\n\u001b14:50:32.040 [chaincode] Launch -&gt; ERRO 050\u001b[0m stop failed chaincode name not set(Failed to init chaincode(handler not found for chaincode ))*",
+        "ts": "1474297647.000655"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "my conversation with dsanchezeco",
+        "ts": "1474297716.000656"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "oh sorry",
+        "ts": "1474297727.000657"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "with  mohan :slightly_smiling_face:",
+        "ts": "1474297760.000658"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "yeah, i see it",
+        "ts": "1474297792.000659"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "*chaincode in development mode* the matter is when not running in development",
+        "attachments": [
+            {
+                "fallback": "[September 19th, 2016 3:21 PM] arconederveen: <@U1SLE9PJN> what worked for me is to register the chaincode in development mode on the  command line. with:  CORE_CHAINCODE_ID_NAME=mychaincode CORE_PEER_ADDRESS=172.17.0.4:7051 .\/chaincode",
+                "ts": "1474291266.000600",
+                "author_subname": "arconederveen",
+                "channel_id": "C19ABCKPW",
+                "channel_name": "chaincode",
+                "is_msg_unfurl": true,
+                "text": "<@U1SLE9PJN> what worked for me is to register the chaincode in development mode on the  command line. with:  CORE_CHAINCODE_ID_NAME=mychaincode CORE_PEER_ADDRESS=172.17.0.4:7051 .\/chaincode",
+                "author_name": "Arco Nederveen",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/arconederveen",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/7a074d53c42e70003f59d74fa4d97e99.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0011-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/chaincode\/p1474291266000600",
+                "is_share": true,
+                "footer": "Posted in #chaincode"
+            }
+        ],
+        "ts": "1474297963.000660"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Ok I understand. But I am just trying to get to something working. I dont know why it seems to ignore the  --peer-chaincodedev  flag.",
+        "ts": "1474298223.000661"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Good luck",
+        "ts": "1474298233.000662"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "last thing, maybe rebuild your peers?",
+        "ts": "1474298557.000663"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i've done it every time",
+        "ts": "1474298629.000664"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Ok",
+        "ts": "1474298700.000665"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "could be that hyperledger is not intended yet to run in non-develop? That nowadays is just to develop the chaincode for when it get finished?",
+        "ts": "1474298726.000666"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "Seems a little unlikely to me. But maybe the vagrant setup forces development mode by setting certain environment variables, but thats just speculation from my part.",
+        "ts": "1474299243.000667"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "ok, i kept digging and i found 2 things:\n* first, without --peer-chaincodedev runs in non-develop (my fault, i used &gt;&gt; to create the file instead of &gt; :sweat_smile:)\n* second, when trying to deploy there are docker errors:\n``` hyper_peer_0 | 15:37:48.781 [dockercontroller] deployImage -&gt; ERRO 24e Error building images: cannot connect to Docker endpoint\nhyper_peer_0 | 15:37:48.781 [dockercontroller] deployImage -&gt; ERRO 24f Image Output:\nhyper_peer_0 | 15:37:48.791 [dockercontroller] Start -&gt; ERRO 25d start-could not recreate container cannot connect to Docker endpoint\nhyper_peer_0 | 15:37:48.791 [chaincode] Launch -&gt; ERRO 25f launchAndWaitForRegister failed Error starting container: cannot connect to Docker endpoint\n```",
+        "ts": "1474299837.000668"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "this docker errors are the one that are making the chaincode to not deploy",
+        "ts": "1474299867.000669"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "ok nice find",
+        "ts": "1474299876.000670"
+    },
+    {
+        "type": "message",
+        "user": "U2CFEGHV3",
+        "text": "I am out for today. Out of my curiousity I would appreciate it if you could pm me the solution. Good luck!",
+        "ts": "1474300491.000671"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "of course, as soon as i got something i'll put it here",
+        "ts": "1474300554.000672"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "thanks for the help",
+        "ts": "1474300561.000673"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0ULK2JPP>: maybe you can help?",
+        "ts": "1474317992.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP> will wait for <@U2D62LCQJ> to ping \u2026 probably needs the correct  CORE_VM_ENDPOINT setting",
+        "ts": "1474328308.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I am mobile or would take a closer look myself",
+        "ts": "1474328521.000678"
+    },
+    {
+        "type": "message",
+        "user": "U22RH7VGT",
+        "text": "<@U0KM61BCP> can we send JSONObject as chaincode args parameter",
+        "ts": "1474349490.000680"
+    }
+]

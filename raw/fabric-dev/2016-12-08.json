@@ -1,0 +1,383 @@
+[
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "hi all, I have two questions:",
+        "ts": "1481190235.000159"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "1. when I push a change to gerrit, should I add reviewers manually, or just wait for someone to do the assignment?",
+        "ts": "1481190296.000160"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "2. Is fabric v0.6 still open for changes?",
+        "ts": "1481190320.000161"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "very much appreciated if someone can provide the answers",
+        "ts": "1481190337.000162"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U2CBG8V9U> there `cr-fabric` review group you can add so people will get notified about your CR and I do not think that v0.6 still open for new changes.",
+        "ts": "1481190509.000163"
+    },
+    {
+        "type": "message",
+        "user": "U2CBG8V9U",
+        "text": "<@U1HFNJB50> thank you very much, I will try to do that:)",
+        "ts": "1481190649.000164"
+    },
+    {
+        "user": "U3BGG1H6V",
+        "text": "<@U3BGG1H6V|trueter> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481195543.000165"
+    },
+    {
+        "user": "U36RKMPBQ",
+        "text": "<@U36RKMPBQ|bercinho> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481200678.000166"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "Hi All, anyone knows where too lookup information regarding codechain integration? when I don\u00b4t want to push data into the blockchain worls state, but rather have chaincode acess data via external  serices? (this especailly becomes complex with real time data, like Pricing) ... I am aware of Oracles by Ethereum (SW, HW) and Cryplets from Microsoft, but what is the de-facto standard for Hyperledger?",
+        "ts": "1481200707.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "<@U36RKMPBQ>   well, normally it should be done by the chaincode. If you do it externally, no problem but there is anything to do with Hyperledger development",
+        "ts": "1481203496.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "we do not trust the caller by default",
+        "ts": "1481203506.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "he has to sign all what he does, and he is known by the CA",
+        "ts": "1481203524.000170"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "Hi Benjamin, what I meant is that the chaincode execution can not only rely on data within the Blockchain World State, but it needs external data. There are tons of use cases for this. One way to solve this is to have external data pushed down to the blockchain (once it changes, periodically or whatsoever). But in cases when this is not possible the chaincode should be able to reach out for data. For Ethereum Smart Contracts they introduced the concept of Oracles, and Microsoft provides the Cryplet architecture to deal with this having supprot from Intel via enclaves. There must be some pattern \/ guideline how to deal with this in case of Hyperledger allowing chaincode to reach out for external data. I do understand the problem that this has to be consistent over all Peers and should result with collecting the same data.",
+        "ts": "1481204056.000171"
+    },
+    {
+        "user": "U2TUCLGRJ",
+        "text": "<@U2TUCLGRJ|ahmedelhajji> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481204216.000172"
+    },
+    {
+        "user": "U1BC5A0F9",
+        "text": "<@U1BC5A0F9|elli> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481204741.000173"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U36RKMPBQ>, you are right: When there is a need for the chaincode to obtain information from external resources you would either need to have some \"trusted entities\" that are allowed to post announcements of this info occasionally to the blockchain, or you would need to have \"oracles\", i.e., dedicated entities trusted by the chaincode(s), and that the chaincode could query.",
+        "ts": "1481205031.000174"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Up to version 0.6, the latter method could cause issues, as having two validators receiving different answer from the oracle (which can happen in cases of answers, whose value change in time) would bring the system potentially to an inconsistent state.",
+        "ts": "1481205123.000175"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "With the new architecture though we are not in this situation; while inconsistent responses may lead to difficulties on the client side, to have a proposal endorsed, as soon as endorsements (satisfying the endorsement policy of the chaincode) are obtained, the system cannot be brought to  inconsistent state.",
+        "ts": "1481205204.000176"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "[At least with the default ESCC\/VSCC provided by the fabric]",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481205223.000000"
+        },
+        "ts": "1481205219.000177"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "ok, so with Fabric v1 we should handle choosing between inconsistent results when simulating the chaincode execution as part of the endorsement policy?",
+        "ts": "1481205346.000179"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "My impression is that through the docker configuration chaincodes can indeed connect to external resources as of now, but adding <@U0KN2SSKE> , <@U0ULK2JPP>  to confirm this.",
+        "ts": "1481205385.000180"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "With the new architecture that fabric v1 is implementing, the execution takes place before the addition of the transaction to the ledger.",
+        "ts": "1481205417.000181"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "with v0.6 we should simply  keep pushing down the data to the Blockchain World State, is there any support for integration with IPFS or BigChainDB for Hyperledger?",
+        "ts": "1481205434.000182"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "The client sends \"tx-proposals\" to the endorsers who are listed as \"responsible for that chaincode's execution\", and try to obtain signatures of these endorsers on the same result.",
+        "ts": "1481205463.000183"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "it would be better to push down the data into these distributed file system, DB instead of the Blockchain World State",
+        "ts": "1481205472.000184"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Result here would be the input and output (i am guessing this you would still need to track through some fabric state).",
+        "ts": "1481205511.000185"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Ok, i will need to look into the bigchaindb system ( I havent had the time to do so far unfortunately), and get back to you. Perhaps <@U1KFCPFQA> has already an answer on this, or <@U0Y14MWA2> .",
+        "ts": "1481205608.000186"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "Thanks Elli!",
+        "ts": "1481205656.000187"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Overall though you need read-sets and write-sets of the state associated to a tx to refer to an external db, and not refer to the HPL state (?)",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481205746.000000"
+        },
+        "ts": "1481205662.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "<@U36RKMPBQ> if you want to talk about interaction with external systems, as we are in a distributed network, I advise you to set a proxy to deal with non determinstic problems",
+        "ts": "1481205755.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "a blockchain is not a DB system, it is a distributed application",
+        "ts": "1481205786.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "the World State is the statefull and validated part of Hyperledger",
+        "ts": "1481205851.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "does not work like Bitcoin on this point",
+        "ts": "1481205866.000195"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "The question is does my distributed application have to own all the data that influences it\u00b4s behavior or we might have external data it might reach out to (pull) or be pushed into it\u00b4s scope.",
+        "ts": "1481205994.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "<@U36RKMPBQ> very hard to answer, depends on your use case",
+        "ts": "1481206146.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "just share what it should be shared by all and need trust",
+        "edited": {
+            "user": "U0N4D2T61",
+            "ts": "1481206202.000000"
+        },
+        "ts": "1481206167.000198"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "when we have to push all data into the World State, then it might grow exponentially if my external data need &amp; change frequency is really high why I was thinking to stage such data in an IPFS or BlockchainDB; if I can somehow call out via trusted proxies (Oracles, Cryplets) to maintain a deterministic, consistent &amp; trusted response what is the pattern to do so (how do I do this from a chaincode running in a Docker?) ...",
+        "ts": "1481206209.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "yep",
+        "ts": "1481206227.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "for real time purpose, it can be problematic",
+        "ts": "1481206241.000202"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": "I am looking into Energy Trading use case",
+        "ts": "1481206263.000203"
+    },
+    {
+        "type": "message",
+        "user": "U36RKMPBQ",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481206267.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "if your transactions are a big volume",
+        "ts": "1481206275.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "maybe, better to store an average \/month",
+        "ts": "1481206298.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "as a trustable declaration",
+        "ts": "1481206306.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "otherwise, store very little data",
+        "ts": "1481206317.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "on each transaction",
+        "ts": "1481206335.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "but keep in mind",
+        "ts": "1481206346.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "you have blocks -    and on the other side   - World State",
+        "ts": "1481206366.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "this is 2 separated things",
+        "ts": "1481206373.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "maybe in World State, you can store only the current \"count\"",
+        "ts": "1481206400.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "that is updated at each transaction",
+        "ts": "1481206407.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "on this way, the WorldState is very light",
+        "ts": "1481206417.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "but if you want to keep all history \u2026 ? well you have still blocks to look up",
+        "ts": "1481206443.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "up to u",
+        "ts": "1481206451.000217"
+    },
+    {
+        "user": "U3AFRMY68",
+        "text": "<@U3AFRMY68|donjohnny> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481206913.000218"
+    },
+    {
+        "user": "U3BKMJZTK",
+        "text": "<@U3BKMJZTK|mdevilliers> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481210523.000219"
+    },
+    {
+        "user": "U0MS3TK2A",
+        "text": "<@U0MS3TK2A|nao> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481219231.000220"
+    },
+    {
+        "user": "U3CAX2JKW",
+        "text": "<@U3CAX2JKW|shinji> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481230288.000221"
+    },
+    {
+        "user": "U3BQF48RE",
+        "text": "<@U3BQF48RE|oliverledger> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481231743.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U36RKMPBQ> what would a transaction look like?  if you have a lot of data (10s of MBs), I would suggest you store them somewhere else and use the hash on the transaction.  The interaction with external systems is ideally done through the application, which then feeds the data into the chaincodes.  In v1.0, chaincode may call out but its tricky to ensure deterministic result from external system. Also access to those external systems is another issue.",
+        "ts": "1481240131.000223"
+    }
+]

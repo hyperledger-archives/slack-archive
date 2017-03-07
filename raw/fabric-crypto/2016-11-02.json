@@ -1,0 +1,1511 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, let's start the discussion on the replay attack protection then. I had a quick discussion with <@U26T99AQ4> and we agreed that TransactionHeader needs to have a nonce and an epoch at least",
+        "ts": "1478083579.001651"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Also ActionHeader needs to have those fields",
+        "ts": "1478083592.001652"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "The point is then to understand who fills this fields, when and how :slightly_smiling_face:",
+        "ts": "1478083618.001653"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> - which piece of the system is \"checking for\" \/ \"protecting against\" replay attacks?",
+        "ts": "1478087627.001654"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0PB67X4K> we will actually prepare a document to explain all these details so we can easily reason about it.",
+        "ts": "1478088615.001655",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "excellent  :wink:",
+        "ts": "1478088869.001656"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Back to the protos discussion for a sec. Isn't every block in the chain supposed to carry marshaled `Envelope`s?",
+        "ts": "1478093744.001657"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> Correct, the block data is a repeated section of marshaled `Envelope`s",
+        "ts": "1478094520.001658"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I thought so. I remember noting it down when reading the protos yesterday, but couldn't find it in the revised text. (Or maybe I missed it.)",
+        "ts": "1478094590.001659"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that was my understanding as well",
+        "ts": "1478094591.001660"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If that's the case though, why is the genesis block provided by the static bootstrapper a marshaled `ConfigurationEnvelope`? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2153\/1\/orderer\/common\/bootstrap\/static\/static.go>",
+        "ts": "1478094665.001661"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's my mistake, something I forgot to clean up after the new transaction format",
+        "ts": "1478094879.001662"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No problem. I have a changeset ready that addresses this, just wanted to check that my understanding was correct.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478095133.000000"
+        },
+        "ts": "1478095109.001663"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I've also added tests to that package. (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2177\/> + <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2179\/>)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478095598.000000"
+        },
+        "ts": "1478095115.001664",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XQ35CDD> ^^^ unfortunately they need to be rebased methinks",
+        "ts": "1478097938.001669"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "It seems like the culprit is the CI failing on an earlier changeset (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2075\/5>) that I've stacked these changes against.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478098044.000000"
+        },
+        "ts": "1478098022.001670"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Thanks for the heads up though.)",
+        "ts": "1478098056.001672"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> we do need to consolidate orderer\u2019s Block with fabric\u2019s Block2 (ie, we\u2019ll have only 1 block correct ?)",
+        "ts": "1478104630.001673"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> Yes, I think that is the next step",
+        "ts": "1478104729.001674"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure if want to wait on the fabric transaction definition or not",
+        "ts": "1478104758.001675"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We can hack the orderer code to allow non-`Envelope` transactions through for the moment, though I'd prefer not to",
+        "ts": "1478104809.001676"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `Block` and `Envelope` definitions should be stable now, so I'd rather put the workarounds at the other (like embedding the old tran until it is consolidated)",
+        "ts": "1478104838.001677"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XPR4NP4> reason I asked about Block consolidation was to allow other work (such as gossip) which is dependednt on Block structures \u2026( <@U1HFNJB50> )",
+        "ts": "1478105357.001678"
+    },
+    {
+        "user": "U1HFNJB50",
+        "inviter": "U0ULK2JPP",
+        "text": "<@U1HFNJB50|c0rwin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478105364.001679"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`I'm not sure if want to wait on the fabric transaction definition or not` \u2026 if they are independent, I vote we do the block consolidation first. In addition to unblocking, we will do incremental work ?",
+        "ts": "1478106078.001680"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good to me then",
+        "ts": "1478106138.001681"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "From an orderer perspective, we will expect `Envelope` transactions in `Broadcast`, and encode them into the new type `Block` for `Deliver`",
+        "ts": "1478106167.001682"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "inviting <@U0Z541B3P> <@U1KFCPFQA>",
+        "ts": "1478106777.001683"
+    },
+    {
+        "user": "U1KFCPFQA",
+        "text": "<@U1KFCPFQA|dave.enyeart> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478106782.001684"
+    },
+    {
+        "user": "U0Z541B3P",
+        "inviter": "U0ULK2JPP",
+        "text": "<@U0Z541B3P|manish-sethi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478106783.001685"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Z541B3P> <@U1KFCPFQA> Block from ab.proto is in \u2026 what do you think of consolidating replacing Block2 with ab.Block ?",
+        "ts": "1478106832.001686"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was also considering consolidating the protos, doing something like putting the `Block` and `Envelope` definitions into `protos\/common` the `Broadcast`\/`Deliver` pieces into `protos\/orderer` and then the fabric transaction and friends into `protos\/peer`",
+        "ts": "1478106939.001687"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sounds good to me\u2026.",
+        "ts": "1478107058.001688"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "just to make sure, the consolidation of block structure will include changes in the ledger API\u2019s right?",
+        "ts": "1478107114.001689"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I don\u2019t know how much work conversion from Block2 to Block entails to ledger \u2026 <@U0Z541B3P> <@U1KFCPFQA> ?",
+        "ts": "1478107134.001690"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^^ same as <@U1HFNJB50>  question",
+        "ts": "1478107159.001691"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Let me have a look and think over",
+        "ts": "1478107165.001692"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Manish, I assume this would impact your serialized block as well",
+        "ts": "1478107208.001693"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "also I\u2019m looking at current definitions of ledger API inside `ledger_interface.go` and struggling to understand how it expected to work, having Block2?",
+        "ts": "1478107234.001694"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Yes, that we would need to change",
+        "ts": "1478107243.001695"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I mean Block2 doesn\u2019t provides information about block sequence number",
+        "ts": "1478107252.001696"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "while ledger api has a functionality of retrieving the block by it\u2019s sequence number",
+        "ts": "1478107274.001697"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U1HFNJB50> - at ledger level, it is assumed that the blocks arrive in sequence and hence while writing Block2, we had kept the fields to minimum",
+        "ts": "1478107338.001698"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I assumed something like that",
+        "ts": "1478107375.001699"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "but still, I guess that path to write block should look like `RemoveInvalidTransactionsAndPrepare(block)` \u2014&gt; `Commit()` \u2014&gt; `GetBlockByNumber(seqNum)`",
+        "ts": "1478107442.001700"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "how this expected to work in case of failure in `Commit`?",
+        "ts": "1478107463.001701"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Next block cannot be committed before a successful commit of previous block in any case - irrespective of whether the block contains seqNum or not",
+        "ts": "1478107581.001702"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Because, validation of next block depends on a successful commit of previous blocks",
+        "ts": "1478107609.001703"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "ok",
+        "ts": "1478107708.001704"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I got it",
+        "ts": "1478107710.001705"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "so that means ledgers has to have counters synced w\/ orderers?",
+        "ts": "1478107768.001706"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Only thing I am saying is that from ledger's perspective, we do not mind if sequence number is present in the block (and can think of using it for certain optimizations in retrieval but can live without it as well (as long as it is guaranteed to be delivered in sequence)",
+        "ts": "1478107797.001707"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Ledger always keep track total number of blocks committed so yes, when comes back after a crash it expects blocks from there on...",
+        "ts": "1478107876.001708"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "so how do you make sure that block to be committed is from the next sequence number?",
+        "ts": "1478107902.001709"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "`RemoveInvalidTransactionsAndPrepare(block)` \u2014&gt; `Commit()`",
+        "ts": "1478107930.001710"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "You mean to say that ledger can receive blocks out of order?",
+        "ts": "1478107948.001711"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "is there something inside ledger to prevent it?",
+        "ts": "1478107971.001712"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "If our assumption is wrong then we would have to build it by bufferring etc... As of now, it assumes that an upper layer is doing this",
+        "ts": "1478108027.001713"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "is this assumption wrong?",
+        "ts": "1478108057.001714"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "not sure whenever it\u2019s wrong, but it\u2019s optimistic IMO",
+        "ts": "1478108105.001715"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "somewhere some layer has to do ordering and not sure if this should be performed at multiple layers...",
+        "ts": "1478108180.001716"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I thought the gossip layer was the one who buffered and ordered for the ledger?",
+        "ts": "1478108210.001717"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Unless the peer is pulling from the ordering service, in which case, things arrive ordered)",
+        "ts": "1478108224.001718"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "That's what my assumption was too...",
+        "ts": "1478108225.001719"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In my talks with <@U0ZJZBJLF> that has been my impression.  We have discussed how to do this properly",
+        "ts": "1478108241.001720"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "right gossip makes sure that blocks are re-ordered according to the sequence numbers",
+        "ts": "1478108252.001721"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "At best, in ledger - we can check that if seqNum is unexpected - raise a panic but certainly don't want to repeat what is being done by  gossip",
+        "ts": "1478108287.001722"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "I would agree with that approach Manish",
+        "ts": "1478108304.001723"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "specifically, we are talking about the new Block header \u2018Number\u2019 right",
+        "ts": "1478108333.001724"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Also, I am not sure whether it is meaningful have a `DataHash` inside the block?",
+        "edited": {
+            "user": "U0Z541B3P",
+            "ts": "1478108421.000000"
+        },
+        "ts": "1478108364.001725"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "well, if new ab.Block is going to replace Block2 and ledger API eventually got refactored I won\u2019t have any concerns",
+        "ts": "1478108382.001726"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "i believe that is the request that Manish is currently sizing",
+        "ts": "1478108416.001728"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Also, I am not sure whether it is meaningfull have a \ufeff\u2060\u2060\u2060\u2060DataHash\ufeff\u2060\u2060\u2060\u2060 inside the block?\n\nI don't understand?",
+        "ts": "1478108428.001730"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I think the answer to this is yes",
+        "ts": "1478108482.001731"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "I mean the data and data hash both with in the same block what significance the datahash carries?",
+        "ts": "1478108486.001732"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The hash chain is among the headers",
+        "ts": "1478108505.001733"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And a header can be used to validate the data section",
+        "ts": "1478108516.001734"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "ok, I\u2019m looking on it from the ledger replication perspective, new node is joining and has to get all missing blocks to it\u2019s local ledger",
+        "ts": "1478108543.001735"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "and i thought another benefit was that the data can eventually be purged while leaving the headers and hashes intact, right?",
+        "ts": "1478108562.001736"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.  You can for instance, present a header and signatures, without the actual block contents, and show that \"Yes, this is a part of the chain\"",
+        "ts": "1478108589.001737"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "yeap",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1478108608.000000"
+        },
+        "ts": "1478108603.001738"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think this will be especially useful for things like Gossip where you want to send something which is provably chained, but not the whole block",
+        "ts": "1478108610.001740"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "right, was going to type the exactly same argument :slightly_smiling_face: thanks <@U0XPR4NP4>",
+        "edited": {
+            "user": "U1HFNJB50",
+            "ts": "1478108679.000000"
+        },
+        "ts": "1478108669.001741"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "While I have everyone here, something <@U0ZJZBJLF> requested, which I'm somewhat inclined to add, is to include the index of the last configuration transaction for a chain in the block header.  Because, given a block header, and a set of signatures, you need a third piece of information \"Which signatures are required\", which is embedded in the configuration transaction.  What does everyone think?",
+        "ts": "1478108757.001743"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"provably chained\" - can be proved with the chain?",
+        "ts": "1478108759.001744"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "like merkel tree, etc?",
+        "ts": "1478108780.001745"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think that's a great idea Jason!",
+        "ts": "1478108810.001746"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "more information cannot hurt :wink:",
+        "ts": "1478108818.001747"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "By \"provably chained\" I mean that the headers have the collection of signatures against them which \"Proves\" them.  I use this in the same sense of the hash-puzzle proof of Bitcoin.  Where the puzzle solution \"Proves\" that the header is valid",
+        "ts": "1478108831.001748"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You'll need 2 fields though, right? 1 for orderer configuration and 1 for channel membership conf",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478108939.000000"
+        },
+        "ts": "1478108893.001749"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "since I think they are different types of transactions",
+        "ts": "1478108911.001750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "~Hmmm, I guess I haven't not heard about the 'validator configuration transactions', can you expand?~",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478108970.000000"
+        },
+        "ts": "1478108939.001751"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the orderer change",
+        "ts": "1478108949.001753"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, your edit clarified things",
+        "ts": "1478108963.001754"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So no, all configuration goes into the same configuration block, both channel membership, and orderer configuration",
+        "ts": "1478108991.001756"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "My point was why can't that be simply a single hash (previous hash + this blocks hash) and let the signing happen over that...",
+        "ts": "1478109003.001757"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because then you need the whole block to validate the hash",
+        "ts": "1478109026.001758"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Whereas with the two, you only need the block headers to do so",
+        "ts": "1478109034.001759"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Do we need to explicitly store both previous blockhash and datahash",
+        "ts": "1478109037.001760"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "yes, for full validation, you anyways need to verify datahash against the data...",
+        "ts": "1478109099.001761"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "I am not sure if I am missing something here...",
+        "ts": "1478109115.001762"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, <@U0XPR4NP4>  isn't that a problem then? it's dangerous",
+        "ts": "1478109178.001763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For full validation yes, but there are plenty of scenarios where you don't want to validate all of the data, maybe you only want to validate say, configuration.",
+        "ts": "1478109200.001764"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no, wait, forget that.",
+        "ts": "1478109209.001765"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm not thinking clearly anymore at this point of the day, it's not dangerous",
+        "ts": "1478109226.001766"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, in the configuration scenario, I want to look at the blockchain, and be able to verify that the configuration in block 10 million is valid.  I don't care if the data contents of block 9,999,999 is corrupt, so I don't want to have to hash it and check it, I just care that there's a valid header chain to block 10 million",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478109480.000000"
+        },
+        "ts": "1478109300.001767"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or, maybe I don't want to keep a fully copy of the chain, because it's too big, but I also want to make sure that my copy of the chain isn't messed with.  I can just retain only the headers, which form a hash chain, so it is safely tamper proof.  Then, when I want to actually inspect a block, I go ask someone for it,and verify it against the small header chain I keep locally.",
+        "ts": "1478109383.001768"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Basically, by splitting the block into header and data, it allows you to safely prune data out of your chain, without breaking the chain integrity.",
+        "ts": "1478109447.001769"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "OK, sure. Makes sense to me. So, PreviousHash is the hash of the 'header' of the previous block?",
+        "ts": "1478109604.001771"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly",
+        "ts": "1478109610.001772"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "That means that I would require two hash computations per block?",
+        "ts": "1478109680.001773"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, from a ledger perspective, that depends.  Does the ledger actually ensure there is a hash chain?",
+        "ts": "1478109707.001774"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so when you get a block `i` you verify `header(i)` against body of the block `i` and also against the hash of the header of `i-1` then commit it?",
+        "ts": "1478109717.001775"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I sort of assumed that the ledger is handed a block which is known to be valid.  And it just applied the block contents.  You could obviously check the hashes and so forth, but I had assumed this was handled further up.",
+        "ts": "1478109756.001776"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and where is the signature in all that? in some wrapper that wraps the block?",
+        "ts": "1478109802.001777"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "OK, I did not assume so... if someone is doing is up, I can skip this...",
+        "ts": "1478109805.001778"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or in the header also?",
+        "ts": "1478109807.001779"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm also unsure, do we still have the notion of the 'validated ledger'? I wasn't sure if that made it into v1",
+        "ts": "1478109812.001780"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "yes, we have a 'validated ledger'.. unless, it's changed :slightly_smiling_face:",
+        "ts": "1478109843.001781"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "from what I understand, validating blocks will be locally in the ledger, so in v1.0 there won't be validation like they want with gossip, etc.",
+        "ts": "1478109851.001782"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So in that case, you're generating a new block from the raw block and committing it?",
+        "ts": "1478109862.001783"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "yes",
+        "ts": "1478109875.001784"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When a block arrives, either via gossip, or via the ordering service.  The first step is going to be to make sure that the block is well formed, that the signatures over the header are correct, and that the header's hashes match (both data and previous).",
+        "ts": "1478109911.001785"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or, this is my assumption, at least.",
+        "ts": "1478109919.001786"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If this layer does not do this, then the signature validation is a little weird to me.  Because we verify a signature, but not that the hash it's signed over is valid?",
+        "ts": "1478109987.001787"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, how is it possible that the sig is valid but the hash isn't?",
+        "ts": "1478110021.001788"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "I am assuming that someone doing it on top... is gossip doing this?",
+        "ts": "1478110023.001789"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why would we validate with the hash",
+        "ts": "1478110036.001790"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "?",
+        "ts": "1478110038.001791"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "because, signature are for hash and data is separate...",
+        "ts": "1478110058.001792"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I though committer is expected to do it",
+        "ts": "1478110068.001793"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I mean, the signature is over the hash of the header.  But if the header does not correspond to the block contents, then the signature is 'valid' but it's not valid over 'this block'",
+        "ts": "1478110072.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but, if the block is properly signed then it means a write-quorum of orderers made that block",
+        "ts": "1478110078.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I thought the sig is on the whole block",
+        "ts": "1478110094.001796"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, I now I'm confused",
+        "ts": "1478110109.001797"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, no, signature is over the header.  Has to be, otherwise you lose the prunability",
+        "ts": "1478110110.001798"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "signature are always on hash...",
+        "ts": "1478110112.001799"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "a block has a deader and a body, right?",
+        "ts": "1478110116.001800"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, hash of the header",
+        "ts": "1478110119.001801"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm a gossip component",
+        "ts": "1478110131.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I get a block",
+        "ts": "1478110134.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I look at the header and at the body",
+        "ts": "1478110139.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the header is signed, everything is A-OK",
+        "ts": "1478110147.001805"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No",
+        "ts": "1478110152.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, I'm going somewhere",
+        "ts": "1478110158.001807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, I say, 'not good enough', but go on",
+        "ts": "1478110166.001808"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how do I validate the body assuming the header is properly signed?",
+        "ts": "1478110171.001809"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You look at the `DataHash` field, and you compute the hash of the `BlockData` and make sure they match",
+        "ts": "1478110188.001810"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Otherwise, I could just take a valid header, and send you garbage block contents",
+        "ts": "1478110199.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh so I need to hash the body, see that the header's body-hash is equal and then verify the sig?",
+        "ts": "1478110224.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.",
+        "ts": "1478110244.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that has nothing to do with looking at the previous hash though",
+        "ts": "1478110256.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To me, the hash of the body matching the hash encoded in the header is part of the block being 'well formed'",
+        "ts": "1478110260.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I expect the ledger to do that",
+        "ts": "1478110264.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "you also need to look at the previous block hash separately",
+        "ts": "1478110271.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why do *i* need to do that though?",
+        "ts": "1478110282.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you have a valid block, and the previous block hash does not match, then we have a serious problem.  A sort of \"Panic and call the admins\" sort of problem",
+        "ts": "1478110302.001819"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0ZJZBJLF>: I think this should capability of committer rather than ledger",
+        "ts": "1478110306.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm asking, how is it possible that a block passed verification and *doesn't* match the prev hash?",
+        "ts": "1478110307.001821"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That would only happen if the system is broken",
+        "ts": "1478110319.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah so don't you agree (Jason) that this is a very rare case, and therefore- the gossip layer should not do the book keeping of the prev hash",
+        "ts": "1478110348.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What is exactly the use of this?",
+        "attachments": [
+            {
+                "fallback": "[November 2nd, 2016 1:45 PM] jyellick: While I have everyone here, something <@U0ZJZBJLF> requested, which I'm somewhat inclined to add, is to include the index of the last configuration transaction for a chain in the block header.  Because, given a block header, and a set of signatures, you need a third piece of information \"Which signatures are required\", which is embedded in the configuration transaction.  What does everyone think?",
+                "ts": "1478108757.001743",
+                "author_subname": "jyellick",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "While I have everyone here, something <@U0ZJZBJLF> requested, which I'm somewhat inclined to add, is to include the index of the last configuration transaction for a chain in the block header.  Because, given a block header, and a set of signatures, you need a third piece of information \"Which signatures are required\", which is embedded in the configuration transaction.  What does everyone think?",
+                "author_name": "Jason Yellick",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jyellick",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/80fccad690b283483c3b5418b8b82b5b.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F272a%2Fimg%2Favatars%2Fava_0026-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478108757001743",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1478110352.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "kostas- I can use that information to know when it's safe to relay a block",
+        "ts": "1478110373.001825"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I'm fine with the committing layer doing the previous block hash check, but not the data hash one",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478110392.000000"
+        },
+        "ts": "1478110379.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I don't mind that we do the hashing, I think that it's supposed to be in our layer",
+        "ts": "1478110401.001828"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: You cannot.",
+        "ts": "1478110403.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but we need an API change for that hash thing :slightly_smiling_face:",
+        "ts": "1478110411.001830"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "kostas- can you elaborate?",
+        "ts": "1478110422.001831"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Sure.",
+        "ts": "1478110513.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "As I had noted in that phone call a couple of weeks ago. I am a Byzantine orderer, sending out block 120 that says \"by the way the last configuration transaction for this chain is at block 100\". (Block 100 is a config transaction that includes me as an orderer.) Meanwhile, at block 110, a new config was posted and the orderer network kicked me out, or whatever.",
+        "ts": "1478110620.001833"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So I'm pointing you to stale information and make you believe that you're good to relay the block.",
+        "ts": "1478110638.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait wait wait",
+        "ts": "1478110645.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I first validate the block",
+        "ts": "1478110652.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how can you make that data block be signed?",
+        "ts": "1478110668.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i validate it with the latest conf I have",
+        "ts": "1478110683.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If you validate that block, and by validate you mean that you have all of the chain before it, why do you need that extra bit of info to begin with?",
+        "ts": "1478110708.001839"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1478110736.001840"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's not what I mean",
+        "ts": "1478110743.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- when I get a block that claims the last config to be block `100`, all orderers needed to sign that block",
+        "ts": "1478110812.001842"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so how do you make it happen?",
+        "ts": "1478110825.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Block 100 is signed by all orderers, or block 122 that you just received?",
+        "ts": "1478110844.001844"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "122",
+        "ts": "1478110851.001845"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Did I miss the memo about the blocks having to be signed by all orderers?",
+        "ts": "1478110884.001846"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Unless we talk f+1, etc.",
+        "ts": "1478110898.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, not all",
+        "ts": "1478110902.001848"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "f+1",
+        "ts": "1478110906.001849"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So it can certainly happen.",
+        "ts": "1478110918.001850"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you're talking about a configuration increase now?",
+        "ts": "1478110919.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so f+1 is less than f'+1?",
+        "ts": "1478110931.001852"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so \u2026.apologize for jumping in\u2026 this started with discussion on consolidating ab.Block2 with fabric.Block",
+        "ts": "1478110939.001853"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Because a part of those those orderers were kicked out between block 100 and 110.",
+        "ts": "1478110940.001854"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if orderers were kicked out that's the happy path",
+        "ts": "1478110964.001855"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you won't have enough signatures because you can't gather f+1, because you didn't increase N",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478111074.000000"
+        },
+        "ts": "1478110971.001856"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "am i right?",
+        "ts": "1478110976.001857"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0Z541B3P> <@U1KFCPFQA> <@U1HFNJB50> <@U0XPR4NP4> \u2026 what happened to that discussion ?",
+        "ts": "1478110978.001858"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ULK2JPP> I can defer the conversation for later, but I'm responding to this call in here 20m ago: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478108757001743>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1478108757001743",
+                "fallback": "[November 2nd, 2016 10:45 AM] jyellick: While I have everyone here, something <@U0ZJZBJLF> requested, which I'm somewhat inclined to add, is to include the index of the last configuration transaction for a chain in the block header.  Because, given a block header, and a set of signatures, you need a third piece of information \"Which signatures are required\", which is embedded in the configuration transaction.  What does everyone think?",
+                "ts": "1478108757.001743",
+                "author_subname": "jyellick",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "While I have everyone here, something <@U0ZJZBJLF> requested, which I'm somewhat inclined to add, is to include the index of the last configuration transaction for a chain in the block header.  Because, given a block header, and a set of signatures, you need a third piece of information \"Which signatures are required\", which is embedded in the configuration transaction.  What does everyone think?",
+                "author_name": "Jason Yellick",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jyellick",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/80fccad690b283483c3b5418b8b82b5b.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F272a%2Fimg%2Favatars%2Fava_0026-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1478111000.001859"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP> I think it's known that my vote is 'do it', with respect to <@U1KFCPFQA> and <@U0Z541B3P> I don't recall any real endorsement or objection",
+        "ts": "1478111060.001861"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0XPR4NP4> - again one doubt on the block header. Let me know what am I missing if I say the following for your scenario of selective chain verification (without full data validation).\nLet's have a single field in the header called blockhash (which is computed as 'previous blockhash + blockdata'). For selective verification, why can't one take the field value itself for granted when it can take it's hash for granted?",
+        "ts": "1478111083.001863"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Z541B3P> I give you a series of 3 headers and 3 signature sets, for blocks 1, 2, 3. And no block contents.  How do I validate that no one has modified the header of block 2, without retrieving any block contents?",
+        "ts": "1478111199.001864"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(<@U0ZJZBJLF>: Say you need 4 signatures. You understand that these 4 signatures can be valid based on block 100, but invalid based on block 110 right? So if these 4 signatures are referenced in block 122 and they're saying \"you can totally trust us because they last config block is 100\" you're setting yourself up for failure.)",
+        "ts": "1478111250.001865"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Let's take this to gossip-dev.)",
+        "ts": "1478111282.001866"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sure",
+        "ts": "1478111287.001867"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "But for validating the header you need the content anyway... no?",
+        "ts": "1478111311.001868"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why?",
+        "ts": "1478111369.001869"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I can give you a sequence of headers, and you can validate that they hash chain together, and have the appropriate signatures?",
+        "ts": "1478111391.001870"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So if someone were to modify block 2's header, the hash chain would break",
+        "ts": "1478111405.001871"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "What am I missing here is that... we are trusting the signatures. What is wrong if those signatures sign the header with just one field in it and we simply trust that as well...",
+        "ts": "1478111615.001872"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Two-fold",
+        "ts": "1478111660.001873"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "One, checking signatures is much slower.  Two, you can actually safely prune signatures as well, so long as your most recent block has signatures, there's no need to retain any of the past ones.",
+        "ts": "1478111692.001874"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0ULK2JPP>: I have clarified for me  assumptions made for ledger API and given that ab.Block has been merged the only missing part if refactoring of ledger API to incorporate nee Block",
+        "ts": "1478111725.001875"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "i believe I can make further progress  now",
+        "ts": "1478111789.001876"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "May be I am missing something very basic... but not able to get why two fields can be trusted and one cannot ...",
+        "ts": "1478111870.001877"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Given block headers 1, 2, 3, and signatures over block 3.  How can I detect a modification to block header 1 or 2 (without their corresponding data) if the hash includes that data?",
+        "ts": "1478111948.001878"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "my only point is that you are trusting on datahash... cannot we just trust on 'data+previoushash'",
+        "ts": "1478112017.001879"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "for full validation anyways data is needed",
+        "ts": "1478112031.001880"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "answer: it's how bitcoin does it",
+        "ts": "1478112107.001881"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "I am fine..If that's the reasoning... was just trying to understand the logic.",
+        "ts": "1478112178.001882"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Bitcoin does it that way, which I think is worth emulating if only for the familiarity.  And I still maintain there are concrete advantages for having the hash chain over the headers, like signature pruning, and hash verification being faster than signature verification.",
+        "ts": "1478112281.001883"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "does it sound reasonable <@U0XPR4NP4> <@U0Z541B3P> to incorporate the new Block into ledger ( <@U1HFNJB50> is unblocked from implementation but dependent on the consolidation on testing)",
+        "ts": "1478113214.001884"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "yes <@U0ULK2JPP>. We will have to make changes in the ledger code... will discuss in the ledger scrum tomorrow",
+        "ts": "1478113317.001885"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "perfect",
+        "ts": "1478113326.001886"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sounds good to me",
+        "ts": "1478113336.001887"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "manish, i think you can prioritize the block structure work",
+        "ts": "1478113346.001888"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "the other items you are working on can get pushed back, better to consolidate the blocks sooner than later",
+        "ts": "1478113374.001889",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP",
+                    "U1HFNJB50"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "yes... Let's discuss tomorrow in detail...",
+        "ts": "1478113417.001890"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "sure thing, just wanted to give you the green light to work on it tomorrow before scrum",
+        "ts": "1478113438.001891"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "my last question on this topic - is PreviousHash a hash of the previous header itself?  or a hash of the previous header\u2019s DataHash?",
+        "ts": "1478113486.001892"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "hash of the previous header",
+        "ts": "1478113525.001893"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "ok, which includes DataHash",
+        "ts": "1478113540.001894"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "otherwise, you would miss the blocks below the previous block",
+        "edited": {
+            "user": "U0Z541B3P",
+            "ts": "1478113560.000000"
+        },
+        "ts": "1478113542.001895"
+    },
+    {
+        "user": "U2Y2V95D2",
+        "text": "<@U2Y2V95D2|alanlee> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478142438.001897"
+    }
+]

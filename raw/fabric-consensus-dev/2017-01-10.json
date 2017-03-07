@@ -1,0 +1,464 @@
+[
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "<@U0XPR4NP4> Hi Jason, I'm curious about the replay attack prevention. Why not just using txId? Since txId is unique in the ledger, replayed txID will not be accepted. Forgive me if I'm asking a silly question :smile:",
+        "ts": "1484040024.001344"
+    },
+    {
+        "user": "U1V5VNSAD",
+        "text": "<@U1V5VNSAD|subax> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484046851.001345"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1B9E51R8> In case of chaincodes, one can run the same chaincode with the same arguments. As far as I know, this would result the same transaction so the txID would be the same. (I hope this has any relationship with your question)",
+        "ts": "1484048117.001346"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "<@U1AU8DRQR> Thank you for your response. To be more clear, client sends a tx(txId: 123) to OS and committed as a valid tx in ledger. If a malicious node replays this tx(txId: 123), the committer node won't accept it because there's already a tx w\/ same txId in the ledger. My question was whether the replay attack could be prevented by verifying the unique txId?",
+        "ts": "1484049504.001347"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "or even depending on the MVCC check? because replayed tx should not pass MVCC validation",
+        "ts": "1484049530.001348"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "&gt; My question was whether the replay attack could be prevented by verifying the unique txId?\n<@U1B9E51R8> I guess it could be (depending on the chaincode \/ actual application)\n&gt; or even depending on the MVCC check? because replayed tx should not pass MVCC validation\nMVCC is the validation chaincode right? and one can write its own validation chaincode. so yes, one can write one that does the appropriate check",
+        "ts": "1484049863.001349"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "thanks Gabor",
+        "ts": "1484052513.001350"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U12452RAP> are you looking for this? <http:\/\/sammantics.com\/blog\/2016\/7\/27\/chain-1>",
+        "attachments": [
+            {
+                "service_name": "SAMMANTICS",
+                "title": "Chain: Simplified Byzantine Fault Tolerance (SBFT)",
+                "title_link": "http:\/\/sammantics.com\/blog\/2016\/7\/27\/chain-1",
+                "text": "This post aims to look at some of the key features of the Chain Open Standard, a permissioned blockchain,\u00a0specifically its consensus mechanism.\u00a0 Blockchain startup Chain, \u00a0recently released an open source permissioned blockchain built in collaboration with 10 global financial firms and telcos. \u00a0This platform is made for financial applications that require high scalability ( &gt; thousands of transactions per second), robust security and near absolute privacy. \u00a0Blockchains must be built for the regulatory requirements of these institutions as well. These are attributes the financial services sector requires. \u00a0If speed is the key characteristic of this platform, network stability becomes very important in any solution designed. \u00a0Chain was built with this design assumption in mind. Partners in the project include Capital One, Citi, Fidelity, First Data, Fiserv, Mitsubishi UFJ, Nasdaq, Orange, State Street and Visa, all of which have contributed to the technology. This platform is being called the Chain Open Standard. \u00a0Chain Core is the software implementation of the Chain Open Standard and is designed to run for enterprise IT environments. Note: Chain Core is the name Chain has given to nodes on its platform.\u00a0 Consensus Mechanism: Simplified Byzantine Fault Tolerance (SBFT) In SBFT, one designated block generator collects and validates proposed transactions, periodically batching them together into a new-block proposal. \u00a0Consensus is provided by a Generator that applies rules (validates) agreed to by the nodes (chain cores)\u00a0to the block and designated block signors.\u00a0Other (multiple) designated block signers ratify the proposed block with their signatures. \u00a0\u00a0All network members know the identities of the block signers (permissioned blockchain)\u00a0and accept blocks only if signed by a sufficient number of signers. A Block Signer validates all transactions in each block and adds a signature.\u00a0 Only blocks with sufficient signatures are accepted into the chain.\u00a0This attempts to prevent the double spending problem by attempting to ensure competing transactions gets resolved.\u00a0 By using 1 generator (master replicator) in a trusted, private environment this effectively allows for kind of scale and speed needed for transactions and for the signors to validate transactions. \u00a0These signors are configurable meaning they can be added\/removed from the system at any time. \u00a0The same goes for the nodes (chain cores) in the network. \u00a0They can be added\/deleted since it is a private network and this adds an extra layer of security particularly when dealing with what could be a malicious actor. As a result of using 1 generator instead of multiple, synchronization does not occur. \u00a0Synchronization is a process that establishes consistency of data between 2 or more entities.\u00a0This feature allows for scalability and speed to not be affected for the enterprise grade solution.\u00a0 \u00a0Since the blockchain is private and the entities are known multiple generators could be seen as a redundancy. \u00a0Not all nodes need to be online for this platform to function at a minimum \u00a01 generator and 1 signor are needed. \u00a0However, typically it allows 100 participants to interact, only needs 5 signors, 1 generator and 1 issuer (some regulatory body). \u00a0The Fault Tolerance in this setup allows for 3 out of 4 or 4 out of 5 signors. The Privacy section will go into the details of how the Chain Open Standard tackles the problem of Confidentiality of information for the platform participants. \u00a0Open, permissionless blockchains like Bitcoin are transparency machines in that all participants can view information on the network. \u00a0Chain has built a solution for those who need privacy as a main feature. \u00a0Without the need for complete transparency and all nodes (chain cores) receiving transactional information, scalability does not get sacrificed, but transparency does. \u00a0All systems have trade-offs. \u00a0In this system, \u00a0the nodes (chain cores) would only get block proofs by node platform. \u00a0\u00a0 The node (core) itself, \u00a0could store all the blockchain data or only a snapshot (balance sheet) and a limited history of activity from the Account Manager (described below). \u00a0 Stages 1. The Asset Issuer (presumably a node on the platform) creates what can be an unlimited number of cryptographically unique Asset ID's. \u00a0 (Creation Phase) 2. Units of these assets are issued on a blockchain. \u00a0(Submission Phase) 3. An Asset ID is associated with an Asset Definition. (Asset Definitions can be self enforcing rules to meet specific conditions depending on the use case. \u00a0These can have an unlimited amount of reference data) (Validation Phase) 4. Once issued, units of an asset ID can be stored in and transferred between accounts, programmatically transacted via smart contracts, or retired from circulation. (Signing Phase and Pulling into Nodes Phase) 5. \u00a0After the Signing Phase the transaction goes live. One of the interesting features of this system is the Account Manager which serves many key roles. \u00a0It stores assets in secure accounts. \u00a0This is where transaction data gets stored. \u00a0These accounts can contain any combination of assets and created for many different types of users. \u00a0These accounts can be thought of as digitally secure wallets. In addition to storing assets, the Account Manager enables the transferability of assets in to and out of accounts via blockchain transactions (within the same Core or between different Cores in the network). The Account Manager builds the smart contracts for all different types of transactions (See Smart Contract Section). \u00a0Each transaction is a smart contract. \u00a0 Ownership of the assets flows through the system by using a push model. \u00a0The addresses are provided by other parties and the unique Asset ID's and accounts that get created are used to designate ownership of the assets. \u00a0The smart contract (transaction) defines what actions a designated party can take. Privacy &amp; Security The Chain Open Standard is a private network in which confidentiality of information is one of top priorities. This platform has been designed to support selective disclosure of sensitive information. This is done using three techniques: one-time-use addresses, zero knowledge proofs, and encrypted metadata. A one-time address is created each time an account holder wishes to receives assets. These differing addresses prevent other observers of the blockchain from associating transactions with each other or with a particular party. To cryptographically conceal the contents (assets and amounts)\u00a0of a transaction, \u201czero knowledge proofs,\u201d are used,\u00a0while still allowing the entire network to validate the integrity of the contents. Zero Knowledge Proofs (ZKPs) do this by one party proving to another party that a given statement is true, without conveying any information (in this case, about the transaction) apart from the fact that the statement is indeed true.\u00a0Only the counter-parties (and those granted access) can view the details of the transaction. Also transaction metadata can be encrypted with traditional PKI, to conceal details from all but the relevant parties. \u00a0The platform uses keys to prove verifiable authenticity (signatures) of the messages delivered between the nodes (chain cores). The keys are generated by creating an unlimited number of cryptographically unique Asset IDs. \u00a0These keys get rotated every 2-3 weeks. \u00a0Rotating keys is a process for decrypting data with an old key and applying the data to a new key by re-keying. \u00a0These keys should probably be kept in different places or data centers. If one of the keys gets compromised then use other key to generate backup keys and transfer over all assets to new key. \u00a0Key management and rotation is essential to managing secure digital assets. These keys also allow and restrict access to certain activities. Chain Core also integrates with industry-standard hardware security module (HSM) technology. All block a\u2026",
+                "fallback": "SAMMANTICS: Chain: Simplified Byzantine Fault Tolerance (SBFT)",
+                "image_url": "http:\/\/static1.squarespace.com\/static\/564100e0e4b08c9445a5fc5d\/t\/57b148f9e6f2e1dc08c8fd29\/1471236352593\/?format=1000w",
+                "from_url": "http:\/\/sammantics.com\/blog\/2016\/7\/27\/chain-1",
+                "image_width": 327,
+                "image_height": 250,
+                "image_bytes": 39558,
+                "service_icon": "http:\/\/sammantics.com\/favicon.ico",
+                "id": 1
+            }
+        ],
+        "ts": "1484055981.001351"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B9E51R8> The problem of replay protection is not so much in identifying replayed transactions and more of identifying them efficiently.  The `epoch` field in particular is used to scope the set of transactions which must be checked against the new transaction.  Doing a full select across all transactions ever is not a scheme that would scale over time.",
+        "ts": "1484056248.001354"
+    },
+    {
+        "type": "message",
+        "user": "U1B9E51R8",
+        "text": "<@U0XPR4NP4> I see. Thanks for the explanation",
+        "ts": "1484056737.001355"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U12452RAP> <@U0NCW1DPX> The paper behind SBFT is really the classic PBFT paper by Liskov. There are differences (the main one being that you process a single batch of requests at a time), but to my knowledge, the closest reference material remains the PBFT paper.",
+        "ts": "1484060717.001356"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I would suggest we rename this work to something else than SBFT eventually, as people always assume that we refer to the Chain implementation, but that's a low-priority item.",
+        "ts": "1484060772.001357"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The other key difference I would point out is that the PBFT paper assumes unordered (UDP type) links, while SBFT assumes FIFO (TCP type).",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484060813.000000"
+        },
+        "ts": "1484060804.001358"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "Thanks guys, I found that ticket in Jira",
+        "ts": "1484061054.001360"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "well described ",
+        "ts": "1484061071.001361"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0KN2SSKE> <@U0Y14MWA2> I see that pbfts uses util.ComputeCryptoHash to computes hashes. I was wonder if those hashes should be computed by the BCCSP. Also, I was thinking that the hash function should be configurable in an independent way, I mean by having a specific property under pbft",
+        "ts": "1484062044.001362"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0ZR63HLK> lets sync on these. No integration with common libs has been done in sbft so far",
+        "ts": "1484062175.001363"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I expect this not to be rocket science",
+        "ts": "1484062186.001364"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "me too, but we have to decide. Crypto calls need to be reordered",
+        "ts": "1484062220.001365"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> I would like to specify the hashing parameters in the genesis block",
+        "ts": "1484062575.001366"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "+1",
+        "ts": "1484062589.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I think the gensis block is a perfect place for this kind of configurations",
+        "ts": "1484062614.001368"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> I'm guessing you are aware, but <@U1AU8DRQR> has started some work on moving to the common libs",
+        "ts": "1484062648.001369"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am",
+        "ts": "1484062670.001370"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I see another issue in sbft. When a signature is generated sha256 is always used to compute the digest",
+        "ts": "1484062693.001371"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but if the underlying curve used for ECDSA is P384, than sha384 needs to be used",
+        "ts": "1484062710.001372"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we need to be more uniform there",
+        "ts": "1484062753.001373"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "It is not entirely cleat to me that this is the case",
+        "ts": "1484062766.001374"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "look at the code, it tells the truth",
+        "ts": "1484062790.001375"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":slightly_smiling_face:",
+        "ts": "1484062791.001376"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "We cannot insist that every consensus protocol supports all the crypto",
+        "ts": "1484062800.001377"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "fair enough",
+        "ts": "1484062811.001378"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "then if some tries to sign with P384 a digest shorter than 384 bits, then it rejects",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1484062847.000000"
+        },
+        "ts": "1484062842.001379"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "But lets see if such support those not bloat the code than i may be in favor",
+        "ts": "1484062852.001381"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "at the least, I would like to have consistency in using the algorithms",
+        "ts": "1484062861.001382"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that you can also support only P256 and SHA2-256",
+        "ts": "1484062878.001383"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm perfectly  fine",
+        "ts": "1484062890.001384"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If you can open jira to track this that be great",
+        "ts": "1484062918.001385"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZR63HLK> I think you would be a better person to define the hashing parameters for the genesis block.  To my mind, I thought we would need to specify hashing algorithm for the block header, whether to compute the data hash via Merkle (with specified width) or flat, and possibly the hashing algorithm to use within the Merkle tree.  But, I'm certain there are other places hashes are used (like sbft\/pbft).  I'm not certain what a reasonable expectation would be.  I had thought maybe one global 'hashing algorithm' which would be used anywhere it was not otherwise specified (like for MSP signature validation), but it sounds like maybe that's inadequate?",
+        "ts": "1484063101.001386"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I' m actually a bit worried about this global settings that can work for everything. For sure, when digest has to be computed to be signed then it is a different story. The digest must be computed according to the signing algorithm requirements",
+        "ts": "1484063238.001387"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Genesis block needs to have custom field that can be populated by consensus protocol",
+        "ts": "1484063290.001388"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for the rest, it might be fine to have a global one at least at very beginning and with versioning in such a way we can always change and be retro compatible",
+        "ts": "1484063292.001389"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "If you already want to standardize the genesis block",
+        "ts": "1484063308.001390"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "A specific config should not be mandated",
+        "ts": "1484063328.001391"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> Genesis block already has this function, you can see it being used by Kafka to populate the brokers for instance",
+        "ts": "1484063356.001392"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Very good so no need to mandate things more uniform imo",
+        "ts": "1484063409.001393"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, SBFT or whatever consensus algorithm can do whatever config it would like.  But, it would make sense to have a 'hashing default', to essentially determine the behavior of hashing whenever the implementer does not want to have to pick",
+        "ts": "1484063479.001394"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "should then that component be in charge of defining what's default? Not sure.",
+        "ts": "1484063592.001395"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's take this example",
+        "ts": "1484063689.001396"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the struct BlockHeader has an Hash method",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1484063736.000000"
+        },
+        "ts": "1484063703.001397"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is implemented by using util.ComputeCryptoHash that uses sha256 (hard-coded)",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1484063767.000000"
+        },
+        "ts": "1484063716.001398"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "where the configuration of this hash function should come from?",
+        "ts": "1484063724.001399"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i do not object defining hash function for hashchaining the blocks",
+        "ts": "1484067215.001402"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but internally i do not think that we can mandate much from a consensus implementation",
+        "ts": "1484067241.001403"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if an implementation hardcodes sha256 internally it may do so - and people may decide not to use such an implementation if they do not like it",
+        "ts": "1484067279.001404"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "my point is - we want consensus modular so we need to give it some leeway",
+        "ts": "1484067298.001405"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "standardizing the block format so clients can consume it makes sense",
+        "ts": "1484067325.001406"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but mandating a given signature function is imo too much",
+        "ts": "1484067341.001407"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sbft is less of a problem but think of integration of bft smart or any other third party protocol",
+        "ts": "1484067466.001408"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm only casually glancing at this conversation and I don't think you guys disagree here. A sensible default, along with the option to easily change as the user sees fit is what pretty much everyone is arguing for, no?",
+        "ts": "1484067479.001409"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "you want to give such an implementation room in the genesis block to store its custom config and that's about it",
+        "ts": "1484067498.001410",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XQ35CDD> perhaps :slightly_smiling_face:",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1484067777.000000"
+        },
+        "ts": "1484067527.001411"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "do we have a \"standard \" hash function to hashchain the blocks in the ledger?",
+        "ts": "1484067570.001412"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or is this itself configurable",
+        "ts": "1484067607.001413"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Unless something was changed while I was away, we're invoking `ComputeCryptoHash` from the `core\/util` package for this. And this is currently hardcoded to SHA-3. These are some of my thoughts on the matter: <https:\/\/jira.hyperledger.org\/browse\/FAB-887?focusedCommentId=19743&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-19743>",
+        "ts": "1484067788.001415"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I am all in for a most efficient function which provides \"sufficient\" security - which would in this case second  SHA256 to be default instead of SHA3",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1484068064.000000"
+        },
+        "ts": "1484068017.001416"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that said i do not object it being configurable",
+        "ts": "1484068110.001418"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but this is the only place (talking about the function used to hashchain the ledger blocks) where I see the need for some \"standardization\" across consensus implementations",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1484068162.000000"
+        },
+        "ts": "1484068140.001419"
+    }
+]

@@ -1,0 +1,51 @@
+[
+    {
+        "type": "message",
+        "user": "U26PBUZRT",
+        "text": "Commentary. Looking the object model in the  family examples, I miss a smart contract language, because to define the objects, their relations and the restrictions, is a little hard such as is doing. Did you think about that?",
+        "ts": "1476173984.000239"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "<@U0VKPD6A2> The first question of the permissioning is:\nI looked into the code of sawtooth, but I couldn't find the code of verifying the signature of transaction. I did a test: I changed transaction['Nonce'] after signing the transaction, then posted the transaction (.\/bin\/xo create game000). But the validation of server passed, didn't throw an error. What's wrong with this or did I make a mistake?",
+        "ts": "1476178859.000240"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "<@U1L6PRGTF> OK, I'll update the PR.",
+        "ts": "1476178900.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0VKPD6A2",
+        "text": "<@U1ZUSJHAA> signature verification is in signed object.  The current model is when a transaction is checked, the parent method for check_valid() is invoked along with any check_valid() defined by the transaction family.  Historically this was called is_valid() and SignedObject class kept that method signature.  So all transactions call SignedObject.is_valid() which verifies the signature.  \nIf you found a way to modify a transaction and it still passes verification it would be great if you could write up the reproduction case so we can fix that.",
+        "edited": {
+            "user": "U0VKPD6A2",
+            "ts": "1476194596.000000"
+        },
+        "ts": "1476194580.000242"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "<@U0VKPD6A2> Yes, I know SignedObject.is_valid() calls SignedObject.verify_signature(). But the default value of parameter of originatorid is None, so the line of 'return originatorid is None or recovered_id == originatorid' in SignedObject.verify_signature() always return true.\nI did a test as follow:\nI added a line 'transaction['Nonce'] = time.time()' at  \"<https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/core\/sawtooth\/client.py#L62>\". The line I added\n could modify a transaction.\nThen I ran '.\/bin\/xo create game000' command, it created game000 successfully, the transaction still passes verification.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/sawtooth-core",
+                "title_link": "https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/core\/sawtooth\/client.py#L62",
+                "text": "sawtooth-core - Core repository for Sawtooth Lake Distributed ledger",
+                "fallback": "GitHub: hyperledger\/sawtooth-core",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/sawtooth-core\/blob\/master\/core\/sawtooth\/client.py#L62",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1476237485.000244"
+    }
+]

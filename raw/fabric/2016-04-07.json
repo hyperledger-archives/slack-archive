@@ -1,0 +1,1268 @@
+[
+    {
+        "user": "U0Q7KRNSJ",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Q7KRNSJ|primrose> has joined the channel",
+        "ts": "1460028600.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "ok so i wasn't at the f2f and i am sure my questions were most likely asked there... I've finally started the fabric build and i can't get my head around why the setup chain has its elements... i mean, aren't vagrant, docker and virtual box all geared towards providing the same start environment for a build? I've stared at the diagram for a while but i can't see why we have a vm in vagrant...",
+        "ts": "1460029017.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":simple_smile:",
+        "ts": "1460029108.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vagrant is used to provide a consistent, working development environment",
+        "ts": "1460029124.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vagrant uses virtualbox for this purpose",
+        "ts": "1460029134.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "docker is used by fabric to execute chaincode processes",
+        "ts": "1460029155.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "docker is also used during fabric development to easily spin up multiple instances of fabric peers to create a local network",
+        "ts": "1460029187.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does that help?",
+        "ts": "1460029190.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Q7KRNSJ>: to add additional color to what <@U0XR6J961> said: it is true that vagrant and docker both have overlapping goals in some sense (e.g. \u201crepeatable\u201d environments derived from a base image + devops orchestration file), but they are used for different purposes within the HL architecture",
+        "ts": "1460030364.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, docker has very specific requirements about the host (it has to be running a linux kernel, for instance)\u2026.even docker itself utilizes HV virtualization for this reason on non-linux platforms",
+        "ts": "1460030520.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so vagrant+virtualbox get you a base linux environment that is suitable for hosting docker containers as well as providing other resources useful to building\/running the fabric, and docker brings additional lightweight containers useful for things like chaincode isolation and network simulation",
+        "ts": "1460030597.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0XR6J961> <@U0KPFAZNF> thank you!!! so vagrant+virtual box go together. got that. vagrant + vbox create the dev env whilst docker provides testing potential. with the added benefit that vagrant+vbox provide a \"safe\" initial machine for the docker bots (if i may call them that) to run in. is that right?",
+        "ts": "1460031079.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, except I wouldnt limit docker role to just testing: it is currently used in a live environment too for chaincode isolation",
+        "ts": "1460031122.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but otherwise, yes",
+        "ts": "1460031132.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IOW, if you issue a \u201cchaincode deploy\u201d, it gets injected into a new docker container on each validating peer on the fly",
+        "ts": "1460031188.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this would be true even for production",
+        "ts": "1460031214.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0KPFAZNF> ah i was googling what chaincode isolation actually meant. i get it now!",
+        "edited": {
+            "user": "U0Q7KRNSJ",
+            "ts": "1460031287.000000"
+        },
+        "ts": "1460031256.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1460031275.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "i can't find a reaction which indicates that i'll sleep slightly less dumb tonight. but would you also be able to say why go needs to be installed on the host machine please? i would have thought this would only be needed in the VMs\/Docker which are actually building and running the code?",
+        "edited": {
+            "user": "U0Q7KRNSJ",
+            "ts": "1460031514.000000"
+        },
+        "ts": "1460031501.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we are currently using go 1.6, though note you only need go on the host if you plan to edit\/build there",
+        "ts": "1460031544.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which is fairly common, but not strictly required",
+        "ts": "1460031553.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least, editing and building within an IDE",
+        "ts": "1460031575.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think you need go only in the base docker image for chaincode",
+        "ts": "1460031602.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: i think <@U0Q7KRNSJ> is asking about the host environment itself",
+        "ts": "1460031626.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0KPFAZNF>: <@U0XR6J961> yes the question was about the host env itself. the instructions ask for an install of go before all the VMs\/Containers are setup and i wondered why",
+        "ts": "1460031667.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "@primose, i missed that you said \u201cwhy\u201d not \u201cwhich\u201d, which is why I said 1.6",
+        "ts": "1460031681.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the why is to permit the user to edit the code in an environment that is most comfortable for them",
+        "ts": "1460031702.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0KPFAZNF>: i mistyped and corrected. mea culpa",
+        "ts": "1460031706.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, that explains it",
+        "ts": "1460031714.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "i thought i was fast enough for it to be a seamless change!",
+        "ts": "1460031730.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the basic idea is that the vagrant environment has all the stuff you need to build\/run the code, but not necessarily all encompassing for editing",
+        "ts": "1460031756.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "+kudos to whoever put the setup together and made it so simple to run",
+        "ts": "1460031756.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0KPFAZNF>: got it. thanks! now i have to go and do something with the build...",
+        "ts": "1460031811.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0ULX737C",
+        "text": "There was talk at f2f about not requiring chaincode isolation as an alternative. So that known chaincode runs bound to the peer. This would be in addition to the current chaincode sandbox in docker",
+        "ts": "1460032745.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi vipinb!",
+        "ts": "1460032871.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULX737C>: i believe I have heard that called \u201csystem chaincode\u201d, i think its under development",
+        "ts": "1460033089.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres also talk of making the isolation mechanism pluggable",
+        "ts": "1460033104.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ULX737C",
+        "text": "Hello <@U0XR6J961> my regards to Zurich",
+        "ts": "1460033371.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ghaskins: system chaincode is separate",
+        "ts": "1460033402.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "system chaincode is administration\/configuration",
+        "ts": "1460033414.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vipinb is talking about e.g. taking the blockstream\/DAH code and linking it directly with fabric, instead of running it in a docker instance",
+        "ts": "1460033450.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course you wouldn't deploy that code then",
+        "ts": "1460033462.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0ULX737C",
+        "text": "<@U0XR6J961> . Just having the isolation mechanism pluggable like <@U0KPFAZNF> said. Which is having an option to have chaincode interpreter only, directly executable in peer\/consensus context much like BTC. Of course only trusted\/limited primitives will be allowed unlike the extensibility of docker contained chaincode. This was for speed and ease of deployment. Worth thinking about.",
+        "ts": "1460033886.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<!channel>,  a reminder that with PR #1004 being merged overnight,  the consensus config vars have been renamed from OPENCHAIN_OBCPBFT_xxxx to CORE_PBFT_xxxx  and that CORE_PEER_VALIDATOR_CONSENSUS=pbft",
+        "ts": "1460034483.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i've modified all the .yaml files as well but you might have some private configs that you'll have to update",
+        "ts": "1460034526.000097"
+    },
+    {
+        "user": "U0Y14MWA2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Y14MWA2|vukolic> has joined the channel",
+        "ts": "1460034780.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0ULX737C>: when you say \"chaincode runs bound to the peer\" do you mean that the chaincode can not be updated on that peer once it has spun up? if so then i do not understand the pluggable mechanism... what would be the point of lightweight interpretation then?",
+        "ts": "1460035633.000099"
+    },
+    {
+        "user": "U0KLX66S0",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KLX66S0|ramkomarraju> has joined the channel",
+        "ts": "1460036371.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: part of the conversation about system chaincode is that it would have access to resources\/facilities that are normally isolated, so it reminded me of what <@U0ULX737C> was talking about",
+        "ts": "1460036605.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1460036625.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "related",
+        "ts": "1460036629.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok",
+        "ts": "1460036643.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there does seem to be a conflation of issues\/concepts in this thread:",
+        "ts": "1460036729.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one issue would be the notion of some chaincode that has enhanced priviledges\/access, and another for alternate chaincode environments\/interpreters",
+        "ts": "1460036760.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see them generally as orthogonal",
+        "ts": "1460036800.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "system chaincode is not chaincode itself, it just uses the same mechanisms to maintain configuration state of the peers",
+        "ts": "1460036822.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, they are",
+        "ts": "1460036828.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "agreed",
+        "ts": "1460036830.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they have a common aspect: they don't run in a docker container :simple_smile:",
+        "ts": "1460036846.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I see \u201csystem chaincode\u201d as something that looks\/acts like chaincode as far as the outside worlds is concerned:  you can send it invokes and it can submit mutated state to consensus, for instance",
+        "ts": "1460036867.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but implementation wise, it would probably be .go code compiled into the fabric binary",
+        "ts": "1460036886.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there are other ways to do it too, that is just one idea",
+        "ts": "1460036918.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "re: vagrant and docker ... the very first search result for \"vagrant vs docker\" brings up <http:\/\/stackoverflow.com\/questions\/16647069\/should-i-use-vagrant-or-docker-for-creating-an-isolated-environment>, which answered the question for me nicely when I first started playing with this environment ...",
+        "attachments": [
+            {
+                "title": "Should I use Vagrant or Docker for creating an isolated environment?",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/16647069\/should-i-use-vagrant-or-docker-for-creating-an-isolated-environment",
+                "text": "I use Ubuntu for development and deployment, and have a need for creating an isolated env. I am considering either Vagrant or Docker for this purpose? Can anyone help me with the pros and cons, o...",
+                "fallback": "Should I use Vagrant or Docker for creating an isolated environment?",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/16647069\/should-i-use-vagrant-or-docker-for-creating-an-isolated-environment",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "id": 1
+            }
+        ],
+        "ts": "1460036962.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: an astute observation, yes",
+        "ts": "1460037003.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<!here|@here> -- re my question yesterday, I noticed a conversation today (on an issue I think) discussing client subscriptions and actual results of invokes being sent back. The discussion was of course around the question as to what happens when the network loses track of a transaction. Anyway, is this feature imminent?",
+        "ts": "1460037132.000118"
+    },
+    {
+        "user": "U0XV1HDL3",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XV1HDL3|cca> has joined the channel",
+        "ts": "1460038560.000119"
+    },
+    {
+        "user": "U0VKKEGKB",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0VKKEGKB|zhipengh> has joined the channel",
+        "ts": "1460040633.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<!here|@here> <@U0KPFAZNF> <@U0ULX737C> <@U0XR6J961> I think of it as \u201cin process\u201d chaincode with \u201csystem chaincode\u201d as an instantiation of it. Helps separate out \u201csystem chaincode\u201d specific concerns from the general chaincode specific functions. It also allows possibilities of non-system \u201cin process\u201d chaincode. And help to not take short cuts in the design\/implementation \u2026. break off from the current \u201ccontainer chaincode\u201d design only where applicable.",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1460041112.000000"
+        },
+        "ts": "1460041097.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1460041115.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I cant think of where that distinction is important, but I am open minded to the possibility that it is",
+        "ts": "1460041197.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to put it another way: running in process is one convenient way to implement \u201csystem chaincode\u201d, but I cant think of a reason to want to run unstrusted code outside of isolation",
+        "ts": "1460041270.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "performance maybe?  not sure",
+        "ts": "1460041283.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "performance, maybe.\u2026 or policies ? system chaincode are given more rights",
+        "ts": "1460041447.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am all for well defined abstractions, of course, just not seeing where you would have code that doesn\u2019t need enhanced privilege that you might want to run non-isolated",
+        "ts": "1460041456.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, trusted code",
+        "ts": "1460041547.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "generally speaking, i think abstracting the chaincode environment such that it supports: system\/priviledged chaincode, normal isolated chaincode (with choice on isolation vehicle), and, if desired, \u201cin-process, untrusted\u201d chaincode, that its a good thing",
+        "ts": "1460041551.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "even if the latter is never realized",
+        "ts": "1460041560.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for example, if DAH only wants to run a UTXO processor",
+        "ts": "1460041562.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why go through the hassle of adding all this docker complexity",
+        "ts": "1460041572.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: ah, now I see where the value is",
+        "ts": "1460041585.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thank you, that is a good explaination",
+        "ts": "1460041594.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so its not that its \u201cuntrusted\u201d, its that certain use cases arent going to have users submitting chaincode",
+        "ts": "1460041639.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1460041648.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "got it, makes sense",
+        "ts": "1460041652.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right, tight, purposed environments",
+        "ts": "1460041731.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(can I say \u201cpurposed\u201d ? :-))",
+        "ts": "1460041741.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "parses fine for me",
+        "ts": "1460041754.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, hyperledger\/fabric as a platform for decentralized applications with state mutation goverened by consensus,  where applications might be baked in, user submitted, or anything in between",
+        "ts": "1460041856.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "makes sense to me",
+        "ts": "1460041871.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well in the end, system state may have to be signed by a quorum of participants",
+        "ts": "1460041898.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: absolutely",
+        "ts": "1460041913.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not just automatically processed, but deliberately (policy) agreed to",
+        "ts": "1460041915.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you have a suggestion on how to implement such a condition?",
+        "ts": "1460041940.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if done right, the differences between system\/in-process\/untrusted should be handled the same w.r.t. consensus",
+        "ts": "1460041950.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "more chaincode implementing this check?",
+        "ts": "1460041958.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i envision that they look\/act like any chaincode, they have an address, they can accept invokes\/queries, and they can mutate Get\/Put state which then goes through consensus",
+        "ts": "1460042030.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the difference is really how they were deployed, thats it",
+        "ts": "1460042038.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I envision that something like system\/in-process is deployed via yaml, essentally consensus by common configuration",
+        "ts": "1460042075.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "something like untrusted is deployed as the mutation of state of a system chaincode that handles untrusted deployments",
+        "ts": "1460042103.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "where policy like AAA can be enforced in the system \u201cdeployment\u201d chaincode",
+        "ts": "1460042139.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^ aligns with my thoughts\u2026 with the understanding some features (such as AAA) will be phased in",
+        "ts": "1460042424.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's my point: authorization policies will differ",
+        "ts": "1460042448.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "dont understand that, simon...",
+        "ts": "1460042549.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "muralisr: let's say you want to add validators to the system",
+        "ts": "1460042575.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is something that cannot be decided unilaterally, but has to be performed by real-world agreements",
+        "ts": "1460042598.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: my thought there is through a combination of knobs on the \u201cdeployment\u201d service, coupled with the fact that a network may opt to replace it with something else, you would achieve whatever policy you want",
+        "ts": "1460042603.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "network X might decide to configure yaml\/genesis as [A,B,C], network Y, something else",
+        "ts": "1460042633.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so there needs to be a structure in place that prevents automatic change of the memberlist, unless certain real-world conditions are met",
+        "ts": "1460042633.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but, these conditions will be different for different deployments",
+        "ts": "1460042653.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "therefore, how are these conditions formulated?",
+        "ts": "1460042669.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "those choices for yaml\/genesis define what policies are in place for subsequent mutations",
+        "ts": "1460042670.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and the consensus at this level is simply that the network is configured with a compatible yaml\/genesis",
+        "ts": "1460042700.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you're saying there is a limited set of policies you can choose from, and you might be able to parametrize those",
+        "ts": "1460042738.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I am saying is, the policies have a root in the initial configuration of the network",
+        "ts": "1460042763.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1460042769.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which is a combination of configuration+genesis block",
+        "ts": "1460042779.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm asking: how are these policies implemented",
+        "ts": "1460042781.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, lets say we had a system chaincode for deploying other chaincode",
+        "ts": "1460042813.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only way to get untrusted code in the system is to send a \u201cdeploy\u201d invoke to the system chaincode address for the deployment service",
+        "ts": "1460042841.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that code is responsible for implementing the policy of who\/what\/where\/whatever on what consistutes a valid deploy transaction",
+        "ts": "1460042864.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1460042873.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so write go code",
+        "ts": "1460042883.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "some of that policy might be driven by yaml knobs, some of that policy might be baked in to the go code",
+        "ts": "1460042891.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if an operator likes the reference implementation of the deployment service, they deploy it with the knobs they want",
+        "ts": "1460042920.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if they dont, they omit\/replace it with an alternate system chaincode",
+        "ts": "1460042931.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "would that system chaincode run in a docker container?",
+        "ts": "1460042947.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont envision that, no",
+        "ts": "1460042955.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that means that the peer needs to be built locally",
+        "ts": "1460042972.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "<@U0KPFAZNF> and <@U0XR6J961> I think that is a good idea",
+        "ts": "1460042992.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think like I said before, there is the concept of an abstract chaincode endpoint that looks\/acts like chaincode, it has an address, it can accept transactions, it can submit mutated state to consensus",
+        "ts": "1460043012.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0N3AJSSU",
+        "text": "Today, for example, you can't run docker's in a trusted execution evironment",
+        "ts": "1460043015.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the environment that a system chaincode runs in is likely completely different from an untrusted chaincode",
+        "ts": "1460043038.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it is likely something just compiled into the fabric",
+        "ts": "1460043050.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "uh oh",
+        "ts": "1460043058.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "why \u201cuh oh\u201d?",
+        "ts": "1460043072.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "requiring admins all over the world to compile their binaries in exactly the same way...",
+        "ts": "1460043093.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its not really different than deciding what your yaml\/genesis are, right?  code base selection is part of that criteria",
+        "ts": "1460043094.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "genesis is fixed via cryptographic hash",
+        "ts": "1460043113.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "while that is a perfectly valid model, I envision it would be more like a release",
+        "ts": "1460043118.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, it isnt :wink:",
+        "ts": "1460043127.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "genesis is \u201cfixed\u201d by what the network of nodes agrees its value is out of band from the fabric",
+        "ts": "1460043146.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, by means of a cryptographic hash",
+        "ts": "1460043162.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no shared genesis hash = not part of same chain",
+        "ts": "1460043185.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "more difficult with compiled code",
+        "ts": "1460043201.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "otp",
+        "ts": "1460043245.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i was thinking that maybe some form of language expressing the authorization criteria could be used, and a program of this language (script) be part of the genesis block",
+        "ts": "1460043250.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XR6J961>: \"requiring admins all over the world to compile their binaries in exactly the same way\u2026\u201d\nI haven\u2019t looked into it yet, but I was pointed to <https:\/\/gitian.org\/> the other day. It may be worth looking into",
+        "ts": "1460043354.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "fancy",
+        "ts": "1460043390.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but one binary, signed by a trusted entity - far simpler",
+        "ts": "1460043424.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "<@U0XR6J961>: is there only one trusted entity in this scenario?",
+        "ts": "1460044075.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i suppose",
+        "ts": "1460044110.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean, standard sysadmin stuff",
+        "ts": "1460044158.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "system package manager trusts a set of keys",
+        "ts": "1460044170.000207"
+    },
+    {
+        "user": "U0N1K6Z0X",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N1K6Z0X|georglink> has joined the channel",
+        "ts": "1460044238.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0Q7KRNSJ",
+        "text": "to me the whole point of a blockchain is for the trust to be built into the system itself... i didn't think of the build elements but it sounds weird to make an exception of them",
+        "ts": "1460044252.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, this is where you transition from network to individual",
+        "ts": "1460044551.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "your local admin always has power over your systems",
+        "ts": "1460044566.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i'd love to hear solutions",
+        "ts": "1460044575.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0ULX737C",
+        "text": "Identity will enter the picture, in this case meta identity",
+        "ts": "1460044681.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: back",
+        "ts": "1460046886.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think no matter how you slice it, there is extrinsic agreement, and there is intrinsic agreement",
+        "ts": "1460046908.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "extrinsic agreement would be things like the choice of software\/configuration\/genesis",
+        "ts": "1460046927.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whether that means there is one \u201c<http:\/\/myblockchain.com|myblockchain.com>\u201d that you download a package that has the software\/configuration\/genesis that all operators trust\/use, or some other mechanism doesnt matter",
+        "ts": "1460046969.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least, conceptually",
+        "ts": "1460046973.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "some other mechanism might be a conference call where the parties agree on the git sha and yaml contents and then go off and build it themselves, it doesnt matter",
+        "ts": "1460047020.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "conceptually correct, practically maybe difficult?",
+        "ts": "1460047027.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am not advocating one vs the other",
+        "ts": "1460047044.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am just saying, that extrinsic agreement needs to exist",
+        "ts": "1460047062.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm strongly advocating for correct by design",
+        "ts": "1460047065.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "meaning, the extrinsic agreement is required anyhow (people installing the same thing), but the system should prevent incorrect operation",
+        "ts": "1460047099.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and it is via this mechanism that establishes policy, such as what the deploy-system-chaincode does",
+        "ts": "1460047108.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh, and fail early",
+        "ts": "1460047125.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and it would: if people didnt establish the extrinsic agreement, the network probably would never converge, or be able to achieve consensus, etc",
+        "ts": "1460047149.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that isnt really my point",
+        "ts": "1460047162.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "don't fail when you try to update your policy on how to deploy new chaincodes, because it turns out different nodes are configured differently",
+        "ts": "1460047166.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my point is that it is the extrinsic agreement that establishes the policy that governs the intrinsic behavior",
+        "ts": "1460047184.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1460047238.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we agree in principle?",
+        "ts": "1460047249.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think so",
+        "ts": "1460047252.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my point was that the system should check that all nodes are configured the same way (due to extrinsic agreement)",
+        "ts": "1460047326.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "policy as implemented in the code: difficult to check (different platforms mean different binary, etc.)",
+        "ts": "1460047391.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "policy implemented e.g. as a script (i.e. interpreted rules): easier to test, can even be part of the genesis block",
+        "ts": "1460047422.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh sure, i agree with you on that",
+        "ts": "1460047602.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great!",
+        "ts": "1460047617.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least in terms of making it easier",
+        "ts": "1460047620.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not necessarily in how to make it easier",
+        "ts": "1460047636.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have no strong opinion on that",
+        "ts": "1460047643.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i don't know what the best is",
+        "ts": "1460047646.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess bitcoin script is a strong precedent",
+        "ts": "1460047660.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the most important thing is, a mismatch is likely to already be handled (e.g. membership list disparity would prevent quorum from forming, or the EV checks on system chaincode mutations wont match, failing to commit its transactions, etc",
+        "ts": "1460047725.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we design it carefully",
+        "ts": "1460047752.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and there are no bugs, etc.",
+        "ts": "1460047758.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, having it say \u201chey, your network is mismatched\u201d is a better behavior than just failing to every get a convergence",
+        "ts": "1460047764.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1460047772.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "better stop the network than keeping operating under inconsistency",
+        "ts": "1460047793.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1460047798.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it would need to be carefully thought out too, though",
+        "ts": "1460047809.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as disparity doesnt always mean incompatiblity",
+        "ts": "1460047818.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, older vs newer releases running together",
+        "ts": "1460047826.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the main criterial is the protocol can operate in agreement",
+        "ts": "1460047857.000256"
+    },
+    {
+        "user": "U0YNFB22X",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0YNFB22X|satheesh> has joined the channel",
+        "ts": "1460051198.000257"
+    },
+    {
+        "user": "U0LBXH9S4",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0LBXH9S4|evan.wagner> has joined the channel",
+        "ts": "1460059220.000258"
+    },
+    {
+        "user": "U0NF7DF2A",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0NF7DF2A|todd_mcd_r3> has joined the channel",
+        "ts": "1460075697.000259"
+    },
+    {
+        "user": "U0N0GDVJ5",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N0GDVJ5|nick> has joined the channel",
+        "ts": "1460084450.000260"
+    },
+    {
+        "user": "U0KLX3284",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KLX3284|martindale> has joined the channel",
+        "ts": "1460085262.000261"
+    }
+]

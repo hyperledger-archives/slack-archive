@@ -1,0 +1,612 @@
+[
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U21NTHK7C> I guess that makes sense that if multiple peers have the same IP address it may cause confusion.  The 172.17.0.0\/12 network I believe is just an internal Docker nextwork within your host.  There must be a way to change the network, but I don't know Docker well enough to know where that is controlled.",
+        "edited": {
+            "user": "U23S3DPFY",
+            "ts": "1475655586.000000"
+        },
+        "ts": "1475655432.002158"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "Maybe the real answer is that in production mode there is no need\/reason to run the peer inside a docker container (just the chaincode, which happens automatically).  I'm also not sure how you set that up though.",
+        "ts": "1475655654.002160"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "I think with the docker it make the deploy of the fabric more easy on different machine and VMs.",
+        "ts": "1475656062.002161"
+    },
+    {
+        "type": "message",
+        "user": "U25R83TAP",
+        "text": "What are the different json structures that can be returned by the fabric?\nAccording to the `fabric.proto` a Block structure looks like this:\n```message Block {\n    uint32 version = 1;\n    google.protobuf.Timestamp timestamp = 2;\n    repeated Transaction transactions = 3;\n    bytes stateHash = 4;\n    bytes previousBlockHash = 5;\n    bytes consensusMetadata = 6;\n    NonHashData nonHashData = 7;\n}```\n\nBut when I request the block number 1 it looks like this:\n```\n{\n  \"previousBlockHash\": \"RrndKwuojRMjOz\/rdD7rJD\/NUupiuBuCtQwnZG7Vdi\/XXcTd2MDyAMsFAZ1ntZL2\/IIcSUeatIZAKS6ss7fEvg==\"\n  \"nonHashData\": {\n      \"localLedgerCommitTimestamp\": {\n          \"seconds\": 1475655114\n          \"nanos\": 576500533\n      }\n      \"chaincodeEvents\": [1]\n          0:  {}\n  }\n}\n```\n\nThere\u2019s no transactions clause \u2026 not even an empty one. \nCan this be expected? and why don\u2019t have all the blocks the same structure?",
+        "edited": {
+            "user": "U25R83TAP",
+            "ts": "1475656223.000000"
+        },
+        "ts": "1475656164.002162"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there are several things that you'll need to do if you want to allow Docker containers on different machines to communicate.   I won't get into overlay networking because it is probably overkill for what you want to do here.  Assuming you are running one peer per machine\/VM, you should start the peer container on each host with the `--net=host` option .   You'll then want to configure the `CORE_PEER_DISCOVERY_ROOTNODE` to be the host ip address of at least one of the machine (host ip meaning not the docker bridge address but rather than IP that other machines can connect to you with)",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1475656362.000000"
+        },
+        "ts": "1475656314.002164"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "for safety sake, you can also configure the `CORE_PEER_LISTEN_ADDRESS` and\/or `CORE_PEER_ADDRESS` to be [machine ip]:7051 as well",
+        "ts": "1475656435.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "do this on each machine",
+        "ts": "1475656447.002169"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "I was just looking at the following.  It may be helpful in getting the `--net=host` option working.",
+        "ts": "1475656888.002170"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<http:\/\/www.dasblinkenlichten.com\/docker-networking-101-host-mode\/>",
+        "attachments": [
+            {
+                "service_name": "Das Blinken Lichten",
+                "title": "Docker Networking 101 \u2013 Host mode - Das Blinken Lichten",
+                "title_link": "http:\/\/www.dasblinkenlichten.com\/docker-networking-101-host-mode\/",
+                "text": "In our last post we covered what docker does with container networking in a default configuration.\u00a0 In this post, I\u2019d like to start covering the remaining non-default network configuration modes.\u00a0 There are really 4 docker \u2018provided\u2019 network modes in which you can run containers\u2026 Bridge mode \u2013 This is the default, we saw how this \u2026",
+                "fallback": "Das Blinken Lichten: Docker Networking 101 \u2013 Host mode - Das Blinken Lichten",
+                "image_url": "http:\/\/www.dasblinkenlichten.com\/wp-content\/uploads\/2015\/01\/image_thumb16.png",
+                "ts": 1421882733,
+                "from_url": "http:\/\/www.dasblinkenlichten.com\/docker-networking-101-host-mode\/",
+                "image_width": 247,
+                "image_height": 250,
+                "image_bytes": 159435,
+                "id": 1
+            }
+        ],
+        "ts": "1475656890.002171"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "thanks <@U0PB67X4K> and <@U23S3DPFY> ! I will take a try on this solution.",
+        "ts": "1475657120.002173"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "Hi All,",
+        "ts": "1475658980.002175"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "I am setting up enviroment to build the fabric outsoide vagrant.",
+        "ts": "1475659044.002176"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/build.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/build.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/build.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1475659048.002177"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "After installing docker, I stop docker and edit file \/etc\/defaut\/docker with options -H <tcp:\/\/0.0.0.0:2375> -H unix:\/\/\/var\/run\/docker.sock.",
+        "ts": "1475659138.002179"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "DOCKER_OPTS=\"-H <tcp:\/\/0.0.0.0:2375> -H unix:\/\/\/var\/run\/docker.sock\"",
+        "ts": "1475659183.002180"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "Then I start docker.",
+        "ts": "1475659203.002181"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "After that, every time I issue a command of docker I get a message:",
+        "ts": "1475659257.002182"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U23CGEC7N|rafael> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KGEGM36\/Untitled.xml|Untitled>",
+        "file": {
+            "id": "F2KGEGM36",
+            "created": 1475659298,
+            "timestamp": 1475659298,
+            "name": "Untitled.xml",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "xml",
+            "pretty_type": "XML",
+            "user": "U23CGEC7N",
+            "editable": true,
+            "size": 79,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KGEGM36\/Untitled.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KGEGM36\/download\/Untitled.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KGEGM36\/Untitled.xml",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2KGEGM36-57ca2744f5",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KGEGM36\/Untitled.xml\/edit",
+            "preview": "Cannot connect to the Docker daemon. Is the docker daemon running on this host?",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Cannot connect to the Docker daemon. Is the docker daemon running on this host?<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 1,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U23CGEC7N",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U23CGEC7N|rafael>",
+        "bot_id": null,
+        "ts": "1475659299.002183"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "Anyone can help?",
+        "ts": "1475660555.002186"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you need to run the command as root and\/or add your userid to the docker group",
+        "ts": "1475666118.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(assuming you are running on a Unix system)",
+        "ts": "1475666129.002189"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "try running `docker info` and if it fails run `sudo docker info` - if that succeeds what I wrote above is the issue",
+        "ts": "1475666167.002190"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "I tried it. But it was unsuccessful.",
+        "ts": "1475676073.002192"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "Actually, I run `sudo rm -rf \/var\/lib\/docker` and it worked.",
+        "edited": {
+            "user": "U23CGEC7N",
+            "ts": "1475676439.000000"
+        },
+        "ts": "1475676189.002193"
+    },
+    {
+        "user": "U2KJHTPQT",
+        "text": "<@U2KJHTPQT|stevenroose> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475677610.002198"
+    },
+    {
+        "user": "U2KLTKHSL",
+        "text": "<@U2KLTKHSL|moh.maher> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475680159.002199"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "Hi All,",
+        "ts": "1475680591.002200"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "I am building the fabric outside of vagrant.",
+        "edited": {
+            "user": "U23CGEC7N",
+            "ts": "1475680651.000000"
+        },
+        "ts": "1475680615.002201"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "When I run `make peer`, I get this error",
+        "ts": "1475680643.002202"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U23CGEC7N|rafael> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KM1E25C\/-.xml|Untitled>",
+        "file": {
+            "id": "F2KM1E25C",
+            "created": 1475680685,
+            "timestamp": 1475680685,
+            "name": "-.xml",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "xml",
+            "pretty_type": "XML",
+            "user": "U23CGEC7N",
+            "editable": true,
+            "size": 475,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KM1E25C\/-.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KM1E25C\/download\/-.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KM1E25C\/-.xml",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2KM1E25C-fe64f8b919",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/rafael\/F2KM1E25C\/-.xml\/edit",
+            "preview": "CGO_CFLAGS=\" \" CGO_LDFLAGS=\"-lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy\" GOBIN=\/opt\/gopath\/src\/github\/hyperledger\/fabric\/build\/bin go install github.com\/hyperledger\/fabric\/peer\r\ncan't load package: package github.com\/hyperledger\/fabric\/peer: cannot find package \"github.com\/hyperledger\/fabric\/peer\" in any of:\r\n\t\/opt\/go\/src\/github.com\/hyperledger\/fabric\/peer (from $GOROOT)\r\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer (from $GOPATH)\r\nmake: *** [build\/bin\/peer] Error 1",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>CGO_CFLAGS=&quot; &quot; CGO_LDFLAGS=&quot;-lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy&quot; GOBIN=\/opt\/gopath\/src\/github\/hyperledger\/fabric\/build\/bin go install github.com\/hyperledger\/fabric\/peer<\/pre><\/div>\n<div><pre>can't load package: package github.com\/hyperledger\/fabric\/peer: cannot find package &quot;github.com\/hyperledger\/fabric\/peer&quot; in any of:<\/pre><\/div>\n<div><pre>\t\/opt\/go\/src\/github.com\/hyperledger\/fabric\/peer (from $GOROOT)<\/pre><\/div>\n<div><pre>\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer (from $GOPATH)<\/pre><\/div>\n<div><pre>make: *** [build\/bin\/peer] Error 1<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 5,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U23CGEC7N",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U23CGEC7N|rafael>",
+        "bot_id": null,
+        "ts": "1475680686.002206"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "Does anyone have successfully run an hyperledger image in Bluemix container ?",
+        "ts": "1475680844.002207"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "It always shutdown with no logs. Is the 2GB RAM limit a problem ?",
+        "ts": "1475681538.002208"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "i deploy like this :",
+        "ts": "1475681583.002209"
+    },
+    {
+        "type": "message",
+        "user": "U0N4D2T61",
+        "text": "cf ic build -t <http:\/\/registry.ng.bluemix.net\/myhyperledger\/hyperledger|registry.ng.bluemix.net\/myhyperledger\/hyperledger> \/usr\/local\/go\/src\/github.com\/hyperledger\/fabric\/build\/image\/javaenv\/",
+        "ts": "1475681605.002210"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U23CGEC7N> what do you get when you run \u201cls $GOPATH\/src\/github.com\/hyperledger\/fabric\u201d in the same shell as the \u201cmake peer\"",
+        "ts": "1475681802.002211"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1475681803.002212"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "<@U0KPFAZNF>  I get this `ls: cannot access \/opt\/gopath\/src\/github.com\/hyperledger\/fabric: No such file or directory`",
+        "edited": {
+            "user": "U23CGEC7N",
+            "ts": "1475682325.000000"
+        },
+        "ts": "1475682133.002218"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "are you using the vagrant image?",
+        "ts": "1475682703.002220"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this sounds weird",
+        "ts": "1475682708.002221"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "I know the problem. I made a wrong directory.",
+        "ts": "1475682756.002222"
+    },
+    {
+        "type": "message",
+        "user": "U23CGEC7N",
+        "text": "<@U0KPFAZNF> thanks.",
+        "ts": "1475682763.002223"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U23CGEC7N> yw",
+        "ts": "1475683322.002224"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> <@U23CGEC7N> was using a custom environment",
+        "ts": "1475683371.002225",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U2KNX0F1P",
+        "text": "<@U2KNX0F1P|jsalvachua> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475686232.002226"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "I have successfully deployed the fabric on docker, thanks <@U23S3DPFY> <@U0PB67X4K> . but now I encountered another problem. I find that I cannot query the chaincode successfully.",
+        "ts": "1475690035.002227"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "I have deploy the chaincode ,and invoke it following the guide",
+        "ts": "1475690066.002228"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U21NTHK7C> im just spitballing, but I am guessing that you might be hitting the same issue we just dealt with <@U2CC1NDT2>",
+        "ts": "1475690081.002229"
+    },
+    {
+        "user": "U2CC1NDT2",
+        "inviter": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2|lenh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475690088.002230"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is, your chaincode might not have actually deployed properly",
+        "ts": "1475690106.002231"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you provide your peer log from the time period between the deploy and the query that is failing?",
+        "ts": "1475690123.002232"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "OK, just a moment",
+        "ts": "1475690280.002235"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2KPS3ADC\/screen_shot_2016-10-05_at_1.59.24_pm.png|Screen Shot 2016-10-05 at 1.59.24 PM.png> and commented: <@U0PB67X4K> fyi",
+        "file": {
+            "id": "F2KPS3ADC",
+            "created": 1475690399,
+            "timestamp": 1475690399,
+            "name": "Screen Shot 2016-10-05 at 1.59.24 PM.png",
+            "title": "Screen Shot 2016-10-05 at 1.59.24 PM.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0KPFAZNF",
+            "editable": false,
+            "size": 184902,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KPS3ADC\/screen_shot_2016-10-05_at_1.59.24_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2KPS3ADC\/download\/screen_shot_2016-10-05_at_1.59.24_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 224,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 299,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 449,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 598,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2KPS3ADC-f05acc243c\/screen_shot_2016-10-05_at_1.59.24_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 638,
+            "image_exif_rotation": 1,
+            "original_w": 1718,
+            "original_h": 1071,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F2KPS3ADC\/screen_shot_2016-10-05_at_1.59.24_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2KPS3ADC-e4003b27ee",
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2KQ28H2T",
+                "created": 1475690399,
+                "timestamp": 1475690399,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "<@U0PB67X4K> fyi",
+                "channel": ""
+            },
+            "reactions": [
+                {
+                    "name": "+1",
+                    "users": [
+                        "U0PB67X4K"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1475690404.002236"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "basic PetSet deployment working in Origin v1.3.0",
+        "ts": "1475690431.002237"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "do i need to start the peer with CORE_LOGGING_LEVEL=debug? because i cannot see anything in the peer node console",
+        "ts": "1475691155.002238"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "I found there is an error when I deploy the blockchain",
+        "ts": "1475691855.002239"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "vp0_1  | 18:22:21.365 [peer] ensureConnected -&gt; DEBU 40d Discovery knows about: [13.75.124.157:7051]\nvp0_1  | 18:22:22.304 [dockercontroller] deployImage -&gt; ERRO 40e Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nvp0_1  | 18:22:22.304 [dockercontroller] deployImage -&gt; ERRO 40f Image Output:\nvp0_1  | ********************\nvp0_1  | Step 1 : FROM hyperledger\/fabric-baseimage\nvp0_1  | Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nvp0_1  | \nvp0_1  | ********************\nvp0_1  | 18:22:22.304 [container] unlockContainer -&gt; DEBU 410 container lock deleted(dev-vp0-4ea4051e1702b1086da6aad02ac43cdf331050c9791c98356c0daff5c2516267367c3e75fca9c08f5474cc86f78e775726bd27b0d294cb218c2bb93a92aa9242)\nvp0_1  | 18:22:22.304 [chaincode] Launch -&gt; ERRO 411 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nvp0_1  | 18:22:22.304 [state] TxFinish -&gt; DEBU 412 txFinish() for txId [4ea4051e1702b1086da6aad02ac43cdf331050c9791c98356c0daff5c2516267367c3e75fca9c08f5474cc86f78e775726bd27b0d294cb218c2bb93a92aa9242], txSuccessful=[false]\nvp0_1  | 18:22:22.304 [state] GetHash -&gt; DEBU 413 Enter - GetHash()\nvp0_1  | 18:22:22.304 [buckettree] ComputeCryptoHash -&gt; DEBU 414 Enter - ComputeCryptoHash()\nvp0_1  | 18:22:22.304 [buckettree] ComputeCryptoHash -&gt; DEBU 415 Returing existing crypto-hash as recomputation not required\nvp0_1  | 18:22:22.304 [state] GetHash -&gt; DEBU 416 Exit - GetHash()\nvp0_1  | 18:22:22.304 [consensus\/noops] processTransactions -&gt; DEBU 417 Committing TX batch with timestamp: seconds:1475691724 nanos:25282953 \nvp0_1  | 18:22:22.321 [state] GetHash -&gt; DEBU 418 Enter - GetHash()\nvp0_1  | 18:22:22.321 [buckettree] ComputeCryptoHash -&gt; DEBU 419 Enter - ComputeCryptoHash()\nvp0_1  | 18:22:22.321 [buckettree] ComputeCryptoHash -&gt; DEBU 41a Returing existing crypto-hash as recomputation not required\nvp0_1  | 18:22:22.321 [state] GetHash -&gt; DEBU 41b Exit - GetHash()\nvp0_1  | 18:22:22.322 [indexes] addIndexDataForPersistence -&gt; DEBU 41c Indexing block number [1] by hash = [ed7c72c953c5ce69e717cc4b7ee72429aa94a55f0c3f67ee3fbdcefa4ac4b2038bf7e3b8313c793e336c930f4b8933aea250f86479187dac0524781973db97da]",
+        "ts": "1475691857.002240"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "here is the error part of the log",
+        "ts": "1475691870.002241"
+    },
+    {
+        "type": "message",
+        "user": "U21NTHK7C",
+        "text": "since the complete log is too long if I paste it from the timestamp I send the request to I got the response from the peer. I only paste the error part",
+        "ts": "1475691968.002242"
+    },
+    {
+        "user": "U2KAGEX6H",
+        "text": "<@U2KAGEX6H|dtonelli> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475692716.002243"
+    },
+    {
+        "type": "message",
+        "user": "U2FR6FUJV",
+        "text": "when i run peer in docker, like this:\ndocker run --rm -it  -p \"3066:3066\"   -e CORE_VM_ENDPOINT=<http:\/\/192.168.42.1:2375>  -e CORE_PEER_ADDRESS=\"host_address:3066\" ....   \nhyperledger\/fabric-peer peer node start\n\nthe other peers can't connect to this peer use the \"host_address:3066\",  who can help me?",
+        "ts": "1475702558.002245"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U21NTHK7C>  I ran into the same problem a few days ago and was given the suggestion to rebuild my environment.  Apparently there was some problem with the snapshot of the code I was using.  All was better after refreshing the code.  As a workaround though, I think you can locally create a \"latest\" Docker tag for the \"fabric-baseimage\" container",
+        "ts": "1475727436.002249"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "I pulled the code that had a problem about 2 weeks ago from today, and I pulled the working code about a week ago from today if that helps.",
+        "ts": "1475727500.002250"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U2FR6FUJV>  I'm still learning my way around Docker so this is kind of a guess, but I would try connecting to one of the containers hosting the \"peer\" and look at the interfaces\/routes that are available (e.g. use \"ifconfig\").  If your containers are only communicating on the 172.17.0.0\/12 network then it makes sense they can't see the host address.",
+        "ts": "1475727649.002251"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "I have not checked this thread for a long time, sorry if I missed the announcement. Quick question, Is \"update of chaincode\" to existing Docker image or create the image with the same name supported now ?",
+        "ts": "1475728899.002252"
+    }
+]

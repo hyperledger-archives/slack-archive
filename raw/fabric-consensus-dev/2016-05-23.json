@@ -1,0 +1,1259 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chetsky: if 1\/3 of your nodes can be byzantine, how can you avoid leaving 1\/3 of your nodes to their own devices and ignore their slowness?  They may try to catch up, but clearly they're acting (relatively) byzantine, because they're slower than the rest.",
+        "ts": "1463991154.002094"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0KPFAZNF> roughly, MVCCs mentioned above imply that out of two concurrent tx modifying a single object at most one may go through",
+        "ts": "1464012709.002095"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so implementing that counter like in that chaincode example would clash left and right",
+        "ts": "1464012739.002096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see, you are referring to avoiding hotspots",
+        "ts": "1464012741.002097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "got it, makes sense",
+        "ts": "1464012765.002098"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in UTXO data model this is largely a non-issue - as objects (coins) are not supposed to be modified concurrently",
+        "ts": "1464012811.002099"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0XR6J961> absolutely, faulty nodes get no guarantees.  But if all nodes are fault-free, and the network is fault-free, then the protocol should not -induce- faults, should not -induce- instability",
+        "ts": "1464012818.002100"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as we move to key value store we may need to take care how we program chaincodes with MVCCs",
+        "ts": "1464012836.002101"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well should",
+        "ts": "1464012842.002102"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but how do you prevent this?",
+        "ts": "1464012856.002103"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "I don't know enough aboutextant BFT protocols to be able to answer that.   I do know that as  -systems- guy, I wouldn't start down the road of building a -system- without having a protocol that had the properties I outline above.",
+        "ts": "1464012917.002104"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "In short, I should be able to operate it at maximum throughput, at overload of ingress requests, and as long as no nodes or network hops are faulty, the system should not itself induce faults.",
+        "ts": "1464012975.002105"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "that's what flow control is for, after all.",
+        "ts": "1464012992.002106"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1464013009.002107"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you differentiate between a faulty node and a slightly slow node?",
+        "ts": "1464013027.002108"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "to determine your flow control boundaries\/metrics",
+        "ts": "1464013052.002109"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "I think we know the difference in practice, eh?",
+        "ts": "1464013068.002110"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no?",
+        "ts": "1464013074.002111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not talking about a crashed node",
+        "ts": "1464013090.002112"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "agreed.  all I'm saying is, you -do- know what's the difference between faulty and \"slightly slow\".",
+        "ts": "1464013118.002113"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but just faulty - e.g. bad cable, network is slow",
+        "ts": "1464013121.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "slightly slow nodes don't exceed their timeouts",
+        "ts": "1464013128.002115"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah! timeouts",
+        "ts": "1464013135.002116"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what timeout would you set?",
+        "ts": "1464013144.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "static or determine the timeout dynamically",
+        "ts": "1464013179.002118"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not how many seconds - of course that depends",
+        "ts": "1464013191.002119"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "well - definitely deployment dependent as deployment on LSEGs floor and over WAN are not going to be the same",
+        "ts": "1464013214.002120"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "whether dynamic this is yet another issue",
+        "ts": "1464013230.002121"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(I am talking about timeouts obviously)",
+        "ts": "1464013264.002122"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1464013274.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "Let me put this in context: <https:\/\/github.com\/bft-smart\/library\/issues\/27>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "DefaultRecoverable doesn&#39;t seem to deal with nodes going out-to-lunch and then returning \u00b7 Issue #27 \u00b7 bft-smart\/library \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/bft-smart\/library\/issues\/27",
+                "text": "I've written a simple test application with BFT-Smart, as a warmup for doing something real. This application consists in: (a) a simple client that sends \"commands\" consisting of some fixed amoun...",
+                "fallback": "GitHub: DefaultRecoverable doesn't seem to deal with nodes going out-to-lunch and then returning \u00b7 Issue #27 \u00b7 bft-smart\/library",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/1755771?v=3&s=400",
+                "from_url": "https:\/\/github.com\/bft-smart\/library\/issues\/27",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1464013352.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "in NO protocol, is it acceptable for one of the conditions to be \"lower your input rate\"",
+        "ts": "1464013390.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "i can tell you a funny, funny story about a certain enterprise app-server product from 1998, in that regard.",
+        "ts": "1464013421.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "seemed, it had some bugs in its ingress-request-processing code.",
+        "ts": "1464013442.002128"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "with high likelihood,  with &gt;60 concurrent requests, it would crash.",
+        "ts": "1464013455.002129"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "so when it shipped, it was with that proviso to customers.",
+        "ts": "1464013465.002130"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "now, since nobody knew -why- it crashed, that meant that it could happen at &lt;60 concurrent reqs, and certainly nothing prevented load from going above that (per node)",
+        "ts": "1464013505.002131"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "after all, there are load-spikes in teh real world.",
+        "ts": "1464013515.002132"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "suppose you have such a system, with N nodes.  And you lose a node.  the #  of reqs\/node has just increased.  So you get another crash. And then another,etc.",
+        "ts": "1464013566.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "Flow control is about preventing self-induced instability.",
+        "ts": "1464013585.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, sure",
+        "ts": "1464014370.002135"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but byzantine flow control use the slowest F replicas as the performance limit gauge",
+        "ts": "1464014436.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because those F replicas may be deliberately slow",
+        "ts": "1464014453.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<!here|@here> sorry for jumping in (and being fairly clueless, please forgive if dumb q. :slightly_smiling_face: ). Is it possible to summarize the discussion so I can catchup ?",
+        "ts": "1464014616.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi muralisr",
+        "ts": "1464014630.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I can take it offline if you like",
+        "ts": "1464014631.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it can be summarized quickly here (might be nice for others too)",
+        "ts": "1464014647.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're talking about the fact that plain PBFT will leave F nodes behind",
+        "ts": "1464014664.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. the fastest 2F+1 nodes make progress, and the remaining F are lagging behind",
+        "ts": "1464014683.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the protocol is not \"waiting\" for them",
+        "ts": "1464014689.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To put it another way, PBFT is designed not to allow f byzantine replicas to negatively impact the network.  So, even when f nodes are simply 'a little slow', the network ends up leaving them behind, because it can't differentiate between \"doing their best but slow\" and \"trying to slow the network down\".",
+        "ts": "1464014740.002145"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what may work there is agressive to moderate - but not conservative - timeouts - to wait for all replicas to catch up most of the time",
+        "ts": "1464014856.002146"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as in wait for 2f+1 and expir of timer",
+        "ts": "1464014877.002147"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "where timer is agrweesive\/moderate",
+        "ts": "1464014883.002148"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: <@U0Y14MWA2> <@U0XRC0KLH>.  It seems like adaptive timeouts (we may have even discussed this in context of XFT) could make sense.  Say, the any node has to be no slower than 80% the speed of the 2f+1th fastest node. Otherwise we consider it byzantine and move along.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1464014934.000000"
+        },
+        "ts": "1464014904.002149"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "sth like that",
+        "ts": "1464014920.002151"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so byzantine nodes can only slow down the network by 20%",
+        "ts": "1464014938.002153"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly.  Obviously you could make it configurable, but then the negative impact would be bounded.",
+        "ts": "1464014970.002154"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it would be interesting to analyze the equilibrium between waiting for slower nodes and having to do state transfer",
+        "ts": "1464015006.002155"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> write a paper! :slightly_smiling_face:",
+        "ts": "1464015024.002156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "haha",
+        "ts": "1464015039.002157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm having trouble removing all the bugs i keep adding",
+        "ts": "1464015052.002158"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "From a business perspective, I'm not sure it's quite that simple.  \"Doing state transfer\" isn't an acceptable alternative to participating in the network.",
+        "ts": "1464015058.002159"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not?",
+        "ts": "1464015070.002160"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe <@U0XRC0KLH> can be more articulate about it, but if the f slowest nodes never execute a transaction but just get a slightly laggy state transferred version of the chain, that won't fly.",
+        "ts": "1464015123.002161"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Presumably, because they would be losing a business advantage by knowing the results at a later time, I'd think)",
+        "ts": "1464015179.002162"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not?",
+        "ts": "1464015192.002163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, then they should use faster machines?",
+        "ts": "1464015204.002164"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But then you get into an arms race, and you still leave the f slowest behind.",
+        "ts": "1464015220.002165"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1464015225.002166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "darwinistic computing",
+        "ts": "1464015235.002167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So I can play this back: IIUC in the perhaps naive approach, we assume that the network will operate at approximately the speed of the fastest 2f+1 nodes, leaving f nodes to potentially fall behind\u2026but falling behind has its own cost in that lagging nodes must enter a state transfer protocol which is more expensive than steady state, perpetuating the load on the network",
+        "ts": "1464015237.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, that's what i suggested above",
+        "ts": "1464015263.002169"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "guys - we need to work here with well specified requirements - until then this is just the guesswork of what will businesses require",
+        "ts": "1464015273.002170"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thus impacting the speed of the presumably fastest 2f+1 because then they are busy catching the others up",
+        "ts": "1464015283.002171"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It seems like a clear requirement, that if all nodes are trying to participate in a non-byzantine way, they should all be able to.",
+        "ts": "1464015321.002172"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and the proposal is to introduce a mitigating strategy to flow control the network in general to reduce state transfer pressure?",
+        "ts": "1464015337.002173"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but what does \"participate\" mean?",
+        "ts": "1464015339.002174"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "PBFT as designed, leaves the f slowest nodes never executing transactions, always trying to catch up, whenever the network is under any sort of serious load.",
+        "ts": "1464015344.002175"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ghaskins: no, people don't like it that until state transfer triggers, nodes are \"behind\"",
+        "ts": "1464015359.002176"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "guys, can I suggest you look at (for instance) tihe Ensemble system",
+        "ts": "1464015372.002177"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: It is not about preventing state transfer, it's about allowing all nodes to be 'current' in terms of participating in the ordering etc.",
+        "ts": "1464015377.002178"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "real world distributed systems designed for massive data-flows all include flow-control",
+        "ts": "1464015388.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "it isn't a 'mitigation\"",
+        "ts": "1464015392.002180"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but they can participate in ordering",
+        "ts": "1464015392.002181"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they just don't execute",
+        "ts": "1464015395.002182"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "it's a core part of what they do",
+        "ts": "1464015396.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XPR4NP4> this is not sufficient as network faults may make them appear to the rest of the network as fautly",
+        "ts": "1464015398.002184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XRC0KLH>: what i am driving at is: isnt the flow control kind of already there?",
+        "ts": "1464015423.002185"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2>: I agree, at some point nodes need to be left behind, but as a normal case high load operating principle \"we leave the f slowest behind\", that is a problem.",
+        "ts": "1464015429.002186"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that we may try to solve with that agressive\/moderate (and perhaps dynamic) timeout",
+        "ts": "1464015464.002187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. theres nothing you can do about the slower nodes per se\u2026the network will run at the speed of the fastest 2f+1\u2026that is a form of flow control right there",
+        "ts": "1464015478.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at least at the client txn confirmation rate level, not necessarily the consensus protocol level",
+        "ts": "1464015510.002189"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "personally, I dont see the f-nodes lagging as a problem\u2026thats the nature of being byzantine resistant",
+        "ts": "1464015561.002190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its irreducible, actually",
+        "ts": "1464015583.002191"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0KPFAZNF> - nice to hear this",
+        "ts": "1464015588.002192"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: It's great to get that sort of feedback, but I have gotten just the opposite from many (for instance <@U0N1D1UAE>)",
+        "ts": "1464015592.002193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think the moment you say \u201cthe network must be in lockstep\u201d you immediately discard the notion of being byzantine resistant",
+        "ts": "1464015629.002194"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we actually have some methods to deal with that  - some being discussed here but others may be more invasive",
+        "ts": "1464015631.002195"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(while staying byzantine resilient of course)",
+        "ts": "1464015654.002196"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway <@U0XPR4NP4> <@U0XR6J961>  seems we are going for: 1) periodic leader rotation and 2) wait for f slowest nodes but not too much",
+        "ts": "1464015691.002197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so back to my comment about mitigating strategy, unless there is some quantifiable negative impact to the 2f+1 when f are slow (such as increased state-transfer pressure), let them be slow",
+        "ts": "1464015837.002198"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0KPFAZNF>: this was my initial answer but apparently users may have objections to this",
+        "ts": "1464015869.002199"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so 1) and 2) would adress this to a large extent and would be configurable",
+        "ts": "1464015880.002200"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so you can switch them off",
+        "ts": "1464015887.002201"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it strikes me as \u201ccake and eat it too\"",
+        "ts": "1464015887.002202"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: As mentioned, this is great feedback, we'll make sure we can at least have this behavior via config",
+        "ts": "1464015896.002203"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and let dragging replicas - well - drag...",
+        "ts": "1464015901.002204"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(and it is what exists today)",
+        "ts": "1464015905.002205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0Y14MWA2>: I would love to understand more about the ideas you mentioned above that can deal with this",
+        "ts": "1464016048.002206"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "even if its just academic curiosity\u2026because I am fine with the lagging",
+        "ts": "1464016072.002207"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You can see on <https:\/\/github.com\/hyperledger\/fabric\/issues\/1120> and <https:\/\/github.com\/hyperledger\/fabric\/issues\/1454>",
+        "ts": "1464016099.002208"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(For some of the strategy)",
+        "ts": "1464016108.002209"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "these are good pointers - will also recap here",
+        "ts": "1464016115.002210"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: ty",
+        "ts": "1464016123.002211"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "for 1) periodic leader rotation: it addresses a lagging replica in a case when it is one of at most f replicas that complains about the leader and issues a view change. Per PBFT protocol such replica  does participate in the main protocol until the leader is changed",
+        "ts": "1464016177.002212"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so periodic leader rotation somehow helps unblock such replicas",
+        "ts": "1464016196.002213"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1120> contains more elaborate discussion - including a more invasive solution to premature lack of trust into leader (cf. SUSPECT messages mentioned there)",
+        "ts": "1464016257.002214"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "re 2) it is simple - instead wait for 2f+1 fastest replicas (out of 3f+1) we would wait for 2f+1 fastest AND an agressive\/moderately set timeout to expire before moving on",
+        "ts": "1464016324.002215"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I just skimmed the issue, and yes, this all makes sense",
+        "ts": "1464016330.002216"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if a lagging replica cannot respond within that timout it will lag - and let it lag",
+        "ts": "1464016345.002217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "without a SUSPECT protocol, the node may end up being permanently isolated",
+        "ts": "1464016351.002218"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "obviously this somehow limits latency to that timeout - so this is bad",
+        "ts": "1464016385.002219"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but we will be able to switch the mechanism off",
+        "ts": "1464016401.002220"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "We avoid SUSPECTS at the moment as adding protocol msgs - is in a sense invasive",
+        "ts": "1464016468.002221"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so it will be a last resort",
+        "ts": "1464016473.002222"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it strikes me that you could summarize this as the basic notion of introducing consensus to view-change itself",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464016542.000000"
+        },
+        "ts": "1464016496.002223"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if a machine joins the network and is neither slow nor byzantine, will it catch up \u201cpretty quickly\u201d ?",
+        "ts": "1464016512.002224"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Before or after the suggested implemented changes?",
+        "ts": "1464016541.002225"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "before",
+        "ts": "1464016545.002227"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "hopefully :slightly_smiling_face: - once we implement reconfiguration - that is",
+        "ts": "1464016546.002228"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as is today",
+        "ts": "1464016548.002229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Recovery is driven by eavesdropping, so today, if there is no traffic, no recovery will occur.",
+        "ts": "1464016575.002230"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Some of the proposed changes basically artificially generate traffic, so that recovery can occur.",
+        "ts": "1464016599.002231"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if the answer is a \u201cgood machine\u201d will likely catch up, then the effect of letting-things-be is just to be darwinistic ?",
+        "ts": "1464016624.002232"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ie, go back to what <@U0KPFAZNF> was saying - don\u2019t do anything, its part of the game",
+        "ts": "1464016680.002233"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If the node was partitioned, and initiated a view change, its blockchain will slowly catchup, but it will not start participating in ordering\/executing until a view change occurs.",
+        "ts": "1464016694.002234"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(We propose periodic view changes to solve this)",
+        "ts": "1464016705.002235"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1464016708.002236"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "\u201cnode was partitioned\u201d as in network partitioning ?",
+        "ts": "1464016740.002237"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Think, ethernet cable got unplugged for a few minutes.",
+        "ts": "1464016761.002238"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1464016764.002239"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks much!",
+        "ts": "1464016783.002240"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You're welcome, anytime",
+        "ts": "1464016809.002241"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0KPFAZNF> <@U0XPR4NP4> The problem with allowing lagging nodes to lag permanently is that it obviates the need for this project. Why would a client invest in the infrastructure to add \u201cher\u201d node to the blockchain network, if her node is not going to be up-to-date? The database might as well become a centralized service then. \u201cStrong reads\u201d are another example of a solution that calls into question the need for the blockchain. I don\u2019t want the network to wait for the slowest node, but I think all nodes need to make progress as fast as they can unless they are faulty.",
+        "ts": "1464017492.002242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0N1D1UAE>: from my perspective, its the opposite\u2026you would want to use this project specifically _because_ its resistant to a slow node and a result can be validated with a strong-read.",
+        "ts": "1464017616.002243"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "You can do that already",
+        "ts": "1464017629.002244"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "with other distributed databases",
+        "ts": "1464017642.002245"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have to step out for a dr appt, to be continued...",
+        "ts": "1464017656.002246"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N1D1UAE>: Other distributed databases are not byzantine fault tolerant?",
+        "ts": "1464017706.002247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[I'm actually inclined to agree with you with respect to keeping up to date with the network, just trying to understand where everyone is coming from]",
+        "ts": "1464017787.002248"
+    },
+    {
+        "type": "message",
+        "user": "U0N1D1UAE",
+        "text": "<@U0XPR4NP4> I\u2019m coming from trying to understand how to explain the value proposition of joining a permissioned peer network as a peer. It seems that the current consensus system makes sense if the peer networks are not large, but composed of only a few independent players that everyone trusts, where most participants set up read-only peers that do strong reads from the trusted core. I don\u2019t think this is how we currently explain the benefits of blockchain however, it\u2019s all about everyone having all of the data.",
+        "edited": {
+            "user": "U0N1D1UAE",
+            "ts": "1464019150.000000"
+        },
+        "ts": "1464019051.002249"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0N1D1UAE>: \u201c \u2026. allowing lagging nodes to lag permanently \u2026\u201d  - if that can, in general, happen only with byzantine nodes or slow machines., that is, it is not \u201ctypical\u201d scenario, I\u2019d think that\u2019s also subsumed by the model ? ie, nodes that lag behind deserve to lag behind\u2026.",
+        "ts": "1464019138.002250"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0N1D1UAE>: I would replace \"everyone trusts\" with \"limited trust\", and we make up for that lack of trust by checking for Byzantine faults",
+        "ts": "1464019174.002252"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ULK2JPP>: I think the difference here is that your machine doesn't have to be \"slow\" to be left behind.   In general, the f slowest replicas will constantly be lagging, even if they are 99% as fast as the 2f+1st fastest replica, whenever the system is under high load.",
+        "ts": "1464019529.002253"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ah true. understood\u2026(thanks <@U0XPR4NP4> !)",
+        "ts": "1464019587.002254"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "interesting, its like this discussion. If its slow enough, I can catchup :slightly_smiling_face: \u2026. if that analogy holds, isn;t it a matter of flow control ?",
+        "ts": "1464020202.002255"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "Interesting &amp; good discussion here.\nMy 2c: \n<@U0XRC0KLH> - Ensemble would be the wrong place to look for a solution because there, if a node does not respond after a timeout, then it is faulty in the *worst* possible way that matters, because it only considers crashes. So if the slow node times out, it can be thrown out and we do not harm the system. Also, Ensemble will reconfigure the group for this. On the other hand, in the BFT model, a slow node shows a *mild* form of fault, because it could catch up later and fill in for an actually misbehaving node. So the suggested solution makse sense to me (use a moderate timeout, tuned to the progress rate of the others, with sth like the 20% idea). The inflow control must also be adjusted to what the system can handle.\n<@U0KPFAZNF>: Operating in with much asynchrony and permit the lagging nodes will create an issue with buffering: in theory we can pretend nodes perpetually try to resend to the slow nodes, but this implies unbounded buffers, either at the sender or in a communication channel like TCP. None of them has such unbounded memory in practice though. Thats why the proposed solutions are needed (periodic view change, gossip, and so on).",
+        "ts": "1464021202.002256"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0N1D1UAE>: back",
+        "ts": "1464023256.002257"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, you were wondering what is the value proposition if you were to go through the trouble of installing a VP only to have it be summarily ignored by the network IIUC",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464023345.000000"
+        },
+        "ts": "1464023326.002258"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres two parts to that answer",
+        "ts": "1464023372.002260"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the first part is the value proposition to _everyone else_\u2026that is, someone bringing a subpar node\/network to the cluster doesn\u2019t take everyone else down with it",
+        "ts": "1464023451.002261"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the second is to recognize that \u201cvalidation\u201d is actually a multi faceted beast:  one part is the part we often talk the most about\u2026the notion of computing a signature for a given transaction juxtaposed against a specific world state\u2026.the second part is about validating the signatures of all the participating validating peers",
+        "ts": "1464023641.002262"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "any VP has the ability to participate in the first part, but we only need a certain subset to achieve quorum\u2026.its a best effort contribution in the hope that your VP helps the network make forward progress",
+        "ts": "1464023748.002263"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its the second part that is actually important w.r.t. the value proposition of a potential participant\u2026the ability to verify that everything looks kosher, up to the limits of the byzantine resistance of the network.",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464024131.000000"
+        },
+        "ts": "1464023799.002264"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "A slow node only loses out in the ability to help achieve quorum, it doesn\u2019t lose out in its ability to ascertain the legitimacy of the world state",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464023900.000000"
+        },
+        "ts": "1464023886.002265"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "What I am trying to say is, liveliness\/real-time doesn\u2019t matter for the most important function, it can be done offline at any time in the future.",
+        "ts": "1464023974.002267"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If, on the other hand, we are saying that all things being equal, certain nodes may never catch up, we should probably try to address that so its more even",
+        "ts": "1464024185.002269"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if someone introduces a particularly slow node and\/or connection, i have absolutely no problem with the notion that it might never contribute a signature",
+        "ts": "1464024436.002270"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XV1HDL3>: understand what you are getting at:  What I am saying is that at least for certain use cases, there will be a natural flow control at a higher level",
+        "ts": "1464025818.002271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, if I am doing UTXOs, im probably not going to blast a chain of 100k successive spends of the same coin..rather I am going to do certain transactions and then block for confirmation",
+        "ts": "1464025914.002272"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if confirmation is slow, my spend requests slow down",
+        "ts": "1464025938.002273"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats all I was getting at",
+        "ts": "1464025965.002274"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KPFAZNF>: Do you see clients querying 'the network', or, 'their validating peer'?",
+        "ts": "1464026376.002275"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Thats a tough question\u2026.we didn\u2019t have the notion of query() like the one that exists in HLF.  Everything went through consensus, which solves some problems (and creates others).  When I first joined OBC I didn\u2019t like the notion of \u201ctrusting your NVP\u201d, at least partly because I didn\u2019t view it as \u201cpart of the client stack\u201d.   If you do view it that way (or consume something more explicit like the upcoming node sdk), it seemed that \u201cstrong read\u201d was the only way to go.  However, I think the current mechanism for query() is not really conducive to strong reads so I am not sure we have much of a choice",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464026639.000000"
+        },
+        "ts": "1464026611.002276"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we would either need to be able to specify the block height in the request (which may have implications for clients that ask for sufficiently old blocks), or to include block height in the response so that clients could tell when they get a stale answer (as opposed to a byzantine answer)",
+        "ts": "1464026718.002278"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I do like what you were getting at the other day with the notion that we can probably \u201cpush\u201d some kind of synchronizing signal w.r.t. \u201ccurrent\u201d rather than requiring remote end points to try to request it",
+        "ts": "1464026796.002279"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that is part of the story here.",
+        "ts": "1464026810.002280"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, there seem to be two camps to some extent. The \"You can't possibly trust the result unless it's a strong read, which goes to the whole network\" and then the other side of \"So long as I know my copy of the blockchain is correct, there's no reason to go to the network\"",
+        "ts": "1464026878.002281"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "don't checkpoints play that role of the synchronizing signal?",
+        "ts": "1464026894.002282"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That is one proposal",
+        "ts": "1464026912.002283"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And one I like)",
+        "ts": "1464026916.002284"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just realized my first statement above was incoherent (sorry, just had my eyes dilated and cant see very clearly right now, heh)",
+        "ts": "1464027028.002285"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I meant was, if you can get to \u201ci trust my stack\u201d, then a weak read is ok",
+        "ts": "1464027054.002286"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I do think that \u201ctrusting your stack\u201d really means that you own an NVP-like representation of the chain locally",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1464027103.000000"
+        },
+        "ts": "1464027091.002287"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The sort of fundamental architecture question I have is whether clients get to talk to the whole network or not.  As I've heard it described before, you have 4 companies, each running a validating peer, and of course, company A isn't going to let clients from company B query its validating peer, because of firewalls and generally because they do not want to pay to support their queries (maybe company B runs 100x the queries of company A).",
+        "ts": "1464027113.002289"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have always envisioned they could, but i see your point",
+        "ts": "1464027202.002290"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me think about it some more",
+        "ts": "1464027230.002291"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And maybe it's fine that they can, but if they cannot, it changes the implementation considerably",
+        "ts": "1464027231.002292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "agreed",
+        "ts": "1464027246.002293"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think in the bitcoin world, they would say \"It's totally unacceptable to have to go ask the network, I need to be able to trust queries against my node\".  Of course I think that's a little disingenuous, you still need information from the network, like the current block height, to actually trust your node, but I still understand their concern that doing strong reads is very much a different paradigm.  It would be nice to support both.",
+        "ts": "1464027350.002294"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0KPFAZNF>: as long as you have f+1 checkpoints for block X (which is a process that happens during PBFT), your local chain is solid up to that point, so a weak read is good. checkpoint messages keep coming periodically and harden your local chain up to block Y (Y &gt; X), so eventually you get a longer chain you can trust. do you see any drawbacks to that?",
+        "ts": "1464027367.002295"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XQ35CDD> There is the censorship problem, but I think with the 'time, crontab' stuff <@U0ULK2JPP> is working on, you would be able to detect that",
+        "ts": "1464027428.002296"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "censorship from whom specifically?",
+        "ts": "1464027458.002297"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A VP censoring updates to a client.  Censorship would be the malicious form, but you could simply go with 'staleness' as a more general term.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1464027543.000000"
+        },
+        "ts": "1464027496.002298"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "correct, but not an unfixable problem. in the end, unless you're partitioned (at which case you have bigger problems), you should be able to get those checkpoints.",
+        "ts": "1464027635.002301"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XQ35CDD>: when I first joined the project, I was bothered by that model because I saw the local NVP as part of \u201cthe network\u201d and not part of \u201cthe client\u201d.  I think when we start to talk about having the NVP be part of the client figuratively (or literally via the nodesdk) then it becomes more practical.  I think the important distinction is when looking at \u201cthe trust line\u201d.   On the trusted side of the trust line, single points of reference are \u201cok\u201d.  On the untrusted side, you have to \u201cfan out\u201d or \u201cstrong read\u201d\u2026.now by strong read, I dont mean necessarily w.r.t. transactions\/queries\u2026but rather just the notion that multiple points of reference are considered\u2026.this would include consensus\/ledger level comms",
+        "ts": "1464027661.002302"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "bridging the trust line must consider the entire network state, IOW",
+        "ts": "1464027716.002303"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "agreed",
+        "ts": "1464027739.002304"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "lunch time, bbiab",
+        "ts": "1464027803.002305"
+    },
+    {
+        "user": "U196VQF1N",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U196VQF1N|vladimir.starostenkov> has joined the channel",
+        "ts": "1464035143.002306"
+    }
+]

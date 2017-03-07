@@ -1,0 +1,1225 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>  - looks like you need to do a quick rebase",
+        "ts": "1478075766.002027"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: it sounds like you are about where I am right now (build runs fine, uts run, die in the middle)",
+        "ts": "1478090140.002028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you clarify on what is not to your expectations?",
+        "ts": "1478090155.002029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(also note, I am not fully done yet)",
+        "ts": "1478090163.002030"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF> <@U0PB67X4K> we haven't agreed yet how to continue with this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1649\/>",
+        "ts": "1478090491.002031"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> <https:\/\/gist.github.com\/christo4ferris\/f4027847f2e168898d4045963ac1cdbb>",
+        "ts": "1478090674.002032"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "looks like we need to have dind for chaincode tests",
+        "ts": "1478090694.002033"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I should note that this isn\u2019t quite what I was thinking",
+        "ts": "1478090738.002034"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> 2159 rebased and updated, it should go in first. I\u2019ll rebase the others on top of it once it\u2019s merged. thanks!",
+        "ts": "1478090863.002035"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I envisioned a model where the codebase is mounted into a base image container and the build and tests execute IN the container. This seems (correct me if I am mistaken) to be a native build, which is also goodness, however, it means that when a changeset is submitted, it might pass on native mac or windows but fail for ubuntu, etc",
+        "ts": "1478090865.002036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think if you dig in deeper, you'll see thats exactly what we are doing",
+        "ts": "1478090897.002037"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not much is actually run \"native\" aside from commands like git\/make\/docker\/tar",
+        "ts": "1478090917.002038"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "everything else is happening in a docker environment",
+        "ts": "1478090924.002039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(such as go-build, etc)",
+        "ts": "1478090931.002040"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I do currently rely on things like \"go list\" and \"git ls-files\" to run native",
+        "ts": "1478090955.002041"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though that could change if necessary",
+        "ts": "1478090959.002042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but as an example:",
+        "ts": "1478090969.002043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/docker-native\/scripts\/goUnitTests.sh#L42>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "ghaskins\/hyperledger-fabric",
+                "title_link": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/docker-native\/scripts\/goUnitTests.sh#L42",
+                "text": "hyperledger-fabric - Blockchain fabric code",
+                "fallback": "GitHub: ghaskins\/hyperledger-fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/blob\/docker-native\/scripts\/goUnitTests.sh#L42",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478091035.002044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in this example, you can see the UTs now run inside a docker-run context",
+        "ts": "1478091059.002046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this comes from this change",
+        "ts": "1478091099.002047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/ghaskins\/hyperledger-fabric\/commit\/5e18563bd5e16a6fb8100d2f0210524d9362b085>",
+        "ts": "1478091100.002048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might be easier to review if you look patch by patch: <https:\/\/github.com\/ghaskins\/hyperledger-fabric\/commits\/docker-native>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "ghaskins\/hyperledger-fabric",
+                "title_link": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/commits\/docker-native",
+                "text": "hyperledger-fabric - Blockchain fabric code",
+                "fallback": "GitHub: ghaskins\/hyperledger-fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/ghaskins\/hyperledger-fabric\/commits\/docker-native",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478091147.002049"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "This is another major one where I moved the linter to run inside docker: <https:\/\/github.com\/ghaskins\/hyperledger-fabric\/commit\/1ff77ff910d04b257db56b1774fd534e9092b010>",
+        "ts": "1478091206.002051"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR> <@U0PB67X4K> regarding CR 1649: I was thinking more about <@U0PB67X4K> said about just requiring the user to manually tag things, and I am not sure that will work well in all scenarios",
+        "ts": "1478091462.002052"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, deploying to kubernetes, I dont easily have access to the docker catalog",
+        "ts": "1478091480.002053"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U13TWBRBL> merged\u2026 I want to point out though that code coverage has dipped below 50%. This is unacceptable",
+        "ts": "1478091500.002054"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, it would be nice to have something like CR 1649 in place so I can deploy \"fabric-peer\" and have it take care of the rest (kind of like how kubernetes itself works)",
+        "ts": "1478091523.002055"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I want developers doing test driven development",
+        "ts": "1478091526.002056"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I want developers writing the unit tests before the code",
+        "ts": "1478091534.002057"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "testing is not and cannot be an afterthought",
+        "ts": "1478091555.002058"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "it is fundamental",
+        "ts": "1478091559.002059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> in light of above ^^^, do you think it might be closer to what you envisioned after all?  Or did I still miss the mark?",
+        "ts": "1478091769.002060"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in summary, the meat of everything (except behave, i havent ported that yet) is now done inside a normalized docker environment, though I do rely on a few native tools like make\/git\/go\/docker to orchestrate it all",
+        "ts": "1478091848.002061"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my thought was, those tools are ubiquitous...whereas things like librocksdb have been a PITA",
+        "ts": "1478091866.002062"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and I only rely on \"go\" at a high level, like for accumulating package lists, etc",
+        "ts": "1478091888.002063"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF> you mean user tagging won't go easily? For me, the best temporary solution seems to be still tagging from peer",
+        "ts": "1478092107.002064"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR> to be clear: I am trying to say that I think CR 1649 is more appropriate solution than relying on explicit user action",
+        "ts": "1478092147.002065",
+        "reactions": [
+            {
+                "name": "+1::skin-tone-2",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and therefore, my vote is to merge",
+        "ts": "1478092175.002066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "without it, my kubernetes deployments are not going to work properly",
+        "ts": "1478092193.002067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i am still trying to rapidly converge on the point where even 1649 isnt necessary, but we are not there yet",
+        "ts": "1478092221.002068"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> digging",
+        "ts": "1478092285.002069"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> also note I exploit an overarching pattern here: Quite a few things run in two phases",
+        "ts": "1478092489.002070"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ah, I see what you did there",
+        "ts": "1478092516.002071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a docker-run phase, which does the compilation, saving results to a volume-mount, and a second phase issuing a docker-build to seal the artifacts in",
+        "ts": "1478092528.002072"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "ok, so for the unit tests, we need to exploit <@U0PB67X4K> docker in docker approach",
+        "ts": "1478092543.002073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(this will pave the way to having lighter weight final artifacts, like alpine images with just \"peer\" binary",
+        "ts": "1478092561.002074"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "eg rather than docker run, use compose and stand up a dind container along side of the peer container",
+        "ts": "1478092583.002075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you mean for the unit-test execution?",
+        "ts": "1478092606.002076"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes",
+        "ts": "1478092610.002077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "does docker-compose handle dind for you?",
+        "ts": "1478092618.002078"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "and behave",
+        "ts": "1478092620.002079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and can you clarify: there are two types of \"dind\"...there is the literal \"dind\" project which nests the containers, and there is the \"-H\" method which just points the tooling to a remote dockerd",
+        "ts": "1478092707.002080"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/github.com\/mastersingh24\/fabric05-docker\/blob\/master\/fabric05\/compose\/single-peer-ca.yaml>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "mastersingh24\/fabric05-docker",
+                "title_link": "https:\/\/github.com\/mastersingh24\/fabric05-docker\/blob\/master\/fabric05\/compose\/single-peer-ca.yaml",
+                "text": "Contribute to fabric05-docker development by creating an account on GitHub.",
+                "fallback": "GitHub: mastersingh24\/fabric05-docker",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/5595790?v=3&s=400",
+                "from_url": "https:\/\/github.com\/mastersingh24\/fabric05-docker\/blob\/master\/fabric05\/compose\/single-peer-ca.yaml",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478092751.002081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we have, for a long time, used the -H method...and from what I have read, it might be the generally easier\/better solution to work with over true dind",
+        "ts": "1478092752.002083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(because of the security implications and asymmetric behavior it tends to have",
+        "ts": "1478092774.002084"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what are your thoughts there?",
+        "ts": "1478092778.002085"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "he had to do some tweaks but basically, the first is a derivative of docker in docker",
+        "ts": "1478092780.002086"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, ill take a look at that",
+        "ts": "1478092806.002087"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/github.com\/docker-library\/docker\/blob\/36e2107fb879d5d5c3dbb5d8d93aeef0a2d45ac8\/1.12\/Dockerfile>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "docker-library\/docker",
+                "title_link": "https:\/\/github.com\/docker-library\/docker\/blob\/36e2107fb879d5d5c3dbb5d8d93aeef0a2d45ac8\/1.12\/Dockerfile",
+                "text": "docker - Docker Official Image packaging for Docker",
+                "fallback": "GitHub: docker-library\/docker",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/7739233?v=3&s=400",
+                "from_url": "https:\/\/github.com\/docker-library\/docker\/blob\/36e2107fb879d5d5c3dbb5d8d93aeef0a2d45ac8\/1.12\/Dockerfile",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478092838.002088"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "note that is based on alpine",
+        "ts": "1478092845.002090"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I think that we\u2019d need an ubuntu version of dind",
+        "ts": "1478092874.002091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so is <@U0PB67X4K> using a dind based image as the base?  or is he just using privledged mode with -H?",
+        "ts": "1478092889.002092"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I need to dig a bit to find where he builds this image",
+        "ts": "1478092921.002093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i still need to confirm this, but I think the -H pseudo dind would work if I simply ran the UTs with --privledged",
+        "ts": "1478092923.002094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "on a related note: the peer needs to be able to create docker containers too, technically...how does this work today?",
+        "ts": "1478092964.002095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are we just getting lucky that the UTs do not deploy anything?",
+        "ts": "1478092976.002096"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF> I see, and what do the others think of CR 1649?",
+        "ts": "1478093042.002097"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is where the dind comes in",
+        "ts": "1478093223.002098"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "basically, we tell the peer that the docker daemon address is named \u2018docker\u2019 and set the CORE_VM_ENDPOINT accordingly - CORE_VM_ENDPOINT=<http:\/\/docker:2375>",
+        "ts": "1478093280.002099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to keep them straight, lets differentiate them as dind-true and dind-H",
+        "ts": "1478093293.002100"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so when the peer spins up a chaincode container, it just asks the daemon in the dind container",
+        "ts": "1478093308.002101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, so I would classify CORE_VM_ENDPOINT as \"dind-H\"",
+        "ts": "1478093308.002102"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes",
+        "ts": "1478093330.002103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "dind-true is different in that the dockerd runs inside the docker container, and actually nests the underlying containers under itself",
+        "ts": "1478093344.002104"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "whereas dind-H simply fires up containers at the same level as itself",
+        "ts": "1478093364.002105"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "oh, misunderstood",
+        "ts": "1478093376.002106"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "then no",
+        "ts": "1478093378.002107"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "you want true I believe where the containers run inside the dind container",
+        "ts": "1478093392.002108"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "russian dolls",
+        "ts": "1478093398.002109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ideally, yes....there are a few issues we need to work through though",
+        "ts": "1478093435.002110"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and we dont use dind-true today, afaick)",
+        "ts": "1478093452.002111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think architecturally, dind-true makes the most sense",
+        "ts": "1478093472.002112"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we don\u2019t now, no",
+        "ts": "1478093475.002113"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is a new approach",
+        "ts": "1478093479.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but from a practical perspective, its not super mature yet",
+        "ts": "1478093492.002115"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "keeps things tidier",
+        "ts": "1478093492.002116"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is true",
+        "ts": "1478093500.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right...will become more important to manage the namespace",
+        "ts": "1478093510.002118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, where I am going with this is: I think I can get dind-H in place trivially",
+        "ts": "1478093539.002119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "dind-true might take a bit more work\/vetting",
+        "ts": "1478093557.002120"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if thats the case, I think the UTs would be unblocked in the new model",
+        "ts": "1478093575.002121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i do hope, for a later phase, to move to alpine for the baseimage anyway, which might make things easier to incorporate dind-true at that time",
+        "ts": "1478093623.002122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "does that sound like an acceptable plan?",
+        "ts": "1478093669.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think we are no worse for the wear....we essentially let the UTs drive dockerd on the host today by running them natively...if we then push the UTs into a dind-H container, they are still just driving containers on the host all the same",
+        "ts": "1478093788.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is more of an important concept for the peer itself IMO...would be nice to namespace scope the chaincode containers under the peer",
+        "ts": "1478093816.002125"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - we can just mount the host docker daemon to a UT container",
+        "ts": "1478094288.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if we name the UT container, then docker networking should let any child containers communicate back to any endpoint on the UT container",
+        "ts": "1478094330.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I think that using Alpine is a good idea, but I also think that some market analysis needs to be done as to how acceptable that might be",
+        "ts": "1478094442.002128"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should at least pair down to debian:jessie   :wink:",
+        "ts": "1478094512.002129"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I was going to see if we can get Alpine approved by IBM)  :wink:",
+        "ts": "1478094527.002130"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I was more thinking about enterprise use\/acceptance",
+        "ts": "1478095745.002131"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "eg who does triage and mitigation for CVEs?",
+        "ts": "1478095887.002132"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "HPE seemed to be on this but has not been updated for 5 months",
+        "ts": "1478095898.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/github.com\/eedevops\/alpine-cve-db>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "eedevops\/alpine-cve-db",
+                "title_link": "https:\/\/github.com\/eedevops\/alpine-cve-db",
+                "text": "alpine-cve-db - Alpine CVE list sourced from <https:\/\/nvd.nist.gov\/download.cfm> and easily consumable by scanners and other clients.",
+                "fallback": "GitHub: eedevops\/alpine-cve-db",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/16719882?v=3&s=400",
+                "from_url": "https:\/\/github.com\/eedevops\/alpine-cve-db",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1478095900.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> i hadnt thought of it from that angle",
+        "ts": "1478096369.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "long story short, with the current ubuntu design, I think I can eventually get fabric-peer image to about 150M (uncompressed)",
+        "ts": "1478096405.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Alpine is community driven\u2026 this is a good thing, but enterprises want assurances",
+        "ts": "1478096420.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and I think that would drop to closer to 15-20M on alpine",
+        "ts": "1478096420.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, its a big drop, but 150M isnt bad either",
+        "ts": "1478096433.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "150 better than 1.6G",
+        "ts": "1478096438.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1478096445.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "you are removing the build time dependencies from the base image?",
+        "ts": "1478096467.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am still less alarmed about the 1.6G than others...its 400M download and you only pay it once",
+        "ts": "1478096468.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but still, i understand the concern and I think we can fix it",
+        "ts": "1478096483.002145"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, not in this series\/effort, but that is my thinking yes",
+        "ts": "1478096504.002146"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im thinking \"baseimage\" gets split into, say baseimage (with just minimum runtime, librocksdb.so, etc), \"builder\" (kind of what baseimage is today, with full golang, protoc, etc), and possibly \"testenv\"",
+        "ts": "1478096590.002147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "they would have a derivative relationship: baseimage -&gt; builder -&gt; testenv",
+        "ts": "1478096610.002148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(where testenv has all the extra crap for testing, like behave\/docker-compose, etc",
+        "ts": "1478096628.002149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, to the point of the multi-phase build: I would run the build-phase with the builder image, produce artifacts to the volume mount, and  then seal them in the minimal baseimage",
+        "ts": "1478096671.002150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im actually _almost_ there now if I just use xenial instead of a stripped down form form of baseimage, except its missing librocksdb.so",
+        "ts": "1478096711.002151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as a POC",
+        "ts": "1478096717.002152"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KM61BCP> thanks for merging 2159. can you review and merge <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2155>? others on the node.js SDK team are somewhat blocked until this gets merged",
+        "ts": "1478097525.002153"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> ^^^",
+        "ts": "1478097545.002154"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I've looked at it - just waiting for CI verification",
+        "ts": "1478097712.002155",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U11HH3P7Y> can you check why the CI job hasn\u2019t started on this changeset? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2155\/>",
+        "ts": "1478098422.002156"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "let me check",
+        "ts": "1478098467.002157"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U11HH3P7Y> same thing on <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2115\/>   I even added the \u201creverify\u201d and there is no CI action",
+        "ts": "1478098520.002158"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "is there another way to trigger the CI?",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1478098570.000000"
+        },
+        "ts": "1478098558.002159"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I could see 20 jobs are in progress, I think \"reverify\" is not working when all available executors are busy in process",
+        "ts": "1478098872.002161"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "will check with <@U0UHG4VP1> and let you know",
+        "ts": "1478098886.002162",
+        "reactions": [
+            {
+                "name": "ok_hand",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "+1 to this, I am seeing similar problems with reverify not working",
+        "ts": "1478099782.002163"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jyellick dave.enyeart jzhang I will look in to why reverify is not working",
+        "ts": "1478099976.002164",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13TWBRBL",
+                    "U0XPR4NP4"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jzhang I triggered 2155 manually",
+        "ts": "1478100049.002165"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0UHG4VP1> thanks!",
+        "ts": "1478100074.002166"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "guys, could you tell me what you think about this? <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1649\/>",
+        "ts": "1478101138.002167"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0PB67X4K> <@U0KM61BCP> looks like i need to rebase 2155 to have it pick up the changes in 2159 to get past the headless-test.js error (that the test never returns). <@U0UHG4VP1> or <@U11HH3P7Y> can you manually abandon that build (<https:\/\/jenkins.hyperledger.org\/job\/fabric-sdk-node-verify-x86_64\/42\/>)?",
+        "ts": "1478101890.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jzhang just let it time out, I don't want to get in the habit of messing with builds manually",
+        "ts": "1478101941.002169"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok",
+        "ts": "1478101957.002170"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "actually, I see they're both hung for a a half hour so I killed 42 and 43",
+        "ts": "1478102110.002171"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0UHG4VP1> thanks!",
+        "ts": "1478106233.002172"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KM61BCP> <@U0PB67X4K> the CI job on 2155 has just finished with +1.",
+        "ts": "1478106260.002173"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U13TWBRBL> You have 1 from me.",
+        "ts": "1478109360.002174",
+        "reactions": [
+            {
+                "name": "v",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2157\/> has been rebased and ready for review and merge",
+        "ts": "1478110369.002175"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2161\/1> I gave a -2",
+        "ts": "1478111366.002176"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "putting source in documentation is a bad idea as it can get out of synch too easily. Link to the file in source tree",
+        "ts": "1478111387.002177"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0PB67X4K> <@U0KPFAZNF> and any others\u2026 was chatting with <@U13TWBRBL> about testing for SDK which requires images",
+        "ts": "1478113436.002178"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "hence to develop for node, java etc SDK you need to build your own images",
+        "ts": "1478113454.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is probably unnecessary",
+        "ts": "1478113463.002180"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we should be able to avoid that",
+        "ts": "1478113490.002181"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I wonder what others think about pushing images out of the build and labeling them \u201cunstable\u201d or something",
+        "ts": "1478113508.002182"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "these could be used for development and testing and the more adventurous",
+        "ts": "1478113552.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "thoughts?",
+        "ts": "1478113558.002184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not for or against the idea, but I will note that the \"-snapshot\" that we currently label them with is sufficient in regards to the \"unstable\" nature, IMO",
+        "ts": "1478113612.002185"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres plenty of precedent for that, at least",
+        "ts": "1478113628.002186"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I don\u2019t think this is a bad idea. Generated (only) by the CI - with a \u2018naming scheme\u2019 which allows us to pull the exact built image and test locally\u2026 will allow everyone to reuse it. \u201c-snapshot\u201d is fine. We\u2019ll have the version\/hash as part of the build, etc. Sounds good to me.",
+        "ts": "1478113736.002187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i would like to understand more about the use case before making any further recommendations",
+        "ts": "1478113790.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, the fact that we label -snapshot-$sha means we will be adding a lot more artifacts to dockerhub than we would in the more traditional undecorated \"-snapshot\" label scenario",
+        "ts": "1478113838.002189"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, id like to understand how these artifacts are expected to be consumed....I may prefer to drop the -sha depending on the answert",
+        "ts": "1478113871.002190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for example: does SDK want a stable coordinate, a stable release, a coupled version, or just \"whatever\"",
+        "ts": "1478113943.002191"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF> i think there are two primary use cases from the SDK\u2019s point of view: 1) CI job 2) contributor\u2019s local testing",
+        "ts": "1478114675.002192"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "for #1 we\u2019ll want to run against the latest fabric images",
+        "ts": "1478114694.002193"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "for #2 a developer may choose the latest or a more \u201cstable\u201d version depending on what they are coding up",
+        "ts": "1478114713.002194"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\u201cstable\u201d in relative terms, like \u201cfrom last sprint\u201d but not much older than that given the fast pace in fabric progression",
+        "ts": "1478114776.002195"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KM61BCP> <@U0PB67X4K> can you review <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2201> for \u201cgulp test\u201d command to run the full test bucket and generate coverage report? screenshot like below:",
+        "ts": "1478120246.002196"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U13TWBRBL|jzhang> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jzhang\/F2XU3T0BE\/pasted_image_at_2016_11_02_04_57_pm.png|Pasted image at 2016-11-02, 4:57 PM>",
+        "file": {
+            "id": "F2XU3T0BE",
+            "created": 1478120279,
+            "timestamp": 1478120279,
+            "name": "Pasted image at 2016_11_02 04_57 PM.png",
+            "title": "Pasted image at 2016-11-02, 4:57 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U13TWBRBL",
+            "editable": false,
+            "size": 193384,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2XU3T0BE\/pasted_image_at_2016_11_02_04_57_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2XU3T0BE\/download\/pasted_image_at_2016_11_02_04_57_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2XU3T0BE-cfab1086e1\/pasted_image_at_2016_11_02_04_57_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2XU3T0BE-cfab1086e1\/pasted_image_at_2016_11_02_04_57_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2XU3T0BE-cfab1086e1\/pasted_image_at_2016_11_02_04_57_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 329,
+            "thumb_360_h": 360,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2XU3T0BE-cfab1086e1\/pasted_image_at_2016_11_02_04_57_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 438,
+            "thumb_480_h": 480,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2XU3T0BE-cfab1086e1\/pasted_image_at_2016_11_02_04_57_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 651,
+            "original_h": 713,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jzhang\/F2XU3T0BE\/pasted_image_at_2016_11_02_04_57_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2XU3T0BE-a8d3733082",
+            "channels": [
+                "C28CXQXD5"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U13TWBRBL",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U13TWBRBL|jzhang>",
+        "bot_id": null,
+        "ts": "1478120282.002197"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "the CI job seems to be having issues, all 3 on changeset 2201 failed the same way:\n\n21:04:26  &gt; git rev-parse FETCH_HEAD^{commit} # timeout=10\n21:04:28 java.io.IOException: Remote call on hyp-x86_64-1234 failed\n21:04:28 \tat hudson.remoting.Channel.call(Channel.java:805)\n21:04:28 \tat hudson.remoting.RemoteInvocationHandler.invoke(RemoteInvocationHandler.java:252)\n21:04:28 \tat com.sun.proxy.$Proxy91.withRepository(Unknown Source)\n21:04:28 \tat org.jenkinsci.plugins.gitclient.RemoteGitImpl.withRepository(RemoteGitImpl.java:234)\n21:04:28 \tat com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser.getFirstParent(GerritTriggerBuildChooser.java:166)\n21:04:28 \tat com.sonyericsson.hudson.plugins.gerrit.trigger.hudsontrigger.GerritTriggerBuildChooser.prevBuildForChangelog(GerritTriggerBuildChooser.java:132)\n21:04:28 \tat hudson.plugins.git.GitSCM.computeChangeLog(GitSCM.java:1198)\n21:04:28 \tat hudson.plugins.git.GitSCM.checkout(GitSCM.java:1131)\n21:04:28 \tat hudson.scm.SCM.checkout(SCM.java:495)\n21:04:28 \tat hudson.model.AbstractProject.checkout(AbstractProject.java:1278)\n21:04:28 \tat hudson.model.AbstractBuild$AbstractBuildExecution.defaultCheckout(AbstractBuild.java:604)\n21:04:28 \tat jenkins.scm.SCMCheckoutStrategy.checkout(SCMCheckoutStrategy.java:86)\n21:04:28 \tat hudson.model.AbstractBuild$AbstractBuildExecution.run(AbstractBuild.java:529)\n21:04:28 \tat hudson.model.Run.execute(Run.java:1720)\n21:04:28 \tat hudson.model.FreeStyleBuild.run(FreeStyleBuild.java:43)\n21:04:28 \tat hudson.model.ResourceController.execute(ResourceController.java:98)\n21:04:28 \tat hudson.model.Executor.run(Executor.java:404)\n21:04:28 Caused by: java.lang.NoSuchMethodError: org.eclipse.jgit.revwalk.RevWalk.release()V",
+        "ts": "1478128381.002198"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jzhang link to a change?",
+        "ts": "1478128572.002199"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the change that's failing",
+        "ts": "1478128576.002200"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2201\/>",
+        "ts": "1478128591.002201"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "jzhang: I updated one of the plugins for gerrit and it appears to have broken more builds than I thought. I've retriggered 2201 and it moving along: <https:\/\/jenkins.hyperledger.org\/view\/ci-management\/job\/fabric-sdk-node-verify-x86_64\/53\/console>",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1478128739.000000"
+        },
+        "ts": "1478128703.002202"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "from the web UI it\u2019s still npm install'ing",
+        "ts": "1478128809.002204"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "just finished successfully",
+        "ts": "1478128852.002205"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "thanks <@U0UHG4VP1> !",
+        "ts": "1478128889.002206",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UHG4VP1"
+                ],
+                "count": 1
+            }
+        ]
+    }
+]

@@ -1,0 +1,622 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "kind of 'next level' stress tests for sbft: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2515\/13>",
+        "ts": "1479911264.004323"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1KDAMDJ7|sanchezl> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sanchezl\/F35KVP9EV\/jim-env.tgz|jim-env.tgz> and commented: <@U13TWBRBL> , I was unable to reproduce your issue. Here is a copy of the environment I used and the commands I ran.",
+        "file": {
+            "id": "F35KVP9EV",
+            "created": 1479913985,
+            "timestamp": 1479913985,
+            "name": "jim-env.tgz",
+            "title": "jim-env.tgz",
+            "mimetype": "application\/x-gzip",
+            "filetype": "gzip",
+            "pretty_type": "GZip",
+            "user": "U1KDAMDJ7",
+            "editable": false,
+            "size": 2078,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F35KVP9EV\/jim-env.tgz?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F35KVP9EV\/download\/jim-env.tgz?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sanchezl\/F35KVP9EV\/jim-env.tgz",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F35KVP9EV-3727782c76",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc36CKDY5A",
+                "created": 1479913985,
+                "timestamp": 1479913985,
+                "user": "U1KDAMDJ7",
+                "is_intro": true,
+                "comment": "<@U13TWBRBL> , I was unable to reproduce your issue. Here is a copy of the environment I used and the commands I ran.",
+                "channel": ""
+            }
+        },
+        "user": "U1KDAMDJ7",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1KDAMDJ7|sanchezl>",
+        "bot_id": null,
+        "ts": "1479913986.004324"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "something in orderer is broken recently. its receiving transactions but appearst to be dropping them randomly\u2026 by random, I mean the same transaction content does appear to trigger cut\/deliver block\u2026. looking at it.",
+        "ts": "1479929553.004325"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if anyone has ideas, please do suggest",
+        "ts": "1479929568.004326"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Can someone verify this fix <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2741\/> for the above please ? ( <@U0XPR4NP4> , <@U0XQ35CDD>, <@U1AU8DRQR> ?)",
+        "ts": "1479935657.004327"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Looking ",
+        "ts": "1479935676.004328"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks <@U1AU8DRQR>",
+        "ts": "1479935703.004329"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "So the timer should be nil-ed every time right? ",
+        "ts": "1479935826.004330"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think so\u2026 and it did work",
+        "ts": "1479935844.004331"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also looked at some old code and it was getting niled there",
+        "ts": "1479935860.004332"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "specifically",
+        "ts": "1479935920.004333"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```cutBatch := func() {\n                bs.rl.Append(curBatch, nil)\n                curBatch = nil\n                timer = nil\n        }```",
+        "ts": "1479935924.004334"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "from the previous version...",
+        "ts": "1479935935.004335"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "gets called each time the timer pops",
+        "ts": "1479935949.004336"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think its the right thing to do \u2026 but then I need your eyes",
+        "ts": "1479935968.004337"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "But after it is nil, it must be reinitalized because receive and send to nil channel always blocks",
+        "ts": "1479936012.004338"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think the only initialization happens here",
+        "ts": "1479936127.004339"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F376EELUF\/pasted_image_at_2016_11_23_04_22_pm.png|Pasted image at 2016-11-23, 4:22 PM>",
+        "file": {
+            "id": "F376EELUF",
+            "created": 1479936128,
+            "timestamp": 1479936128,
+            "name": "Pasted image at 2016_11_23 04_22 PM.png",
+            "title": "Pasted image at 2016-11-23, 4:22 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 17021,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F376EELUF\/pasted_image_at_2016_11_23_04_22_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F376EELUF\/download\/pasted_image_at_2016_11_23_04_22_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 56,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 74,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F376EELUF-46447aef2a\/pasted_image_at_2016_11_23_04_22_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 111,
+            "image_exif_rotation": 1,
+            "original_w": 778,
+            "original_h": 120,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F376EELUF\/pasted_image_at_2016_11_23_04_22_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F376EELUF-88e2b56bc6",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1479936131.004340"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the first batch always gets sent \u2026 ie, timer starts out as nil",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1479936165.000000"
+        },
+        "ts": "1479936147.004341"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and look at that check",
+        "ts": "1479936174.004343"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it basically depends upon timer to be nil to start one",
+        "ts": "1479936201.004344"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Why len(batches) == 0",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1479936482.000000"
+        },
+        "ts": "1479936456.004345"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "The only thing I don't get yet",
+        "ts": "1479936468.004346"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F36JA80S1\/pasted_image_at_2016_11_23_04_32_pm.png|common\/b> and commented: because of that",
+        "file": {
+            "id": "F36JA80S1",
+            "created": 1479936761,
+            "timestamp": 1479936761,
+            "name": "Pasted image at 2016_11_23 04_32 PM.png",
+            "title": "common\/b",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 63151,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F36JA80S1\/pasted_image_at_2016_11_23_04_32_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F36JA80S1\/download\/pasted_image_at_2016_11_23_04_32_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 111,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 148,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 223,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 297,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F36JA80S1-76b18281dc\/pasted_image_at_2016_11_23_04_32_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 317,
+            "image_exif_rotation": 1,
+            "original_w": 1106,
+            "original_h": 342,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F36JA80S1\/pasted_image_at_2016_11_23_04_32_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F36JA80S1-19ef543f23",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc35QCS9MW",
+                "created": 1479936761,
+                "timestamp": 1479936761,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "because of that",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1479936764.004348"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the first message to be ordered returns \u201cnil, true\u201d which signals that a new batch is getting started",
+        "ts": "1479936809.004349"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "ok in the meanwhile I had a look at the code and found it out so I think I buy it",
+        "ts": "1479936819.004350"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1479936825.004351"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and the select on a nil channel is basiaclly a noop I think",
+        "ts": "1479936847.004352"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(it better be :slightly_smiling_face: )",
+        "ts": "1479936855.004353"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "nil operations block but select does not select that case - I guess",
+        "ts": "1479936873.004354"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok. that might be too",
+        "ts": "1479936892.004355"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "wait, sorry, one more thing",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1479936924.000000"
+        },
+        "ts": "1479936916.004356"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=orderer\/solo\/consensus.go;h=a1c4bac2bd0ef09aae07541b1e0965b205ccbd74;hb=b1ecf809e8c2b4e938e16b549f1ddf63d5582d0d>",
+        "ts": "1479936927.004358"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "line 81",
+        "ts": "1479936941.004359"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes ?",
+        "ts": "1479936980.004360"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what happens if \t\/\/ If the message is a valid normal message and does not fill the batch, nil, true is returned",
+        "ts": "1479937015.004361"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if this is the case",
+        "ts": "1479937019.004362"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "nil, true",
+        "ts": "1479937022.004363"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "len(nil) == 0 ?",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1479937046.000000"
+        },
+        "ts": "1479937032.004364"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think nil,true is returned ONLY if it is the first message in the batch ?",
+        "ts": "1479937059.004366"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no. I\u2019ll rephrase",
+        "ts": "1479937095.004367"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I don't know, I only know what Jason's comments say here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2587\/3\/orderer\/common\/blockcutter\/blockcutter.go>",
+        "ts": "1479937106.004368"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1479937120.004369"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that\u2019s what I was going to rephrase \u2026",
+        "ts": "1479937136.004370"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "len(nil) == 0, yes",
+        "ts": "1479937142.004371"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw if v is nil, len(v) is zero.",
+        "ts": "1479937158.004372"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "from godocs",
+        "ts": "1479937162.004373"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "okaaay, sorry",
+        "ts": "1479937166.004374"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "basically it says keep returning nil and batch up internally",
+        "ts": "1479937182.004375"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1479937183.004376"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no worries",
+        "ts": "1479937188.004377"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it took me a bit going back and forth too",
+        "ts": "1479937206.004378"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so yeah, the timer needs to be \"cleared\" (set to nil)",
+        "ts": "1479937216.004379"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "timer channel",
+        "ts": "1479937226.004380"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right, seems that\u2019s all needs to be done",
+        "ts": "1479937234.004381"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "+2 given",
+        "ts": "1479937353.004382"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw isn't there any test for this?",
+        "ts": "1479937407.004383"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks! we need to check with <@U0XPR4NP4>",
+        "ts": "1479937810.004384"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we should have a test for this",
+        "ts": "1479938186.004385"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It is preferable\/desirable to have all these various \u201cpaths\u201d covered somehow with unit tests, so that the full \u201cstate machine\u201d is being visited.",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1479939345.000000"
+        },
+        "ts": "1479938264.004386"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It may be difficult to reproduce (at first), but long term, the investment will pay itself pretty quickly.",
+        "ts": "1479938297.004387"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Having said that, I have merged it, in the meantime.",
+        "ts": "1479938313.004388"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sorry, just catching up on this ",
+        "ts": "1479939002.004389"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, timer should be nil-ed after it pops, sorry for the bug ",
+        "ts": "1479939025.004390",
+        "reactions": [
+            {
+                "name": "woo",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I can write up a test for this later tonight ",
+        "ts": "1479939058.004391"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "no worries, Jason",
+        "ts": "1479939547.004393"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "lets chalk it up to any bug of mine waiting out there :wink:",
+        "ts": "1479939581.004394"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XPR4NP4> a test would be welcomed",
+        "ts": "1479942718.004395"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Hi, I have some question about accessing consensus state.\nCurrently, I check if the consensus process is done by checking if the chainheight and the currentBlockHash are all the same on all nodes.\nThe question is, can I read the consensus state by using API\/SDK? With this, I will know if I send transaction too fast, then be able to throttle the transaction speed,",
+        "ts": "1479957976.004396"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KM61BCP> <@U0ULK2JPP> As promised, please see <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2749\/> .  There was one additional case where the timer was being stopped by `cutBlock` in the old code which got omitted in the refactored code, so I added a fix and a test case for that as well.",
+        "ts": "1479972282.004397"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0XPR4NP4>: I dread asking what\u2019s your local time!",
+        "ts": "1479973111.004398"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Thank you\u2026 looks great. Will approve once the tests complete.",
+        "ts": "1479973179.004399"
+    }
+]

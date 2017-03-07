@@ -1,0 +1,357 @@
+[
+    {
+        "type": "message",
+        "user": "U3CMTAX18",
+        "text": "Chain allows interoperability between different instances e.g. Alice creates asset X in Bank A\u2019s Chain. Bob is a user in Bank B\u2019s Chain. Alice can send pieces of her asset to Bob even though it\u2019s on another Chain. Is this kind of interoperability in the scope for Fabric 1.0?",
+        "ts": "1484404269.001629"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U3CMTAX18> Fabric v1.0 has the notion of channels, which could be leveraged, I believe in the manner you suggest",
+        "ts": "1484420052.001631"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP> - if running in dev mode, what's the env variable you need to set on the chaincode and\/or peer side?",
+        "ts": "1484420063.001632"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I have a feeling that might be the issue <@U3LF97LF3> is facing?   at least I've seen that before",
+        "ts": "1484420087.001633"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> reading...",
+        "ts": "1484420128.001634"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1TA5FDU7>  - you need docker-compose 1.8 or above",
+        "ts": "1484420208.001635",
+        "reactions": [
+            {
+                "name": "slightly_smiling_face",
+                "users": [
+                    "U1TA5FDU7"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right I was not sure of the configurations here\u2026contradictions in two comments made me pause (1) `There is gRPC error from orderer when it tries to send the Deploy Transaction Block to Peer.` from <@U3DKG7M54> and (2) `Registration and deployment of chaincode is successful.` from <@U3LF97LF3>",
+        "ts": "1484420302.001636"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and `I was looking at the same issue and working with <@U3LF97LF3>.` from <@U3DKG7M54>",
+        "ts": "1484420336.001637"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sounded like different problems but from same configuration \u2026.",
+        "ts": "1484420364.001638"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also `images are used from the connect-a-thon - v1.0 architecture ` from <@U3DKG7M54>  \u2026 the devmode env variables in latest master might be slightly different than with images used in connect-a-thon (the chaincode needs to register with the fully qualified namespace \u201cmycc:0\/**TEST_CHAINID**\u201d)",
+        "ts": "1484420509.001639"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I wanted to wait till I heard back from <@U3LF97LF3>",
+        "ts": "1484420523.001640"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "gotcha",
+        "ts": "1484420659.001641"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> <@U3DKG7M54> <@U0KM61BCP> <https:\/\/jira.hyperledger.org\/secure\/attachment\/10378\/peerchaincodedev_in_1.0.txt> added to JIRA item fab-37 \u2026 also accessible from <https:\/\/wiki.hyperledger.org\/community\/fabric-design-docs>",
+        "ts": "1484423258.001642"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0ULK2JPP> <@U0PB67X4K> \n\nWe have followed the same steps &gt;quote <https:\/\/jira.hyperledger.org\/secure\/attachment\/10378\/peerchaincodedev_in_1.0.txt> &gt;quote using the images from the connect-a-thon\/marble application. There is no multi-chain that is tried in our steps (i.e. no-chain id specified) and I doubt these images support it.\n\nComing to the scenario \n\nThough <@U3LF97LF3> mentions chaincode deployment is success ` CORE_CHAINCODE_MODE=dev peer chaincode deploy -n mycc -c '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}' ` . Looking at Peer CLI logs it gives a impression that deployment is really successful and at the same time chaincode init method returns no error prints in the chaincode running window.\n\nSo performing next step ` send an invoke ` after restarting chaincode fails with the message as put by Sneha ` Error: Error endorsing chaincode: rpc error: code = 2 desc = Error deploying chaincode: Failed to launch chaincode spec(Failed to init chaincode(handler not found for chaincode mycc)) ` .\n\nAnd the main reason I see from logs, the Orderer Service itself failed to pass the Deploy Transaction back to the Peer thus actually completing the deployment cycle of Chaincode. Following is the error seen in the orderer logs.\n\n` grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38084: write: broken pipe\" `",
+        "ts": "1484430024.001643"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so",
+        "ts": "1484430085.001644"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3DKG7M54> you are using docker \u2026 and the instructions just posted are for running in vagrant",
+        "ts": "1484430119.001645"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "yes - running using docker, does it matter <@U0ULK2JPP>",
+        "ts": "1484430186.001646"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the instructions would have to be modified a bit",
+        "ts": "1484430202.001647"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "using docker container ids and `docker inspect &lt;container id&gt;` we can get IP addresses for `peer` and `orderer`",
+        "ts": "1484430225.001648"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "yes - this is taken care.",
+        "ts": "1484430242.001649"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the CLI commands would have to be modified to point to those addresses",
+        "ts": "1484430253.001650"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so for example",
+        "ts": "1484430256.001651"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`CORE_CHAINCODE_MODE=dev peer chaincode deploy -n mycc -c '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}\u2019` would change to",
+        "ts": "1484430270.001652"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`CORE_PEER_ADDRESS=&lt;peer ip&gt;:&lt;exported peer port&gt; CORE_CHAINCODE_MODE=dev peer chaincode deploy -n mycc -c '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}\u2019`",
+        "ts": "1484430297.001653"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "actually no",
+        "ts": "1484430311.001654"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you\u2019d also need to orderer address...",
+        "ts": "1484430320.001655"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`CORE_PEER_ADDRESS=&lt;peer ip&gt;:&lt;exported peer port&gt; CORE_COMMITTER_LEDGER_ORDERER=&lt;orderer ip&gt;:&lt;exporteded orderer port&gt; CORE_CHAINCODE_MODE=dev peer chaincode deploy -n mycc -c '{\"Args\":[\"init\",\"a\",\"100\",\"b\",\"200\"]}\u2019`",
+        "ts": "1484430385.001656"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and finally",
+        "ts": "1484430405.001657"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "yes Murali. Connect-a-thon images had the docker-composer file and had the YML file pre-configured.",
+        "ts": "1484430427.001658"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and you are running `peer chaincode deploy` from vagrant ?",
+        "ts": "1484430500.001659"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "So Peer, Orderer and Cop images are pre-configured. The additional step run are the one - you provided. This is also run using the actual peer  IP:Port",
+        "ts": "1484430501.001660"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "or from another docker container",
+        "ts": "1484430528.001661"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Everything is from Docker Container.",
+        "ts": "1484430543.001662"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Also - I have run the same setup on the AWS instance hosting a Linux RHEL VM. I did see  ` grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38084: write: broken pipe\" ` but the frequent of these messages is very very less.",
+        "ts": "1484430605.001663"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "So on AWS Linux RHEL instance - I was able to run my custom chaincode (Deploy + Invoke) and also with 2 PEER setup.",
+        "ts": "1484430648.001664"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "This problem aggravates very much on the environment which is hosted on Intranet (our development boxes).",
+        "ts": "1484430704.001665"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "I hope we are now sync?",
+        "ts": "1484430729.001666"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Our internal intranet hosted environment are also RHEL.",
+        "ts": "1484430763.001667"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3DKG7M54> I\u2019m not sure of all the dynamics here, but I\u2019d say first step is to make sure the various containers can talke to each other and the envs (the `CORE_\u2026` envs) are setup correctly to point to various processes",
+        "ts": "1484431046.001668"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0ULK2JPP> <@U0PB67X4K> My understanding the setup w.r.t. IP, Port and ENV for DEV mode run is all correct. Like if I restart Peer, I do see a communication happening between Peer &lt;--&gt; Orderer successfully.  However when a Transaction is sent for committing to the Ledger (in this case Deploy Transaction as per our scenario described), Orderer gets the correct IP of the Peer but the Port used is completely different and it gives the gRPC error. This is tried by the Orderer with correct IP but a increasing Port number.",
+        "edited": {
+            "user": "U3DKG7M54",
+            "ts": "1484432064.000000"
+        },
+        "ts": "1484431322.001669"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "How does the Orderer get the Peer endpoint information for communication - is it at the start-up Peer talks to the Orderer and registers this information?",
+        "ts": "1484431492.001672"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it is the Peer who opens up communication with the oredre",
+        "ts": "1484433136.001676"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so orderer does not have to know \u201cendpoint\u201d information  of the peer",
+        "ts": "1484433181.001677"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3DKG7M54> it does sound like a configuration \/ setup issue (as opposed to a correctly setup env but failing sporadically) \u2026 I could be wrong of course (for example a flaky network might cause certain issues)",
+        "ts": "1484433294.001678"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we\u2019d need proper docs (for example, if you are using docker compose the composition files) to understand what\u2019s happening",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1484433352.000000"
+        },
+        "ts": "1484433336.001679"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0ULK2JPP> - v1.0 arch setup\n\nPeer, Cop and Orderer Images used from ` <https:\/\/github.com\/IBM-Blockchain\/connectathon> `\nDocker composer - ` <https:\/\/github.com\/rahulhegde\/playtime\/blob\/master\/docker-compose.zip> `\nSample Chaincode - ` <https:\/\/github.com\/rahulhegde\/learn-chaincode\/tree\/master\/start> `\n\nOver above we have followed  the steps provided by you to run the custom chaincode in DEV mode. I can also setup a screen share to show you the setup and error.",
+        "ts": "1484435101.001681"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "` invoke ` for the custom chain code prints the key before updating the key with the new value.\n\nLogs from Orderer\n`\n[21:19:47.003]     deliver.go:121: [DEBUG] Room for more blocks, activating channel\n2017\/01\/14 21:19:47 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38072: write: broken pipe\"\n2017\/01\/14 21:19:47 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38076: write: broken pipe\"\n2017\/01\/14 21:19:48 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38084: write: broken pipe\"\n[21:19:49.300]   broadcast.go:125: [DEBUG] Batch timer expired, creating block\n[21:19:49.300]   ramledger.go:171: [DEBUG] Sending signal that block 6 has a successor\n[21:19:49.300]     deliver.go:121: [DEBUG] Room for more blocks, activating channel  \n`\nIt gets the error first and then the Block gets passed to the Peer- somehow it is able to send it to Peer. I can see from the next 'invoke', world-state ledger contains updated value.\n\n` [22:15:28.489]      deliver.go:78: [DEBUG] Received acknowledgement from client\n[22:15:28.489]     deliver.go:121: [DEBUG] Room for more blocks, activating channel\n2017\/01\/14 22:20:44 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.18.0.2:7050-&gt;172.18.0.4:38096: write: broken pipe\"\n[22:21:02.431]   broadcast.go:125: [DEBUG] Batch timer expired, creating block\n[22:21:02.432]   ramledger.go:171: [DEBUG] Sending signal that block 7 has a successor\n[22:21:02.432]     deliver.go:121: [DEBUG] Room for more blocks, activating channel\n[22:21:11.717]   broadcast.go:125: [DEBUG] Batch timer expired, creating block `\nAnother snapshot at a different time.",
+        "edited": {
+            "user": "U3DKG7M54",
+            "ts": "1484437462.000000"
+        },
+        "ts": "1484436443.001682"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the connection between the peer(s) and the orderer seem to be breaking.  Do you see anything in the peer logs?    I assume that `172.18.0.2:7050` is the orderer?",
+        "ts": "1484436866.001684"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "The \"random\" ports you see are the ephemeral ports used by the peer on its end when creating the connection to the orderer.   The GRPC connection is full duplex (meaning either side can initiate sending information) - so the low level GRPC error is misleading - it trying to send data over the existing connection which appears to be broken",
+        "ts": "1484436984.001685"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "Yes the logs put are from the Orderer having endpoint ` 172.18.0.2:7050 ` , I don't see any error in the log of the 1-Peer setup environment having endpoint configured as ` 172.18.0.4:7051 `",
+        "edited": {
+            "user": "U3DKG7M54",
+            "ts": "1484437352.000000"
+        },
+        "ts": "1484437320.001686"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3DKG7M54> I need to go in a bit but have about 15 mins or so if you want to do a screenshare or google hangout",
+        "ts": "1484437667.001689"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0ULK2JPP> I will pass the screenshare detail  as direct message.",
+        "ts": "1484437746.001690"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the peer is definitely connecting \/ reconnecting IMHO",
+        "ts": "1484437768.001691"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yeah.. thinking some (flaky) network issue ?",
+        "ts": "1484437863.001692"
+    },
+    {
+        "type": "message",
+        "user": "U3DKG7M54",
+        "text": "<@U0ULK2JPP> <@U0PB67X4K>\nHad a call with Murali (thanks for your time) and concluded there is no issue with the setup between peer and orderer. As suggested by Murali, I will post this problem on the <#C0Z4NBUN6|fabric-consensus-dev> so this can be picked by you with the Consensus team for suggestion of any quick workaround.",
+        "ts": "1484443610.001693"
+    }
+]

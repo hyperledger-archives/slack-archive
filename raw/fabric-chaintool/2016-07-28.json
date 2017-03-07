@@ -1,0 +1,583 @@
+[
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Thanks <@U0KPFAZNF> that helped greatly.  For documentation purposes, it might be useful to refer people to <https:\/\/developers.google.com\/protocol-buffers\/docs\/proto3> for how to define things.  So now I've gotten to the point where I can package a car (sweet name).  But I'm trying to find documentation on how to deploy cars, I'm assuming I just point to the package at some location on the node machine when running the deploy command, is that true?",
+        "ts": "1469745978.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VE97GV8>: I think generally you have the right idea, though there might be a few speed bumps",
+        "ts": "1469747327.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1) the chaintool binary that is currently checked into the fabric tree is really old (v0.5.1 vs the current v0.8-SNAPSHOT)",
+        "ts": "1469747353.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, if you do a standard deployment, the infrastructure is going to compile your .car with old tooling",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1469747458.000000"
+        },
+        "ts": "1469747373.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres workarounds, but lets come back to that",
+        "ts": "1469747382.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "2) The SDK I think is currently limited to deploying GOLANG type payloads, so others (like CAR) are not likely to work via this method",
+        "ts": "1469747429.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(there are workarounds here too)",
+        "ts": "1469747437.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "1a), the old tooling is no longer ABI compatible with the current chaintool protocol, that is why I mention that",
+        "ts": "1469747483.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am using base64 encoding now, I wasnt then",
+        "ts": "1469747491.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, it wont work",
+        "ts": "1469747494.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one thing you can do is simply replace the fabric.git\/devenv\/tools\/chaintool binary with the one you built from HEAD",
+        "ts": "1469747529.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you do that, you will also need to make sure that the hyperledger\/fabric-ccenv docker image is rebuilt",
+        "ts": "1469747551.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what i was going to suggest as a workaround to both is: use devmode (for now)",
+        "ts": "1469747588.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you are willing to use devmode, you just use \u201cchaintool build\u201d and run the binary that way, that circumvents both the (1) and (2) issues",
+        "ts": "1469747614.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I can help with the specifics",
+        "ts": "1469747623.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if that is not acceptable, then what we need to do in summary is A) update your chaintool\/ccenv, and B) deploy using something other than the SDK, such as the REST interface",
+        "ts": "1469747654.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me know which direction is more appealing and I can guide appropriately",
+        "ts": "1469747695.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and sorry for the troubles, hope to have both fixed ASAP)",
+        "ts": "1469747711.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "So let's assume that I have a special build on my local which pulls in all the necessary chaintool dependencies to build 0.8-SNAPSHOT, then builds and packages the car.  I'm not using the vagrant image right now since I run on Mint anyways and it seemed like additional overhead to start a VM of basically what I'm running.  I was thinking to deploy using the REST interface anyways, so the car should work for that use case as long as I build with the 0.8-SNAPSHOT?",
+        "ts": "1469748322.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VE97GV8>: yes AND you update the tool that is in the ccenv docker image",
+        "ts": "1469748399.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "otherwise the deployment will be processed by the old tooling",
+        "ts": "1469748428.000039"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Ah, I see.  Do you know when the main fabric tree will pull in the new version out of curiosity?",
+        "ts": "1469748470.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think the steps would be something like: take the chaintool binary and copy it to .\/devenv\/tools\/chaintool; rm -rf build\/image\/ccenv; make images",
+        "ts": "1469748505.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, it pulls it from a local cache",
+        "ts": "1469748520.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "checked into fabric.git\/devenv\/tools",
+        "ts": "1469748529.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that needs to be updated though",
+        "ts": "1469748534.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry for the dance, you are one of the first customers of chaintool, heh",
+        "ts": "1469748566.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, some growing pains",
+        "ts": "1469748571.000046"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Yeah, I think that was the question, when would it be updated?  After the gerrit change I'm assuming?",
+        "ts": "1469748591.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(dont be scared by that comment, my team uses it extensively, its quite solid in general",
+        "ts": "1469748595.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its just that we are currently in -devmode type workflows, so this discrepancy hasnt yet been very painful",
+        "ts": "1469748619.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "No worries about the growing pains, I make things work",
+        "ts": "1469748628.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i have a PR to release chaintool v0.8.0..i was planning on updating fabric after that gets accepted",
+        "ts": "1469748660.000051"
+    },
+    {
+        "text": "eyes <@U0ULK2JPP|muralisr>",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1469748668.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "yeah, we actually took something we wrote in the old chaintool environment and migrated it to the 0.8-SNAPSHOT, we wanted to know if it would work, I am going to test right now",
+        "ts": "1469748698.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh cool, i didnt realize people were actually using it",
+        "ts": "1469748713.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is cool",
+        "ts": "1469748714.000055",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "outside my team, i mean",
+        "ts": "1469748720.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in general things have been backwards compatible, few exceptions aside (like the v0.5.1 base64 borkage",
+        "ts": "1469748754.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "mostly its been enhancements, like supporting proto nested messages and parameterless RPCs",
+        "ts": "1469748780.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, conceivably if you tried to compile a parameterless function in an older version, that would break",
+        "ts": "1469748804.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VE97GV8>: <https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/21>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Documentation should reference proto3 specification in a clear way \u00b7 Issue #21 \u00b7 hyperledger\/fabric-chaintool \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/21",
+                "text": "The grammar for CCI closesly models proto3, but this is not called out in a clear manner. We should make sure this is clear and provide reference links, etc.",
+                "fallback": "GitHub: Documentation should reference proto3 specification in a clear way \u00b7 Issue #21 \u00b7 hyperledger\/fabric-chaintool",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/issues\/21",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469749302.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Very cool, thanks for that",
+        "ts": "1469749347.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "<@U0KPFAZNF>: For the deploying via REST, I'm assuming its a relative path to somewhere inside the GOPATH?",
+        "ts": "1469749756.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "FQP path, $GOPATH isnt used at all",
+        "ts": "1469749773.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "FQP relative to the (N)VP handling the REST call",
+        "ts": "1469749795.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Hmm, {\"code\":-32001,\"message\":\"Deployment failure\",\"data\":\"Error when deploying chaincode: Error getting chaincode package bytes: code does not exist File \/home\/jonathan\/Code\/hyperledger-hackathon\/src\/com.calypso.chaincode.slb-0.1-SNAPSHOT.car is not dir\\n\"},\"id\":1}",
+        "ts": "1469749902.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, so on the machine running your (N)VP, can you stat that file ?",
+        "ts": "1469750072.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\/home\/jonathan\/Code\/hyperledger-hackathon\/src\/com.calypso.chaincode.slb-0.1-SNAPSHOT.car",
+        "ts": "1469750105.000068"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "$ stat \/home\/jonathan\/Code\/hyperledger-hackathon\/src\/com.calypso.chaincode.slb-0.1-SNAPSHOT.car\n  File: \u2018\/home\/jonathan\/Code\/hyperledger-hackathon\/src\/com.calypso.chaincode.slb-0.1-SNAPSHOT.car\u2019\n  Size: 1952      \tBlocks: 8          IO Block: 4096   regular file\nDevice: 805h\/2053d\tInode: 29624154    Links: 1\nAccess: (0644\/-rw-r--r--)  Uid: ( 1000\/jonathan)   Gid: ( 1000\/jonathan)\nAccess: 2016-07-28 16:50:05.525001734 -0700\nModify: 2016-07-28 16:50:05.525001734 -0700\nChange: 2016-07-28 16:50:05.525001734 -0700\n Birth: -",
+        "ts": "1469750112.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, good, did you set the type in the request to \u201c3\"",
+        "ts": "1469750126.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(most literature is going to say use \u201c1\u201d for GOLANG",
+        "ts": "1469750151.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but CAR = 3",
+        "ts": "1469750154.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(post the full request, if you can )",
+        "ts": "1469750169.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "curl -X'POST' 10.1.119.157:5000\/chaincode -d '{\"jsonrpc\":\"2.0\", \"method\": \"deploy\", \"params\": { \"type\": 3, \"chaincodeID\": { \"path\": \"com.calypso.chaincode.slb-0.1-SNAPSHOT.car\"}, \"ctorMsg\": {\"function\":\"init\",\"args\":[\"1\",\"ISIN-1111\",\"500.00\",\"cert1,cert2\",\"sometime later\"]} }, \"id\": 1 }'",
+        "ts": "1469750184.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, that looks good",
+        "ts": "1469750195.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note that your args: will need to be encoded",
+        "ts": "1469750234.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "ah, different error message with type 3",
+        "ts": "1469750236.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but the path\/type look right",
+        "ts": "1469750243.000078"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "\"error\":{\"code\":-32001,\"message\":\"Deployment failure\",\"data\":\"Error when deploying chaincode: Error getting chaincode package bytes: Error generating hashcode: Error reading file: open com.calypso.chaincode.slb-0.1-SNAPSHOT.car: no such file or directory\"}",
+        "ts": "1469750259.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, thats strange",
+        "ts": "1469750271.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me try on this side",
+        "ts": "1469750277.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "might need to put full path?",
+        "ts": "1469750281.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive been using devmode for so long, havent tried this path in a bit",
+        "ts": "1469750291.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh yes, needs fqp",
+        "ts": "1469750303.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "didnt notice that part, sorry",
+        "ts": "1469750307.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "ah yes",
+        "ts": "1469750315.000086"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "good news, we are deployed",
+        "ts": "1469750321.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "nice!",
+        "ts": "1469750325.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though i wouldnt expect that args: to have been valid",
+        "ts": "1469750337.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "normally its some base64 string as a result of encoding your appinit.cci::Init",
+        "ts": "1469750359.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "hmm",
+        "ts": "1469750379.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it looks like it worked?",
+        "ts": "1469750387.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fwiw, its super easy to write a nodejs script to do the rest call with encoding for you",
+        "ts": "1469750445.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric-chaintool\/blob\/master\/examples\/example02\/client\/rest\/nodejs\/index.js#L14>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric-chaintool",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/blob\/master\/examples\/example02\/client\/rest\/nodejs\/index.js#L14",
+                "text": "fabric-chaintool - Chaintool - Chaincode Tooling for <https:\/\/github.com\/hyperledger\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric-chaintool",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-chaintool\/blob\/master\/examples\/example02\/client\/rest\/nodejs\/index.js#L14",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469750446.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, i would have expected the ctor to reject your args",
+        "ts": "1469750464.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sometimes the fabric logging is deceptively terse, it might have actually failed",
+        "ts": "1469750479.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but FYI, if you wanted to adapt that nodejs script, you can use \u201cchaintool proto path\/to\/cci -o path\/to\/proto\u201d to get a .proto file from your CCI",
+        "ts": "1469750538.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, to convert appinit.cci",
+        "ts": "1469750554.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP>: <@U0KRRM29Z> could you review the outstanding chaintool PRs at your earliest?",
+        "ts": "1469750610.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VE97GV8>: have to step out for the night, but ill be back online tomorrow",
+        "ts": "1469750948.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "<@U0KPFAZNF>: ok, thanks for the help",
+        "ts": "1469750975.000102"
+    },
+    {
+        "type": "message",
+        "user": "U1VE97GV8",
+        "text": "Will save up some questions for tomorrow",
+        "ts": "1469750982.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fwiw, theres some details of the tunnelling protocol here",
+        "ts": "1469750993.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric-chaintool#input-protocol>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric-chaintool",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric-chaintool#input-protocol",
+                "text": "fabric-chaintool - Chaintool - Chaincode Tooling for <https:\/\/github.com\/hyperledger\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric-chaintool",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric-chaintool#input-protocol",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1469750994.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "generally a healthy deploy would look something like: {\"function\u201d:\"init\",\"args\":[\"CgNmb28=\"]}}",
+        "ts": "1469751031.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, im out, ttyl",
+        "ts": "1469751046.000108"
+    }
+]

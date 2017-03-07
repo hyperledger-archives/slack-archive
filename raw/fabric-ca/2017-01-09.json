@@ -1,0 +1,1059 @@
+[
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0S5KF44D> if i am right, the enroll request change to json format",
+        "ts": "1483954281.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yes, you are correct.   Jira tasks were opened to update SDKs appropriately.",
+        "ts": "1483958226.000295"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0S5KF44D>: OK, as we also are develop ing a python SDK , could you open a Jira for this too?",
+        "ts": "1483962261.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yes ... did that last week.  See <https:\/\/jira.hyperledger.org\/browse\/FAB-1544>",
+        "ts": "1483964827.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "FYI, here is a summary of remaining work we are trying to finish for COP for V1.  Not all of these are strict requirements, but thought I'd leave them in the list for now.   This is probably easier to read than viewing the dashboard.",
+        "ts": "1483973866.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "1) API simplification - <https:\/\/jira.hyperledger.org\/browse\/FAB-1462>\n   a) Delete idp package; all API structs go into api package.\n      - api\/net.go contains structs defining everything that goes over the network\n        between the client and server.\n      - api\/client.go contains structs defining I\/O to the client library objects\n   b) Simplify object hierarchy in lib to be only Client, Identity, &amp; Cert;\n      signer, temporalSigner, and verifier are consumed in Cert.\n      Identity object has:\n         GetECert() (Cert, error)\n         GetTCerts(req *GetTCertBatchRequest) (*GetTCertBatchResponse, error)\n\n2) TCert option 2 (depends on #1)\n   - The GetTCertBatchRequest struct in api\/client.go has a bool field:\n       DisableKeyDerivation bool\n     If this is true, then option 2 is used.  This is the only change to the client.\n     The rest is handled by the client library code.\n   - The impl of GetTCertBatch in lib\/identity.go calls BCCSP to generate a key-pair for\n     each tcert in the batch.  It then sets the array of public keys in the\n     GetTCertBatchRequestNet struct defined in api\/net.go and sends the request to the server.\n   - The server generates a CSR for each public key, signs them, and returns the array of certs.\n     This is done in cli\/server\/tcert.go and requires relatively minor change.\n     After we get the attribute values (no change), if there is an array of public keys, we\n     fork off to separate code to generate the CSRs and sign them.  The only thing we call lib\/tcert.go\n     code for is to get the extensions which go in the CSR.  Each of these CSRs should be identical\n     except for the value of the public key, so that should be the only thing in the loop.\n\n3) BCCSP COP integration (slightly dependent on #1, but could merge)\n   a) Into CFSSL\n      - CFSSL pull request has been submitted (see <https:\/\/github.com\/cloudflare\/cfssl\/issues\/711>)\n      - rebase\/refactor <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3679\/> on top <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3735\/>\n   b) Into COP itself\n      - lib\/tcert.go rewritten using BCCSP APIs (also on top of <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3735\/>)\n        Is this done in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3679\/>?\n\n4) CLI Improvements - <https:\/\/jira.hyperledger.org\/browse\/FAB-1170>\n\n5) Store\/retrieve tcert root prekey in DB - <https:\/\/jira.hyperledger.org\/browse\/FAB-1561>\n\n6) Helpme improvements\n   b) endpoint whitelist - <https:\/\/jira.hyperledger.org\/browse\/FAB-1555>\n   c) register with password - <https:\/\/jira.hyperledger.org\/browse\/FAB-1473>\n\n7) Documentation\n   - Update the readme docs.  Not sure when this needs to be done.\n     See <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/#option-2-docker-for-mac-or-windows> for example\n   - Swagger doc for REST APIs.  Given api\/net.go, can we use <https:\/\/github.com\/go-swagger\/go-swagger> to auto generate swagger doc?\n     (depends on #1)\n   - User's guide in fabric-cop\/README.md.  See <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3727\/>\n   - Developer's guide to include code overview",
+        "ts": "1483973877.000299"
+    },
+    {
+        "user": "U221LL03Z",
+        "text": "<@U221LL03Z|ashutoshkumar> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483974212.000300"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Good morning,",
+        "ts": "1483975637.000301"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I think that this component (fabric COP) requires a LOT of testing\u2026 we have merged a lot, pretty quickly, but we need to see it working.",
+        "ts": "1483975662.000302"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I believe that it will be highly beneficial to have less \u201cexotic\" features and have more tests, use-cases, examples of how people should use it.",
+        "ts": "1483975711.000303"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "And the more \u201cearly adopters\u201d start\/try to use it, the more feedback we can gather.",
+        "ts": "1483975733.000304"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I will go over the new README and other CRs today, but I actually think that maybe slowing down with all these CRs will help us to merge more.",
+        "ts": "1483975781.000305"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Keith, Gari and I worked last week, to \u201cclear the way\u201d with a lot of stuff from the holidays that was there.",
+        "ts": "1483975810.000306"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "And I do appreciate that the above is just a \u201cheads-up\u201d regarding what\u2019s coming\u2026",
+        "ts": "1483975829.000307"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Just wanted to share my thoughts here openly. More tests, more people trying things out -&gt; more feedback -&gt; better :wink:",
+        "ts": "1483975860.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Thanks for the comments Jonathan.  As far as I know, the things that are merged are working ... though I did have to push a change set over the weekend to help with that (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3749\/>).  Any specific comments from you or anyone else regarding what is considered exotic would be great.",
+        "ts": "1483975959.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "We did push a change set for #7 documentation last week but not reviewed yet.",
+        "ts": "1483975996.000310"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, I\u2019m looking at the README CR that was submitted on Friday.",
+        "ts": "1483976112.000311"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "*Update the readme docs.  Not sure when this needs to be done.* -&gt; I think that\u2019s important, I\u2019ll give it a\/the priority too (as it may help other learn how to use the new things earlier).",
+        "ts": "1483976169.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Someone on this channel I believe was requesting something that would be solved by #4 in my list.  It would be helpful to know how important folks think this is",
+        "ts": "1483976227.000313"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "By \u201cexotic\u201d I mean anything that is currently not a \u201cmust have\u201d in order to start working. I know that people are\/were holding off trying things out since v0.5 and v0.6, so the sooner we get them up and running (even with the \u201cbasic\u201d, that is \u201cnot exotic\u201d stuff) on the v1 branch, the better, I believe.",
+        "ts": "1483976380.000316"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Mind you, I don\u2019t know everything\u2026 but the (developer) documentation, more tests, end-to-end samples, and the basic flow (e.g., without a re-enrolment\/certificate extension, even) will be highly useful.",
+        "ts": "1483976478.000317"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Maybe in a line, my informal definition for \u201cnon-exotic\u201d stuff is collectively, all the basic stuff that people could do with v0.5 and v0.6, now in the better\/new\/shiny version that\u2019s in the v1 branch.",
+        "ts": "1483976556.000318"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "___\nTo clarify, I don\u2019t think we are in any disagreement here.\nJust adding my thoughts\/suggestions to the end of your list\u2026\n___",
+        "ts": "1483976612.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "thanks ... I'll start updating the readthedocs after finishing #1 today hopefully",
+        "ts": "1483976842.000320"
+    },
+    {
+        "user": "U0KPFAZNF",
+        "text": "<@U0KPFAZNF|ghaskins> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483977529.000321"
+    },
+    {
+        "user": "U195M30MD",
+        "text": "<@U195M30MD|nickmelis> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483977569.000322"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Hi again <@U195M30MD>: Especially regarding ECerts, TCerts, etc\u2026this is the \u201cplace to be\/ask\u201d :wink:",
+        "ts": "1483977588.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> <@U0S5KF44D> FYI, I have a patch coming which mods the docker build, trying to reconcile a few things with fabric.git and improve turnkey experience",
+        "ts": "1483977602.000324",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill post when I push to gerrit for review",
+        "ts": "1483977610.000325"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "Hi <@U11MANG9G> thanks for pointing me here",
+        "ts": "1483977613.000326"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I do have in fact a problem with TCert, but I have no idea what\u2019s causing it",
+        "ts": "1483977628.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one thing I noticed is that it seems fabric-cop is binding to localhost right now",
+        "ts": "1483977632.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i need to track down if that is already tunable",
+        "ts": "1483977640.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "any guidance appreciated",
+        "ts": "1483977644.000330"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes :disappointed:",
+        "ts": "1483977644.000331"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "Java SDK only says Failed getting a new TCert",
+        "ts": "1483977655.000332"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0KPFAZNF>: And uses a hidden folder (.cop) in one\u2019s home directory.",
+        "ts": "1483977680.000333"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": ":disappointed: This needs changing, but probably not a show stopper for today.",
+        "ts": "1483977708.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> yeah, i think I already have that more dockerized (e.g. using \/etc\/hyperledger\/fabric-cop instead of ~\/.cop",
+        "ts": "1483977712.000335"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Thank you!",
+        "ts": "1483977721.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think the last part is I need it to bind to 0.0.0.0",
+        "ts": "1483977729.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "having looked if that is available as a knob in the .json or if I have to hack code",
+        "ts": "1483977743.000338"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "if I debug through the code I also get this as a cause: io.grpc.StatusRuntimeException: UNKNOWN: sql: no rows in result set",
+        "ts": "1483977810.000339"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ever seen it?",
+        "ts": "1483977814.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3763\/>",
+        "ts": "1483978231.000341",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U3FB31151",
+        "text": "<@U3FB31151|ns> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483979663.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0KPFAZNF> You can add the \"-address 0.0.0.0\" option to the \"cop server start\" command",
+        "ts": "1483980279.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "That is inherited from cfssl but we plan to make it the default in future",
+        "ts": "1483980305.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0S5KF44D> awesome, ty",
+        "ts": "1483980334.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U195M30MD> I'm not exactly sure what client you're using and how configured, but looks like it's trying to speak GRPC to COP which supports REST",
+        "ts": "1483980594.000346"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ah\u2026that is actually useful!! I do think SKD is trying to communicate via GRPC when getting the TCert batch",
+        "ts": "1483980640.000347"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so is COP only REST now?",
+        "ts": "1483980657.000348"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I\u2019m using the Java SDK, did the old membersrvc at any point communicate via GRPC?",
+        "ts": "1483980888.000349"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U195M30MD>  , you can use REST to get TCert , but the code to consume TCert in JAVA sdk is not there yet.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1483981990.000000"
+        },
+        "ts": "1483981942.000350"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "If you think , you have handle that , that is fine , otherwisw , we need to provide you that support.",
+        "ts": "1483982036.000352"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "let me know.",
+        "ts": "1483982061.000353"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "your first step is to get batch of tcerts , which you are working on now.",
+        "ts": "1483982087.000354"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Consumption of TCerts comes next.",
+        "ts": "1483982103.000355"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "<@U221LL03Z> let me see if I get it right, membersrvc used to support GRPC and provide batch of TCerts over GRPC. But this is not the case anymore and Java SDK needs to be updated. Is that right?",
+        "ts": "1483982172.000356"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yes , that is correct.",
+        "ts": "1483982190.000357"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "that is one part of puzzle.",
+        "ts": "1483982204.000358"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "and first step.",
+        "ts": "1483982210.000359"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so in theory, if I use fabric v0.6 and Java SDK v0.6, I should be fine",
+        "ts": "1483982212.000360"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "I do not think so.",
+        "ts": "1483982234.000361"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "in fabric 0.6 , I do not think there was TCert client part written for JAVA sdk. In 0.6 , only node SDK had TCert client support.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1483982454.000000"
+        },
+        "ts": "1483982266.000362"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "so , even in 0.6 , you can get batch of TCerts over GRPC  , but you cannot use them to sign transactions.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1483982373.000000"
+        },
+        "ts": "1483982325.000363"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "because the support for TCert client code is not there.",
+        "ts": "1483982351.000364"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "unless you have written TCert client portion in Java SDK.",
+        "ts": "1483982398.000366"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I\u2019m just trying to understand what happened. I\u2019m working with the master branch right now, and it assumes TCerts are exchanged over GRPC. But this is no longer the case. So I presume at some point the membersrvc did support TCerts batch over GRPC, but you\u2019re saying that was after v0.6 was released right?",
+        "ts": "1483982503.000368"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "which master branch ? Fabric 0.6 or Fabric-Cop ?",
+        "ts": "1483982552.000369"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "fabric-sdk-java",
+        "edited": {
+            "user": "U195M30MD",
+            "ts": "1483982600.000000"
+        },
+        "ts": "1483982566.000370"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "ok. So , from fabric-java-sdk , you are trying to hit fabric 0.6 end point or fabric-cop end point ?",
+        "ts": "1483982627.000372"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I\u2019m also using Docker images to run fabric and fabric-cop",
+        "ts": "1483982628.000373"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "no from fabric-java-sdk I\u2019m trying to hit fabric and fabric-cop v1.0",
+        "ts": "1483982654.000374"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "ok. So , it is over REST now.",
+        "ts": "1483982674.000375"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "not GRPC.",
+        "ts": "1483982680.000376"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "you need to code it to hit end point using REST.",
+        "ts": "1483982700.000377"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "when did it change?",
+        "ts": "1483982710.000378"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "from beginning itself.",
+        "ts": "1483982722.000379"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "In Fabric-cop , we are are not supporting GRPC as Fabric-Cop is based on CFSSL , which does not support GRPC.",
+        "ts": "1483982768.000380"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so is fabric-cop a brand new module rather than a prosecution of the old membersrvc?",
+        "ts": "1483982807.000381"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I thought it was the same code being pulled out of the main fabric repo",
+        "ts": "1483982823.000382"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yes for first and no for second.",
+        "ts": "1483982848.000383"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so you killed membersrvc?",
+        "ts": "1483982868.000384"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Do you work with Rick Rienholt by any chance ?",
+        "ts": "1483982870.000385"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "not me.:flushed:",
+        "ts": "1483982880.000386"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "I cannot even kill a bird.:flushed:",
+        "ts": "1483982903.000387"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "it\u2019s easier to kill a github repo :smile:",
+        "ts": "1483982926.000388"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ok let\u2019s say that membersrvc died peacefully then, ok?",
+        "ts": "1483982940.000389"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "that right.",
+        "ts": "1483982951.000390"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "are you one of the developers of fabric-cop?",
+        "edited": {
+            "user": "U195M30MD",
+            "ts": "1483982978.000000"
+        },
+        "ts": "1483982973.000391"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yes , I am working on TCert primarily.",
+        "ts": "1483983005.000393"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "and on JAVA Sdk side , I usually have hallway conversations with Rick Rienholt as he is geographically colocated.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1483983066.000000"
+        },
+        "ts": "1483983054.000394"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "Is Rick Rienholt responsible for the Java SDK?",
+        "ts": "1483983089.000396"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "yes.",
+        "ts": "1483983094.000397"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "what\u2019s his slack name?",
+        "ts": "1483983112.000398"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "trying to find him. Hold on.",
+        "ts": "1483983185.000399"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "thanks a lot!",
+        "ts": "1483983256.000400"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "can I ask you one more question before I head off?",
+        "ts": "1483983266.000401"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U2Q0HP4HY>",
+        "ts": "1483983300.000402"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "what\u2019s the reason behind the choice to get rid of the old membersrvc completely and rewrite a new module from scratch??",
+        "ts": "1483983302.000403"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U0PB67X4K> is the best person to answer that q.",
+        "ts": "1483983329.000404"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "Hi <@U2Q0HP4HY> I was just asking <@U221LL03Z> some questions about the Java SDK and he pointed me to you",
+        "ts": "1483983356.000405"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "I may have some more questions but I\u2019ll leave them to <#C2FPLFWM6|fabric-sdk-java>",
+        "ts": "1483983386.000406"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "But , I think , it was reusing some of the work that already has been done wrt Certificate Management. That is the reason we based our code on CFSSL.",
+        "ts": "1483983421.000407"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Second reason was to make Membership Services distributed.",
+        "ts": "1483983440.000408"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "ok fair enough",
+        "ts": "1483983465.000409"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "so if I want to use fabric-cop now via java SDK I need to write the REST client myself or wait",
+        "ts": "1483983495.000410"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "well thanks for your help, that was useful",
+        "ts": "1483983503.000411"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U2Q0HP4HY> has that in his plates , I guess.",
+        "ts": "1483983525.000412"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "np. Anytime.",
+        "ts": "1483983538.000413"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "<@U195M30MD> Gerrit commits are already there for enroll",
+        "ts": "1483983549.000414"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "register is being worked on.",
+        "ts": "1483983576.000415"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "thanks for the info <@U2Q0HP4HY>",
+        "ts": "1483983646.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> <@U0S5KF44D> any feedback re: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3763\/>",
+        "ts": "1483995949.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1483995951.000418"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U0S5KF44D>: do you want to give it a go?",
+        "ts": "1483995994.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is the plan to stick with port 8888? migrate to the original 7054?  something else?",
+        "ts": "1483996689.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0KPFAZNF> 8888 is the default cfssl and 7054 was a grpc port.  I would think we would either default to 443 or could just stick with 8888.   I would lean towards 443 but not sure if that's what folks tend to do with default of this kind",
+        "ts": "1483996967.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see",
+        "ts": "1483996993.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i would discourage assuming 443",
+        "ts": "1483997003.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just in my experience elsewhere",
+        "ts": "1483997016.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the reason I ask is because I need to do some v1.0 testing and for reasons I wont bore you with, I need to do it in vagrant",
+        "ts": "1483997051.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but we dont currently expose 8888 outside of vagrant",
+        "ts": "1483997060.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so I was wondering what mod might make the most sense",
+        "ts": "1483997069.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(adding 8888 to vagrant, moding cop to 7054, or something else",
+        "ts": "1483997085.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U1C3LNJ58> Allen, can you and\/or Latisha look at the docker work Greg has done at <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3763\/> and see how it compares to work you've done?",
+        "ts": "1483997135.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0KPFAZNF> thanks for doing this",
+        "ts": "1483997151.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I don't feel strongly either way Greg, but would lean towards changing vagrant just to avoid any ambiguity of what folks are trying to talk to",
+        "ts": "1483997261.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0S5KF44D> that makes sense to me",
+        "ts": "1483997272.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill punch 8888 through for now, we can always adjust",
+        "ts": "1483997283.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "sounds good",
+        "ts": "1483997295.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> is it possible to configure cop over http rather than https",
+        "ts": "1484008159.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1484008161.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not for production, obviously",
+        "ts": "1484008176.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just mean for testing",
+        "ts": "1484008180.000442"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Needs testing, but effectively, there is a flag for it now ...",
+        "ts": "1484008422.000443"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[TLSDisable]",
+        "ts": "1484008426.000444"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Now, if provided it must lei\u2019s say:\n   *return http.ListenAndServeTLS(addr, conf.TLSCertFile, conf.TLSKeyFile, nil) return http.ListenAndServeTLS(addr, conf.TLSCertFile, conf.TLSKeyFile, nil)",
+        "ts": "1484008525.000445",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "See fabric-cop\/testdata\/testconfig.json",
+        "ts": "1484009536.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "You set the 1st property \"tls_disable\" to true",
+        "ts": "1484009559.000447",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "it is false by default",
+        "ts": "1484009566.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do you guys think this should be the default in the container?",
+        "ts": "1484009949.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3763\/3\/images\/cop\/config\/cop.json>",
+        "ts": "1484009950.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "w.r.t. 3763",
+        "ts": "1484009962.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1484009974.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "those files were never intended to be for production deployments anyway, but just a sample configuration",
+        "ts": "1484010024.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems reasonable to me to make that sample as simple as possible",
+        "ts": "1484010034.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and a keypair that is exposed like that doesnt have any real security anyway",
+        "ts": "1484010060.000455"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0S5KF44D>",
+        "ts": "1484012968.000456"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "I don't see cop enroll client implement this json format",
+        "ts": "1484013006.000457"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U12452RAP|grapebaba> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/grapebaba\/F3Q0Y82F9\/-.coffee|Untitled>",
+        "file": {
+            "id": "F3Q0Y82F9",
+            "created": 1484013021,
+            "timestamp": 1484013021,
+            "name": "-.coffee",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "coffeescript",
+            "pretty_type": "CoffeeScript",
+            "user": "U12452RAP",
+            "editable": true,
+            "size": 293,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3Q0Y82F9\/-.coffee?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3Q0Y82F9\/download\/-.coffee?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/grapebaba\/F3Q0Y82F9\/-.coffee",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3Q0Y82F9-07105406d8",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/grapebaba\/F3Q0Y82F9\/-.coffee\/edit",
+            "preview": "{\r\n\t\"hosts\": [\"host1\", \"host2\"],\r\n\t\"certificate_request\": \"encoded CSR\",\r\n\t\"subject\": \"CN=Gari\",\r\n\t\"profile\": \"myprofile\",\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-punctuation\">{<\/span><\/pre><\/div>\n<div><pre>\t<span class=\"cm-string\">&quot;hosts&quot;<\/span><span class=\"cm-punctuation\">:<\/span> <span class=\"cm-punctuation\">[<\/span><span class=\"cm-string\">&quot;host1&quot;<\/span><span class=\"cm-punctuation\">,<\/span> <span class=\"cm-string\">&quot;host2&quot;<\/span><span class=\"cm-punctuation\">]<\/span><span class=\"cm-punctuation\">,<\/span><\/pre><\/div>\n<div><pre>\t<span class=\"cm-string\">&quot;certificate_request&quot;<\/span><span class=\"cm-punctuation\">:<\/span> <span class=\"cm-string\">&quot;encoded CSR&quot;<\/span><span class=\"cm-punctuation\">,<\/span><\/pre><\/div>\n<div><pre>\t<span class=\"cm-string\">&quot;subject&quot;<\/span><span class=\"cm-punctuation\">:<\/span> <span class=\"cm-string\">&quot;CN=Gari&quot;<\/span><span class=\"cm-punctuation\">,<\/span><\/pre><\/div>\n<div><pre>\t<span class=\"cm-string\">&quot;profile&quot;<\/span><span class=\"cm-punctuation\">:<\/span> <span class=\"cm-string\">&quot;myprofile&quot;<\/span><span class=\"cm-punctuation\">,<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 14,
+            "lines_more": 9,
+            "preview_is_truncated": false,
+            "channels": [
+                "C2Y3CPP16"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U12452RAP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U12452RAP|grapebaba>",
+        "bot_id": null,
+        "ts": "1484013021.000458"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "Maybe it is still in progress",
+        "ts": "1484013054.000459"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "Would you like add comments each field?",
+        "ts": "1484013127.000460"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "I can follow it in python SDK",
+        "ts": "1484013157.000461"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0S5KF44D> <@U11MANG9G>",
+        "ts": "1484022169.000462"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "for current json format, i am confusion that when generate CSR, it already need subject,extensions, these should included in CSR, why we need add them in json again?",
+        "edited": {
+            "user": "U12452RAP",
+            "ts": "1484022988.000000"
+        },
+        "ts": "1484022275.000463"
+    }
+]

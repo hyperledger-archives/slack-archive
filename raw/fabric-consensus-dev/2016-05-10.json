@@ -1,0 +1,602 @@
+[
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UGH3X7X|tuand> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F17KLN3DY\/view-change.zip|view-change.zip> and commented: now why would the peers decide to to view-change so quickly and so frequently ?  Also, in peer4.log, connections from &lt;nil&gt; ?  and at end of  peer4.log, note the attempts at state transfer ?",
+        "file": {
+            "id": "F17KLN3DY",
+            "created": 1462890482,
+            "timestamp": 1462890482,
+            "name": "view-change.zip",
+            "title": "view-change.zip",
+            "mimetype": "application\/zip",
+            "filetype": "zip",
+            "pretty_type": "Zip",
+            "user": "U0UGH3X7X",
+            "editable": false,
+            "size": 150803,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F17KLN3DY\/view-change.zip?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F17KLN3DY\/download\/view-change.zip?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F17KLN3DY\/view-change.zip",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F17KLN3DY-43f900bde1",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc17K7UYEL",
+                "created": 1462890482,
+                "timestamp": 1462890482,
+                "user": "U0UGH3X7X",
+                "is_intro": true,
+                "comment": "now why would the peers decide to to view-change so quickly and so frequently ?  Also, in peer4.log, connections from &lt;nil&gt; ?  and at end of  peer4.log, note the attempts at state transfer ?",
+                "channel": "C0Z4NBUN6"
+            }
+        },
+        "user": "U0UGH3X7X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UGH3X7X|tuand>",
+        "bot_id": null,
+        "ts": "1462890482.001441"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I've asked them to turn on debug logging level",
+        "ts": "1462890510.001442"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, state transfer is horribly broken at the moment",
+        "ts": "1462890561.001443"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, assuming it gets triggered a few times it will certainly put the network into a weird state where it constantly changes views,",
+        "ts": "1462890636.001444"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Most of the logic was lost when the executor was removed, and the tests became largely invalid",
+        "ts": "1462890688.001445"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'll try to submit something to patch it up later today, but still wrestling with how to fix it",
+        "ts": "1462890714.001446"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i think this is from a commit late friday",
+        "ts": "1462890718.001447"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That would have contained the broken state transfer, I think",
+        "ts": "1462890772.001448"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "first thing I'm scratching my head about is the view changes seem to happen right after peer startup   ... will have to see if debug logs show anything right after startup",
+        "ts": "1462890831.001449"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "and of course , all behave tests ran fine for me friday till today and i run this app fine on friday",
+        "ts": "1462890934.001450"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i broke it?",
+        "ts": "1462892080.001451"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't realize",
+        "ts": "1462892082.001452"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, `Initiate` is called only during construction of the helper, so once statetransfer completes once, it will never execute again.",
+        "ts": "1462892233.001453"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Similarly, the mock tests were changed to bypass the statetransfer code entirely, and used generated blocks, rather than copying them from other peers",
+        "ts": "1462892274.001454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I see what your assumptions were now (they've actually made splitting the statetransfer tests out much easier) and I'm working to make them true, but undecided how to handle everything yet.",
+        "ts": "1462892347.001455"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh!",
+        "ts": "1462892407.001456"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't realize that this was the usage pattern",
+        "ts": "1462892418.001457"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i've been terrible at not commenting interfaces - we need to fix this",
+        "ts": "1462892432.001458"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i wanted to figure out how to copy blocks from other peers - but I didn't know how",
+        "ts": "1462892472.001459"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We seem to be enforcing the go vet \/ golint on PRs now, so I think they will get cleaned up",
+        "ts": "1462892473.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think overall, it may be a good idea to limit our tests as much as possible",
+        "ts": "1462892488.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. if it can be done with a single peer, do it with a single peer",
+        "ts": "1462892502.001462"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Take a look at <https:\/\/github.com\/hyperledger\/fabric\/pull\/1423>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Split statetransfer tests from obcpbft by jyellick \u00b7 Pull Request #1423 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1423",
+                "text": "Description This changeset splits the common infrastructure between state transfer and PBFT in two, and moves the statetransfer tests into the statetransfer package. This continues the work begun...",
+                "fallback": "GitHub: Split statetransfer tests from obcpbft by jyellick \u00b7 Pull Request #1423 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1423",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1462892505.001463"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead of creating a network",
+        "ts": "1462892508.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's hard to see in the diff, really, it should be compared against <https:\/\/github.com\/hyperledger\/fabric\/pull\/1416>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Remove helper dependencies from statetransfer by jyellick \u00b7 Pull Request #1416 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1416",
+                "text": "This is the first of several PRs decoupling statetransfer from consensus. Description State transfer needs to be moved from consensus\/statetransfer to core\/peer\/statetransfer. This first changes...",
+                "fallback": "GitHub: Remove helper dependencies from statetransfer by jyellick \u00b7 Pull Request #1416 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1416",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1462892522.001466"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But basically, this rips out the vast majority of the mock ledger, moves it to state transfer, and then uses a much simpler mock ledger for pbft, I think it's an improvement.",
+        "ts": "1462892546.001468"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(It's also necessary in order to get the statetransfer tests out of obcpbft)",
+        "ts": "1462892559.001469"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i saw your other patch - i was a bit confused that sheehan wanted documentation for lines you didn't even touch",
+        "ts": "1462892569.001470"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great",
+        "ts": "1462892580.001471"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yeah, I added them, I guess they were visible in the diff, so, they became my responsibility",
+        "ts": "1462892589.001472"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me know if there is anything i can do - otherwise i'll just create documentation commits and go vet stuff",
+        "ts": "1462892634.001473"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe if we don't combine the \"stack\" into one interface, but pass many separate interfaces, we can also simplify each of those interfaces",
+        "ts": "1462892681.001474"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ideally we'd get rid of the helper and just hand in the ledger, for example",
+        "ts": "1462892701.001475"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So maybe I can get your input on how to fix the `helper.go` statetransfer usage.  The usage pattern for statetransfer was designed as follows:\n\nDetect state transfer required\nCall `Initiate`\nCall `AddTarget` feeding in potential hashes as they become available\nReceive callback indicating `Finished`",
+        "ts": "1462892703.001476"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me have a look",
+        "ts": "1462892722.001477"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh you have to call finished?",
+        "ts": "1462892753.001478"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That's a callback",
+        "ts": "1462892766.001479"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The reason why the usage is a little messy, is because the underlying ledger infrastructure gives us no guarantee that a particular target is reachable",
+        "ts": "1462892769.001480"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1462892776.001481"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Otherwise it would simplify things immensely",
+        "ts": "1462892792.001482"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is the relation between `Completed` and `Finished`?",
+        "ts": "1462892792.001483"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oops, I mispoke, out of memory",
+        "ts": "1462892821.001484"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah the same",
+        "ts": "1462892825.001485"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1462892828.001486"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You can see the interface doc:\n\n```\n\/\/ Listener is an interface which allows for other modules to register to receive events about the progress of state transfer\ntype Listener interface {\n        Initiated()                                                   \/\/ Called when the state transfer thread starts a new state transfer\n        Errored(uint64, []byte, []*protos.PeerID, interface{}, error) \/\/ Called when an error is encountered during state transfer, only the error is guaranteed to be set, other fields will be set on a best effort basis\n        Completed(uint64, []byte, []*protos.PeerID, interface{})      \/\/ Called when the state transfer is completed\n}\n```",
+        "ts": "1462892829.001487"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can we just call `Initiated` again from `Completed`?",
+        "ts": "1462892851.001488"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the problem is the race, and why `AddTarget` does not implicitly call `Initiate`",
+        "ts": "1462892876.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XR6J961>: <@U0XPR4NP4> who should I track down for documenting public functions in consensus?",
+        "ts": "1462892925.001490"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sheehan: oh for sure it is us",
+        "ts": "1462892936.001491"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sheehan: just that jyellick's patch didn't even touch these interfaces :simple_smile:",
+        "ts": "1462892950.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll be working on it",
+        "ts": "1462892957.001493"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "yeah, I realize. Thought it would be easy to try to fix up as we go",
+        "ts": "1462892964.001494"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but we're trying to severely cut down the interfaces exposed",
+        "ts": "1462892974.001495"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "but as long as someone is working on it, that\u2019s fine",
+        "ts": "1462892974.001496"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: what race?",
+        "ts": "1462893012.001497"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: maybe we need to move the state transfer interaction into the plugin statemachine",
+        "ts": "1462893040.001498"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that no races will happen",
+        "ts": "1462893046.001499"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Essentially, imagine the following:\n\nt1: Calls initiate\nt1: Adds target\nt2: Calls Completed\nt1: Adds target (implicitly calls initiate)\nt1: receives Completed\n\nt1 now believes that state transfer is not occurring",
+        "ts": "1462893121.001500"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1462893160.001501"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, that race will always exist",
+        "ts": "1462893176.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well it gets back its interface",
+        "ts": "1462893203.001503"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so it can tell that the completed refers to a different stage",
+        "ts": "1462893220.001504"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the question is, where do we put the interlock and retry",
+        "ts": "1462893235.001505"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it has to be in t1",
+        "ts": "1462893262.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It can tell the completed came from a different target, but that's also okay, this would also be a fine scenario:\n\nt1: Calls initiate\nt1: Adds target A\nt1: Adds target B\nt2: Calls Completed (to target A)\nt1: receives Completed",
+        "ts": "1462893419.001507"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The guarantee made by state transfer is that one of the targets will be reached, not the last one added",
+        "ts": "1462893459.001508"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1462893470.001509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so ideally i'd prefer the helper not to do any mediation in the state transfer, and have a state transfer object passed to the plugin",
+        "ts": "1462893594.001510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and for tests we replace this with something simple (as we have anyways right now)",
+        "ts": "1462893622.001511"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then the plugin needs to figure out whether to initiate + addtarget again",
+        "ts": "1462893645.001512"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So the executor eliminate the race by having the initiating thread block until completion.  I think that might be the most direct way to fix this.  Simply have a go routine who's responsibility it is to interact with state transfer, when that goroutine is busy (via say a default on a select) the pbft thread would be invoking `AddTarget`, when the thread isn't busy, it would grab the target, and invoke `Initiate`, then `AddTarget`.",
+        "ts": "1462894053.001513"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Eh, maybe not, not sure that fixes this.",
+        "ts": "1462894121.001514"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Double calling `Initiate` is a problem, but could even be solved with a mutex, the problem is knowing whether or not statetransfer is executing in PBFT.  Maybe the key would be to listen on the `Initiated` callback to keep track.",
+        "ts": "1462894201.001515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: What would you think of eliminating `Initiate()` as a call, having `AddTarget` implicitly initiate, then require the caller to listen for the `Initiated` and `Completed` events to figure out what's going on?",
+        "ts": "1462894323.001516"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmmm",
+        "ts": "1462894387.001517"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "initiated is not used at all",
+        "ts": "1462894400.001518"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, I added it because it seemed like valuable information, but never had the need to consume it.",
+        "ts": "1462894436.001519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so the race is really:",
+        "ts": "1462894441.001520"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "addtarget, completed sent, addtarget, completed arrives.  actually we should keep waiting",
+        "ts": "1462894472.001521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that has to be handled in pbft",
+        "ts": "1462894491.001522"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in the statemachine",
+        "ts": "1462894499.001523"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, assuming addtarget now implicitly calls initiate",
+        "ts": "1462894502.001524"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1462894511.001525"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think that makes sense to do",
+        "ts": "1462894517.001526"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Okay, I like it, I'll get to work on coding it up",
+        "ts": "1462894530.001527"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "cool!",
+        "ts": "1462894534.001528"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let me know what i can do",
+        "ts": "1462894537.001529"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Will do, once I've got the code together, I'll post it here for review",
+        "ts": "1462894553.001530"
+    }
+]

@@ -1,0 +1,150 @@
+[
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U2JLNV77T> , I assume you are working on V0.6. I could think of two things  here. Could you check below and let us know \n1) check If the vendor folder exists and it contains all the required files (you can refer: `<https:\/\/github.com\/ratnakar-asara\/NodeSdkSample\/raw\/master\/tlsca\/src\/chaincode_example02\/vendor.zip`>)\n2) Are you able to compile your chaincode with `go build` command ?",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1482159260.000000"
+        },
+        "ts": "1482159208.000162"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "<@U13Q594J2> Yes, I'm working with v0.6\n1. The vendor folder exists, on the GOPATH, at the same level as the package containing the chaincode. \n2. Yes, `go build` generates an executable without any errors.",
+        "ts": "1482161591.000164"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "hmmm thats strange ...",
+        "ts": "1482161704.000165"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "did you set GOPATH explicitly in your node program ?",
+        "ts": "1482161749.000166"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "Something similar to this `process.env['GOPATH']= __dirname;`\nPlease make sure you have this structure `$GOPATH\/src\/&lt;chaincode-folder-name&gt;\/&lt;chaincode&gt;`",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1482161935.000000"
+        },
+        "ts": "1482161907.000167"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "Oh, I haven't! I thought `go env` would take care of it, no? The only path I have set in my Node program is the chaincodePath",
+        "ts": "1482161993.000169"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "I'll just add `process.env['GOPATH']=$GOPATH\/src\/&lt;chaincode-folder-name&gt;\/&lt;chaincode&gt;` bit and check",
+        "ts": "1482162020.000170"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "no no .. If you have the chaincode dir structure maintained properly then you don't need to set this .... Can you please refer this sample once \n`<https:\/\/github.com\/ratnakar-asara\/NodeSdkSample\/tree\/master\/events>`\n\nwhere in my Node program I explicitly added GOPATH in my program `<https:\/\/github.com\/ratnakar-asara\/NodeSdkSample\/blob\/master\/events\/event-sample.js#L23>` (This is not manditory) \nand my chaincode src is placed under `<https:\/\/github.com\/ratnakar-asara\/NodeSdkSample\/tree\/master\/events\/src\/eventsender>`\n\nMake sure have the similar chaincode structire `$GOPATH\/src\/&lt;chaincode-folder-name&gt;\/&lt;chaincode-src&gt;`",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1482162270.000000"
+        },
+        "ts": "1482162190.000171"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "Does Node have a problem if the chaincode is placed in a sub-sub directory of src?",
+        "ts": "1482162293.000174"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "Nope .. that shouldn't cause any issues \nIf you see this line `<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1748>`\n`$GOPATH`  +  `\"\/src\/\"` + `request.chaincodePath (Path that you set in your node program)`",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1482162637.000000"
+        },
+        "ts": "1482162610.000175"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "Also, a difference between our directory structures is that I have my Node app in the ~\/mytest directory (following the fabric-starter-kit example), while chaincodes reside in a completely different directory (which is shared under the `volumes` tag in my docker-compose)",
+        "ts": "1482162661.000178"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "Yeah, that makes sense. So sub-sub directory isn't the issue.",
+        "attachments": [
+            {
+                "fallback": "[December 19th, 2016 9:20 PM] ratnakar: Nope .. that shouldn't cause any issues \nIf you see this line `<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1748>`\n`$GOPATH`  +  `\"\/src\/\"` + `request.chaincodePath (Path that you set in your node program)`",
+                "ts": "1482162610.000175",
+                "author_subname": "ratnakar",
+                "channel_id": "C14011Q9M",
+                "channel_name": "fabric-sdk",
+                "is_msg_unfurl": true,
+                "text": "Nope .. that shouldn't cause any issues \nIf you see this line `<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1748>`\n`$GOPATH`  +  `\"\/src\/\"` + `request.chaincodePath (Path that you set in your node program)`",
+                "author_name": "Ratnakar Asara",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/ratnakar",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-21\/82560000166_ed0ccae12e3d1e3dd811_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-sdk\/p1482162610000175",
+                "is_share": true,
+                "footer": "Posted in #fabric-sdk"
+            }
+        ],
+        "ts": "1482162783.000180"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "<@U13Q594J2> \nThere isn't any difference even if I set the Gopath using the `process.env` attribute. \nAlso, when I run the application with the `DEBUG=hfc` flag, it says the $GOPATH is  \/opt\/gopath\/ and identifies the project directory as the folder containing the chaincode source too.",
+        "edited": {
+            "user": "U2JLNV77T",
+            "ts": "1482163877.000000"
+        },
+        "ts": "1482163831.000181"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "not really sure at this point what is causing that issue .... Can you tell me what value have you set to `chaincodePath` in your program ?",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1482164431.000000"
+        },
+        "ts": "1482164336.000183"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "`deployRequest.chaincodePath = \"<http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_trade\/workflow_template_manager_chaincode\/|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_trade\/workflow_template_manager_chaincode\/>\";`",
+        "ts": "1482166299.000186"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "And the directory is also accessible in the container",
+        "ts": "1482166362.000187"
+    },
+    {
+        "user": "U3AECURPZ",
+        "text": "<@U3AECURPZ|gvlax> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482179099.000188"
+    }
+]

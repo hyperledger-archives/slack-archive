@@ -1,0 +1,155 @@
+[
+    {
+        "user": "U2CC1NDT2",
+        "text": "<@U2CC1NDT2|lenh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475485147.000125"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "could someone please tell me what this error means when using the nodeSDK...\n```error on invoke: {\"error\":{\"code\":2,\"metadata\":{\"_internal_repr\":{}}},\"msg\":\"Error: sql: no rows in result set\"}```",
+        "ts": "1475487476.000130"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "I can confirm that the membersrvc, peer and chaincode is running correctly on the fabric",
+        "ts": "1475487704.000131"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "I'm guessing I have a problem in how I'm calling `handleUserRequest` which I'm doing like this\n```var chain_response = handleUserRequest('jim','6avZQLwcUe9b','mycc','query',[\"b\"]);```\nany pointers \/ help would be greatly appreciated...",
+        "ts": "1475488820.000132"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U2CC1NDT2> this might be helpful <https:\/\/github.com\/IBM-Blockchain\/ibm-blockchain-issues\/issues\/45#issuecomment-250563940>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Having issues connecting to membershipservice with HFC v0.6.2 \u00b7 Issue #45 \u00b7 IBM-Blockchain\/ibm-blockchain-issues \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/IBM-Blockchain\/ibm-blockchain-issues\/issues\/45#issuecomment-250563940",
+                "text": "Hello everyone! Trying to enroll user to bluemix membership service and keep getting code:2 error. Please help! (the certificate is there and readable, errors would have risen otherwise) Current t...",
+                "fallback": "GitHub: Having issues connecting to membershipservice with HFC v0.6.2 \u00b7 Issue #45 \u00b7 IBM-Blockchain\/ibm-blockchain-issues",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/482284?v=3&s=400",
+                "from_url": "https:\/\/github.com\/IBM-Blockchain\/ibm-blockchain-issues\/issues\/45#issuecomment-250563940",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1475499286.000133"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U13Q594J2> - thanks - I think I was on the wrong track but am slowly making progress now...",
+        "ts": "1475499373.000135",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13Q594J2",
+                    "U0Z81GL6S"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "user": "U11HTMW0H",
+        "old_name": "nodesdk",
+        "name": "fabric-sdk-node",
+        "text": "<@U11HTMW0H|bmos299> has renamed the channel from \"nodesdk\" to \"fabric-sdk-node\"",
+        "type": "message",
+        "subtype": "channel_name",
+        "ts": "1475523443.000136"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "hi folks - I think something is off with the SDK...\n1. `make node-sdk-unit-tests` - not a single test passes regardless of `net` or `dev`mode...\n2. calling the Fabric from a client running the SDK - query fails...",
+        "ts": "1475526865.000137"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "TL;DR\n\n Steps taken:\n 1. Clean pull of repo + `vagrant up` provisioning - OK\n 2. `make membersrvc` and `make peer` - OK\n 3. `make unit-test` - OK\n\n So up to this point everything working as expected...\n\n 4. `make node-sdk-unit-tests` - FAIL (all of them)\n\n I then ran the Behave BDD Tests with `make behave`. I was specifically interested in the `query` transactions which all seemed to pass.\n\n Here is the output from Behave:\n ```Failing scenarios:\n java_shim.feature:121  Java TableExample chaincode single peer\n\n 4 features passed, 1 failed, 3 skipped\n 39 scenarios passed, 1 failed, 9 skipped\n 549 steps passed, 1 failed, 270 skipped, 0 undefined\n Took 19m20.454s\n make: *** [behave] Error 1```",
+        "edited": {
+            "user": "U2CC1NDT2",
+            "ts": "1475526910.000000"
+        },
+        "ts": "1475526886.000138"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Here are some selected outputs from the `make node-sdk-unit-tests`:\n\n ```status: 'FAILURE' }, msg: 'Error:Failed to launch chaincode spec(Could not get deployment transaction for 6479d17c2bf0b805920bad34a86a5896b5286a28084cee9567e284ab4938e25a - LedgerError - ResourceNotFound: ledger: resource not found)' }\n at: fail (\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/test\/unit\/asset-mgmt.js:97:7)\n\n END running asset-mgmt tests\n *******  asset-mgmt.js failed!  *******\n\n query: querying {\"chaincodeID\":\"18dcdd7aa560d61ddd289e3cf5b62c73f12fe68c67b654647bd9dffc67403934\",\"fcn\":\"query\",\"args\":[\"MyAsset\"]}\n\n \"msg\":\"Error:Failed to launch chaincode spec(Could not get deployment transaction for 18dcdd7aa560d61ddd289e3cf5b62c73f12fe68c67b654647bd9dffc67403934 - LedgerError - ResourceNotFound: ledger: resource not found)\"}\n\n Deploy with missing chaincodeName or chaincodePath\n ok 21 Failed to deploy chaincode: request={\"fcn\":\"init\",\"args\":[\"a\",\"100\",\"b\",\"200\"]}, error={\"error\":{},\"msg\":\"Error: missing chaincodePath in DeployRequest\"}\n\n END running asset management with roles tests\n *******  asset-mgmt-with-roles.js failed!  *******```",
+        "ts": "1475526934.000140"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Here is the output from my client-side test:\n\n ```vagrant@homestead:~\/Code\/node_hl$ node server.js\n Hyperldeger REST API provider listening on port 8081\n Middleware invoked...\n Enrolling WebAppAdmin...\n Enrolled JohnDoe successfully\n\n deploying chaincode; please wait ...\n deploy complete; results: {\"uuid\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\"}\n invoke chaincode ...\n invoke submitted successfully; results={\"uuid\":\"7a38c5a5-1da7-4b18-8663-019bcccd17f1\"}\n invoke completed successfully; results={\"result\":\"Tx 7a38c5a5-1da7-4b18-8663-019bcccd17f1 complete\"}\n Waiting for chain to sync...\n querying chaincode ...\n Failed to query chaincode: request={\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"fcn\":\"query\",\"args\":[\"a\"]}, error=%k EventTransactionError {\n error:\n { status: 'FAILURE',\n msg: &lt;Buffer 45 72 72 6f 72 3a 46 61 69 6c 65 64 20 74 6f 20 6c 61 75 6e 63 68 20 63 68 61 69 6e 63 6f 64 65 20 73 70 65 63 28 43 6f 75 6c 64 20 6e 6f 74 20 67 65 ... &gt; },\n msg: 'Error:Failed to launch chaincode spec(Could not get deployment transaction for 56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8 - LedgerError - ResourceNotFound: ledger: resource not found)' }\n vagrant@homestead:~\/Code\/node_hl$```",
+        "ts": "1475526955.000141"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Peer output whilst running a client -&gt; fabric test:\n\n ```vagrant@hyperledger-devenv:v0.1.0-bb5b5f8:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ peer node start\n 20:00:43.552 [nodeCmd] serve -&gt; INFO 002 Security enabled status: false\n 20:00:43.552 [nodeCmd] serve -&gt; INFO 003 Privacy enabled status: false\n 20:00:43.552 [eventhub_producer] start -&gt; INFO 001 event processor started\n 20:00:43.568 [chaincode] NewChaincodeSupport -&gt; INFO 004 Chaincode support using peerAddress: 0.0.0.0:7051\n 20:00:43.569 [sysccapi] RegisterSysCC -&gt; INFO 005 system chaincode (noop,<http:\/\/github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop|github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop>) disabled\n 20:00:43.570 [state] loadConfig -&gt; INFO 006 Loading configurations...\n 20:00:43.571 [state] loadConfig -&gt; INFO 007 Configurations loaded. stateImplName=[buckettree], stateImplConfigs=map[numBuckets:%!s(int=1000003) maxGroupingAtEachLevel:%!s(int=5) bucketCacheSize:%!s(int=100)], deltaHistorySize=[500]\n 20:00:43.571 [state] NewState -&gt; INFO 008 Initializing state implementation [buckettree]\n 20:00:43.571 [buckettree] initConfig -&gt; INFO 009 configs passed during initialization = map[string]interface {}{\"numBuckets\":1000003, \"maxGroupingAtEachLevel\":5, \"bucketCacheSize\":100}\n 20:00:43.572 [buckettree] initConfig -&gt; INFO 00a Initializing bucket tree state implemetation with configurations &amp;{maxGroupingAtEachLevel:5 lowestLevel:9 levelToNumBucketsMap:map[7:40001 3:65 2:13 1:3 0:1 8:200001 6:8001 4:321 9:1000003 5:1601] hashFunc:0xab1cd0}\n 20:00:43.572 [buckettree] newBucketCache -&gt; INFO 00b Constructing bucket-cache with max bucket cache size = [100] MBs\n 20:00:43.573 [buckettree] loadAllBucketNodesFromDB -&gt; INFO 00c Loaded buckets data in cache. Total buckets in DB = [0]. Total cache size:=0\n 20:00:43.573 [genesis] func1 -&gt; INFO 00d Creating genesis block.\n 20:00:43.580 [consensus\/controller] NewConsenter -&gt; INFO 00e Creating default consensus plugin (noops)\n 20:00:43.584 [consensus\/noops] newNoops -&gt; INFO 00f NOOPS consensus type = *noops.Noops\n 20:00:43.584 [consensus\/noops] newNoops -&gt; INFO 010 NOOPS block size = 500\n 20:00:43.584 [consensus\/noops] newNoops -&gt; INFO 011 NOOPS block wait = 1s\n 20:00:43.586 [consensus\/statetransfer] blockThread -&gt; INFO 013 Validated blockchain to the genesis block\n 20:00:43.585 [nodeCmd] serve -&gt; INFO 012 Starting peer with ID=name:\"jdoe\" , network ID=dev, address=0.0.0.0:7051, rootnodes=, validator=true\n 20:00:43.587 [rest] StartOpenchainRESTServer -&gt; INFO 014 Initializing the REST service on 0.0.0.0:7050, TLS is disabled.\n 2016\/10\/03 20:08:24 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 10.10.10.200:7051-&gt;10.10.10.150:33175: write: broken pipe\"\n 20:08:35.615 [dockercontroller] deployImage -&gt; ERRO 015 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 20:08:35.616 [dockercontroller] deployImage -&gt; ERRO 016 Image Output:\n ********************\n Step 1 : FROM hyperledger\/fabric-baseimage\n Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n ********************\n 20:08:44.837 [dockercontroller] deployImage -&gt; ERRO 017 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 20:08:44.837 [dockercontroller] deployImage -&gt; ERRO 018 Image Output:\n ********************\n Step 1 : FROM hyperledger\/fabric-baseimage\n Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n ********************\n 20:08:44.837 [chaincode] Launch -&gt; ERRO 019 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 2016\/10\/03 20:10:24 transport: http2Server.HandleStreams failed to receive the preface from client: EOF\n 2016\/10\/03 20:13:14 transport: http2Server.HandleStreams failed to receive the preface from client: EOF```",
+        "ts": "1475527020.000142"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "All things considered though it looks to be a NodeSDK issue I would think given that the `make unit-test` and `make behave` tests pass with respect to querying the chain...",
+        "edited": {
+            "user": "U2CC1NDT2",
+            "ts": "1475527064.000000"
+        },
+        "ts": "1475527040.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "I am not surprised...",
+        "ts": "1475528092.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "we had four change sets that needed to be merged *together*, but only one was merged\u2026 I am almost 100% certain that is causing the trouble you are seeing.",
+        "ts": "1475528129.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "Please stay tuned for the following change sets to be merged:\n\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1303\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1305\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1307\/>",
+        "ts": "1475528195.000147"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0Z81GL6S> - ok - thanks...",
+        "ts": "1475528215.000148"
+    },
+    {
+        "user": "U12452RAP",
+        "text": "<@U12452RAP|grapebaba> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475539565.000149"
+    },
+    {
+        "user": "U2A5NPBQ9",
+        "text": "<@U2A5NPBQ9|kent_landholm> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475562964.000150"
+    }
+]

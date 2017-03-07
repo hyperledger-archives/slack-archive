@@ -1,0 +1,327 @@
+[
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "The chaincode deploy functionality is the SDK is posing two blocking issues for me. My intention is to fix them and contribute back the changes. I wanted to discuss a bit.\n\nThe issues center around \n1.   The way the SDK builds go code in the dockerfiles it generates is inconsistent with the way gocode is built in the peer deploy command.(<https:\/\/jira.hyperledger.org\/browse\/FAB-212>)\n\n2. I think the SDK shouldn't overwrite a Dockerfile in the chaincode directory if one already exists.",
+        "ts": "1475846629.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sounds good <@U0N13GKRP>",
+        "ts": "1475847158.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "1) we should externalize the dockerfile being used",
+        "ts": "1475847169.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we also need to look at the change coming to have a \"cc\" container for golang, java, etc.  <@U0KPFAZNF> should have the details",
+        "ts": "1475847200.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we can 100% avoid having to vendor fabric with a good cc container which has the fabric src  :wink:",
+        "ts": "1475847223.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the beginnings of this are already in place, though we are not yet publishing the image to docker",
+        "ts": "1475847287.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but overall, I still think the SDK needs to be completely out of the Dockerfile business",
+        "ts": "1475847306.000820"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the deployment should only be a) the code and b) some metadata that conveys what the code needs\/expects",
+        "ts": "1475847336.000821",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z81GL6S",
+                    "U1MSZ37NK"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and the peer(s) can then map that into the environment properly",
+        "ts": "1475847355.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Just thinking about what next incremental steps should be.\n\n1. Drop the dockerfile creation from the SDK entirely. ( main issue is then we need to add dockerfiles to the example chaincodes so they are deployable with the SDK) maybe not the end of the world.\n\n2. Conditionally create the dockerfile with the SDK",
+        "ts": "1475848278.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "preferences between 1 and 2",
+        "ts": "1475848287.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "?",
+        "ts": "1475848289.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "one more thing to consider\u2026. when we enabled user provided names for chaincode, there\u2019ll be less need to involve SDK in any kind of munging of the deployed chaincode (at least to compute name)",
+        "ts": "1475848404.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I would probably do a combination - I would not hardcode the Dockerfile contents in the Javascript but rather either in a config.json or just have a template Dockerfile.  We could check to see if one exists in the project or not (if someone wants to override on a per chaincode basis)?  Maybe that is overkill.  Perhaps we just have it as a default template file you could modify and it gt users for all chaincodes?",
+        "ts": "1475848834.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think what I wrote above is confusing.  Basically, I think what we do is provide a \"default\" Dockerfile as part of the SDK that is not hardcoded as a string within the code",
+        "ts": "1475849024.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "I see what you are getting at",
+        "ts": "1475849437.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "I'm not sure how to make the Dockerfile fully generic over the paths for gocode",
+        "ts": "1475849506.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "the advantage of dynamic generation is that you can infer the paths the go code should be copied into in the Dockerfile the paths passed to the deploy function",
+        "ts": "1475849595.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - I think you could so a \"string replace\" in a template?",
+        "ts": "1475849891.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Agree",
+        "ts": "1475856265.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Thanks I think we have a rough direction forward!",
+        "ts": "1475856290.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Awesome that you are looking at it and wrote it up.  Similar thought has been on my mind and then of course I get distracted",
+        "ts": "1475856585.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Just to reiterate, I think dockerfile on the client is not sustainable, and I am moving to get rid of it",
+        "ts": "1475860184.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/2016-September\/000331.html>",
+        "ts": "1475860188.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there are numerous problems with this model, the least of which is the weak $arch support in docker",
+        "ts": "1475860213.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "true enough",
+        "ts": "1475860767.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> so we\u2019d just send the chaincode source directly to peer and it\u2019ll cmpute the docker image ?",
+        "ts": "1475860898.000840"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Oh I see, shuld have read the email link",
+        "ts": "1475860948.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "<@U0KPFAZNF> How would handle deploying something like the utxo example without a provided Dockerfile?",
+        "ts": "1475865233.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "The party that submits the tx seems to be neccessarily responsible for providing a viable dockerfile",
+        "ts": "1475865301.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "It seems reasonable me that Hyperledger networks will specific what $arch are expected for peers",
+        "ts": "1475865526.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Generally I would say something like the UTXO example would be a candidate for a system chaincode",
+        "ts": "1475865568.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, if it were something that was generalizable, it or the resources necessary to support it could be described as a new chaincode platform type",
+        "ts": "1475865631.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. golang, system (golang), java, c++\/utxo, etc",
+        "ts": "1475865657.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the notion of clients passing in Dockerfiles is problematic on several levels, including robustness (as in the opposite of fragility) which is what is plaguing us right now",
+        "ts": "1475865721.000849"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but think of it this way: a client has to either specify a _precise_ FROM target, which is fragile w.r.t. $arch, or they have to specify a relative FROM target, which is fragile w.r.t. peer rev\/capability",
+        "ts": "1475865833.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think this is all wrong: the client has code, and the code has minimum requirements it needs for its environment\u2026that is all we should be specifying",
+        "ts": "1475865873.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the peer can then map the code\/requirements as appropriate",
+        "ts": "1475865893.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and note that a network may not necessarily be homogenous",
+        "ts": "1475865930.000853"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there might be different revs and different $arch",
+        "ts": "1475865959.000854"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Makes sense to me",
+        "ts": "1475866151.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "frankly I think the whole chaincode model is wrong in terms of even using a base image.  we take a 6MB Go executable and deploy a 1.5GB container",
+        "ts": "1475866686.000856"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "lol true",
+        "ts": "1475866751.000857"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K>: certainly not ideal, but keep in mind a few things: the majority of the bloat is coming from irreducible components like the golang compiler and JRE.  Also note that docker is relatively efficient with sharing that 1.5G",
+        "ts": "1475884212.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So, each subsequent instance isn't really 1.5G but much much less",
+        "ts": "1475884243.000860"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That said, we should try to minimize it as much as possible at some point",
+        "ts": "1475884264.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> and I tried to switch to alpine Linux at one point but the results were disappointing.  It needs to be revisited ",
+        "ts": "1475884304.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yeah, even alpine yields like 750mb images",
+        "ts": "1475886517.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "a static linked binary would be ideal",
+        "ts": "1475886534.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "unikernels FTW",
+        "ts": "1475886557.000865",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0N13GKRP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "getting close with working fabctl cli",
+        "ts": "1475886587.000866"
+    }
+]

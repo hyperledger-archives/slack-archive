@@ -1,0 +1,162 @@
+[
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> where can I find the v1 master branch ? I can't see the v1 here: <https:\/\/github.com\/hyperledger\/fabric\/branches>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1482140821.000000"
+        },
+        "ts": "1482140817.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U1CTBUNEN> - master branch is V1",
+        "ts": "1482144233.000092"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U1CTBUNEN> In case it has been a while\u2026 we are using gerrit for the repository and code reviews now, see instructions here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Gerrit\/gerrit.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Gerrit\/gerrit.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/Gerrit\/gerrit.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1482150252.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Also, I know you were interested in the query API, it is now available in master.  Here was the changeset in case you want to review: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3299\/>",
+        "ts": "1482150335.000095"
+    },
+    {
+        "user": "U0Y14MWA2",
+        "text": "<@U0Y14MWA2|vukolic> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482155757.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "@manish-sethii <@U1KFCPFQA>",
+        "ts": "1482155767.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0Z541B3P>",
+        "ts": "1482155776.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Ledger provides a verifiable history of all successful state changes (we talk about *valid* transactions) and unsuccessful attempts to change state (we talk about *invalid* transactions), occurring during the operation of the system.\n\nLedger is constructed by the ordering service (see Sec 1.3.3) as a totally ordered hashchain of blocks of (valid or invalid) transactions. The hashchain imposes the total order of blocks in a ledger and each block contains an array of totally ordered transactions. This imposes total order across all transactions.\n\nLedger is kept at all peers and, optionally, at a subset of orderers. In the context of an orderer we refer to the Ledger as to `OrdererLedger`, whereas in the context of a peer we refer to the ledger as to `PeerLedger`. `PeerLedger` differs from the `OrdererLedger` in that peers locally maintain a bitmask that tells apart valid transactions from invalid ones (see Section XX for more details). \n\nPeers may prune `PeerLedger` as described in Section XX (post-v1 feature).   \n   \nThe Ledger allows peers to replay the history of all transactions and to reconstruct the state. Therefore, state as described in Sec 1.2.1 is an optional datastructure.",
+        "ts": "1482155779.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "--------------------------",
+        "ts": "1482155792.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is the new text about Ledger for the architecture - pls tell me if you have any immediate comments",
+        "ts": "1482155812.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "(of course - will tag you for gerrit review)",
+        "ts": "1482155824.000102"
+    },
+    {
+        "type": "message",
+        "user": "U2UU1LKTR",
+        "text": "Hi everyone, I have noticed that in the ledger.go there is a copyState() function which takes in a source chaincode Id and destination chaincode Id, is it possible to use this function within an invoke function to migrate the world state\/data from one chaincode container to another? Any help would be greatly appreciated",
+        "ts": "1482161229.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U0Y14MWA2> - your text looks fine to me. Good choice of name `OrdererLedger` and `PeerLedger`.",
+        "ts": "1482161668.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U2UU1LKTR> - you must be looking at v0.5\/v0.6. This function was being used for the scenario of chaincode upgrade. When a chain would upgrade, the data would be copied from the previous namespace to the newer namespace. This function was not meant to consume outside the peer.",
+        "ts": "1482161866.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Also, in V1, this is removed as the upgrade chaincode scenario is changed and it would work on the original data directly.",
+        "ts": "1482161935.000107"
+    },
+    {
+        "type": "message",
+        "user": "U2UU1LKTR",
+        "text": "thanks <@U0Z541B3P> for the clarification, yes we are on v0.6, so if we want to implement such a function to upgrade in v0.6, we have to write a go application and run it directly on the peer?",
+        "ts": "1482162371.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "No <@U2UU1LKTR> - there was a plan to provide upgrade feature as a first class feature in v0.5. The ledger function was completed but I guess the chaincode part of the code was not fully implemented... <@U0ULK2JPP> can you please confirm... I guess, my memory is fading here.",
+        "edited": {
+            "user": "U0Z541B3P",
+            "ts": "1482166702.000000"
+        },
+        "ts": "1482166689.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "Because, there were certain things that need to be taken care at the chaincode management side as well for upgrade scenario.",
+        "edited": {
+            "user": "U0Z541B3P",
+            "ts": "1482166773.000000"
+        },
+        "ts": "1482166763.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0Z541B3P",
+        "text": "<@U2UU1LKTR> finally, if you meant to implement the chaincode upgrade feature on your own on v0.6 branch, I am not sure if you want to take that pain as it's going to be available in V1.",
+        "ts": "1482170540.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0Z541B3P> thanks - here is the changeset if you want to have a look",
+        "ts": "1482186371.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3411\/>",
+        "ts": "1482186372.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I also changed the readset\/writeset text as we discussed few weeks ago",
+        "ts": "1482186387.000116"
+    }
+]

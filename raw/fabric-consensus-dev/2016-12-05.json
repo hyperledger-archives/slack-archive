@@ -1,0 +1,588 @@
+[
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1480950010.000004"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/w4fwecg6ardwlnagyjbfklgpu4e|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1480950029.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "working on FAB-665, FAB-666 boostrapping  of orderer  - reviewing one last time changeset <http:\/\/gerrit.hyperledger.org\/r\/2963> and then will update the genesis block create tool to create the blocks as defined",
+        "ts": "1480951468.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "also working on FAB-701  authenticating connection btw orderer and kafka network   ...  TLS setup will be via .properties files but we will need to map forward configuration from orderer to sarama config struct    ...  one outstanding issue is how to add\/remove orderers as I haven't seen if kafka can dynamically revoke a certificate yet",
+        "ts": "1480951694.000007"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0UGH3X7X> <@U0Y14MWA2> <@U0XPR4NP4> about SBFT, what I will have to do:\n1) finish networked stress tests with Marko (we still need to fix a bug)\n2) remove network stress tests and sbft tests from orderer's \"short test set\" (e.g. if !Short() return : <https:\/\/golang.org\/pkg\/testing\/#Short>)\n3) rewrite sbft and app to use the common stuff",
+        "ts": "1480956024.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "re 3) what sort of sbft rewrite this involves",
+        "ts": "1480956155.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "?",
+        "ts": "1480956158.000010"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "about 1) we agreed that until censorship prevention component is implemented we simply add delays (sleep N seconds) to the tests to give nodes enough time to connect (as there were cases when the replicas were unable to connect to each other quickly enough and some requests got 'censored'\/left out) - are you OK with this?",
+        "ts": "1480956209.000011"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0Y14MWA2> 3) involves the usage of the common stuff <@U0XPR4NP4> introduced (e.g. common proto structures, block cutter, common deliver\/broadcast etc lot of stuff)",
+        "ts": "1480956269.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XPR4NP4> help me out with some details please :smile:",
+        "ts": "1480956288.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "ok let's do that carefully :slightly_smiling_face:",
+        "ts": "1480956341.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in principle it is not clear that every consensus impl needs to do stuff in the same way",
+        "ts": "1480956358.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "imagine 3rd party consensus",
+        "ts": "1480956365.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My suggestion would be first, to migrate from the `batch` structure used internally to the common `Block` structure, they are nearly the same, and ultimately, sbft will need to deliver `Block`s",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1480956420.000000"
+        },
+        "ts": "1480956413.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "why is this not called Batch?",
+        "ts": "1480956429.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because it contains a hash chain",
+        "ts": "1480956452.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or rather, because it forms one",
+        "ts": "1480956459.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "well Batches do as well",
+        "ts": "1480956464.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "calling it Batch would be in spirit of NCAP",
+        "ts": "1480956472.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Block is for Validated Ledger",
+        "ts": "1480956479.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But for implementation, if we wish to have re-use of components, we must have a common data type",
+        "ts": "1480956509.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "agree - I am talking about the name :slightly_smiling_face:",
+        "ts": "1480956519.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We cannot convert from a `Batch` datatype to a `Block` datatype without breaking the hash chain (unless they are 100% identical, which at that point, having two different data structures seems silly)",
+        "ts": "1480956547.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "let me rephrase",
+        "ts": "1480956558.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I propose to refactor Block into Batch",
+        "ts": "1480956565.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "rename",
+        "ts": "1480956573.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "as for current Batch and Block compatibility I will take a look",
+        "ts": "1480956587.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But this is all an internal implementation detail? If you wish, we can `type batch cb.Block`.  I think I must be missing your point",
+        "ts": "1480956644.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what I am saying is that the thingy should be *called* Batch",
+        "ts": "1480956666.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not Block",
+        "ts": "1480956669.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "to be in spirit of the NCAP",
+        "ts": "1480956677.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But then we will be using a `Batch` datastructure to store blocks.  And the only benefit is for people who actually inspect the code (what we call what a user thinks of as a 'batch' internally should have no impact on that user).",
+        "ts": "1480956778.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no - we use it to store batches :slightly_smiling_face:",
+        "ts": "1480956791.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "raw ledger has batches",
+        "ts": "1480956797.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "validated ledger has blocks",
+        "ts": "1480956801.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I can also do the renaming in the NCAP",
+        "ts": "1480956810.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "but it may be rooted already in people's brains this way",
+        "ts": "1480956828.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "it is in mine :slightly_smiling_face:",
+        "ts": "1480956832.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I would argue that that's a clarification we made to make things clear in the NCAP to the high level user, but in real implementation, we have blocks on both sides.  It was just confusing to a user to call them both blocks.",
+        "ts": "1480956832.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Fundamentally, at the orderer side, we _are_ building a blockchain.",
+        "ts": "1480956847.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "All transactions in the blockchain will be valid, per the blockchain rules.",
+        "ts": "1480956858.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway - naming needs to be in sync",
+        "ts": "1480956884.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "one way or another",
+        "ts": "1480956888.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It just so happens that the peer side is going to take this perfectly valid orderer blockchain, and apply a different set of rules to it, to form another, perfectly valid blockchain.",
+        "ts": "1480956889.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "either renaming code",
+        "ts": "1480956892.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "or renaming ncap",
+        "ts": "1480956896.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If we rename it in code... then the naming on the blockchain side is right, and then on the peer side it is wrong.",
+        "ts": "1480956930.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/697\/> (discussion starting from 08-26 16:01 is a deja-vu of this)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1480957035.000000"
+        },
+        "ts": "1480956943.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no its not - in NCAP this is Batch on both sides",
+        "ts": "1480956973.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "anyway",
+        "ts": "1480956983.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we are wasting too much slack for this",
+        "ts": "1480956990.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Another option is to rename NCAP to Blocks and VBlocks ",
+        "ts": "1480957821.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "I do not really care",
+        "ts": "1480957830.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Except that naming must be consistent",
+        "ts": "1480957839.000059"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah the code and the document should have the same names, that is true",
+        "ts": "1480958012.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0Y14MWA2> v1 won\u2019t even have validated ledger, the committer will have a raw ledger that includes an indicator of which trans are valid or not.  I don\u2019t think we\u2019d want to have a v1 without blocks :slightly_smiling_face: , therefore I\u2019d agree NCAP should be updated to call them Blocks and VBlocks.",
+        "ts": "1480959043.000061",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U2NG5AX0A",
+        "text": "<@U2NG5AX0A|klorenz> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480968005.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "A heads up that I'll be changing the test chain ID string (currently set to `**TEST_CHAIN_ID**`) as asterisks are not allowed in topic names in Kafka: <https:\/\/github.com\/apache\/kafka\/blob\/trunk\/core\/src\/main\/scala\/kafka\/common\/Topic.scala#L29>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "apache\/kafka",
+                "title_link": "https:\/\/github.com\/apache\/kafka\/blob\/trunk\/core\/src\/main\/scala\/kafka\/common\/Topic.scala#L29",
+                "text": "kafka - Mirror of Apache Kafka",
+                "fallback": "GitHub: apache\/kafka",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/47359?v=3&s=400",
+                "from_url": "https:\/\/github.com\/apache\/kafka\/blob\/trunk\/core\/src\/main\/scala\/kafka\/common\/Topic.scala#L29",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1480980623.000063",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This has implications on the allowed chain IDs in general.",
+        "ts": "1480980687.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Do we provide a function that generates acceptable allowed chain IDs and check the given chain ID during the config-tx filtering in ingress?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1480980770.000000"
+        },
+        "ts": "1480980722.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "gee thanks :slightly_smiling_face:",
+        "ts": "1480980793.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "just kidding",
+        "ts": "1480980795.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Do we let all characters be fairplay, then strip out the invalid ones if the backing consenter is Kafka?",
+        "ts": "1480980829.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you do me a favor ? \u2026.also change in core\/util ?",
+        "ts": "1480980831.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(<@U0ULK2JPP>: Sure, will do.)",
+        "ts": "1480980840.000072"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that should take care of CLI e-2-e",
+        "ts": "1480980854.000073"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks, Kostas",
+        "ts": "1480980863.000074",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The downside of the first option is that we're tied too much to the way Kafka does things. It also won't play nicely if we want the chain ID to be the hash of certain data as <@U1BC5A0F9> had suggested at one point.",
+        "ts": "1480980911.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The downside of the second option is that we're losing the one-to-one mapping between the original chain ID and the one that Kafka holds. May be insignificant (and nothing that can't be taken care of with persisting some metadata), but doesn't quite feel right.",
+        "ts": "1480980970.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what do you think of keep it simple and do \u201cstandard\u201d chars for chainID across the board ?",
+        "ts": "1480980994.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So that's closer to the first option right?",
+        "ts": "1480981030.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`Do we provide a function that generates acceptable allowed chain IDs and check the given chain ID during the config-tx filtering in ingress?` - basically saying perhaps we enforce a \u201cvalid chain ID\u201d at fabric level ?",
+        "ts": "1480981070.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes.",
+        "ts": "1480981080.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think if we do that,  we at least standardize upfront and keep it sane\/simple",
+        "ts": "1480981112.000081",
+        "reactions": [
+            {
+                "name": "100",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "To me that works. I do remember reading in a slide that we wanted the chain ID to be the hash digest of certain data (Elli's suggestion, or I may be wrong), but I don't know if there's a special reason behind this. If there's not, we're good.",
+        "ts": "1480981122.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right, I don\u2019t know all the implications of that\u2026 however if we allow arbitrary bytes, we run into the problem of needing to map to various underlying technologies",
+        "ts": "1480981168.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "We could always do what I used to do when chainID was a byte slice.",
+        "ts": "1480981183.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I would hex-encode it. But the length limit still applies. (249 characters max.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1480981937.000000"
+        },
+        "ts": "1480981195.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "All safe characters :simple_smile:",
+        "ts": "1480981202.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right. worst cast we could do that",
+        "ts": "1480981216.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "In fact, I'll do that for now, and wait until we reach a \u2014wait for it\u2014 consensus before I change the test chain ID.",
+        "ts": "1480981248.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I like it\u2026 let the mapping be handled at the higher levels , in-your-face, rather than burying deep",
+        "ts": "1480981256.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "for the test chainID , see no harm in moving to sane chars",
+        "ts": "1480981283.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "at least will unblock you",
+        "ts": "1480981315.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm good either way. At least now that I know the issue, I can work around it. Thanks Murali.",
+        "ts": "1480981350.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thank you!",
+        "ts": "1480981423.000093"
+    }
+]

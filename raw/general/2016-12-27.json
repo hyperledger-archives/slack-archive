@@ -1,0 +1,348 @@
+[
+    {
+        "user": "U3KLCSY4X",
+        "text": "<@U3KLCSY4X|bobshi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482827444.002200"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "Hi Team,",
+        "ts": "1482829038.002201"
+    },
+    {
+        "user": "U3JTY0Y2X",
+        "text": "<@U3JTY0Y2X|rick_reesen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482832203.002202"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "I am new to chaincode development. i have previously worked on Ethereum based dapps with contracts coded in solidity",
+        "ts": "1482832909.002203"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "From what I see in examples, there are Getstate and Putstate functions that we can use to write\/read key value pairs to Ledger",
+        "ts": "1482832961.002204"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "Now if I need to save complex structured and objects, how can I do that???",
+        "ts": "1482832986.002205"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "Also is there any official API reference containing all chain code functions that I can refer??",
+        "ts": "1482833027.002206"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U3J2GFC2G>, you can.  Shim provides API through which you can create tables, insert, update and delete data. They are not relational tables, but more like object store.",
+        "ts": "1482833238.002207"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "Do you have",
+        "ts": "1482833306.002208"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "<@U1SHFS1Q9> Do you have the link to the documentation??",
+        "ts": "1482833347.002209"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "And Is updation possible on ledger. I thought it's immutable",
+        "ts": "1482833358.002210"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "You can refer to the samples. If you have cloned the fabric project, you can refer to the sample at \/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/largerowsiter\n\nThat has table operations.  I was given to understand that under covers it uses Getstate and Putstate functions\n\nComing to the immutability part, updating data is possible.  However, the trail of transactions is immutable. Again that is how I have understood.  May be someone can correct me.",
+        "ts": "1482833803.002211"
+    },
+    {
+        "type": "message",
+        "user": "U3ENCLLUA",
+        "text": "<@U1SHFS1Q9> I can\u2019t find `largerowsiter` on fabric repo on github",
+        "ts": "1482834314.002212"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U3ENCLLUA> &amp; <@U3J2GFC2G>, Sorry. My bad.  This sample is available in V0.6 repo\n\n<https:\/\/github.com\/hyperledger\/fabric\/tree\/v0.6\/examples\/chaincode\/go\/largerowsiter>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/v0.6\/examples\/chaincode\/go\/largerowsiter",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/v0.6\/examples\/chaincode\/go\/largerowsiter",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1482834495.002213"
+    },
+    {
+        "type": "message",
+        "user": "U3ENCLLUA",
+        "text": "tks, a Table is like a sql table or a mongodb collection?",
+        "ts": "1482834546.002215"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "More like a collection. It is not a relational (SQL based) DB",
+        "ts": "1482834612.002216"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U3J2GFC2G> &amp; <@U3ENCLLUA> , Some code snippet for your reference\n\nfunc TableOperations (stub shim.ChaincodeStubInterface) {\n\nerr := stub.CreateTable(\u201cTableName\u201d, []*shim.ColumnDefinition{\n\t\t&amp;shim.ColumnDefinition{Name: \u201cKeyColumnName\u201d, Type: shim.ColumnDefinition_STRING, Key: true},\n\t\t&amp;shim.ColumnDefinition{Name: \"ColumnName2\", Type: shim.ColumnDefinition_STRING, Key: false},\n\t\t&amp;shim.ColumnDefinition{Name: \"ColumnName3\", Type: shim.ColumnDefinition_STRING, Key: false},\n\t})\n\n\nsuccess, err := stub.InsertRow(\"TableName\", shim.Row{\n\t\tColumns: []*shim.Column{\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val1}},\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val2}},\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val3}},\n\t\t},\n\t})\n\n\nsuccess, err := stub.ReplaceRow(\"TableName\", shim.Row{\n\t\tColumns: []*shim.Column{\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val1}},\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val2}},\n\t\t\t&amp;shim.Column{Value: &amp;shim.Column_String_{String_: Val3}},\n\t\t},\n\t})\n\n\nvar columns []shim.Column\nkeyColumn := shim.Column{Value: &amp;shim.Column_String_{String_: KeyColumnName}}\ncolumns = append(columns, keyColumn)\nrow, err := stub.GetRow(\"TableName\", columns)\n\n}",
+        "ts": "1482835360.002218"
+    },
+    {
+        "type": "message",
+        "user": "U3ENCLLUA",
+        "text": "tks for the help",
+        "ts": "1482835391.002219"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "welcome",
+        "ts": "1482835404.002220"
+    },
+    {
+        "type": "message",
+        "user": "U3ENCLLUA",
+        "text": "what about representing a relationship between 2 tables?",
+        "ts": "1482835702.002221"
+    },
+    {
+        "type": "message",
+        "user": "U3J2GFC2G",
+        "text": "Thanks <@U1SHFS1Q9>",
+        "ts": "1482835932.002222"
+    },
+    {
+        "type": "message",
+        "user": "U2N8F32KZ",
+        "text": "is it possible to create our own membersrvc image",
+        "ts": "1482838355.002223"
+    },
+    {
+        "type": "message",
+        "user": "U2N8F32KZ",
+        "text": "else customize the existing one",
+        "ts": "1482838372.002224"
+    },
+    {
+        "user": "U3JBCDT7B",
+        "text": "<@U3JBCDT7B|herelab> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482844602.002226"
+    },
+    {
+        "user": "U3KN8RV8F",
+        "text": "<@U3KN8RV8F|pieterhaasnoot> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482844866.002227"
+    },
+    {
+        "user": "U3K49L0Q4",
+        "text": "<@U3K49L0Q4|kpow> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482845538.002228"
+    },
+    {
+        "type": "message",
+        "user": "U3K49L0Q4",
+        "text": "<#C0J02NU1E|general> hello all I joined this slack because I am working on an ecoblockchain Hyperledger Bitcoin project for the AngelHack UAE global hackathon- anyone else here working on a project for that specific hackathon?",
+        "ts": "1482846005.002229"
+    },
+    {
+        "user": "U3KNEKV0F",
+        "text": "<@U3KNEKV0F|hananah> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482846540.002230"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U3ENCLLUA>, I think we have have the key of one table as a column in the other table to represent relationships.  However, i don\u2019t think we have impose referential integrity constraints.  Those are to be handled through code.",
+        "ts": "1482846548.002231"
+    },
+    {
+        "user": "U3KNW0P5M",
+        "text": "<@U3KNW0P5M|juanjo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482850241.002232"
+    },
+    {
+        "type": "message",
+        "user": "U3D5886CB",
+        "text": "what kind of communication type between cop and peer is being planned to implement? grpc?",
+        "ts": "1482850650.002233"
+    },
+    {
+        "type": "message",
+        "user": "U3D5886CB",
+        "text": "I\u2019ve found GetLocalMspConfig function, which gets sample security config from local dir, and I wanna try to implement something like GetRemoteMspConfig for myself",
+        "ts": "1482850802.002234"
+    },
+    {
+        "type": "message",
+        "user": "U149660UA",
+        "text": "Can a Fabric Peer host many Personas? \nFor example, a shipping company deals with many truckers as contractors. Must every trucker run their own peer, or can a single peer handle many truckers _as if_ they were independent peers?",
+        "ts": "1482854842.002235"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3D5886CB> you might want to take a look at the cop interactions in SDKs (say node sdk)",
+        "ts": "1482855000.002237"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U149660UA> that\u2019s really a decision of how you envision membership on the chain. e.g, if the chains \u201csupplychain\u201d with supplier, banks, ports, exchanges etc\u2026 you can imagine the trucker as a user on a \u201csupplier\u201d peer. On the other hand if the chain is a \u201cmonitor truck\u201d chain (stretching a bit here to make a point :slightly_smiling_face: ) you can imagine truckers running their own peer",
+        "ts": "1482855429.002238"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^^ basically begs the question \u201cwhat is my chain\u2019s purpose ?\"",
+        "ts": "1482855517.002239"
+    },
+    {
+        "type": "message",
+        "user": "U149660UA",
+        "text": "If a trucker is a user on a \u201csupplier\u201d peer, can they still sign transactions with their own keys, keep their data confidential from other truckers, etc? Or is it all mixed in under the supplier\u2019s credentials?",
+        "ts": "1482855751.002240"
+    },
+    {
+        "user": "U3K1EMJ2F",
+        "text": "<@U3K1EMJ2F|sabaset> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482856094.002241"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U149660UA> to state it simply a wide variety of possibilities (but what you ask would be possible). Details on how this can be managed depends upon the application (client side and chaincode).  fabric-crypto would be the channel for details (although I expect it\u2019ll be quiet for a few more days)",
+        "ts": "1482856278.002242"
+    },
+    {
+        "user": "U3JCYFDGR",
+        "text": "<@U3JCYFDGR|mikkelpetersen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482856600.002243"
+    },
+    {
+        "type": "message",
+        "user": "U3JCYFDGR",
+        "text": "Hey, quick question here, is there a faster way to retrieve all the blocks and get a list of it all for an auditor? Right now I'm doing it by sending a request from 0-xxxxxxx but it takes forever",
+        "ts": "1482856665.002244"
+    },
+    {
+        "user": "U3K1ZSQ3D",
+        "text": "<@U3K1ZSQ3D|eric_gieseke> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482859780.002245"
+    },
+    {
+        "user": "U3JCNBXDE",
+        "text": "<@U3JCNBXDE|eric.gieseke> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482859988.002246"
+    },
+    {
+        "user": "U3K36KEHH",
+        "text": "<@U3K36KEHH|kaikun213> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482867905.002247"
+    },
+    {
+        "user": "U3JE1U5SL",
+        "text": "<@U3JE1U5SL|kris> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482869577.002248"
+    },
+    {
+        "user": "U3K3SQS2F",
+        "text": "<@U3K3SQS2F|bean> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482872461.002250"
+    },
+    {
+        "user": "U3JEFGAV6",
+        "text": "<@U3JEFGAV6|tjleach> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482872722.002251"
+    },
+    {
+        "user": "U3K3Z604B",
+        "text": "<@U3K3Z604B|healthcr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482874015.002252"
+    },
+    {
+        "user": "U3JEN88KA",
+        "text": "<@U3JEN88KA|bcthinking> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482874391.002253"
+    },
+    {
+        "user": "U3KTUKFPY",
+        "text": "<@U3KTUKFPY|venugopv> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482896189.002255"
+    },
+    {
+        "user": "U3K8154EN",
+        "text": "<@U3K8154EN|kiuki> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1482898552.002256"
+    },
+    {
+        "type": "message",
+        "user": "U26AETJSY",
+        "text": "what is difference between discovery_root_node and vp?",
+        "ts": "1482909525.002257"
+    }
+]

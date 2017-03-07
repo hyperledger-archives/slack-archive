@@ -1,0 +1,336 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi",
+        "ts": "1467719307.001486"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hey <@U0XR6J961>, did you get what you needed yesterday?",
+        "ts": "1467726296.001487"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi jyellick",
+        "ts": "1467726309.001488"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i forgot what it was about",
+        "ts": "1467726314.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm implementing a separate consensus peer binary",
+        "ts": "1467726324.001490"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Neat, going to implement the single consenter consensus? Or are you porting PBFT to start?",
+        "ts": "1467726416.001491"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "using our obcpbft",
+        "ts": "1467726429.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so much crusty interface",
+        "ts": "1467726439.001493"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so beh",
+        "ts": "1467726442.001494"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yeah, hopefully we can clean that interface, Kostas was working on switching the PrePrepare to carry a RequestBlock instead of a Request, once he finishes this, I think we'll be able to finally merge batch\/core and clean much of that up]",
+        "ts": "1467726702.001495"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to decide where to put the grpc service for consensus",
+        "ts": "1467727678.001496"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does it go into pbft or outside?",
+        "ts": "1467727683.001497"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it feels like it should be part of the consensus implementation",
+        "ts": "1467727696.001498"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. connection management",
+        "ts": "1467727722.001499"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd assume you're trying to keep it pluggable so it would be relatively easy to drop another implementation in? I would think gRPC should live on the outside",
+        "ts": "1467728142.001500"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Though certainly you might need to have some hooks for the connection\/disconnection events.",
+        "ts": "1467728163.001501"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i want to avoid excessive marshalling\/unmarshalling",
+        "ts": "1467728663.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which currently is the bottleneck",
+        "ts": "1467728671.001503"
+    },
+    {
+        "user": "U13TWBRBL",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U13TWBRBL|jzhang> has joined the channel",
+        "ts": "1467729989.001504"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Other than the batch marshal\/unmarshal, where are we doing that?",
+        "ts": "1467730240.001505"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know exactly how the composition breaks down",
+        "ts": "1467736851.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "a lot in hashReq",
+        "ts": "1467736861.001507"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and in txID",
+        "ts": "1467736868.001508"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, yes, we do use the marshaling for computing those digests.  We could certainly write a custom digest of some sort, though it seems debatable whether it would be more efficient than the marshaling",
+        "ts": "1467738202.001509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well we should only hash it once",
+        "ts": "1467738394.001510"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i'm debating whether the grpc link between peers should receive a stream or send a stream",
+        "ts": "1467738439.001511"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm",
+        "ts": "1467738458.001512"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Obviously they could both work, what do you see as the tradeoffs?",
+        "ts": "1467738481.001513"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nothing really",
+        "ts": "1467738537.001514"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to figure out how structure the code",
+        "ts": "1467738557.001515"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Presumably this gRPC piece will maintain the point to point links between the peers, and register\/deregister connections as consenters come\/go? Are you not simply lifting this from the existing peer implementation?",
+        "ts": "1467738741.001516"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh no",
+        "ts": "1467738981.001517"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "absolutely not",
+        "ts": "1467738983.001518"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the current peer code is super messy",
+        "ts": "1467738990.001519"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Fair enough.  Not to add to your troubles, but I think it would be nice to keep the door open to not use gRPC.  Something with true broadcasts might be ultimately what's required for scale.",
+        "ts": "1467739090.001520"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean by true broadcasts?",
+        "ts": "1467740159.001521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "RAII is messy :confused:",
+        "ts": "1467740689.001522"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: <https:\/\/github.com\/corecode\/fabric\/tree\/separate-consensus>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/fabric",
+                "title_link": "https:\/\/github.com\/corecode\/fabric\/tree\/separate-consensus",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: corecode\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/fabric\/tree\/separate-consensus",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1467741167.001523"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: it looks quite simple",
+        "ts": "1467741379.001525"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course i didn't run it yet",
+        "ts": "1467741384.001526"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i need a solution for defining the replica set",
+        "ts": "1467741409.001527"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> By \"true broadcast\" I was thinking something like multicast, though I suppose PBFT assumes message validity because the point to point links are secured by an exchanged symmetric key so maybe this is not an obvious drop in",
+        "ts": "1467743184.001528"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wide area multicast?",
+        "ts": "1467743208.001529"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that seems like a lot of pain",
+        "ts": "1467743214.001530"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Could be.  I'm still not sure how people plan to run this, I've not seen anybody actually try to run things other than same physical location.",
+        "ts": "1467743676.001531"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Not to say that the WAN scenario isn't coming)",
+        "ts": "1467743699.001532"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "interesting.",
+        "ts": "1467744143.001533"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But even ignoring multicast, apparently some other UDP based transport is still on the table, especially as this was the original design for PBFT.",
+        "ts": "1467744404.001534"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wouldn't",
+        "ts": "1467745290.001535"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then you need to do DTLS",
+        "ts": "1467745296.001536"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not too familiar with DTLS, is it painful?",
+        "ts": "1467745536.001537"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i don't see any benefit",
+        "ts": "1467745725.001538"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "except for lost packets",
+        "ts": "1467745729.001539"
+    }
+]

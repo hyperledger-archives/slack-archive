@@ -1,0 +1,74 @@
+[
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> it looks like the Query API method in the chaincode is being deprecated and the query will become another option for the Invoke() API",
+        "ts": "1479295959.000381"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "is that the plan moving ahead ?",
+        "ts": "1479295971.000382"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "how does that affect the CouchDB implementation ?",
+        "ts": "1479295996.000383"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U1CTBUNEN> Query() API in chaincode going away has no material impact.  Let me explain. In v0.5 Invoke() automatically went to all peers for execution and Query() went to one peer for query.  If you wanted to query a single peer it was not possible to do that via Invoke, therefore two separate functions were needed.  In v1 architecture the SDK client controls the flow - it is now possible to send the Invoke proposal to an endorser peer for a read-only query, but not submit the results to orderer.  Therefore there is no need for distinction between Invoke() and Query() in v1.  You can Invoke() a chaincode function that does read only queries, against one peer, or against multiple peers if you want to ensure different peers give you consistent results.  A good analogy is a DB Stored Procedure\u2026 you talk about Invoking a Stored Proc rather than Query a Stored Proc, regardless of whether it is doing writes or reads.  So we can still do queries within a chaincode Invoke(), and we will actually likely open up query to peer API (outside chaincode), if you are a user authorized to see all blockchain data (for example an auditor). And with introduction of CouchDB, these queries can now be rich queries against any data field.",
+        "ts": "1479297496.000384"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok it makes sense to me",
+        "ts": "1479297583.000385"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "and where can I find the latest end-to-end code example with CouchDB?",
+        "ts": "1479297600.000386"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "this would be a good starting point for me",
+        "ts": "1479297606.000387"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "(in terms of branch and commit level)",
+        "ts": "1479297643.000388"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Latest master has end-to-end couchdb support",
+        "ts": "1479297701.000389"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "In terms of end-to-end instructions with CLI, see the attachment in Binh's forum email:\n<https:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/2016-October\/000421.html>\nThe attachment at the bottom is:\n<http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/attachments\/20161022\/d3860afb\/attachment.obj>",
+        "ts": "1479297725.000390"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Enable CouchDB in kv_ledger_config.go.  There is a changeset to move the config to core.yaml.  I will update this channel with instructions when that change gets merged.",
+        "ts": "1479297826.000391"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "You can use any chaincode\u2026 the CouchDB interaction code is smart enough to detect whether the values are JSON, if so it saves as normal in CouchDB, if not it saves as a binary attachment.",
+        "ts": "1479297879.000392"
+    }
+]

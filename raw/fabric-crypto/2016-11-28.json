@@ -1,0 +1,136 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK>  writing this here so that <@U26T99AQ4>  and <@U1BC5A0F9>  could see and comment:\nso if I add to the `MessageCryptoService` in `gossip\/api\/crypto.go` something like: \n`ValidateIdentity(peerIdentity PeerIdentityType) error` that'd suffice, right?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1480350339.000000"
+        },
+        "ts": "1480350328.002614"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "The method signature makes sense, we will then see if something needs to be modified when we will go to the implementation",
+        "ts": "1480350380.002616"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but you are implementing the interface this week, right?  if so- can we agree on adding that exact string in the meantime?",
+        "ts": "1480350414.002617"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because I can also make use of that",
+        "ts": "1480350419.002618"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "you mean that method?",
+        "ts": "1480350438.002619"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1480350441.002620"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Yes, I will be working on that",
+        "ts": "1480350446.002621"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "you can already add it to one of your change-set",
+        "ts": "1480350457.002622"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and start using it",
+        "ts": "1480350465.002623"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "at some point, we will provide our implementation of that interface",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1480350490.000000"
+        },
+        "ts": "1480350474.002624"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are working on trying to get JIRA updated with this:",
+        "ts": "1480351063.002626"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "This document contains work-items originally assigned to Crypto squad some of which were refined after our face-to-face:\n\n1. MSP\/chain configuration  documentation. In RTP we had long discussions on what information needs to be passed to fabric MSPManager and\/or to the default MSP (X509 based and\/or COP-based). Configuration relates to parameters associated to the crypto material used by each MSP, but also policies that need to be respected to validate certificates\/members or to reconfigure an MSP. We reached to certain conclusions that are to be documented with a changeset (partially done here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2677\/>), and by updating its description here <https:\/\/docs.google.com\/document\/d\/1_vf5X5WPpECr0PsHM1XfPHB0gmoPJX9j_iGJ5_0mlmI\/edit)> Elli\n\n2. Integration of MSP logic \/ flow to orderers. Ordering service nodes need to  sign certain proto messages as well as reconfiguration transactions (e.g., genesis blocks). Currently this is done by them directly calling the corresponding crypto library. Here one would need to integrate the MSPManager and related interfaces to do signature generation and verification. Angelo\n\n3. PeerMSP implementation. Here we need to implement the default MSP in golang, that is used by the peer, to parse tcerts\/ecerts and confirm signatures generated with these tcerts\/ecerts. This is already work that Ale has started within item (5). Ale\n\n4. Integration of MSP Manager \/ MSP interfaces to the policy framework used for endorsement policies, certificate validation, etc. The policy framework mentioned above leverages an abstractly defined signing and signature verification interface that currently does nothing. We would need to implement that interface using  MSPManager\/default MSP. In addition, we may want to extend the MSP interface with the notion of \nMSP membership\", e.g., a function that leverages certificate validation mechanisms to decide whether the certificate owner is a member of an MSP or not. This would work as a building block to support \"identity group definitions\" that could be leveraged inside policies. Ale\n    \n5. Continue and finalize security work needed on the endorser and committing peer side. VSCC parts that relate to policy evaluation would need to leverage interfaces defined in (3). This item also includes the bootstrapping of the security components of the system using a configuration file, and the components associated to channel security configuration when a channel genesis request is provided to the peer.  Finally this also includes the creation of a a separate MSPManager per channel that is instantiated using the channel genesis block information. Ale\n<https:\/\/jira.hyperledger.org\/secure\/RapidBoard.jspa?rapidView=65&amp;view=planning&amp;selectedIssue=FAB-581>\n<https:\/\/jira.hyperledger.org\/secure\/RapidBoard.jspa?rapidView=65&amp;view=planning&amp;selectedIssue=FAB-580>\n<https:\/\/jira.hyperledger.org\/secure\/RapidBoard.jspa?rapidView=65&amp;view=planning&amp;selectedIssue=FAB-399>\n<https:\/\/jira.hyperledger.org\/secure\/RapidBoard.jspa?rapidView=65&amp;view=planning&amp;selectedIssue=FAB-824>\n\n6. Integrate MSP logic for the needs of the gossip network. Gossip squad has defined an interface to obtain a peer signature\/verify a signature. We would need to implement this using MSP Manager\/interfaces. This item requires collaboration with the consensus squad. Angelo\n\n7. BCCSP support with keystore. We need to provide to BCCSP a pluggable keystore interface, where keys are stored. Angelo",
+        "ts": "1480351087.002627"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "8. Application libraries design &amp; implementation:\n        - build a simple and attribute-based invocation access library; at a first stage this would be the definition of an MSP for the application purposes that leverages MSP capabilities to show attribute ownership\/verify attribute ownership proof. Elli\n        - build a simple (even as a small bc-csp extension of) encryption\/decryption library as discussed with Binh. Design all. Implementation: Angelo\n\n9. Security configuration schemas for peer initialization and chain setup. Elli.\n\n    - content for it in changeset <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2677\/>",
+        "ts": "1480351117.002628"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Here is discussion from the above copy\/paste of information Elli shared---&gt; Gari is wondering how we make this more consumable.  BCCSP seems clear,.. the overall design seems overly- complex though.  COP in itself is x509 and straight forward.   He suggested an incremental approach.    Maybe I need an x509 certificate and we are going to do something based on organization-- all access control is done at org layer,.. map org to it's root.  But what is MFP provider per organization isn't very clear in the specification.",
+        "ts": "1480351526.002629"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I want a create a chain- We decided to support  multiple peers, we are not going to do at an individual peer level.  We are going to do something at an organization level.  I need to have one methodology- x509 based entities.  In simplest terms,.. bank a, b, and c-- they need to provide root authorities they are going to use to issue their certificates.  And then, there is a policy around how people are allowed to change the configuration and that has to be verified.  I don't think you want a policy to change their own MSP- it should be a blockchain wide decision.",
+        "ts": "1480351621.002630"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We seem to be managing individual certificate authorities- but do we really want to support that?",
+        "ts": "1480351638.002631"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Elli thought maybe we need a hardcoded policy for admin access.  She feels you do need to have that some entity needs to have some representation for an administrator.  You may have root certificate authority and another \"bank\" to be added.  What happens if two entities bank b and c use the same root certificate authority.   Gari-&gt;  Then, we need to come up a model... go get an intermediate authority to issue, but then we would differentiate with distinguished name.  But there is a lot of options here with a lot of complexity that is going to get very confusing. Elli-&gt; We could actually remove some of the extra parameters, but what part do we want static and what do we want configurable?  Configuration does increase the complexity...which can become a problem.",
+        "ts": "1480351895.002632"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Elli agreed with Gari and wondered if we stand back and refactor design after discussion.  Gari is wondering do we start with simplest case and building up perhaps...",
+        "ts": "1480352027.002633"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Maybe what we do in the specification we write it as what problem we try to solve and go step by step on how you solve it.",
+        "ts": "1480352112.002634"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Question got asked-&gt; how is the peer expected to learn the Genesis block? Jeff Garrat is concerned about bootstrapping and they are trying to work that out.  On peer side- the genesis block is only there when peer joining channel.  SDK would pass the peer (whichever peer they want on channel) it would send a transaction to system through configuration system chaincode and pass along the genesis block. that CRCC would try to understand and manipulate and start the gossip layer to contact what we call the anchor peers and start up the chain that way.  Of course, eventually they would commit that block into the chain's ledger.  Every ledger would start with genesis block that contains that information.  And that configuration block will be modified at any time.  That CRCC would get the modified information and would go through the same steps.  The first draft of this is out there, but it's not complete yet.  The change set is out there",
+        "ts": "1480352503.002635"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Assuming we have one MSP manager per chain- who is going to provide the MSP Manager with the root CA for that channel.  Is it always going to come from CRCC?  Or some stores on the peers filesystem?  The MSP Manager is instantiated by some function of the peer or from CRCC.  The part not included is not there yet.  For every chain, there has to be an MSP Manager and a few other things and gossip group as part of that. --- whoever instruments will hand to MSP manager and will hand two things 1) stuff from genesis block 2) the local signing key pair and certificate pair for signing that change.  Yes, that is correct assumption.  The local stuff we get from YAML file currently.  Any combination of peer and CRCC will pass that into the MSP manager per chain.",
+        "ts": "1480352638.002636"
+    }
+]

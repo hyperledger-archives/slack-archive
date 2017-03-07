@@ -1,0 +1,273 @@
+[
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "<@U0ULK2JPP> right it was the CORE_VM_ENDPOINT, it has to be `unix:\/\/\/var\/run\/docker.sock`. `127.0.0.1:2375` is not working for linux as says in the TODO of the docs.\n\n<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/#setting-up-a-network> -&gt; ```If you are using the native Docker for Mac or Windows, the value for CORE_VM_ENDPOINT should be set to unix:\/\/\/var\/run\/docker.sock. [TODO] double check this. I believe that 127.0.0.1:2375 also works.```",
+        "ts": "1474355137.000681"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "Now on deploy it says ```[chaincode] Launch -&gt; ERRO 273 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>```",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474355385.000000"
+        },
+        "ts": "1474355334.000682"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "having a look on docker hub I couldn't find the tag latest for that image",
+        "ts": "1474355370.000683"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "<@U2D62LCQJ> \n```\ndocker pull hyperledger\/fabric-baseimage:x86_64-0.0.11\ndocker tag hyperledger\/fabric-baseimage:x86_64-0.0.11    hyperledger\/fabric-baseimage:latest\n```\nI guess this will help you.",
+        "ts": "1474364536.000686"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "Yeah i was going to try it bit im a bit busy right now",
+        "ts": "1474366035.000687"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "ok, i used the `hyperledger\/fabric-baseimage:x86_64-0.1.0` and the previous things are working now.",
+        "ts": "1474377516.000689"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "now the problem comes, if I'm guessing right, with `chaincode deploy -n mycc -c '{\"Function\":\"init\", \"Args\": [\"a\",\"100\", \"b\", \"200\"]}' -p .`\n\nit returns in the log ```[dockercontroller] deployImage -&gt; ERRO 251[0m Error building images: The command '\/bin\/sh -c go install . &amp;&amp; cp src\/github.com\/hyperledger\/fabric\/peer\/core.yaml $GOPATH\/bin &amp;&amp; mv $GOPATH\/bin\/. $GOPATH\/bin\/08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868' returned a non-zero code: 1\n[dockercontroller] deployImage -&gt; ERRO 252[0m Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\n ---&gt; db53d04b117c\nStep 2 : COPY src $GOPATH\/src\n ---&gt; Using cache\n ---&gt; d0938122119f\nStep 3 : WORKDIR $GOPATH\n ---&gt; Using cache\n ---&gt; 1333b249f54a\nStep 4 : RUN go install . &amp;&amp; cp src\/github.com\/hyperledger\/fabric\/peer\/core.yaml $GOPATH\/bin &amp;&amp; mv $GOPATH\/bin\/. $GOPATH\/bin\/08b92258b871e22b8a95d0f91a0e00015869aa248476c8167fe9c52e8e7ca5fdfcb156aafed52870739772d3f740778e17e9f8eeca172867156b1d25bc184868\n ---&gt; Running in 5e3f9d97c978\ncan't load package: package .: no buildable Go source files in \/opt\/gopath\n\n********************```\n\nI guess the problem is `-p .` I'd tried with the full and the relative path and didn't worked out. It returned `Error: Error building chaincode: rpc error: code = 2 desc = Error getting chaincode package bytes: Cannot generate hashcode from empty chaincode path`",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474377884.000000"
+        },
+        "ts": "1474377772.000690"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "i'm going to try again with the x86_64-0.0.11 instead of the x86_64-0.1.0",
+        "ts": "1474377870.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2D62LCQJ>  I assume your peer is not running with `\u2014peer-chaincodedev`  ?",
+        "ts": "1474379801.000693"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "right, the main thing is to make it run without `\u2014peer-chaincodedev\u2060\u2060\u2060\u2060`",
+        "edited": {
+            "user": "U2D62LCQJ",
+            "ts": "1474380555.000000"
+        },
+        "ts": "1474380545.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2D62LCQJ>: how did you access 0.1.0?  That's not officially merged yet to my knowledge",
+        "ts": "1474380602.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so in that case, you should not be passing `-n mycc` on deploy",
+        "ts": "1474380617.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I know there is a prerelease on dockerhub but it should not be referenced yet",
+        "ts": "1474380640.000698"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "by the way, i had no luck either with the x86_64-0.0.11",
+        "ts": "1474380669.000699"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "the x86_64-0.1.0 has been released 14h ago on dockerhub",
+        "ts": "1474380687.000700"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what is your chaincode path ?",
+        "ts": "1474380785.000701"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "<@U0ULK2JPP> doesn't work either",
+        "ts": "1474380788.000702"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "the example, on $GOPATH\/src\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02",
+        "ts": "1474380820.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1474380825.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you try this please ?",
+        "ts": "1474380832.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`peer chaincode deploy -p <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example02> -c '{\"Args\": [\u201cinit\u201d, \"a\",\"100\", \"b\", \"200\"]}\u2019`",
+        "ts": "1474380908.000706"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019m using the latest version where \u201cfunction\u201d argument is subsubmed in Args",
+        "ts": "1474380947.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "but try that please",
+        "ts": "1474380952.000708"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "```hyper_peer_0 | 14:16:29.261 [dockercontroller] deployImage -&gt; ERRO 077 Error building images: cannot normalise nothing\nhyper_peer_0 | 14:16:29.261 [dockercontroller] deployImage -&gt; ERRO 078 Image Output:\nhyper_peer_0 | ********************\nhyper_peer_0 | Step 1 : FROM hyperledger\/fabric-baseimage\nhyper_peer_0 |  ---&gt; 90d869298cb6\nhyper_peer_0 | Step 2 : COPY src $GOPATH\/src\nhyper_peer_0 |  ---&gt; Using cache\nhyper_peer_0 |  ---&gt; 1e862441a08d\nhyper_peer_0 | Step 3 : WORKDIR $GOPATH\nhyper_peer_0 | \nhyper_peer_0 | ********************\nhyper_peer_0 | 14:16:29.261 [container] unlockContainer -&gt; DEBU 079 container lock deleted(dev-vp0-4ea4051e1702b1086da6aad02ac43cdf331050c9791c98356c0daff5c2516267367c3e75fca9c08f5474cc86f78e775726bd27b0d294cb218c2bb93a92aa9242)\nhyper_peer_0 | 14:16:29.261 [chaincode] Launch -&gt; ERRO 07a launchAndWaitForRegister failed Error starting container: cannot normalise nothing\n```",
+        "ts": "1474381061.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1474381087.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the command is correct but you are running into image issues",
+        "ts": "1474381099.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019m not sure exactly what\u2019s happening here (and what state your env is in)\u2026. thoughts <@U0KPFAZNF> <@U0KM61BCP> ?",
+        "ts": "1474381150.000712"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "I'll pull the images again to try",
+        "ts": "1474381364.000713"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP> i\u2019ve never seen that message before",
+        "ts": "1474381668.000714"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "also looks like a grammar bug :wink:",
+        "ts": "1474381697.000715"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "hahahahaha",
+        "ts": "1474381735.000716"
+    },
+    {
+        "user": "U2DHRR4TE",
+        "text": "<@U2DHRR4TE|tom.appleyard> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474381952.000717"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Hey All,\n\nQuick question but for the ReadCertAttribute function described here:\n\n<https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim#ChaincodeStub.ReadCertAttribute>\n\nHow do I add attributes to a certificate? I've tried modifying my memberservc.yaml but it doesn't seem to do anything ;\/\n\nOn from this can anyone give me an example of a field I should be able to request the value of in a tcert? (seems to return nothing for anything I type in?)",
+        "attachments": [
+            {
+                "title": "Package shim",
+                "title_link": "https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim#ChaincodeStub.ReadCertAttribute",
+                "text": "Package shim provides APIs for the chaincode to access its state variables, transaction context and call other chaincodes.",
+                "fallback": "Package shim",
+                "from_url": "https:\/\/godoc.org\/github.com\/hyperledger\/fabric\/core\/chaincode\/shim#ChaincodeStub.ReadCertAttribute",
+                "service_icon": "https:\/\/godoc.org\/favicon.ico",
+                "service_name": "godoc.org",
+                "id": 1
+            }
+        ],
+        "ts": "1474382065.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> :slightly_smiling_face: \u2026that comes from the docker daemon. I did find some hits when I searched on the interesting log message",
+        "ts": "1474382261.000720"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so it seemed to point to images and <@U2D62LCQJ>\u2019s env",
+        "ts": "1474382315.000721"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2D62LCQJ> as a general comment, stick with 0.0.11 for now",
+        "ts": "1474382352.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im still working on releasing 0.1.1",
+        "ts": "1474382357.000723"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "0.1.0 rather",
+        "ts": "1474382361.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not saying that was causing your problem per se, but that is the correct thing to do for the moment",
+        "ts": "1474382384.000725"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "<@U0KPFAZNF> roger",
+        "ts": "1474382408.000726"
+    },
+    {
+        "type": "message",
+        "user": "U2D62LCQJ",
+        "text": "related to the env the only thing that i can recall is the docker version. Previously I had problems when updated to the 1.12. Now i'm on the `1.12.1, build 23cf638`",
+        "ts": "1474382812.000727"
+    }
+]

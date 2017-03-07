@@ -1,0 +1,112 @@
+[
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "<@U3P7ELDTN> Is your peer up and running? In other words, did you run- `peer node start --peer-chaincodedev` ?",
+        "ts": "1484815389.000326"
+    },
+    {
+        "type": "message",
+        "user": "U2JLNV77T",
+        "text": "This might help (assuming a v0.6 setup) : <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/>",
+        "ts": "1484815408.000327"
+    },
+    {
+        "type": "message",
+        "user": "U3P7ELDTN",
+        "text": "<@U2JLNV77T> thanks, the fix was to deploy after setting chain.setDevMode(true)",
+        "ts": "1484837239.000328"
+    },
+    {
+        "user": "U3U415W6T",
+        "text": "<@U3U415W6T|jorgedr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484837708.000329"
+    },
+    {
+        "type": "message",
+        "user": "U3PR8EL5C",
+        "text": "has anyone run into this problem?  i'm running with one peer node in v0.6, `deploy` is successful, `invoke` is successful, but `query` returns (am using HFC v0.6.5) this error message ```msg: 'Error:Failed to launch chaincode spec(Could not get deployment transaction for 14ce57d07a6a74d549962b11abe28d4519f28684a880f2d36721296b8b90d4a5 - LedgerError - ResourceNotFound: ledger: resource not found)' }```",
+        "ts": "1484840037.000330"
+    },
+    {
+        "type": "message",
+        "user": "U3PR8EL5C",
+        "text": "the exact same code runs fine on someone else's laptop, can this error be caused by race conditions etc?",
+        "ts": "1484840103.000331"
+    },
+    {
+        "user": "U3TNHH1NW",
+        "text": "<@U3TNHH1NW|dknochen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484840432.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3PR8EL5C> it generally means that the deploy failed for some reason and was not committed",
+        "ts": "1484840708.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the peer logs after the deploy might contain information",
+        "ts": "1484840730.000334"
+    },
+    {
+        "type": "message",
+        "user": "U3PR8EL5C",
+        "text": "<@U0ULK2JPP> since `invoke` worked, returned a good result, i don't think that the `deploy` failed",
+        "ts": "1484840812.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "invoke would have retirned a transaction ID",
+        "ts": "1484840937.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it\u2019s basically submitted the transaction for execution",
+        "ts": "1484840952.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the actual execution fails with the above error",
+        "ts": "1484840995.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "now\u2026 if you do a \u201cquery\u201d it will synchronously get the result from the chaincode \u2026 and that would be a clear indicator of whether the chaincode is running",
+        "ts": "1484841044.000339"
+    },
+    {
+        "type": "message",
+        "user": "U3PR8EL5C",
+        "text": "```            deployTx.on(\"complete\", function (results) {\n              <http:\/\/logger.info|logger.info>(ctx, \"[SDK] Successfully deployed chaincode\");\n              logger.debug(ctx, \"[SDK] Deploy result: \", results);\n              deploying.resolve(results.chaincodeID);\n            });\n``` returns something useful -- doesn'tthat indicate that deploy succeeded",
+        "ts": "1484841571.000340"
+    },
+    {
+        "type": "message",
+        "user": "U3PR8EL5C",
+        "text": "for `deploy` i see this on the console ```ebug: blockchain.js::deployChaincode() [SDK] Deploy result:  \n{ uuid: '14ce57d07a6a74d549962b11abe28d4519f28684a880f2d36721296b8b90d4a5',\n  chaincodeID: '14ce57d07a6a74d549962b11abe28d4519f28684a880f2d36721296b8b90d4a5',\n  result: undefined }```",
+        "ts": "1484841837.000341"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "note that fabric-cop has been renamed to fabric-ca: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/4365\/>. the old fabric-cop repo will be deleted in a week or so. the new repo fabric-ca is where active development is happening already.",
+        "ts": "1484843038.000342"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U3PR8EL5C> as <@U0ULK2JPP>  mentioned Deploy and Invoke are async calls and they will send you the transactionIDs irrespective whether they are successful or not , In your case it seems Deploy is not succesful. Is it possible for you to share the peer logs please ?",
+        "ts": "1484868802.000344"
+    }
+]

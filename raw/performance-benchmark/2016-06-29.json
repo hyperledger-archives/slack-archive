@@ -1,0 +1,350 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "works for me",
+        "ts": "1467191015.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if i don't use a chaincode, but emulate the chaincode execution in the chaincode exec handler, i get between 2000 and 4000 invokes\/sec",
+        "ts": "1467200501.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead of 600",
+        "ts": "1467200504.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So I think we may have found our killer",
+        "ts": "1467200996.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "pretty stable 4070 now",
+        "ts": "1467200999.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i said so since febuary",
+        "ts": "1467201012.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I wasn't in the project at that time...",
+        "ts": "1467201054.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "BTW- does the chaincode execute in parallel the transactions? or 1-by-1?",
+        "ts": "1467201070.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sequentially",
+        "ts": "1467201076.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so why is the gRPC channel to the peer synchronized then? in the chaincode?",
+        "ts": "1467201108.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean, synchronized",
+        "ts": "1467201261.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "there is a defer and a lock around it",
+        "ts": "1467201271.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nhandler.serialLock.Lock()\n\tdefer handler.serialLock.Unlock()\nif err := handler.ChatStream.Send(msg); err != nil {\n```",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1467201363.000000"
+        },
+        "ts": "1467201341.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZJZBJLF>: queries can be parallel and invokes are sequential",
+        "ts": "1467201651.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ie, multiple queries can be going on at the same time as 1 invoke",
+        "ts": "1467201692.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That makes sense. But why is the channel synchronized then? doesn't it hinder performance?",
+        "ts": "1467201801.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "still 4000 is a bit weak",
+        "ts": "1467201806.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- why not have multiple channels",
+        "ts": "1467201915.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "The gRPC Sends is not thread safe and needs to be serialized",
+        "ts": "1467201927.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah I understand that",
+        "ts": "1467201942.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok...",
+        "ts": "1467201949.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they are not thread safe? wut",
+        "ts": "1467201961.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but why not have multiple channels and select one \"free\" and send along it? HTTP\/2 allows multiple \"sessions\" in the same tcp connection",
+        "ts": "1467202004.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "i cannot interleave two Send calls",
+        "ts": "1467202047.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yacovm: most grpcs interfaces are stream interfaces",
+        "ts": "1467202069.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for no reason",
+        "ts": "1467202072.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "two send calls, on 2 different gRPC channels",
+        "ts": "1467202082.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean in fabric",
+        "ts": "1467202086.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XR6J961> you mean use RPC insterad of \u201cChat\u201d Stream for each request (basically go request-response ?)",
+        "ts": "1467202212.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know whether the chaincode interface should be that way",
+        "ts": "1467202240.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok.",
+        "ts": "1467202410.000265"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZJZBJLF>: One thing\u2026 every chaincode gets its own handler\/channel. was not sure if you were thinking there was one handler for all chaincodes (so just wanted to clarify that)",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1467202490.000000"
+        },
+        "ts": "1467202482.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course, it's in its own process, isn't it?",
+        "ts": "1467202671.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm asking- if a CC instance can query in parallel (for example)- why can't it have K channels and submit the data on 1 of them? Because otherwise, we have (for example) N read-type transactions, 1 write type transaction, and they all \"queued\" on that same gRPC channel on which they send the messages through.",
+        "ts": "1467202754.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "If we have K channels we can send on them in parallel and maybe increase performance?",
+        "ts": "1467202791.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're looking only at invoke performance",
+        "ts": "1467203449.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because fabric is write-oriented?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1467203494.000000"
+        },
+        "ts": "1467203474.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, because that's the slow path",
+        "ts": "1467203604.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "read is trivially scaled",
+        "ts": "1467203611.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just use more machines",
+        "ts": "1467203617.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "well, you certainly could horizontally scale query",
+        "ts": "1467204060.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right, in the end, the invoke serialization is the real problem",
+        "ts": "1467205608.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Just doing queries is not a problem at at all",
+        "ts": "1467205663.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> how is batching impacting 4k tps throughput that you see?",
+        "ts": "1467206626.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "btw is this 4k tps on your laptop?",
+        "ts": "1467206655.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, N=1, F=0, batchsize=100 on my dinky laptop",
+        "ts": "1467207192.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "does changing batchsize \/ N changes things?",
+        "ts": "1467207911.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0ZJZBJLF> perhaps you can shortcircuit execution like <@U0XR6J961> and repeat your tests?",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1467208088.000000"
+        },
+        "ts": "1467207927.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "4k tps on a laptop is becoming more decent...",
+        "ts": "1467208032.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "vukolic: well, it's without chaincode :slightly_smiling_face:",
+        "ts": "1467208042.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we're still not there :slightly_smiling_face:",
+        "ts": "1467208046.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes :slightly_smiling_face:",
+        "ts": "1467208051.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0Y14MWA2>:  if you can provide me a fork\/branch with a blocking-until-transaction-completed Invoke method in the REST part + the needed short-circuit code for the CC part I can...",
+        "ts": "1467211056.000290"
+    },
+    {
+        "user": "U0MSG4RL7",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0MSG4RL7|dmurik> has joined the channel",
+        "ts": "1467216189.000291"
+    },
+    {
+        "user": "U1HFNJB50",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1HFNJB50|c0rwin> has joined the channel",
+        "ts": "1467239491.000292"
+    }
+]

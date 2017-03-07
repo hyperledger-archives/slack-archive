@@ -1,0 +1,511 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "does anybody know .\/orderer\/common\/bootstrap\/static\/ ?",
+        "ts": "1479382660.004095"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if something is breaking, I believe that Kostas fixed this in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2179\/>",
+        "ts": "1479383706.004096"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so you might want to +2, merge and rebase your change",
+        "ts": "1479383735.004097"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no, it is OK (I merged it)",
+        "ts": "1479384755.004098"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "there is a GenesisBlock function which creates a genesis block using the current chain (chain ID) - we would like to have the same genesis block on all replicas of the network, how could we achieve this?",
+        "ts": "1479384884.004099"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XR6J961> thought of having some kind of configuration in the network config file (a JSON)",
+        "ts": "1479384916.004100"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but as I see it is not possible to inject the chain ID from outside",
+        "ts": "1479384982.004101"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the working concept at this point is that when you call JoinChannel on a peer, you would provide the \"genesis block\" or latest \"config\" block (assuming you added a new organization and\/or changed membership for a channel) to that peer.   Is that what you mean?",
+        "ts": "1479385300.004102"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what is 'JoinChannel'?",
+        "ts": "1479385390.004103"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "An API which I don't think exists anywhere in the codebase yet but which will be invoked on peers in order for them to join the specified channel",
+        "ts": "1479385836.004104"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I was talking about SBFT. in an sbft orderer peer, where should this API be called?",
+        "ts": "1479385891.004105"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "create channel would be called on the SBFT orderer",
+        "ts": "1479385928.004106"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the output of that would be the \"genesis\" and\/or latest \"config\" block which would then be provided to peers which are to join that channel.",
+        "ts": "1479385990.004107"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "currently, in sbft we directly create a fileledger which needs a genesis block as an argument. I guess this direct ledger creation will change with this",
+        "ts": "1479386038.004108"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "until that, we need to solve somehow this genesis block issue",
+        "ts": "1479386415.004109"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "probably have to wait for <@U0XPR4NP4> or <@U0XQ35CDD>  - because I believe that we do have the static block creation in the current code (as channels are not yet supported)",
+        "ts": "1479386667.004110"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah the static block creation is static.New().Genesisblock() I guess. but it uses a random number and that results in different genesis block for every peer. somehow I need to workaround thos",
+        "ts": "1479386734.004111"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe <@U0Y14MWA2> knows something about this",
+        "ts": "1479388507.004112"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U1AU8DRQR> - no clue how we create genesis blocks :slightly_smiling_face:",
+        "ts": "1479388567.004113"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this is sth indeed <@U0XPR4NP4> may answer",
+        "ts": "1479388591.004114"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I am very very sad :disappointed:",
+        "ts": "1479388596.004115"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "dont' be",
+        "ts": "1479388602.004116"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we work w\/o genesis",
+        "ts": "1479388608.004117"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": ":slightly_smiling_face:",
+        "ts": "1479388612.004118"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we just came to be",
+        "ts": "1479388616.004119"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "no genesis",
+        "ts": "1479388618.004120"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": ":slightly_smiling_face:",
+        "ts": "1479388626.004121"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0PB67X4K>: sbft doesn't do channels",
+        "ts": "1479389227.004122"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - I figured that part out - neither do any of the other orderers at this point",
+        "ts": "1479389263.004123"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1479389268.004124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Simon or <@U0Y14MWA2>  is there any progress\/updates\/decision about that block gap\/hole sync that you asked me that time (using the pull module)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1479389343.000000"
+        },
+        "ts": "1479389324.004125"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "not yet but I am more and more sure that we need to talk :slightly_smiling_face:",
+        "ts": "1479389443.004127"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sure, ping me when you need on slack",
+        "ts": "1479389462.004128"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "i've just a put a 2x label (consensus\/gossip) to <https:\/\/jira.hyperledger.org\/browse\/FAB-1096>",
+        "ts": "1479389535.004129"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "The genesis block issue is discussed via FAB-359, FAB-665 and FAB-666",
+        "ts": "1479390639.004130"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "The thought is that we create a genesis block that contains all the configuration needed to bootstrap an orderer",
+        "ts": "1479390685.004131"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "also <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2259> and <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2529\/>",
+        "ts": "1479390931.004132"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> Basically, the static bootstrapper was put in place as a stopgap to provide a genesis block when one has not already been generated, <@U0UGH3X7X>  is working on a tool to actually create the 'real' genesis block that can be shared among orderers",
+        "ts": "1479391141.004133"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> We should also probably talk about how the genesis block stuff has changed a little bit this week.  As <@U0PB67X4K> alluded to, since the concept of 'system chain' is gone, your tool will be more constrained to bootstrapping an orderer, not a peer.  The big pieces will be the orderer configuration, and the channel creation policies.",
+        "ts": "1479391247.004134"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "agreed.  I'm reading <@U1BC5A0F9> 's  msp doc today.  I also understand that <@U11HTMW0H> and <@U1B2FF8LR> are starting to look at the peer joinchannel flow",
+        "ts": "1479391386.004135"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's the short term fix to get <@U1AU8DRQR> unstuck?",
+        "ts": "1479391612.004136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now sbft has a mode to ingest a json setup file and create state for a replica",
+        "ts": "1479391655.004137"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this now needs to be extended to contain a genesis block",
+        "ts": "1479391672.004138"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> <@U1AU8DRQR> An easy way to get unstuck locally would be simply to comment out the random chainID generation and set that chainID statically.  For a longer term solution the genesis block creation tool should take that sbft config and put it in the genesis block so that we don't have two different bootstrapping methods.",
+        "ts": "1479391941.004139"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i agree about the long term plan",
+        "ts": "1479391969.004140"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "lets see if locally commenting that solves anything btw",
+        "ts": "1479391985.004141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess replacing the random is an option",
+        "ts": "1479391990.004142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it is ugly",
+        "ts": "1479391998.004143"
+    },
+    {
+        "user": "U11D7BP6U",
+        "text": "<@U11D7BP6U|uramoto> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479394319.004144"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1479394757.004145"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/dcopz4r74jdz7gk52qnkolf5pee|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1479394786.004146"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "I lost my connection and now call is full. \n\u2022 I have 2 patch sets waiting for reviews:\n  \u2022\u00a0<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2043\/>\n  \u2022\u00a0<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2459\/>\n\u2022\u00a0I\u2019m working on FAB-890 yesterday, and continue to work on it today, specifically, making sure that the orderer is resilient to the loss os a kafka broker.",
+        "ts": "1479395205.004147"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "went with <@U0XR6J961> through simplebft view change code - among other things we identified a way to eliminate null blocks from simplebft raw ledger",
+        "ts": "1479395416.004148"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Simon's CR that implement this should appear soon",
+        "ts": "1479395427.004149"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "along with some simplifications of view change code",
+        "ts": "1479395449.004150"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "which should complete sbft epic",
+        "ts": "1479395457.004151"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "&gt; I\u2019m working on FAB-890 yesterday, and continue to work on it today, specifically, making sure that the orderer is resilient to the loss os a kafka broker.",
+        "ts": "1479395861.004152"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1KDAMDJ7>: Are there any blockers in particular here? Something with the sarama API not making sense, or another issue?",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1479395901.000000"
+        },
+        "ts": "1479395884.004153"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "No blockers.",
+        "ts": "1479396035.004155"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should i accept a new view message even tho i didn't go into view change yet?",
+        "ts": "1479396513.004156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep, null requests are gone",
+        "ts": "1479397319.004157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "will push the CR on the train",
+        "ts": "1479397339.004158"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; should i accept a new view message even tho i didn't go into view change yet?\n\nNew view should contain 2f+1 signed view change messages, so if appropriately formed, seems safe to me?",
+        "ts": "1479401577.004159"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "we need to specify who can create\/modify a chain on the orderers \u2014 i know we have bootstrap config, but how can we do this on-going?",
+        "ts": "1479407930.004160"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KN2SSKE> - I believe that after any given \"channel \/ chain\" is initially created part of that creation involved policy around who will be able to modify any of the various key\/value pairs associated with the config",
+        "ts": "1479410049.004161"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This shouldn't be different than how we specify all the different actions and permissions. Fundamentally a key\/value in the ConfigurationTransaction that identifies the root CA certs that are able to issue a new-chain transaction, along with an accompanying modification policy for this key\/value pair (how many sigs do you need to modify the list of CA certs that can create new chains).",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1479410231.000000"
+        },
+        "ts": "1479410065.004162"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Basically what Gari said.",
+        "ts": "1479410077.004163"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0PB67X4K> config tx is bound to a chain, so changes to a config block only affects that chain \u2014 what i referred to configuration outside of chains that governs who can create chains",
+        "ts": "1479416492.004166"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "and how can that be modified",
+        "ts": "1479416516.004167"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KN2SSKE>  - it's basically a chicken and egg problem for the initial setup.  I suppose the only thing you can do is start the ordering service with one or more admins already there",
+        "ts": "1479421838.004168"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U24M29R4G|nikileshsa> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/nikileshsa\/F348GEBGC\/panic__error_unmarshaling_into_structure__1_error_s__decoding______general__has_invalid_keys__profile.sh|panic: Error unmarshaling into structure: 1 error(s) decoding:  * 'General' has invalid keys: Profile> and commented: I am trying to start a solo orderer using the latest fabric code from master and its throwing a panic as shown in this code snippet. Has anyone seen this before? (it was working as of yesterday).",
+        "file": {
+            "id": "F348GEBGC",
+            "created": 1479423437,
+            "timestamp": 1479423437,
+            "name": "panic__Error_unmarshaling_into_structure__1_error_s__decoding______General__has_invalid_keys__Profile.sh",
+            "title": "panic: Error unmarshaling into structure: 1 error(s) decoding:  * 'General' has invalid keys: Profile",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U24M29R4G",
+            "editable": true,
+            "size": 3034,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F348GEBGC\/panic__error_unmarshaling_into_structure__1_error_s__decoding______general__has_invalid_keys__profile.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F348GEBGC\/download\/panic__error_unmarshaling_into_structure__1_error_s__decoding______general__has_invalid_keys__profile.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/nikileshsa\/F348GEBGC\/panic__error_unmarshaling_into_structure__1_error_s__decoding______general__has_invalid_keys__profile.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F348GEBGC-e22885f1bc",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/nikileshsa\/F348GEBGC\/panic__error_unmarshaling_into_structure__1_error_s__decoding______general__has_invalid_keys__profile.sh\/edit",
+            "preview": "[15:52:36]  config_util.go:34: [DEBUG] Found map value for ramledger\r\n[15:52:36]  config_util.go:45: [DEBUG] Found real value for ramledger.HistorySize setting to int 1000\r\n[15:52:36]  config_util.go:34: [DEBUG] Found map value for fileledger\r\n[15:52:36]  config_util.go:45: [DEBUG] Found real value for fileledger.Location setting to <nil> <nil>\r\n[15:52:36]  config_util.go:45: [DEBUG] Found real value for fileledger.Prefix setting to string hyperledger-fabric-rawledger\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>[15:52:36]  config_util.go:34: [DEBUG] Found map value <span class=\"cm-keyword\">for<\/span> ramledger<\/pre><\/div>\n<div><pre>[15:52:36]  config_util.go:45: [DEBUG] Found real value <span class=\"cm-keyword\">for<\/span> ramledger.HistorySize setting to int <span class=\"cm-number\">1000<\/span><\/pre><\/div>\n<div><pre>[15:52:36]  config_util.go:34: [DEBUG] Found map value <span class=\"cm-keyword\">for<\/span> fileledger<\/pre><\/div>\n<div><pre>[15:52:36]  config_util.go:45: [DEBUG] Found real value <span class=\"cm-keyword\">for<\/span> fileledger.Location setting to &lt;nil&gt; &lt;nil&gt;<\/pre><\/div>\n<div><pre>[15:52:36]  config_util.go:45: [DEBUG] Found real value <span class=\"cm-keyword\">for<\/span> fileledger.Prefix setting to string hyperledger-fabric-rawledger<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 34,
+            "lines_more": 29,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc33EW3P2L",
+                "created": 1479423437,
+                "timestamp": 1479423437,
+                "user": "U24M29R4G",
+                "is_intro": true,
+                "comment": "I am trying to start a solo orderer using the latest fabric code from master and its throwing a panic as shown in this code snippet. Has anyone seen this before? (it was working as of yesterday).",
+                "channel": ""
+            }
+        },
+        "user": "U24M29R4G",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U24M29R4G|nikileshsa>",
+        "bot_id": null,
+        "ts": "1479423438.004169"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'd suggest pulling the latest and trying again.  I just pulled the latest down myself, ran `go build &amp;&amp; .\/orderer` in the `fabric\/orderer` directory and it started up nicely for me",
+        "ts": "1479423799.004170"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<@U0PB67X4K> ..thanks for trying this out..will let you know as to how it goes..",
+        "ts": "1479423985.004171"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "<@U0PB67X4K> resolved... looks like a build issue in my local... thanks again..",
+        "ts": "1479424376.004172"
+    }
+]

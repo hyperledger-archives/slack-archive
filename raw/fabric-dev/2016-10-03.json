@@ -1,0 +1,823 @@
+[
+    {
+        "type": "message",
+        "user": "U1GPHH6PQ",
+        "text": "Morning",
+        "ts": "1475488234.001042"
+    },
+    {
+        "type": "message",
+        "user": "U1GPHH6PQ",
+        "text": "s390x build seems broken:\nroot@Peer-70:\/opt\/hyperledger\/git\/src\/github.com\/hyperledger\/fabric\/build\/image\/src# docker build -t hyperledger\/fabric-src .              \nSending build context to Docker daemon 11.54 MB\nStep 1 : FROM hyperledger\/fabric-baseimage:s390x-0.1.0\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\nTag s390x-0.1.0 not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>",
+        "ts": "1475488300.001043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1GPHH6PQ> s390x support hasnt been added to the image pipeline, you\u2019ll need to use the v0.6-preview branch for now",
+        "ts": "1475502033.001044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that still works with the old mechanism",
+        "ts": "1475502067.001045"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> - I'm calling the Fabric (running in a Vagrant VM) from another VM running the HFC NodeSDK and am running through the enroll, deploy, invoke, query cycle but am getting this error:\n```Failed to query chaincode: request={\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"fcn\":\"query\",\"args\":[\"a\"]}, error=%k EventTransactionError {\n  error:\n   { status: 'FAILURE',\n     msg: &lt;Buffer 45 72 72 6f 72 3a 46 61 69 6c 65 64 20 74 6f 20 6c 61 75 6e 63 68 20 63 68 61 69 6e 63 6f 64 65 20 73 70 65 63 28 43 6f 75 6c 64 20 6e 6f 74 20 67 65 ... &gt; },\n  msg: 'Error:Failed to launch chaincode spec(Could not get deployment transaction for 56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8 - LedgerError - ResourceNotFound: ledger: resource not found)' }```\nOn the HFC NodeSDK VM I have the chaincode (example02) and it builds without fault. I'm logging to the console and get this...",
+        "ts": "1475504205.001046"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "```Enrolled JohnDoe successfully\n\ndeploying chaincode; please wait ...\ndeploy complete; results: {\"uuid\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\"}\ninvoke chaincode ...\ninvoke submitted successfully; results={\"uuid\":\"a92527d5-5c18-48d5-81a7-597ac0b25f3b\"}\ninvoke completed successfully; results={\"result\":\"Tx a92527d5-5c18-48d5-81a7-597ac0b25f3b complete\"}\nWaiting for chain to sync...\nquerying chaincode ...\nFailed to query chaincode: request={\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"fcn\":\"query\",\"args\":[\"a\"]}, error=%k EventTransactionError {\n  error:\n   { status: 'FAILURE',\n     msg: &lt;Buffer 45 72 72 6f 72 3a 46 61 69 6c 65 64 20 74 6f 20 6c 61 75 6e 63 68 20 63 68 61 69 6e 63 6f 64 65 20 73 70 65 63 28 43 6f 75 6c 64 20 6e 6f 74 20 67 65 ... &gt; },\n  msg: 'Error:Failed to launch chaincode spec(Could not get deployment transaction for 56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8 - LedgerError - ResourceNotFound: ledger: resource not found)' }```",
+        "ts": "1475504236.001047"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "So it looks to me like the enroll, invoke, etc worked but then get that LedgerError - also FYI - I'm waiting 2.5 mins before calling the query...",
+        "ts": "1475504302.001048"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "I have however noticed this output on the Peer console:\n```14:06:22.860 [rest] StartOpenchainRESTServer -&gt; INFO 013 Initializing the REST service on 0.0.0.0:7050, TLS is disabled.\n2016\/10\/03 14:06:37 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 10.10.10.200:7051-&gt;10.10.10.150:33133: write: broken pipe\"\n14:06:48.873 [dockercontroller] deployImage -&gt; ERRO 014 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n14:06:48.874 [dockercontroller] deployImage -&gt; ERRO 015 Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n********************\n14:06:58.526 [dockercontroller] deployImage -&gt; ERRO 016 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n14:06:58.526 [dockercontroller] deployImage -&gt; ERRO 017 Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n********************\n14:06:58.526 [chaincode] Launch -&gt; ERRO 018 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n2016\/10\/03 14:08:37 transport: http2Server.HandleStreams failed to receive the preface from client: EOF\n2016\/10\/03 14:11:17 transport: http2Server.HandleStreams failed to receive the preface from client: EOF```",
+        "ts": "1475504348.001049"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "So now I'm a bit lost - did the deploy work?",
+        "ts": "1475504376.001050"
+    },
+    {
+        "type": "message",
+        "user": "U1GPHH6PQ",
+        "text": "<@U0KPFAZNF>: thanks Greg.",
+        "ts": "1475504559.001051"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> looking now",
+        "ts": "1475511885.001052"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> if I had to guess, id say the deploy and subsequent invoke failed, but because they are \u201copen loop\u201d right now, your client couldnt tell",
+        "ts": "1475511981.001053"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then it became apparent in the query, which is synchronous",
+        "ts": "1475511995.001054"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, bit of background: historically the event-path has been missing in the SDK so things like invoke are generally asynchronous",
+        "ts": "1475512038.001055"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ok - how come though it responds with:\n```deploy complete; results: {\"uuid\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\",\"chaincodeID\":\"56e9be9d65e603a249e047f0aa08b17fa7889a6aca263d18270a80b13b7ec8f8\"}\ninvoke chaincode ...\ninvoke submitted successfully; results={\"uuid\":\"a92527d5-5c18-48d5-81a7-597ac0b25f3b\"}\ninvoke completed successfully; results={\"result\":\"Tx a92527d5-5c18-48d5-81a7-597ac0b25f3b complete\"}```",
+        "ts": "1475512038.001056"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, you do have a point there",
+        "ts": "1475512057.001057"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me re-look with that in consideration",
+        "ts": "1475512066.001058"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is coming from the client?",
+        "ts": "1475512096.001059"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yes",
+        "ts": "1475512101.001060"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "via the calls to SDK methods",
+        "ts": "1475512110.001061"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right ok\u2026im spitballing a bit here, but I think its wrong",
+        "ts": "1475512115.001062"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "part of the problem is that, like I mentioned, the event feedback mechanism has been missing\u2026so the SDK had to synthesize \u201csuccess\"",
+        "ts": "1475512151.001063"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, the SDK just waits 5 seconds for an invoke and then synthesizes that it completed",
+        "ts": "1475512186.001064"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there is ongoing work by <@U0KQ9QKH6> to close the loop on this by providing event substrate that the SDK will hook into",
+        "ts": "1475512214.001065"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I suspect is happening is you are being tricked into thinking it worked when really your backend is not launching the chaincode properly",
+        "ts": "1475512235.001066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(to be clear, I am speculating)",
+        "ts": "1475512251.001067"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but based on the peer errors, I think the deploy failed",
+        "ts": "1475512263.001068"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and thus all subsquent operations fail as well",
+        "ts": "1475512272.001069"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yeah `deployImage -&gt; ERRO 014 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>` would seem to point to that",
+        "ts": "1475512283.001070"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1475512289.001071"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have to put my kid on the bus, but we should be able to straighten this out when I get back in 10m",
+        "ts": "1475512307.001072"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "no worries",
+        "ts": "1475512316.001073"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "back",
+        "ts": "1475512875.001074"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, as to the issue with baseimage: i think I know what might be wrong",
+        "ts": "1475512900.001075"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "first background: we dont (yet) support running the peer from anything except locally built sources",
+        "ts": "1475512929.001076"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e,g,: the only way it will work \u201cturnkey\u201d is if you do something like \u201cmake peer &amp;&amp; peer node start\u201d from an environment such as the vagrant vm",
+        "ts": "1475512965.001077"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is you are running the peer in some other scenario where a \u201cmake peer\u201d hasnt been run?",
+        "ts": "1475512993.001078"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(side note: we will be fixing this in the coming weeks)",
+        "ts": "1475513011.001079"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but for now, that is a limitation",
+        "ts": "1475513015.001080"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it is of course possible to run it outside of vagrant+make-peer, but you have to massage things",
+        "ts": "1475513050.001081"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I believe this is what the bluemix team does, for instance",
+        "ts": "1475513060.001082"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so my first question <@U2CC1NDT2> is: when you say you run the peer in a \u201cVagrant VM\u201d do you mean you are running it in the fabric devenv?",
+        "ts": "1475513164.001083"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or is it a custom vagrant setup?",
+        "ts": "1475513172.001084"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Yes",
+        "ts": "1475513185.001085"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "second question: how are you running it?",
+        "ts": "1475513185.001086"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes = devenv vagrant, or yes == custom vagrant?",
+        "ts": "1475513242.001087"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "As follows:\n1. boot HL Fabric VM\n2. ssh into\n3. rm -rf \/var\/hyperledger\/production\n4. clear local keyStore (on other machine \/tmp....)\n5.  membersrvc &gt; membersrvc.log 2&gt;&amp;1&amp;\n6. peer node start",
+        "ts": "1475513286.001088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, where did the \u201cpeer\u201d binary come from?",
+        "ts": "1475513312.001089"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "did you previously do a build?",
+        "ts": "1475513318.001090"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yes when I 1st provisioned the HL VM",
+        "ts": "1475513332.001091"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "a few days ago",
+        "ts": "1475513345.001092"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "from the VM, what do you see if you run \u201cdocker images | grep baseimage\"",
+        "ts": "1475513350.001093"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "hyperledger\/fabric-baseimage                                                                                                                x86_64-0.1.0                    db53d04b117c        13 days ago         1.39 GB",
+        "ts": "1475513386.001094"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and can you send me the \u201cgit rev-parse \u2014short HEAD\u201d output from your fabric.git repo?",
+        "ts": "1475513446.001095"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect you are on master, but an older rev",
+        "ts": "1475513517.001096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(we got rid of all baseimage:latest references in HEAD, IIUC)",
+        "ts": "1475513529.001097"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so my guess right now is you are on master, but slightly out of date",
+        "ts": "1475513542.001098"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "that git cmd gives me an error...?",
+        "ts": "1475513670.001099"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "i should run that from the \/hyperledger\/fabric dir on my host os yes?",
+        "ts": "1475513700.001100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, its probably not at that path on your host",
+        "ts": "1475513764.001101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you can run it from the vm at that path though, i think",
+        "ts": "1475513784.001102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hold on, let me fire one up so I can tell you exactly",
+        "ts": "1475513795.001103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually, shortest answer is: run it from the same path you run \u201cvagrant up\"",
+        "ts": "1475513808.001104"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ok cause vagrant up is from \/fabric\/devenv but the fabric was cloned into \/fabric",
+        "ts": "1475513850.001105"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, do it from \/fabric or anywhere below that",
+        "ts": "1475513886.001106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you just need to be in the CWD of the git tree, one way or the other",
+        "ts": "1475513907.001107"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "git rev-parse --short HEAD\n1866020",
+        "ts": "1475513976.001108"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, run this",
+        "ts": "1475514032.001109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "git log --oneline",
+        "ts": "1475514033.001110"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "```1866020 Changed docs\/nodeSDK\/sample-standalone-app.md\n131b36c Merge \"    Java shim build update in DEV mode\"\n42ca84b FAB-506 broken links fixes and added new targets\n79589a5     Java shim build update in DEV mode\ndd5cef6 Merge \"FAB-425 - improve initial experience\"\nf5ea7b5 Merge v0.6 branch\n158480c FAB-425 - improve initial experience\n4173edd Updating SDK README For NPM Publish\nace3143 Updating SDK README For NPM Publish\n8d18b21 Node.js SDK -- Upgrading gRPC Version\n0fa60ba Node.js SDK -- Upgrading gRPC Version\nfc09672 Merge \"node-SDK: add unit tests for chaincode events\"\n1392fa1 Merge \"node-SDK: add multi-callback registrations\"\ncd0c5dd Node.js SDK -- Lock TypeScript Version to 1.8.10\nc7963ea Node.js SDK -- Lock TypeScript Version to 1.8.10\nceefb12 Merge \"Animation abstract &amp; landing page for V1 video\"\ne0b9e0e Merge \"Do not build the fabric peer during vagrant provision\"\neba4553 node-SDK: add unit tests for chaincode events\n57bbb61 Merge \"Busywork updates 9\/22\/2016\"\n4d4df36 node-SDK: add multi-callback registrations\nce2ef23 Do not build the fabric peer during vagrant provision\n02431ee Busywork updates 9\/22\/2016\n3cfaeb5 Merge \"Switch to new baseimage-pipeline\"```",
+        "ts": "1475514061.001111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, interesting",
+        "ts": "1475514099.001112"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "seems like you have the right code",
+        "ts": "1475514109.001113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "how about \u201cgit grep baseimage\"",
+        "ts": "1475514141.001114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1475514145.001115"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "this is what makes me think there's something amiss...\n```2016\/10\/03 16:51:18 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 10.10.10.200:7051-&gt;10.10.10.150:33156: write: broken pipe\"\n16:51:31.636 [dockercontroller] deployImage -&gt; ERRO 014 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n16:51:31.636 [dockercontroller] deployImage -&gt; ERRO 015 Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage```",
+        "ts": "1475514157.001116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, its the \u201cFROM \u2026 baseimage\u201d that is surprising",
+        "ts": "1475514209.001117"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "those should have been eradicated at runtime in the version of code you are running",
+        "ts": "1475514221.001118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(the \u201clatest\u201d tag not found is actually expected",
+        "ts": "1475514248.001119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it shouldnt be looking for that image at all",
+        "ts": "1475514257.001120"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the latest code should be doing a \"FROM \u2026. fabric-ccenv\u201d so I am trying to figure out where that is originating from",
+        "ts": "1475514294.001121"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "```warning: unable to access '\/home\/vagrant\/.config\/git\/attributes': Permission denied\nMakefile:BASEIMAGE_RELEASE=$(shell cat .\/.baseimage-release)\nMakefile:               hyperledger\/fabric-baseimage:$(BASE_DOCKER_TAG) go install <http:\/\/github.com\/golang\/protobuf\/protoc-gen-go|github.com\/golang\/protobuf\/protoc-gen-go>\ndevenv\/Vagrantfile:baseimage_release = File.read '..\/.baseimage-release'\ndevenv\/Vagrantfile:  config.vm.box = \"hyperledger\/fabric-baseimage\"\ndevenv\/Vagrantfile:  config.vm.box_version = ENV['USE_LOCAL_BASEIMAGE'] ? \"0\": baseimage_release # Vagrant does not support versioning local image\ndevenv\/setup.sh:BASEIMAGE_RELEASE=`cat \/etc\/hyperledger-baseimage-release`\nexamples\/chaincode\/go\/utxo\/README.md:Next, modify the `core.yaml` file in the Hyperledger Fabric project to point to the local Docker image that w\nimages\/src\/Dockerfile.in:FROM hyperledger\/fabric-baseimage:_BASE_TAG_\nmembersrvc\/ca\/ca_test.yaml:        from hyperledger\/fabric-baseimage:latest\nsdk\/node\/src\/hfc.ts:        \"from hyperledger\/fabric-baseimage\" + \"\\n\" +\n```",
+        "ts": "1475514301.001122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, that looks right",
+        "ts": "1475514346.001123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and those messages came from the peer?",
+        "ts": "1475514365.001124"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "the only change I have is a pvte IP assigned in Vagrantfile",
+        "ts": "1475514381.001125"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yes from the Peer",
+        "ts": "1475514385.001126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "private IP should be fine",
+        "ts": "1475514394.001127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is very strange",
+        "ts": "1475514397.001128"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yeah the comms all work - the enroll etc is all good - I see the files \/ etc being created on both ends \/tmp\/Key.... on client and \/var\/hyperledger\/production on \"server\"",
+        "ts": "1475514447.001129"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1475514458.001130"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "here's the full output from peer:\n```vagrant@hyperledger-devenv:v0.1.0-131b36c:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/build\/bin$ peer node start                16:51:02.555 [nodeCmd] serve -&gt; INFO 002 Security enabled status: false\n16:51:02.555 [nodeCmd] serve -&gt; INFO 003 Privacy enabled status: false\n16:51:02.555 [eventhub_producer] start -&gt; INFO 001 event processor started\n16:51:02.585 [chaincode] NewChaincodeSupport -&gt; INFO 004 Chaincode support using peerAddress: 0.0.0.0:7051\n16:51:02.586 [sysccapi] RegisterSysCC -&gt; INFO 005 system chaincode (noop,<http:\/\/github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop|github.com\/hyperledger\/fabric\/bddtests\/syschaincode\/noop>) disabled\n16:51:02.590 [state] loadConfig -&gt; INFO 006 Loading configurations...\n16:51:02.590 [state] loadConfig -&gt; INFO 007 Configurations loaded. stateImplName=[buckettree], stateImplConfigs=map[maxGroupingAtEachLevel:%!s(int=5) bucketCacheSize:%!s(int=100) numBuckets:%!s(int=1000003)], deltaHistorySize=[500]\n16:51:02.591 [state] NewState -&gt; INFO 008 Initializing state implementation [buckettree]\n16:51:02.591 [buckettree] initConfig -&gt; INFO 009 configs passed during initialization = map[string]interface {}{\"numBuckets\":1000003, \"maxGroupingAtEachLevel\":5, \"bucketCacheSize\":100}\n16:51:02.591 [buckettree] initConfig -&gt; INFO 00a Initializing bucket tree state implemetation with configurations &amp;{maxGroupingAtEachLevel:5 lowestLevel:9 levelToNumBucketsMap:map[7:40001 5:1601 8:200001 1:3 0:1 4:321 2:13 6:8001 3:65 9:1000003] hashFunc:0xab1cd0}\n16:51:02.592 [buckettree] newBucketCache -&gt; INFO 00b Constructing bucket-cache with max bucket cache size = [100] MBs\n16:51:02.592 [buckettree] loadAllBucketNodesFromDB -&gt; INFO 00c Loaded buckets data in cache. Total buckets in DB = [0]. Total cache size:=0\n16:51:02.594 [consensus\/controller] NewConsenter -&gt; INFO 00d Creating default consensus plugin (noops)\n16:51:02.601 [consensus\/noops] newNoops -&gt; INFO 00e NOOPS consensus type = *noops.Noops\n16:51:02.601 [consensus\/noops] newNoops -&gt; INFO 00f NOOPS block size = 500\n16:51:02.601 [consensus\/noops] newNoops -&gt; INFO 010 NOOPS block wait = 1s\n16:51:02.602 [nodeCmd] serve -&gt; INFO 011 Starting peer with ID=name:\"jdoe\" , network ID=dev, address=0.0.0.0:7051, rootnodes=, validator=true\n16:51:02.604 [consensus\/statetransfer] blockThread -&gt; INFO 012 Validated blockchain to the genesis block\n16:51:02.605 [rest] StartOpenchainRESTServer -&gt; INFO 013 Initializing the REST service on 0.0.0.0:7050, TLS is disabled.\n2016\/10\/03 16:51:18 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 10.10.10.200:7051-&gt;10.10.10.150:33156: write: broken pipe\"\n16:51:31.636 [dockercontroller] deployImage -&gt; ERRO 014 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n16:51:31.636 [dockercontroller] deployImage -&gt; ERRO 015 Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n********************\n16:51:40.973 [dockercontroller] deployImage -&gt; ERRO 016 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n16:51:40.973 [dockercontroller] deployImage -&gt; ERRO 017 Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n********************\n16:51:40.973 [chaincode] Launch -&gt; ERRO 018 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n2016\/10\/03 16:53:18 transport: http2Server.HandleStreams failed to receive the preface from client: EOF\n2016\/10\/03 16:56:08 transport: http2Server.HandleStreams failed to receive the preface from client: EOF```",
+        "ts": "1475514486.001131"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is very confusing",
+        "ts": "1475514522.001132"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you try this from the VM: find $GOPATH -type f | xargs grep baseimage",
+        "ts": "1475514548.001133"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "it's at `2016\/10\/03 16:51:18` that things start wobbling",
+        "ts": "1475514551.001134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the only thing I can think of is you have some core.yaml floating around",
+        "ts": "1475514579.001135"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "mmmhhhh",
+        "ts": "1475514595.001136"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "like the one from the car-lease-demo perhaps?",
+        "ts": "1475514609.001137"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the FROM directives are in the .yaml, but I am not sure where the FROM baseimage is coming from as I changed all of those",
+        "ts": "1475514609.001138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, heh, yah probably",
+        "ts": "1475514618.001139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you using an override?",
+        "ts": "1475514624.001140"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "let me check something quick",
+        "edited": {
+            "user": "U2CC1NDT2",
+            "ts": "1475514649.000000"
+        },
+        "ts": "1475514640.001141"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sure\u2026whatever yaml you think is in use, grep for \u201cbaseimage\"",
+        "ts": "1475514654.001143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats probably the issue",
+        "ts": "1475514657.001144"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "you know what - just to be 100% sure - let me destroy this box and provision it again quickly so it's 100% on the latest and untouched...",
+        "ts": "1475514734.001145"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that should resolve it",
+        "ts": "1475514743.001146"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(if its a bad yaml problem, i mean)",
+        "ts": "1475514755.001147"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yeah - I do recall spending a few hours on the weekend trying to get car-lease working but gave up in the end...",
+        "ts": "1475514790.001148"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "so it's better to try a fresh install",
+        "ts": "1475514802.001149"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "and I'll clone from fresh...",
+        "ts": "1475514831.001150"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1475514837.001151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fwiw, the line that I _think_ is impacting us is here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L285>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L285",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L285",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1475514852.001152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that used to be \u201cFROM \u2026 baseimage\u201d and was changed recently",
+        "ts": "1475514863.001154"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so if you have an old yaml in play, that could cause the behavior you are seeing",
+        "ts": "1475514875.001155"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ok well one way to tell for sure is with completely fresh install...",
+        "ts": "1475514898.001156"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep",
+        "ts": "1475514910.001157"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "I'll let you know outcome - thanks for the assist...",
+        "ts": "1475514919.001158"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "np",
+        "ts": "1475514923.001159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "btw: it looks like your doc change was merged: <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/nodeSDK\/sample-standalone-app\/>",
+        "ts": "1475515074.001160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thanks for that",
+        "ts": "1475515075.001161"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "yeah :slightly_smiling_face: saw that - no worries...",
+        "ts": "1475515207.001162"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "happy to help where I can",
+        "ts": "1475515218.001163"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "<@U0KPFAZNF> - something is off with the HFC NodeJS SDK:\n 1. `make node-sdk-unit-tests` - not a single test passes regardless of `net` or `dev`mode...\n 2. calling the Fabric from a client running the SDK - query fails...",
+        "ts": "1475526545.001164"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "TL;DR\n\n Steps taken:\n 1. Clean pull of repo + `vagrant up` provisioning - OK\n 2. `make membersrvc` and `make peer` - OK\n 3. `make unit-test` - OK\n\n So up to this point everything working as expected...\n\n 4. `make node-sdk-unit-tests` - FAIL (all of them)\n\n I then ran the Behave BDD Tests with `make behave`. I was specifically interested in the `query` transactions which all seemed to pass.",
+        "edited": {
+            "user": "U2CC1NDT2",
+            "ts": "1475526598.000000"
+        },
+        "ts": "1475526568.001165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> I would ping the folks over on <#C1GSVKK1U|fabric-sdk-node>",
+        "ts": "1475526607.001167"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "Here is the output from Behave:\n ```Failing scenarios:\n java_shim.feature:121  Java TableExample chaincode single peer\n\n 4 features passed, 1 failed, 3 skipped\n 39 scenarios passed, 1 failed, 9 skipped\n 549 steps passed, 1 failed, 270 skipped, 0 undefined\n Took 19m20.454s\n make: *** [behave] Error 1```",
+        "ts": "1475526617.001168"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "ok",
+        "ts": "1475526620.001169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i consume the SDK from NPM and don\u2019t get very involved in the building\/testing, so I dont have much advice to offer",
+        "ts": "1475526652.001170"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "sure - but even installing with npm result in the same issues when querying the chain...",
+        "ts": "1475526701.001171"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "I'll pop my findings in the SDK channel and hopefully the folks there can figure out what's happening",
+        "ts": "1475526730.001172"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "FYI though - that peer issue didn't go away with the fresh pull...",
+        "ts": "1475526753.001173"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "```20:00:43.587 [rest] StartOpenchainRESTServer -&gt; INFO 014 Initializing the REST service on 0.0.0.0:7050, TLS is disabled.\n 2016\/10\/03 20:08:24 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 10.10.10.200:7051-&gt;10.10.10.150:33175: write: broken pipe\"\n 20:08:35.615 [dockercontroller] deployImage -&gt; ERRO 015 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 20:08:35.616 [dockercontroller] deployImage -&gt; ERRO 016 Image Output:\n ********************\n Step 1 : FROM hyperledger\/fabric-baseimage\n Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n ********************\n 20:08:44.837 [dockercontroller] deployImage -&gt; ERRO 017 Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 20:08:44.837 [dockercontroller] deployImage -&gt; ERRO 018 Image Output:\n ********************\n Step 1 : FROM hyperledger\/fabric-baseimage\n Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n ********************\n 20:08:44.837 [chaincode] Launch -&gt; ERRO 019 launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n 2016\/10\/03 20:10:24 transport: http2Server.HandleStreams failed to receive the preface from client: EOF\n 2016\/10\/03 20:13:14 transport: http2Server.HandleStreams failed to receive the preface from client: EOF```",
+        "ts": "1475526783.001174"
+    },
+    {
+        "type": "message",
+        "user": "U2CC1NDT2",
+        "text": "OK - I've dropped my findings in the <#C1GSVKK1U|fabric-sdk-node> channel...",
+        "ts": "1475527200.001175"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2CC1NDT2> I think I might know what is wrong",
+        "ts": "1475530456.001176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "unfortunately, there is no quick fix other than getting the baseimage installed into your peer",
+        "ts": "1475530484.001177"
+    }
+]

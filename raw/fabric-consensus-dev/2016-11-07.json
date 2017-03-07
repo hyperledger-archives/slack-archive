@@ -1,0 +1,315 @@
+[
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "I have a question about chaincode determinism - normally to make chaincode deterministic, we should not use date time API, right? But I believe this is some sort of common use case: accounts can have expiration time and accordingly to the user requirements transfer should not be made to the non active account (accounts are also stored in KVS) and the check is part of chaincode contract.... So question here: how to avoid non determinism with such approach as the check would involve date time API call? Any thoughts here?",
+        "ts": "1478515654.003386"
+    },
+    {
+        "type": "message",
+        "user": "U0UL07VSL",
+        "text": "you can use txs to put current time in your world state, probably triggered by a separate clock service that runs periodically. this is valid since in many countries you have a central trusted time service that financial systems retrieve date\/time from",
+        "edited": {
+            "user": "U0UL07VSL",
+            "ts": "1478516585.000000"
+        },
+        "ts": "1478516130.003387"
+    },
+    {
+        "type": "message",
+        "user": "U0UL07VSL",
+        "text": "speaking of determinism, I think there is a interesting case where if you have multiple putStates called at different order by different chaincode, even if they are gurantted to be the same on the db, the hash calculated from delta would still be different <@U0TFEHX8E>",
+        "edited": {
+            "user": "U0UL07VSL",
+            "ts": "1478516259.000000"
+        },
+        "ts": "1478516241.003388"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "how I understand determinism - is that if I replay tx from the same state - I should get the same result, this seems to be an idea of blockchain, If I have date time check in my chaincode - this might be not true.\nFor the second sentence, you wrote - I'm not sure that I got it. If this is true - this sounds like a bug as transactions are ordered and should give the same result on each peer, if they have deterministic code...",
+        "ts": "1478516611.003391"
+    },
+    {
+        "type": "message",
+        "user": "U0UL07VSL",
+        "text": "for the first sentence, you use a time provider service to write time to your blockchain, thi s no different from another invoke tranasction, which will get your time synchonized to all peers. other peers will use the time stored in the world state of your chaincode rather calling any of the date\/time functions",
+        "edited": {
+            "user": "U0UL07VSL",
+            "ts": "1478517535.000000"
+        },
+        "ts": "1478517429.003392"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "so external provider will give me an option of the same date-time on all the peers, which is not something I'm really have doubts about - I can imagine that all my hosts running peers are in sync, and having the same system time. The doubts I have - is that when I replay the same transactions in few month let's say - I'll got different results. As invocation has no (and should not have to have) time in the parameters.",
+        "ts": "1478518678.003396"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "or maybe I didn't get the idea you propose..?",
+        "ts": "1478518727.003397"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N4P17ND> The idea would be that you use the time that is on the chain, so that when you replay the chain, you are also replaying the time.  And since all peers have the same chain, they have the same time.",
+        "ts": "1478528786.003398"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hey Consensus guys. I'm starting to plan the gossip aspect of the multi channel stuff",
+        "ts": "1478528964.003399"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "remember that code that you said is going to be \"librarized\" (made into a library)",
+        "ts": "1478528986.003400"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that allows me to find for a block- for what organizations it can be sent to",
+        "ts": "1478529017.003401"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and to know which organization is a certain peer's PKI-id",
+        "ts": "1478529038.003402"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "?",
+        "ts": "1478529055.003403"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "<@U0XPR4NP4> - thanks, so the idea that my chaincode is invoked and for the first invocation stores the time it was invoked against, so each following invocations will reuse that time, that's what I was thinking about... as well...",
+        "edited": {
+            "user": "U0N4P17ND",
+            "ts": "1478529081.000000"
+        },
+        "ts": "1478529070.003404"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N4P17ND> In the case of an oracle-type service, which periodically writes the time to the chain, you could always reference the value exposed by that service in your chaincode.",
+        "ts": "1478529191.003406"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> Yes, I know to what you are referring",
+        "ts": "1478529228.003407"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, any idea if that's written yet?",
+        "ts": "1478529248.003408"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "so why while replaying the tx oracle service will write me the old time?",
+        "ts": "1478529251.003409"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "or in progress?",
+        "ts": "1478529253.003410"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N4P17ND> The oracle-service writes it to the chain, so when replaying, you also replay the writes of the oracle service, so after you replay block 11, your 'simulated time' corresponds to the time encoded by the oracle onto the chain at block 11.  Essentially, the key is not to depend on a system clock, but rather to depend on a 'chain clock'.",
+        "ts": "1478529381.003411"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> I'd say it is in progress.  I'll also point out, per discussions with <@U0KN2SSKE> <@U0ULK2JPP> their preference was to write a translation layer which converted the configuration transaction into the normal MVCC type data so that it could be queried and utilized with all the normal peer tools, you might want to simply pull it from there once that translation layer is completed.",
+        "ts": "1478529446.003412"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you point me to the data type please? (where is it in the code)",
+        "ts": "1478529510.003413"
+    },
+    {
+        "type": "message",
+        "user": "U0N4P17ND",
+        "text": "<@U0XPR4NP4> yes... make sense... the only thing which seems to be unclear: at the point I replay I don't have `block 11`, right? how oracle service knows what to put there at the time of replay?",
+        "ts": "1478529539.003414"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> The short answer is, there's some code in development for it, but nothing committed, and nothing stable enough I'd be comfortable suggesting you work off of.",
+        "ts": "1478529549.003415"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok, then how about the following course of action? I'll create a go interface that could be implemented in the future and use that for the code, and I'll share it with the people that are supposed to implement it and they acknowledge\/disagree the proposed API?",
+        "ts": "1478529618.003416"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I just want to have something to hold on to, so I could progress",
+        "ts": "1478529628.003417"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0N4P17ND> Your chaincode never interacts with the oracle service.  Your chaincode interacts with the data the oracle service put onto the chain.  In that sense, when you replay, you are only utilizing information on the chain (which you do have), and do not need to interact with the oracle service.  The oracle service is responsible for putting the data onto the chain, then it is done.",
+        "ts": "1478529652.003418"
+    },
+    {
+        "type": "message",
+        "user": "U0UL07VSL",
+        "text": "just some caution on MVCC, it is likely to be an unwanted to feature for financial use cases, where strong consistency is almost always a pre-requirement and you can't have txs failed later without getting caller noticed",
+        "edited": {
+            "user": "U0UL07VSL",
+            "ts": "1478529850.000000"
+        },
+        "ts": "1478529655.003419"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> Sounds like a good plan",
+        "ts": "1478529669.003420"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you point me at the people I need to share it with? :slightly_smiling_face:",
+        "ts": "1478529686.003421"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> is the one working on populating the genesis block, but <@U0S5KF44D> and <@U0ULK2JPP> might also have some interest.  I'd also like to be copied.",
+        "ts": "1478529750.003422"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1478530616.003424"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "link?",
+        "ts": "1478530774.003425"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<https:\/\/hangouts.google.com\/hangouts\/_\/umeidnchr5gk5ktqsrqlgmuvzqe>",
+        "ts": "1478530794.003426"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "folks who didn't make the scrum please post your 1 or 2 liner summary here",
+        "ts": "1478531725.003427"
+    },
+    {
+        "type": "message",
+        "user": "U1B5DPRLG",
+        "text": "We are still running tests for v0.6 as we get new loads (new load received Fri afternoon; possibly another very soon) and we are getting started on tests for v1.0 For more details see <https:\/\/jira.hyperledger.org\/browse\/FAB-531> and <https:\/\/jira.hyperledger.org\/browse\/FAB-979>",
+        "ts": "1478532308.003428"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "OK, I defined an API that needs to be implemented by the upper layers that use the gossip (basically, the peer, ledger layer):\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2325\/>\nI'd like you guys { <@U0UGH3X7X>  , <@U0S5KF44D>  , <@U0ULK2JPP>  , <@U1HFNJB50>  } to take a look and tell me what you think",
+        "ts": "1478540223.003430"
+    },
+    {
+        "type": "message",
+        "user": "U0W7D64LC",
+        "text": "bunch of new videos posted on <#C28M6TC90|playbacks> and our youtube channel at <https:\/\/www.youtube.com\/channel\/UCCFdgCWH_1vCndMPVqQlwZw> Check them out and subscribe\u2026 including tool to generate the genesis block",
+        "attachments": [
+            {
+                "service_name": "YouTube",
+                "title": "Hyperledger Fabric",
+                "title_link": "https:\/\/www.youtube.com\/channel\/UCCFdgCWH_1vCndMPVqQlwZw",
+                "text": "Hyperledger fabric",
+                "fallback": "YouTube: Hyperledger Fabric",
+                "thumb_url": "https:\/\/yt3.ggpht.com\/-p3I4WZFQpKc\/AAAAAAAAAAI\/AAAAAAAAAAA\/nfXbn9j5Dao\/s900-c-k-no-mo-rj-c0xffffff\/photo.jpg",
+                "from_url": "https:\/\/www.youtube.com\/channel\/UCCFdgCWH_1vCndMPVqQlwZw",
+                "thumb_width": 900,
+                "thumb_height": 900,
+                "service_icon": "https:\/\/s.ytimg.com\/yts\/img\/favicon-vflz7uhzw.ico",
+                "id": 1
+            }
+        ],
+        "ts": "1478540333.003431"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "@yacov, can you add the people on your list as reviewers to 2325 so gerrit can do notifications  ?  <@U0KN2SSKE> also  ...",
+        "edited": {
+            "user": "U0UGH3X7X",
+            "ts": "1478552902.000000"
+        },
+        "ts": "1478552667.003433"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll assume you meant to tag me, and yes",
+        "ts": "1478552824.003434"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in a minute, I'll push a modified change set, <@U0XPR4NP4>  you win this time :slightly_smiling_face:",
+        "ts": "1478552863.003435"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "added",
+        "ts": "1478553868.003437"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XPR4NP4>  - your changes are merged",
+        "ts": "1478562471.003438"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "\"[FAB-707] disconnected Peer can't recover from lost connection, then start sending view.\"    I took a look at the code   pbft-core.go and it seems in the  \"stateUpdatedEvent\" where update.seqNo  is far less than  instance.seqNo  can cause loop issue.  that is because  instance.Checkpoint(update.seqNo, update.id) will store a values so low (vc.H )  that will cause viewchange     go  into  \"a loop like\"   thus cause nothing get updated.   I play around it a bit",
+        "ts": "1478568108.003439"
+    },
+    {
+        "type": "message",
+        "user": "U0UL07VSL",
+        "text": "<@U294C6FDW> the issue has already been concluded as a design \"intent\/gap\" if you read the comment section, not a code issue; hopefully the suspect message will be implemented in sbft <@U0XQ35CDD> to permanently solve the problem",
+        "edited": {
+            "user": "U0UL07VSL",
+            "ts": "1478588311.000000"
+        },
+        "ts": "1478583524.003440"
+    }
+]

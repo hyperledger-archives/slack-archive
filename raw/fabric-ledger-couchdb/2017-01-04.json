@@ -1,0 +1,55 @@
+[
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U39S0S55F>  MVCC = Multi-version Concurrency Control.  Essentially at commit time there is validation logic that checks that the versions of keys that were read at simulation time have not been changed in the state database by other inflight transactions.  This ensures serializable isolation level, that is, no other inflight transactions have invalidated this transaction by changing inputs that were used during simulation.  The readset is part of the simulation results and travels with the writeset throughout the infrastructure.",
+        "ts": "1483529147.000010"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Hi Dave <@U1KFCPFQA>. What happens if the validation fails at this stage? If the versions of keys have changed since the simulation for example. The transaction has already been endorsed, and submitted to the consensus service. Might some of the endorsing and committing peers have changed, and if so could some commit the change and some not? Or will they all be synchronised as they\u2019re working off the same channel? Thanks :slightly_smiling_face:",
+        "ts": "1483541024.000011"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "the ordered transactions will be sent to all peers.  the validation check is deterministic and therefore all peers will come to the same conclusion of which trans are valid and not valid.  therefore the same set of validated trans will get applied to ledger on all peers.",
+        "ts": "1483541175.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Thanks Dave. So if validation fails because the version of keys has changed, the transaction is recorded in the ledger but flagged as \u2018not valid\u2019? Does the client which submitted the endorsed transaction to the consensus service receive notification of this?\n\nBy way of an example: Let\u2019s say there is a simple chaincode that implements a basic bank account. It stores a balance, and allows debits and credits to the account. Debits are only allowed if the balance is greater than or equal to the amount being debited. \nThe account balance starts with the value 100.\n- Credit(50) (balance now 150).\n- Debit(120) (balance now 30).\n\nIf there is a delay between the credit and debit, such that the credit is committed to the blockchain, then the debit will succeed. \nIf the debit is invoked immediately after the credit without delay, then it will likely fail (as the balance is still 100 as the credit has not been committed). Similar to other non-blockchain systems.\n\nNow, if we change the transactions to just 2 credits:\n- Credit(50)\n- Credit(20)\n\nSimilar to before, if there is a delay between to the credits, then they will succeed. But also, if the 2 transactions are submitted in quick succession, and are part of the same batch then the 2nd credit will fail validation as the first will change the key version?\n\nA single client submitting these can synchronise these invocations, but it will be more difficult across multiple clients.",
+        "edited": {
+            "user": "U1V6SJ1FF",
+            "ts": "1483544775.000000"
+        },
+        "ts": "1483544598.000013"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U1V6SJ1FF> You are absolutely correct.  If both credits happen at about the same time, then the post image from simulation will be 150 and 120 respectively.  At validation time, the first tran will succeed and change the ledger to 150, while the second tran will be marked invalid.  The client will get notified via an event, and can choose to re-submit.  The post image for the resubmission will be for the correct value of 170, and it will succeed during validation\/commit phase, and all is good.  Note that for invalid transactions, they will be in the block but marked invalid, so that auditors can know what happened, but they will not be applied to the ledger state.",
+        "ts": "1483545258.000015"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Many thanks <@U1KFCPFQA> :slightly_smiling_face: Much appreciated.",
+        "ts": "1483546580.000016"
+    },
+    {
+        "type": "message",
+        "user": "U39S0S55F",
+        "text": "Thanks very much! <@U1KFCPFQA> :grinning:",
+        "ts": "1483578763.000017"
+    },
+    {
+        "user": "U1751P7U4",
+        "text": "<@U1751P7U4|shubhamvrkr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483594858.000018"
+    }
+]

@@ -1,0 +1,451 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1BC5A0F9>, <@U0ZJZBJLF>: just to better clarify. ParticipantID is supposed to return the x509 Subject's Organization field or OrganizationalUnit field?",
+        "ts": "1479889768.002519"
+    },
+    {
+        "type": "message",
+        "user": "U2KJHTPQT",
+        "text": "A thought I had this morning",
+        "ts": "1479895017.002520"
+    },
+    {
+        "type": "message",
+        "user": "U2KJHTPQT",
+        "text": "How easy is it to do SPV proving on Fabric?",
+        "ts": "1479895031.002521"
+    },
+    {
+        "type": "message",
+        "user": "U2KJHTPQT",
+        "text": "I'm thinking for IoT purposes",
+        "ts": "1479895042.002522"
+    },
+    {
+        "type": "message",
+        "user": "U2KJHTPQT",
+        "text": "A tiny device that only has a very limited amount of memory should be able to get reliable information from a chaincode contract with only a few seed nodes known",
+        "ts": "1479895127.002523"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> - good question above.   Here's my take on what we \"allow\" in terms of being able to identity unique members\/participants\/organizations (m\/p\/o) (using every term I know people currently use - we need to quickly hone in on one):\n\n1) Unique certificate issuing authority  - can either be a unique root or intermediate CA (e.g. each m\/p\/o uses it's own CA)\n2) CAs are shared between m\/p\/o's .  In this case, unique identification would be the combination of the certificate issuing authority (root\/intermediate CA) and a \"unique\" field(s) in the Subject DN (need to think about how we allow this to be specified).  Maybe it has to be a unique base DN",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479900273.000000"
+        },
+        "ts": "1479900194.002524"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Is it reasonable to assume that the certificate will include inside (Some prefix of its OU field) the MSPID\/Organization name?",
+        "ts": "1479904531.002526"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Assuming MSPID is \"assigned\" by an MSP (application) at chain genesis time, followed by the MSP config info, we could \"recommend\" that MSPID is some organization name that appears in the OU field of all identities for which MSPManager.isValid(MSPID, identity) returns true.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1479904798.000000"
+        },
+        "ts": "1479904649.002527"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "We had a short discussion over this with <@U0ZR63HLK>, and <@U26T99AQ4> this morning.",
+        "ts": "1479904683.002528"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "It is indeed safe to assume that we can extract the org \/ distinct name from the subject DN.   The question is how \"prescriptive\" are we in terms of the form of the subject DN?",
+        "ts": "1479905670.002531"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K> so all subjects will have the same DN, and no other entities outside that MSP can have the same DN?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1479907014.000000"
+        },
+        "ts": "1479906975.002532"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So to absolutely define the OU a subject belongs to, we wouldneed to specify, the chainid, the mspid (which will be equal to the subjects' DN), and OU of the subject where necessary.",
+        "ts": "1479907116.002534"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "To absolutely define the DN of the subject we would need to specify the chain and MSPID the identity (Subject) is valid within (given that MSPID would take its name from its subjects DN).",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1479907201.000000"
+        },
+        "ts": "1479907167.002535"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Am i correct?",
+        "ts": "1479907171.002536"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Let's assume that we have a single CA and it issues certificates for all the peers for all of \/ each of the members",
+        "ts": "1479907606.002538"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nSo to absolutely define the OU a subject belongs to, we wouldneed to specify, the chainid, the mspid (which will be equal to the subjects' DN), and OU of the subject where necessary.\n```\nWhy the chainID?",
+        "ts": "1479907608.002539"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So - you might have DNs that looks like:\n```\nCN=peer1, OU=org1, O=IBM, C=US\nCN=peer2, OU=org1, O=IBM, C=US\n\nCN=peer1, OU=org2, O=IBM, C=US\n.\n.\n.\nCN=peer2, OU=orgX, O=IBM, C=US\n\n```",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479907801.000000"
+        },
+        "ts": "1479907762.002540"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in this case, the \"baseDN\" is always the same :  `O=IBM, C=US` and `OU` is distinct",
+        "ts": "1479907837.002542"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so you'd have 2 options:\n\n1) when you register the participant\/member\/org, you provide the root ca plus an explicit baseDN (the part that would come after the common name (CN)) for example:\n```\norg1, rootcert,basedn=\"OU=org1, O=IBM, C=US\"\norg2, rootcert,basedn=\"OU=org2, O=IBM, C=US\"\n```",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1479908026.000000"
+        },
+        "ts": "1479908018.002543"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this option is nice because it allows you to use different suffixes for the DN\n\nor\n\n2) you could try to be fancy and just try to extract the `OU` part out",
+        "ts": "1479908102.002545"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I prefer option 1 - where basic the CN=enrollID and you require that if you use the same CA you must explicitly list the entire DN suffix \/ base DN",
+        "ts": "1479908169.002546"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "So, `Subject.OU` is what we'll use to identify the MSP ID for a cert - correct?",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1479909286.000000"
+        },
+        "ts": "1479909262.002547"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so honestly this whole MSP thing confuses me but just wanted to see what would happen with an implementation",
+        "ts": "1479911562.002549"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "putting that aside, let me try this another way:\n\nI'll start with the VSCC case because I think it is easiest to show what is needed \/ capture what we could\/should do",
+        "ts": "1479911627.002550"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(brb - don't let the suspense kill you  :wink: )",
+        "ts": "1479911651.002551",
+        "reactions": [
+            {
+                "name": "joy",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":smile:",
+        "ts": "1479912667.002552"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So I'm in VSCC and my goal is to make sure that the transaction conforms to an endorsement policy which says that we need endorsement for 2 out of the 3 \"participants\/organizations\/members (p\/o\/m)\" that are part of the chain\/channel.   Of course our endorsement checking is based on digital signatures.   So for each EndorsementResponse in the transaction, we need to verify the signature and extract the  p\/o\/m.   I'll assume X509 method for now (since honestly I don't know how to do this for IdentityMixer).  So I need the signature and the bytes of the X509 certificate to:\n\n1) validate that this identity comes from a trusted source:\n\nSo I extract the X509 certificates bytes and in order to \"validate\" it I make sure that is was issued by a trusted authority (in this case a certificate authority which is trusted) \n\n2) obtain the p\/o\/m \n\nFor step 1) above, we have already figured out the \"trusted authority\" so now we need to determine if this authority is responsible for multiple p\/o\/m's.  If responsible for multiple, what can we use from the signing certificate to uniquely identity it's p\/o\/m ?  Clearly we can't use the CN since we assume that a p\/o\/m can have multiple peers and it would make sense for the CN to be the enrolled peer \"name\".   So now we basically have the remainder of the DN to work with.   We could require that you must specify the entire remainder of the DN to identify the p\/o\/m (easy) or we could require that you have an OU as the start of the remainder of the DN and use that (still easy) or we could allow you to have a variable field in the remainder of the DN and use an expression to extract it (hardest)\n\n\n3) verify the signature  (of course if X509\/PKIX you could really combine 1 and 3   but we'll keep them separate for supporting other mechanisms such as identity mixer)\n\nStandard verify used here based on the type of signature and the algorithm specified as part of the fabric",
+        "ts": "1479913023.002553"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So what does this mean coming from the other end - i.e. when you configure a new p\/o\/m to be part of a chain\/channel?    If each p\/o\/m uses their own certificate authority, then all you need is the their CA cert (and it's full chain if it's an intermediate authority).   If multiple p\/o\/m's share the same certificate authority, you need to specify the CA cert (and its chain) as well as either the full DN suffix (the part after the CN) or the OU (assuming we force that convention)",
+        "ts": "1479913227.002554"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So from any X509 public cert used for signing, you should be able to extract the issuer, find that in the list of trusted root authorities and if it has no \"DNs\" under it, just consider it the p\/o\/m else match both the issuer and the OU \/ DN suffix",
+        "ts": "1479913338.002555"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "So I would have though that we would have different provider types like \"X509\", \"IdentityMixer\", etc which we could use when initially \"registering \/ creating \/ configuring\" trusted authorities and that each CA\/optional list of DNs would be used to instantiate instances of that type",
+        "ts": "1479913452.002556"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "seems like we have a lot more complexity right now",
+        "ts": "1479913533.002557"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(sorry for the long winded writeup)",
+        "ts": "1479913646.002558"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, let me make sure I understood. An MSP  should be instantiated by specifying a type, a set of trusted root certificates (CAs) and for each CA a list of DNs. Now a policy to say that an identity belong to a certain MSP might say something like: the identity must be valid against the trusted root certificates and it has to be in the list of DNs. Am I correct?",
+        "ts": "1479914785.002559"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "pretty close - devil in the details - but yes.  And sometimes if there are no DNs, it's just the root certificate that identifies the p\/o\/m  (my new term)",
+        "ts": "1479914867.002560"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, but ok. Lets take the example of a chain where org1 org2 and org3 participate.",
+        "ts": "1479919373.002561"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "their applications talk to each other and each of these orgs provide their msp info",
+        "ts": "1479919394.002562"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so org1 uses ca1 as rootca",
+        "ts": "1479919406.002563"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "org2 uses ca2 as rootca",
+        "ts": "1479919413.002564"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and org3 uses ca3 as rootca",
+        "ts": "1479919420.002565"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "btw, org1, org2, and org3 can be used to identify these msp-is in the chain genesis block",
+        "ts": "1479919445.002566"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So in this case steps 1 and 3 are already supported by the MSP interfaces. For (2) one could easily add to the MSPManager a call returning the OU\/CN of an id that is redirected to the associated MSP that would include some struct {mspid = {org1, org2, org3}, <http:\/\/subject.CN|subject.CN>, subject.OU}",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1479919670.000000"
+        },
+        "ts": "1479919620.002567"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "would this suffice?",
+        "ts": "1479919680.002569"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Othwerwise access policies if defined in terms of CAs may need to be updated each time an MSP updates its rootca",
+        "ts": "1479919771.002570"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1BC5A0F9>, this also makes sense to me. <@U0PB67X4K>, is Elli closer to what you meant?",
+        "ts": "1479921642.002571"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZR63HLK> <@U1BC5A0F9> <@U0PB67X4K> caveat emptor - I\u2019m worse than a new born babe in these matters\u2026. let me ask one thing please",
+        "ts": "1479921752.002572"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1479921755.002573"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, please :slightly_smiling_face:",
+        "ts": "1479921777.002574"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(1) asks is this ID valid ? \u2026 and (3) asks can you verify this signature .  correct ?",
+        "ts": "1479921860.002575"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I\u2019ll wait ...",
+        "ts": "1479921934.002576"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> - conceptually <@U1BC5A0F9> is pretty close.  Perhaps my concern\/confusion\/issue stems from the terminology.  ",
+        "ts": "1479922010.002577"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if we can use as guideline what Elli said that would be helpful",
+        "ts": "1479922060.002578"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ULK2JPP>, I would say yes.",
+        "ts": "1479922069.002579"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "where I was going with this was\u2026 (2) seems to say something different \u2026. is it (a) give me the  p\/o\/m so I (say VSCC) can do further verifications OR (b) can you MSP verify id based on the p\/o\/m ? the later implies there\u2019s a policy associated with the MSP",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1479922245.000000"
+        },
+        "ts": "1479922137.002580"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(now I\u2019ll shut up :-))",
+        "ts": "1479922158.002581"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I don't equate member with MSP or at least I don't like doing it that way.  We are overall missing the concept of what I called p\/o\/m and I would look at  its \"membership\" info as being an attribute of it.  Let me look at the interfaces again but it just seems confusing to me",
+        "ts": "1479922221.002582"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ULK2JPP>:   2) comes into play so that you can determine the number of unique p\/o\/m's from which you have signatures.  This is required because we will allow  multiple peers per p\/o\/m and don't want to count 2 endorsements from the same p\/o\/m.\nIt may be that vscc would not normally need to see this directly depending on how policy enforcement is executed but I could see cases where custom vscc would need to have access to the p\/o\/m's which endorsed a transaction ",
+        "ts": "1479923455.002584"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I think I\u2019m getting it <@U0PB67X4K> \u2026",
+        "ts": "1479924089.002585"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "lets take 2 propositions",
+        "ts": "1479924099.002586"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "1) 2 out of 3",
+        "ts": "1479924110.002587"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "2) (POM-1 || POM-2) &amp;&amp; POM-3",
+        "ts": "1479924134.002588"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the second one is easy \u2026 we can easily ask MSP directly `msp.IsPOM(pom)` and evaluate the expression in VSCC",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1479924640.000000"
+        },
+        "ts": "1479924188.002589"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the first one illustrates the problem outlineted \u2026. its better stated as (1) 2 unique out of 3",
+        "ts": "1479924269.002591"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "for (1) then VSCC has to _retrieve_ POM from MSP and then do the checks itself \u2026 so what would `msp.GetPOM(cert)` look like ? Hence the discussion on CN, DN, OU etc\u2026. sounded like we need to standardize on some convention to represent POMs for our purpose ?",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1479924542.000000"
+        },
+        "ts": "1479924404.002592"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Correct and correct ",
+        "ts": "1479924654.002595"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(whew)",
+        "ts": "1479924666.002596"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) Has it been already decided whether peers use SSL certificates signed by COP, or self-signed? \n2) If they are signed by COP, are they *the same* certificates that are used to verify application-layer signatures by the `msp` layer inside the peer?",
+        "ts": "1479932896.002597"
+    }
+]

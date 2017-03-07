@@ -1,0 +1,476 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: are you sure that all your requests are processed with noops?",
+        "ts": "1466504203.000088"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>: almost yes.  I sent query request at the same time and see that the result of the chaincode transaction has taken into effects with a much faster speed than `pbft`",
+        "ts": "1466505734.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "very interesting.",
+        "ts": "1466505752.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how many nodes do you use?",
+        "ts": "1466505758.000091"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "4 nodes",
+        "ts": "1466505766.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can you increase the batchsize to 100 or 1000?",
+        "ts": "1466505801.000093"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i tried before, but it has no differences",
+        "ts": "1466505882.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there was a fix recently",
+        "ts": "1466505890.000095"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "okay.",
+        "ts": "1466505905.000096"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i also notice that within the eventLoop \n```\nfunc (em *managerImpl) eventLoop() {\n\tfor {\n\t\tselect {\n\t\tcase next := &lt;-em.events:\n\t\t\tem.Inject(next)\n\t\tcase &lt;-em.exit:\n\t\t\tlogger.Debug(\"eventLoop told to exit\")\n\t\t\treturn\n\t\t}\n\t}\n}\n\n```\nwhy not assign a goroutine to `Inject` ?",
+        "ts": "1466505982.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "instead of?",
+        "ts": "1466506010.000098"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "the channel will block until the requests have been finished processing.",
+        "ts": "1466506011.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes of course",
+        "ts": "1466506017.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's the whole point",
+        "ts": "1466506023.000101"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "a general concurrent server works in this way: dispatch requests to a queue, and a threadpool is attached to serve as workers. when there's a request being sent, it's retrieved and sent to a worker thread immediately.   however, in the above design, the eventloop works in a sequential way",
+        "ts": "1466506127.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466506141.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course",
+        "ts": "1466506144.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "consensus is a serialization device",
+        "ts": "1466506153.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's the whole idea - all requests need to be processed in the same order everywhere",
+        "ts": "1466506193.000106"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "but i remember i was asking a question that when concurrent requests come, fabric will treat them at random order",
+        "ts": "1466506336.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466506347.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because concurrent means there is no inherent order",
+        "ts": "1466506361.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then consensus works together to serialize them",
+        "ts": "1466506372.000110"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "got it",
+        "ts": "1466506400.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you think that's the source of performance problems?",
+        "ts": "1466506418.000112"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i feel so.  my CPU occupation has never exceeded for 200%",
+        "ts": "1466506492.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well of course not",
+        "ts": "1466506499.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the transactions need to be executed sequentially :slightly_smiling_face:",
+        "ts": "1466506513.000115"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "a sequential execution will lead to more time to wait",
+        "ts": "1466506524.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466506529.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think that noops will produce more cpu load",
+        "ts": "1466506544.000118"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i've not noticed that, but the TPS is much higher",
+        "ts": "1466506570.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the input or the output?",
+        "ts": "1466506580.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how are the nodes connected?",
+        "ts": "1466506596.000121"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "`invoke` requests",
+        "ts": "1466506613.000122"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "the P2P network was kept same: 4 nodes",
+        "ts": "1466506636.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, but how are they connected",
+        "ts": "1466506643.000124"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "1 leader, the left three directly connect to peer1",
+        "ts": "1466506659.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "switch?",
+        "ts": "1466506698.000126"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "the are on the same rack",
+        "ts": "1466506719.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1466506723.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so how do you count TPS?",
+        "ts": "1466506732.000129"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "jmeter reports",
+        "ts": "1466506751.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you don't know whether these invokes are committed to the chain?",
+        "ts": "1466506786.000131"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i use a seperate `query` request to get the current chaincode state",
+        "ts": "1466506812.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and all invokes are committed?",
+        "ts": "1466506832.000133"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "yes",
+        "ts": "1466506837.000134"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "when jmeter stops, the state of chaincode become stable immediately.  but will wait tens of minutes when pbft is used",
+        "ts": "1466506862.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "did you have a look at the profile?",
+        "ts": "1466506878.000136"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "not yet",
+        "ts": "1466506893.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1466506896.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you run with security enabled?",
+        "ts": "1466506903.000139"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "no",
+        "ts": "1466506909.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmmm",
+        "ts": "1466506918.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, profile would be great",
+        "ts": "1466506937.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there should be a profile port you can connect to",
+        "ts": "1466506955.000143"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "profile for `pbft` was reported by <@U1CK6522F> above.  I've not made it for noops",
+        "ts": "1466506993.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that profile is incomplete",
+        "ts": "1466507015.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it doesn't show anything about pbft",
+        "ts": "1466507033.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but try batchsize = 1000",
+        "ts": "1466507040.000147"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "latest master branch should work fine?",
+        "ts": "1466507165.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it would be useful to use latest master, yes",
+        "ts": "1466507253.000149"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "okay.",
+        "ts": "1466507405.000150"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>:   here are the results for latest code with `batchsize:1000` \n\nJmeter shows a report of :  222s with 77TPS on average.\n\nAfter Jmeter stopped, fabic stopped in around 120s, as a result, the practical TPS is (222*77)\/(222+120) = 53\n\nAnd there's phoenoma that when I use a seperate `query` request to get chaincode status, it kept unchanged, while after all requests have been committed, it returns the eventual committed result.\n\nProfile report would be delivered later.",
+        "ts": "1466510460.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmmm",
+        "ts": "1466510510.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so it stays at the initial value?",
+        "ts": "1466510537.000153"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "no, the status is correct",
+        "ts": "1466510556.000154"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "for example, the status shows `a=1000` at all time, and `a=-20800` in the end: each transaction is just a simple `a -=10`.  But `a=1000` is shown during the whole consensus process",
+        "ts": "1466510673.000155"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "so it seems the performance had been improved from 15(with batch size of 2) to 50(with batch size of 1000)?",
+        "ts": "1466510725.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "weird",
+        "ts": "1466510731.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why doesn't it show intermediate results?",
+        "ts": "1466510750.000158"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "hmm, i've no idea..",
+        "ts": "1466510803.000159"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "i build image based on commits till 6905fecdb3d869c9047cbdfae5a764671e8174e1",
+        "ts": "1466510842.000160"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "could the consensus be processed with a pipeline design?  without pipelined processing, the throughput would not reach a relative large amount",
+        "ts": "1466510946.000161"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "for example, raft\/paxos based storage, such as etcd, could reach 10k write operations per second. although the consensus process of raft will take shorter time, such a large performance metric would not be reached by a simple sequential processing.",
+        "ts": "1466511255.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand",
+        "ts": "1466513492.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chaincode execution are sequential",
+        "ts": "1466513510.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they depend on current state and change it",
+        "ts": "1466513532.000165"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "This is the result when PR1924 had been applied:\n\nThe performance seems to be improved a lot. Jmeter shows a throughput of 4000TPS (without PR1924, it's 77TPS as mentioned above).  The practical commited speed seems to achieve 500, the 1000 batched requests are finished processing in 2 seconds. \n\nAlso there exist some evident bugs, for example, when I restart jmeter for another testing after fabric have committed all queued messages, the commits will not take into effect any more.",
+        "ts": "1466570251.000166"
+    }
+]

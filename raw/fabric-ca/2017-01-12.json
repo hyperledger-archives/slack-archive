@@ -1,0 +1,479 @@
+[
+    {
+        "user": "U2E516363",
+        "text": "<@U2E516363|astepanov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484221025.000767"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "Hi everyone, I hope it's a right channel to ask. Let's say I'd like to use fabric-cop and my own CA for ECerts. How can I do that exactly? Can I my own CA for TCerts as well?",
+        "ts": "1484221174.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U3DHKV84C> Yury, I'm responding to your question here so others can see.   The question was how the peer process knows about COP.   The peer process itself doesn't know about cop.  We have intentionally architected it this way to allow a key\/cert from any X.509 CA to be used.  But when using cop, you simply call \"cop client enroll &lt;enrollmentID&gt; &lt;enrollmentSecret&gt; &lt;copServerURL&gt;\" with the COP_KEY_FILE and COP_CERT_FILE env variables set appropriately so that the key\/cert is placed where the peer expects.   And you currently also have to copy the cop server's root cert to the appropriate place for the peer.  In the hopefully near future, the cop server's root cert will be part of the genesis block so this final step will not be necessary.   FYI, <@U0UKTPMG8> is working on docker-compose files for all of this.   I did a little work on a Dockerfile yesterday which demonstrates these steps by building a peer image based on the cop image, but unfortunately hit an error building the image and so I think Jeff is continuing with it.  But here is the modification that I made to the fabric\/images\/peer\/Dockerfile.in file which demonstrates the steps I outlined above ...",
+        "ts": "1484223143.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "FROM hyperledger\/fabric-cop:_TAG_\nENV PEER_CFG_PATH \/etc\/hyperledger\/fabric\nENV COP_CERT_FILE $PEER_CFG_PATH\/signcerts\/peer.pem\nENV COP_KEY_FILE $PEER_CFG_PATH\/keystore\/key.pem\nRUN mkdir -p \/var\/hyperledger\/db $PEER_CFG_PATH\nCOPY payload\/peer \/usr\/local\/bin\nCOPY payload\/core.yaml $PEER_CFG_PATH\nCOPY payload\/cop-server.pem $PEER_CFG_PATH\/cacerts\/cacert.pem\nADD  payload\/msp-sampleconfig.tar.bz2 $PEER_CFG_PATH\nRUN cop client enroll admin adminpw <http:\/\/127.0.0.1:8888>\nCMD peer node start",
+        "ts": "1484223159.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Note 1 caveat:",
+        "edited": {
+            "user": "U0S5KF44D",
+            "ts": "1484223366.000000"
+        },
+        "ts": "1484223206.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "The payload\/cop-server.pem file is the same as fabric-cop\/testdata\/ec.pem",
+        "edited": {
+            "user": "U0S5KF44D",
+            "ts": "1484223381.000000"
+        },
+        "ts": "1484223308.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0KPFAZNF> may also have a docker-compose file which does this as I know he was working on an end-to-end solution as well",
+        "ts": "1484223502.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Anyway, hopefully this will all be done soon and you will not need to worry about this level of detail",
+        "ts": "1484223540.000776"
+    },
+    {
+        "user": "U3J48LFUG",
+        "text": "<@U3J48LFUG|kfioktistov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484223707.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U2E516363> There are actually several options:",
+        "ts": "1484225173.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "1) Use COP completely",
+        "ts": "1484225180.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "2) Configure COP server with an intermediate cert issued by another CA, in which case COP server continues to issue ecerts and tcerts, but with the other CA's root of trust.   Or depending on the exact use case, the COP server could be extended to meet other requirements, but would have to understand the exact requirements to know for sure.",
+        "edited": {
+            "user": "U0S5KF44D",
+            "ts": "1484227544.000000"
+        },
+        "ts": "1484225246.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "3) Don't use COP at all.  Configure the fabric with your own CA's cert.  In this case, if you're using one of the SDKs, you would need to write code or somehow manually configure\/load key\/certs to use.   The node SDK for example has a Membership Services interface that you'd have to implement if you want to use it with another CA.   The SDK channel would be the best place to get info on that, if interested.",
+        "ts": "1484225561.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "The bottom line is that it is very flexible and just depends on what you are trying to accomplish",
+        "ts": "1484225616.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Can you elaborate on your scenario?",
+        "ts": "1484225631.000783"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U0S5KF44D> thanks for the answer, I guess it's a 3rd option.\nWe building a prototype for interbank communication. One of the requirements - using bank's software for signing transactions (it uses some specific crypto function, like \"gost r 34.11 94\")",
+        "ts": "1484226066.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yes ... which SDK are you using?",
+        "ts": "1484226159.000785"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U0S5KF44D> we used fabric 0.6 before with node sdk, now want to try v1. Same SDK probably",
+        "ts": "1484226310.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Hmm ... seems gost r 34.11 94 is not X.509 based?   Then you would also need to implement your own MSP (Membership Services Provider) which plugs into the fabric",
+        "ts": "1484226312.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "See fabric\/msp",
+        "ts": "1484226324.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Note that the documentation for this is a work-in-progress :disappointed:",
+        "ts": "1484226446.000789"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "One sec, one sec.",
+        "ts": "1484226462.000790"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[January 12th, 2017 5:01 AM] astepanov: <@U0S5KF44D> thanks for the answer, I guess it's a 3rd option.\nWe building a prototype for interbank communication. One of the requirements - using bank's software for signing transactions (it uses some specific crypto function, like \"gost r 34.11 94\")",
+                "ts": "1484226066.000784",
+                "author_subname": "astepanov",
+                "channel_id": "C2Y3CPP16",
+                "channel_name": "fabric-cop",
+                "is_msg_unfurl": true,
+                "text": "<@U0S5KF44D> thanks for the answer, I guess it's a 3rd option.\nWe building a prototype for interbank communication. One of the requirements - using bank's software for signing transactions (it uses some specific crypto function, like \"gost r 34.11 94\")",
+                "author_name": "Andrey Stepanov",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/astepanov",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/c9dd78251191958fd505f7b1f84276e8.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0009-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-cop\/p1484226066000784",
+                "is_share": true,
+                "footer": "Posted in #fabric-cop"
+            }
+        ],
+        "ts": "1484226469.000791"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U2E516363>, why not use COP at all?",
+        "ts": "1484226482.000792"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It is possible to integrate some other functions into the COP flow. We could have done it even back then with v0.5 and v0.6...",
+        "ts": "1484226529.000793"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "COP (the v1) is even more flexible, in that sense.",
+        "ts": "1484226550.000794"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "So, while things are under development, etc\u2026 I would still not dismiss an integration option.",
+        "ts": "1484226578.000795"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(it may save you `loads` of time\/testing\/etc\u2026)",
+        "ts": "1484226590.000796"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U0S5KF44D> I thought it is, but I'm not sure honestly",
+        "ts": "1484226599.000797"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U11MANG9G> I would love to use cop! :slightly_smiling_face:",
+        "ts": "1484226661.000798"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yeh, I don't know anything about \"gost r 34.11 94\".  I guess if it is just another hash function, then yes, COP could be extended much more easily",
+        "ts": "1484226662.000799"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I\u2019m just trying to see whether the use-case is really *prohibitive* so the level that you really have to reimplement everything.",
+        "ts": "1484226663.000800"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes <@U2E516363>, <@U0S5KF44D> if you like, we can develop this a bit more (here or in private), but there are many ways of having a \u201cdecentralized\u201d flow using fabric-cop, the fabric \u201csdk\u201d on the way to \u201cfabric\"",
+        "ts": "1484226746.000801"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "develop, as in, expand the discussion and get to the bottom of it\u2026  especially if you are the planning stage.",
+        "ts": "1484226802.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Yes, I would need to understand \"gost r 34.11 94\" better for sure to make a recommendation ... and any other requirements",
+        "ts": "1484226858.000803"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Likewise.",
+        "ts": "1484226896.000804"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U11MANG9G> <@U0S5KF44D> sure! If you have time, let's do it!",
+        "ts": "1484226984.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Sure ... will leave it to you to set something up",
+        "ts": "1484227040.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3DHKV84C> <@U0S5KF44D> regarding the docker conversation, note that the work I did could be more precisely classified as at the dockerfile\/make-docker level for cop itself, not a higher order composition (though i did do some of that, too)",
+        "ts": "1484228353.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you take <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3843\/>, it is then possible to run \"make docker\" and have the resulting image be relatively turn-key deployable (without real security, though)",
+        "ts": "1484228389.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, for instance \"docker run -it --rm hyperledger\/fabric-cop\" would result in a functional cop server",
+        "ts": "1484228412.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "before my changes, you had to do more of the configuration by hand, though cop has supported emitting a docker image for some time",
+        "ts": "1484228472.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "thanks Greg ... don't you need \"-p 8888:8888\" on docker run command?",
+        "ts": "1484228512.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, yes, thanks keith",
+        "ts": "1484228536.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i forget that when really running too",
+        "ts": "1484228542.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh",
+        "ts": "1484228543.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I tend to rely on my composition which sets the exports\/ports for me",
+        "ts": "1484228560.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "speaking of: if anyone could review CR 3843, it would be appreciated",
+        "ts": "1484228800.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "just did",
+        "ts": "1484229004.000819"
+    },
+    {
+        "type": "message",
+        "user": "U3DHKV84C",
+        "text": "<@U0KPFAZNF> thanks",
+        "ts": "1484231243.000820"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U2E516363> : GOST R is not supported by CFSSL(AFAIK) and hence you cannot use CoP as Intermediate CA making your CA as root CA for ECert purposes. For TCert , we are using CFSSL as issuing CA . but it can be extended to use your CA as Issuing CA. In that case , you need to expose your API for Certificate Signing as we (CoP) do not want to get into business of managing your CA's private key.",
+        "ts": "1484232617.000821"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "we can extend CoP to supprt your use case.",
+        "ts": "1484232715.000822"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U221LL03Z> which way it can be extended? For TCert I mean",
+        "ts": "1484237575.000823"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "From TCert perspective , it'll be same , whether 1 or 2.",
+        "ts": "1484238034.000824"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "I am sorry. It can be extended for ECert as well as TCert.",
+        "ts": "1484238069.000825"
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "<@U221LL03Z> I'm a bit confused, you mean, CFSSL can be extended to use GOST R, for support T\/ECert in COP, right?",
+        "ts": "1484238385.000826"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "Let me step back :1) ECert : To support Elliptic Curve Cryptography , some of the implementations takes algorithm info from , say cert itself. So , in that case , CFSSL has to be extended , which to me , seems a long pole.  Another option that we have is , we can take your ECERT as it is instead of  giving you CoP generated ECert as a result of enrollment process.",
+        "edited": {
+            "user": "U221LL03Z",
+            "ts": "1484239720.000000"
+        },
+        "ts": "1484239148.000827"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "For TCert : If you expose API for cert signing , we can support that.",
+        "ts": "1484239187.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I suggest that we do some more investigate\/verification in house on ghost r, but before that, astepanov was going to set up a call to make sure we understand the requirements better",
+        "ts": "1484239264.000829"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yup, that\u2019s how I feel too.",
+        "ts": "1484239348.000830"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "If it is possible to see\/discuss the \u201cworkflow\u201d, it will be easier to see what can be reused, what needs extending, and how much needs to be out \u201coutside\u201d fabric, or fabric-cop.",
+        "ts": "1484239391.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U2E516363> Please include Ash, Jonathan, and me on the invite ... or I guess could just post here and anyone who wants to join",
+        "ts": "1484239428.000832",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U2E516363"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2E516363",
+        "text": "I made a temp channel for it <#C3Q1ZGX4Y|gostr_and_cop> so we can move discussion there. Welcome anyone who else interest",
+        "ts": "1484240353.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U0P2GSA8Z> To build in vagrant, do the following:",
+        "ts": "1484285060.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "export CGO_LDFLAGS=\"-lstdc++ -lm -lz\"",
+        "ts": "1484285086.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "That is, to build COP in vagrant",
+        "ts": "1484285100.000837",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U12452RAP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I just pushed the fix in changeset <http:\/\/gerrit.hyperledger.org\/r\/3921>",
+        "ts": "1484285145.000838"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "What is the  cause",
+        "ts": "1484286610.000839"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Question related to user registration.  To register, a person need to enroll before running \u201ccop client register\u201d command. Say, we can use \u201cadmin\u201d to register users. However, once \u201cadmin\u201d user enroll using \u201ccop\u201d command, this user can not be used in Node SDK application. Is this correct ? So if we want to have admin privilege in Hyperledger application we can do:\n\n&gt; 1. Pre-register app specific admin user (e.g. webappadmin) in config file ( e.g in testconfig.json)\n&gt; or\n&gt; 2. Register webappadmin with these attributes.\n\n```      \"attrs\": [{\"name\":\"hf.Registrar.Roles\",\"value\":\"client,user,peer,validator,auditor\"},\n                {\"name\":\"hf.Registrar.DelegateRoles\", \"value\": \"client,user,validator,auditor\"},\n                {\"name\":\"hf.Revoker\", \"value\": \u201ctrue\u201d}]`  ```",
+        "ts": "1484292056.000840"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Is my understanding correct ?",
+        "ts": "1484292067.000841"
+    }
+]

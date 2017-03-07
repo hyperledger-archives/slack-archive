@@ -1,0 +1,413 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U139XHJCB>: support for non x86 is still WIP",
+        "ts": "1462274524.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what you can do is try to build the base image locally, this is facilitated in the .\/devenv\/baseimage directory",
+        "ts": "1462274551.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think you will need to install packer+jq and then do \u201cmake docker\"",
+        "ts": "1462274578.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that will produce the baseimage installed in your local environment",
+        "ts": "1462274592.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im not sure this has been tried on ppcle yet so you are in unchartered waters, though there are people looking at getting z\/p added first-class in addition to x so its only a matter of time",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462275327.000000"
+        },
+        "ts": "1462274705.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "Hi, where can i find the openblockchain\/baseimage Dockerfile for the execution of chaincodes?",
+        "ts": "1462276197.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "<@U0KPFAZNF>: i did what you explained on my local machine (ubuntu) but i get still the same error (see aaren's error)",
+        "ts": "1462276450.000767"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0MM86C84>: I suspect what you are seeing is the docker image is a 2 phased design",
+        "ts": "1462278051.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we commit a strictly versioned image to dockerhub (e.g. \u201c0.0.9\u201d) as the first phase, and then run a provisioner script as the second phase which ingests the versioned image locally and  tags it with :latest",
+        "ts": "1462278099.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my guess is, you ran the \u201ccd .\/devenv\/baseimage; make docker\u201d part of the workflow (which generates the first phase artifact for dockerhub) but still need to run phase 2",
+        "ts": "1462278137.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if so, the answer is that the system runs \".\/scripts\/provision\/docker.sh 0.0.9\u201d during provisioning (such as vagrant up, travis runs, etc) that you would nee to emulate",
+        "ts": "1462278181.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "does this sound like your situtation?",
+        "ts": "1462278197.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i still think this is too complicated",
+        "ts": "1462278323.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i want a single command to do everything - build and test source, build images, everything",
+        "ts": "1462278347.000774"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you have it: vagrant up :wink:",
+        "ts": "1462278656.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just the world isnt that simple",
+        "ts": "1462278664.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "part of the problem is we are using a lot of bleeding edge tech (e.g. proto3) so normal dependency mechanisms fall apart",
+        "ts": "1462278775.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if it werent for that, we could probably just JIT things with apt-get and get closer to what you are asking for",
+        "ts": "1462278825.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but until then, we are stuck with the need to custom build things from source and\/or host the artifacts of those builds ourselves",
+        "ts": "1462278864.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "both have their own challenges",
+        "ts": "1462278868.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "<@U0KPFAZNF>: there is no Dockerfile for the chaincode docker environment?",
+        "ts": "1462280304.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, it is hidden in core.yml",
+        "ts": "1462280322.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "There are multiple dockerfiles defined in yaml",
+        "ts": "1462280842.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The one you are asking about is in core.yaml at chaincode.golang iirc",
+        "ts": "1462280891.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Note that almost all of them dynamically augment what's in yaml at runtime",
+        "ts": "1462281660.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Via the docker api ",
+        "ts": "1462281671.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "<@U0KPFAZNF>: thanks! it is working",
+        "ts": "1462284405.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Nice",
+        "ts": "1462284436.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "i think we should simplify it, or provide a manual which describes how to install the fabric on the local machine",
+        "ts": "1462284839.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, it needs refinement",
+        "ts": "1462285305.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have an idea I want to try",
+        "ts": "1462285319.000791"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "<@U0KPFAZNF>: great",
+        "ts": "1462285528.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "out of curiosity, are you building non-x86 too like <@U139XHJCB> ?",
+        "ts": "1462285561.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or was this just non-vagrant x86",
+        "ts": "1462285568.000794"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "non-vagrant x86 (ubuntu 14.04)",
+        "ts": "1462285585.000795"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "gotcha",
+        "ts": "1462285591.000796"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think there are a fairly large number of people with that particular config",
+        "ts": "1462285604.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "yes",
+        "ts": "1462285625.000798"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "i think a good starting point would be a simple script",
+        "edited": {
+            "user": "U0MM86C84",
+            "ts": "1462285661.000000"
+        },
+        "ts": "1462285648.000799"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, thats what we were trying to work towards with the .\/scripts\/provision area",
+        "ts": "1462285674.000801"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "ah cool",
+        "ts": "1462285685.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, [vagrant|travis|custom|whatever] -&gt; .\/scripts\/provision\/*.sh at provisioning time",
+        "ts": "1462285718.000803"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now its just docker+custom, though I was already working on delineating between host\/docker and different hosts",
+        "ts": "1462285759.000804"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "good idea",
+        "ts": "1462285774.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as per this (currently suspended) PR: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1327\/files>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Add a common &quot;host.sh&quot; for sharing provisioning logic by ghaskins \u00b7 Pull Request #1327 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1327\/files",
+                "text": "Travis is missing the protoc compiler, so this starts to incorporate a shared facility to keep travis updated along with vagrant. It can be exploited by other hosting environments too. (possible)...",
+                "fallback": "GitHub: Add a common \"host.sh\" for sharing provisioning logic by ghaskins \u00b7 Pull Request #1327 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1327\/files",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1462285826.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one problem is that the imperative scripts are more conducive to clean-slate provisioning such as the environments within vagrant\/travis",
+        "ts": "1462285875.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might make sense to try to migrate to something more declarative like puppet so environments like yours may be properly reconciled",
+        "ts": "1462285909.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that is TBD",
+        "ts": "1462285918.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "i see",
+        "ts": "1462285933.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0MM86C84>: there already is documentation on setting up a dev environment <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "id": 1
+            }
+        ],
+        "ts": "1462289073.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "it could be improved, but it is pretty straight-forward",
+        "ts": "1462289089.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "if you want that without vagrant, there are some like <@U10PB8HPH>, <@U0V2F6PU4>  and <@U11MANG9G> that have been discussing this",
+        "ts": "1462289225.000815"
+    },
+    {
+        "user": "U10PB8HPH",
+        "inviter": "U0KM61BCP",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U10PB8HPH|joequant> has joined the channel",
+        "ts": "1462289240.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "@ cbf i saw it but it was not sufficient. I had a problem to set up the docker environment for the chaincode. I had to excecute some manual tasks. ",
+        "ts": "1462291692.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "But it is now working ",
+        "ts": "1462291760.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ill review the document, I suspect some of the newer requirements are not reflected properly",
+        "ts": "1462292487.000819"
+    },
+    {
+        "user": "U15LJGQPN",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U15LJGQPN|arner> has joined the channel",
+        "ts": "1462299819.000820"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0V2F6PU4>: <@U0KPFAZNF> just catching up \u2014 could either of you submit a pull request re\n&gt;  .\/version -&gt; \u201c0.0.9\u201d",
+        "ts": "1462305456.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KN2SSKE>: i def can once I sort out the logistics",
+        "ts": "1462305482.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, how to import that into Vagrantfile\/travis.yml",
+        "ts": "1462305491.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "<@U0KPFAZNF>:  great - thanks",
+        "ts": "1462305527.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "any time",
+        "ts": "1462305573.000825"
+    }
+]

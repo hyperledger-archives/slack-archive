@@ -1,0 +1,548 @@
+[
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "<@U2KL18VPU> you can also encrypt it before writing it to the blockchain",
+        "ts": "1485245188.002605"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U2KL18VPU>  I meant about it. This may be good to take a look (though it is currently under discussion).",
+        "ts": "1485246109.002606"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Multichannel Consensus and Ledgers",
+        "ts": "1485246120.002607"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<https:\/\/docs.google.com\/document\/d\/1eRNxxQ0P8yp4Wh__Vi6ddaN_vhN2RQHP-IruHNUwyhc\/edit#heading=h.v3lesbw3atum>",
+        "ts": "1485246127.002608"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U11CP8FF1> Ok, I will look into it. Thanks.",
+        "ts": "1485246390.002610"
+    },
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "<@U11CP8FF1> according to that document, orderers still see all transactions and confidentiality is only on a peer level",
+        "ts": "1485246560.002611"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U3S1PENVA> You're right, we can do encryption. However, if we consider a simple scenario where A wants to transfer B some amount X, then even if we encrypt X, in order to execute the transaction (and make appropriate changes to the world state), all the VPs have to decrypt X. So, there is no way to hide X from the peers.",
+        "ts": "1485246592.002612"
+    },
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "I guess I can quote the paragraph from that document above: \u201cNote that the consensus service receives all transactions for all chains, so confidentiality is only pertaining to the Peers and not the Orderers. This is fine when the consensus service is made up of trusted parties and regulatory bodies in a permissioned network; that is, the transactions are visible to them as business requirements. On the other hand, if the application doesn\u2019t want the Orderers to see the content of transactions, it should utilize other techniques to hide the sensitive data such as hash or encryption. The Consensus Service acts as a trusted party. \"",
+        "ts": "1485246760.002613"
+    },
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "so probably, this is very use case specific and sometimes the encryption will also be needed",
+        "ts": "1485246801.002614"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U3S1PENVA> Yeah, encryption is anyway preferred\/needed to hide details from the other users of the blockchain (or from anyone who can read the blockchain). However, hiding it from some validating peers (in Fabric v0.6) doesn't seem to be possible.",
+        "ts": "1485247047.002615"
+    },
+    {
+        "type": "message",
+        "user": "U3BSMKS21",
+        "text": "<@U3AECURPZ>  ahh ok. but why doesnt it work?",
+        "ts": "1485247066.002616"
+    },
+    {
+        "type": "message",
+        "user": "U3S1PENVA",
+        "text": "well it is possible, they just won\u2019t be able to look inside the encrypted data and process it",
+        "ts": "1485247083.002617"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U3S1PENVA> In my understanding, VPs execute the chaincode. Typically, a transfer function in a chaincode expects to deduct money from the source account and add it to the destination account and update the worldstate accordingly. In order to achieve this, the chaincode requires X value (amount to be transferred) in unencrypted form.",
+        "edited": {
+            "user": "U2KL18VPU",
+            "ts": "1485248638.000000"
+        },
+        "ts": "1485248471.002618"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "So, either the peer (platform) has to do the decryption, or the chaincode has to do the decryption. I couldn't find any way to give the decryption keys to the chaincode without the peer's knowledge..",
+        "ts": "1485248588.002619"
+    },
+    {
+        "user": "U2GU3M283",
+        "text": "<@U2GU3M283|cyrg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485250002.002621"
+    },
+    {
+        "type": "message",
+        "user": "U3V990ESH",
+        "text": "Hi, <@U0KPFAZNF>!\n\nThanks for the answer! I'll wait bug fix for related issue, actually i'm not desperate, because I have a virtual machine which has a stable fabric image running ( i've backups of this vm too, of course)\n\nRegards!",
+        "ts": "1485253591.002622"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "general question: do non validating nodes broadcast transactions to validating nodes only, or every node in the network?",
+        "ts": "1485259905.002623"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U195M30MD>  - I would not worry too much about non-validating nodes at this point given we no longer have the concept in the latest version of the fabric, but to answer your question NVPs are basically like \"clients\" and they broadcast to one validating peer which is then responsible for distributing the tx to all peers.",
+        "ts": "1485268198.002624"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "<@U0PB67X4K> are you saying there won\u2019t be any NVP anymore? Can you explain a bit more?",
+        "ts": "1485268251.002625"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the reality is that there never really was an NVP - well it never really need much other than act as a glorified client",
+        "ts": "1485269106.002626"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "have you taken a look at the new V1.0 architecture?",
+        "ts": "1485269131.002627"
+    },
+    {
+        "user": "U3TV6618W",
+        "text": "<@U3TV6618W|schaeff> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485269822.002628"
+    },
+    {
+        "type": "message",
+        "user": "U195M30MD",
+        "text": "mmh, not really. Where can I find it?",
+        "ts": "1485269860.002629"
+    },
+    {
+        "type": "message",
+        "user": "U3TV6618W",
+        "text": "Hi everyone :slightly_smiling_face: \nQuick question: as I understand Fabric does not prevent non-deterministic chaincode to be pushed. Are there ways to make sure that does not happen (formal proofs?) or would hidden non-deterministic code be patched by \u201cforking\u201d?\nThanks!",
+        "ts": "1485270022.002630"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "baring bugs, non determinism would fail to reach consensus (with the exception of code that is just detministic enough to pass quorum thresholds)",
+        "ts": "1485270141.002631"
+    },
+    {
+        "type": "message",
+        "user": "U3TV6618W",
+        "text": "Thanks, so what would you do in each case?",
+        "edited": {
+            "user": "U3TV6618W",
+            "ts": "1485270413.000000"
+        },
+        "ts": "1485270358.002632"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, in the new design, you would submit a request to N endorsers and they would presumably respond with a read-write-set proposal",
+        "ts": "1485271567.002635"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "your client would see that the RWS doesnt match right there",
+        "ts": "1485271595.002636"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as far as how the orderer would respond if you tried to submit all the mismatched proposals, I am not sure",
+        "ts": "1485271619.002637"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyone have more detail?",
+        "ts": "1485271625.002638"
+    },
+    {
+        "type": "message",
+        "user": "U3TV6618W",
+        "text": "seems like you\u2019re referring to this <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md#2-basic-workflow-of-transaction-endorsement>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md#2-basic-workflow-of-transaction-endorsement",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md#2-basic-workflow-of-transaction-endorsement",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1485272340.002639"
+    },
+    {
+        "type": "message",
+        "user": "U3TV6618W",
+        "text": "If I may ask another question: is the number and identity of validating peers dynamic in any way? If so, is there any governance on that or is it managed by the MembershipService centrally?",
+        "edited": {
+            "user": "U3TV6618W",
+            "ts": "1485274108.000000"
+        },
+        "ts": "1485274090.002641"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "historically (as in v0.6 and prior) it was centralized.  It needs to be decentralized.  I am not sure if this is captured in the v1.0 design or not",
+        "ts": "1485275898.002643"
+    },
+    {
+        "user": "U3M2UCQPR",
+        "text": "<@U3M2UCQPR|gmuecke> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485276151.002644"
+    },
+    {
+        "user": "U3K1EMJ2F",
+        "text": "<@U3K1EMJ2F|sabaset> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485276848.002645"
+    },
+    {
+        "user": "U3V3TJTLZ",
+        "text": "<@U3V3TJTLZ|ivan.sat> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485277034.002646"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U3TV6618W> I do not have a complete answer to your question but I can say with a fair degree of confidence that this will not be managed by membership service's replacement in v1.0, which is the fabric-ca component.  In fact in v1.0 the fabric-ca is optional in that you can provide your own X.509 (and maybe other stuff in future) certs other ways (e.g. your own LDAP, your own favorite Certificate Authority).... fabric-ca just happens to be the \"out-of-the-box\" method to do this.   This is in contrast to Fabric v0.6 where if you wanted to use security, you have to run membership services.   Hope this helps a little bit.",
+        "thread_ts": "1485280058.002647",
+        "reply_count": 1,
+        "replies": [
+            {
+                "user": "U3TV6618W",
+                "ts": "1485335361.002701"
+            }
+        ],
+        "ts": "1485280058.002647"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "Hi, How to run a peer without security setup?  [v1.0]",
+        "ts": "1485281720.002649"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "Error trying to run a peer node using command: peer node start --peer-chaincodedev\n`2017-01-24 17:39:27.465 UTC [msp] getPemMaterialFromDir -&gt; INFO 001 Reading directory \/etc\/hyperledger\/fabric\/msp\/sampleconfig\/cacerts\npanic: Fatal error when setting up MSP from directory \/etc\/hyperledger\/fabric\/msp\/sampleconfig: err Could not load a valid ca certificate from directory \/etc\/hyperledger\/fabric\/msp\/sampleconfig\/cacerts, err Could not read directory open \/etc\/hyperledger\/fabric\/msp\/sampleconfig\/cacerts: no such file or directory, err \/etc\/hyperledger\/fabric\/msp\/sampleconfig\/cacerts`",
+        "ts": "1485281783.002650"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "using Vagrant",
+        "ts": "1485282774.002651"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3FPBMWTA> can you try `CORE_PEER_MSPCONFIGPATH=\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/msp\/sampleconfig peer node start --peer-chaincodedev` ?",
+        "ts": "1485282831.002652",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U3FPBMWTA"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "Yes that worked thanks!",
+        "ts": "1485283460.002653"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "I see errors related to creating Couchdb in the logs",
+        "ts": "1485283532.002654"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "*coucdb database",
+        "ts": "1485283541.002655"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3FPBMWTA> perhaps also  ping fabric-ledger-dev for that ?",
+        "ts": "1485284853.002656"
+    },
+    {
+        "type": "message",
+        "user": "U3UPNQL3E",
+        "text": "<@U0S5KF44D>: is fabric-ca the only way to issue certificates?",
+        "ts": "1485284925.002658"
+    },
+    {
+        "type": "message",
+        "user": "U3EGXRAJG",
+        "text": "Hi guys. I am having problems to download Apache maven version 3.3.9 so I can't build fabric. Apparently the problem is in their servers. Does anyone know how to fix it? Tks. ",
+        "ts": "1485284958.002659"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "<@U0ULK2JPP>  ping fabric-ledger-dev for that --&gt; Is it started along with the peer node?",
+        "ts": "1485285163.002660"
+    },
+    {
+        "type": "message",
+        "user": "U3UPNQL3E",
+        "text": "i'm trying to figure out how to issue certificates as seen in the attributes section of the documentation",
+        "ts": "1485285325.002663"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "When I deploy chaincode_example02, I'm facing this error: `Error: Error getting broadcast client: Error connecting to 0.0.0.0:7050 due to grpc: timed out when dialing` .",
+        "ts": "1485288101.002664"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "I've set CORE_PEER_ADDRESS=0.0.0.0:7051 which is the peer node address.",
+        "edited": {
+            "user": "U3FPBMWTA",
+            "ts": "1485288143.000000"
+        },
+        "ts": "1485288117.002665"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "Any pointer what I'm doing wrong?",
+        "ts": "1485288198.002667"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Is there an ordering service alive? <@U3FPBMWTA>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1485299041.000000"
+        },
+        "ts": "1485298554.002668"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "<@U0ZJZBJLF> No.. what are the steps to build and run an ordering service locally?",
+        "ts": "1485309799.002672"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "I've now made sure that the ordering service is running. Steps followed: 1. make orderer-docker   2. docker run hyperledger\/fabric-orderer",
+        "ts": "1485311269.002673"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "Is this correct?",
+        "ts": "1485311404.002674"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "But I am still facing the same error that I've mentionedabove",
+        "ts": "1485311429.002675"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3FPBMWTA> are you running the peer in a docker container?",
+        "ts": "1485311582.002676"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "No",
+        "ts": "1485311600.002677"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you exposing the orderer's container's ports somehow?",
+        "ts": "1485311621.002678"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "e.g. either with -p or some other docker method for exposing 7050?",
+        "ts": "1485311655.002679"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "No.. is the orderer's default port 7050?",
+        "ts": "1485311752.002680"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, but docker wont surface the port on its own",
+        "ts": "1485311942.002681"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what is your topology?  peer running native, orderer running in a container from the same host?",
+        "ts": "1485311968.002682"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "So I tried running the docker image with port exposed. Still same issue.. Should I restart my peer?",
+        "ts": "1485311974.002683"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, hold on...help me to understand the lay of the land first",
+        "ts": "1485311996.002684"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "with -p 7050:7050",
+        "ts": "1485312000.002685"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, as a sanity check: you should be able to do \"nmap localhost -p7050-7054\" and see the 7050 open if you do that",
+        "ts": "1485312034.002686"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you try that?",
+        "ts": "1485312043.002687"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "sure",
+        "ts": "1485312050.002688"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(and the orderer will need the -p7050:7050 before I expect that to work",
+        "ts": "1485312064.002689"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "So 7050 is open.",
+        "edited": {
+            "user": "U3FPBMWTA",
+            "ts": "1485313086.000000"
+        },
+        "ts": "1485312488.002690"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "That's what I see.",
+        "ts": "1485312498.002691"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "```CONTAINER ID        IMAGE                        COMMAND                CREATED             STATUS              PORTS                    NAMES\nff1c7326fe18        hyperledger\/fabric-orderer   \"\/bin\/sh -c orderer\"   13 minutes ago      Up 13 minutes       0.0.0.0:7050-&gt;7050\/tcp   elated_noyce```",
+        "ts": "1485312820.002692"
+    },
+    {
+        "type": "message",
+        "user": "U3FPBMWTA",
+        "text": "The ordering service is running correctly I believe from this.",
+        "ts": "1485312842.002693"
+    },
+    {
+        "user": "U303C95G9",
+        "text": "<@U303C95G9|donaldliu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485313950.002695"
+    },
+    {
+        "user": "U3J35LVQW",
+        "text": "<@U3J35LVQW|wwwangcai> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485317402.002696"
+    },
+    {
+        "user": "U3CKKAET1",
+        "text": "<@U3CKKAET1|kuldeep> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485319948.002697"
+    },
+    {
+        "user": "U3N2KCHR8",
+        "text": "<@U3N2KCHR8|praveenkakumanu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485324914.002698"
+    },
+    {
+        "user": "U3W6WF32Q",
+        "text": "<@U3W6WF32Q|amrith> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1485331011.002699"
+    }
+]

@@ -1,0 +1,368 @@
+[
+    {
+        "type": "message",
+        "user": "U2RMVHMK9",
+        "text": "how to add user to membership database when it's running?",
+        "ts": "1479372549.001003"
+    },
+    {
+        "type": "message",
+        "user": "U31TA64TT",
+        "text": "<@U0S5KF44D> <@U1F1CU61Y> Do you have any advices on this? Thanks!!!!!!!",
+        "attachments": [
+            {
+                "fallback": "[November 16th, 2016 9:08 AM] newdev2524: <@U0S5KF44D> Thank you very much for your explanation. \nBut why when I enrolled via node SDK and then enrolled again via the REST. I got the message \"Identity or token does not match\" instead of \"User already logged in\". It seemed there was no enrollment.key file created in \/var\/hyperledger\/production\/crypto\/client\/JohnDoe directory on peer node. So, how could I check whether the user already logged in via node SDK? And, how long will the session persist to be able to submit chaincode when I logged in via node SDK?",
+                "ts": "1479262105.000961",
+                "author_subname": "newdev2524",
+                "channel_id": "C1J0BM448",
+                "channel_name": "membership-services",
+                "is_msg_unfurl": true,
+                "text": "<@U0S5KF44D> Thank you very much for your explanation. \nBut why when I enrolled via node SDK and then enrolled again via the REST. I got the message \"Identity or token does not match\" instead of \"User already logged in\". It seemed there was no enrollment.key file created in \/var\/hyperledger\/production\/crypto\/client\/JohnDoe directory on peer node. So, how could I check whether the user already logged in via node SDK? And, how long will the session persist to be able to submit chaincode when I logged in via node SDK?",
+                "author_name": "newdev2524 newdev2524",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/newdev2524",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/4735e1b47bf0c87099149845b5b22418.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0019-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/membership-services\/p1479262105000961",
+                "is_share": true,
+                "footer": "Posted in #membership-services"
+            }
+        ],
+        "ts": "1479373242.001004"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U0S5KF44D>, to reproduce the error:\nFirst of all, we are running outside of vagrant mode. Further, one peer is running on one physical machine and the other one is running on different machine. Both are using published docker images and using docker-compose.yaml file. When we use `docker-compose up` to start our peer and memberservice on both the machines, we are getting the error in communication.\nHere is how our docker-compose.yaml files look like:\nOn one system:\n\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"50051:50051\"\n    - \"7054:7054\"\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"5000:5000\"\n    - \"7050:7050\"\n    - \"30303:30303\"\n    - \"30304:30304\"\n    - \"7051:7051\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=false\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp0\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_PRIVACY=true\n    - CORE_SECURITY_ENROLLID=vp\n    - CORE_SECURITY_ENROLLSECRET=f3489fy98ghf\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start\u201d\n\nOn another system:\n\nvp1:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"5000:5000\"\n    - \"7051:7051\"\n    - \"7050:7050\"\n    - \"30303:30303\"\n    - \"30304:30304\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=false\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp1\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_PRIVACY=true\n    - CORE_SECURITY_ENROLLID=test_vp1\n    - CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy\n    - CORE_PEER_DISCOVERY_ROOTNODE=9.109.251.105:7051\n    - CORE_PEER_PKI_ECA_PADDR=9.109.251.105:7054\n    - CORE_PEER_PKI_TCA_PADDR=9.109.251.105:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=9.109.251.105:7054\n    - CORE_CHAINCODE_DEPLOYTIMEOUT=180000\n  volumes:\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n\n  command: sh -c \"sleep 5; peer node start\"",
+        "ts": "1479376099.001005"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "Basically, memberservice is running on one system and i am trying to point that from another machine using that machine\u2019s IP address.",
+        "ts": "1479376183.001006"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U31TA64TT>  can you please tell me the steps to reproduce this error. So that i may check the same on my end.",
+        "ts": "1479377464.001007"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "Btw can you please share the CA logs so that i may check what error is occuring.",
+        "ts": "1479377521.001008"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729> is both the validators on same machine or on seperate machine ?",
+        "ts": "1479377572.001009"
+    },
+    {
+        "type": "message",
+        "user": "U31TA64TT",
+        "text": "<@U1F1CU61Y>: just run example app.js file in starter container. This js file trying to use registerAndEnroll function via hfc to register and enroll user JohnDoe but after running with success. There is no enrollment.key and related files in \/var\/hyperledger\/production\/crypto\/client\/JohnDoe directory on peer node like other user registered in membersrvc.yaml file and enrolled via REST. After trying to reenroll the user JohnDoe via REST.  it says like the user isn't enrolled. Let me try to capture CA logs and send it to you again. ",
+        "edited": {
+            "user": "U31TA64TT",
+            "ts": "1479379223.000000"
+        },
+        "ts": "1479379096.001010"
+    },
+    {
+        "user": "U2E516363",
+        "text": "<@U2E516363|astepanov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479379162.001011"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U1F1CU61Y>, on separate machines!",
+        "ts": "1479379471.001013"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729>  can you please provide logs i would like to see what error you are getting",
+        "ts": "1479379748.001014"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "Btw my doubt is with CORE_VM_ENDPOINT",
+        "ts": "1479379757.001015"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "as you have to give CORE_VM_ENDPOINT of vp0 so you cant use unix socket you have to give ip and port of that",
+        "ts": "1479379792.001016"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1RLZ5729|abhishekseth> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/abhishekseth\/F33NT19HR\/screen_shot_2016-11-14_at_4.31.40_pm.png|Screen Shot 2016-11-14 at 4.31.40 PM.png> and commented: See, when security was disabled, the peers on two different machines were able to communicate with each other. So the error is in membersrvc and certificates I think!\nBy the way, here is the screen shot of the error:",
+        "file": {
+            "id": "F33NT19HR",
+            "created": 1479379933,
+            "timestamp": 1479379933,
+            "name": "Screen Shot 2016-11-14 at 4.31.40 PM.png",
+            "title": "Screen Shot 2016-11-14 at 4.31.40 PM.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1RLZ5729",
+            "editable": false,
+            "size": 409056,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F33NT19HR\/screen_shot_2016-11-14_at_4.31.40_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F33NT19HR\/download\/screen_shot_2016-11-14_at_4.31.40_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 125,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 167,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 250,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 333,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F33NT19HR-90ad150e4c\/screen_shot_2016-11-14_at_4.31.40_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 356,
+            "image_exif_rotation": 1,
+            "original_w": 2402,
+            "original_h": 834,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/abhishekseth\/F33NT19HR\/screen_shot_2016-11-14_at_4.31.40_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F33NT19HR-080446e761",
+            "channels": [
+                "C1J0BM448"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc34FKRWQ7",
+                "created": 1479379933,
+                "timestamp": 1479379933,
+                "user": "U1RLZ5729",
+                "is_intro": true,
+                "comment": "See, when security was disabled, the peers on two different machines were able to communicate with each other. So the error is in membersrvc and certificates I think!\nBy the way, here is the screen shot of the error:",
+                "channel": ""
+            }
+        },
+        "user": "U1RLZ5729",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1RLZ5729|abhishekseth>",
+        "bot_id": null,
+        "ts": "1479379938.001017"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "It gives certification expiry error.",
+        "ts": "1479379978.001018"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729> yesterday i told you the solution of the same",
+        "ts": "1479380025.001019"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "so you had checked that certificates got expired on April 2016",
+        "ts": "1479380045.001020"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "Please check your membersrvc machine date",
+        "ts": "1479380058.001021"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U1F1CU61Y>, I tried with that solution. I changed the dates of both the machines. But that did not work.\nBy the way, another doubt of mine is if the certificates were expired already, How I was able to run member services and get all the certificates in a setup when one peer and member service was running on one machine only?",
+        "edited": {
+            "user": "U1RLZ5729",
+            "ts": "1479380839.000000"
+        },
+        "ts": "1479380824.001022"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729> I faced same issue while i was running both on same machine then that solution worked for me",
+        "ts": "1479380901.001024"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "Have you restarted membership services and vp after changing the date.",
+        "ts": "1479380966.001025"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "One another solution  is to create similar type of certificate and use that one",
+        "ts": "1479380997.001026"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "yup, i had restarted.\nBy the way, \"two peers on same machine in security enabled mode\" does not have any problem for me.",
+        "ts": "1479381019.001027"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "you may create new certificate using openssl, you must keep in mind one thing you have to create certificate with same cipher",
+        "ts": "1479381039.001028"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729> I really dont know why it worked on your machines not worked on mine :smile: its general developers issue :stuck_out_tongue:",
+        "ts": "1479381086.001029"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "LOL\u2026 :smile:\ncan u give me little more details about creating the new certificates?",
+        "ts": "1479381193.001030"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "First of all check the cipher of current certificate using openssl\n you may google for the command",
+        "ts": "1479381372.001031"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "after then create a new certificate with same cipher",
+        "ts": "1479381400.001032"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "<@U1RLZ5729>  checkout this link <http:\/\/stackoverflow.com\/questions\/1722181\/how-to-determine-certificate-type-from-file> to get certificate type",
+        "attachments": [
+            {
+                "title": "How to determine certificate type from file",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/1722181\/how-to-determine-certificate-type-from-file",
+                "text": "There doesn't seem to be any sort of standard naming convention for OpenSSL certificates, so I'd like to know if there's a simple command to get important information about any OpenSSL certificate,",
+                "fallback": "How to determine certificate type from file",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/1722181\/how-to-determine-certificate-type-from-file",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1479381609.001033"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1RLZ5729>  - is the time on both machines in sync?",
+        "ts": "1479384001.001035"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not just the date but the actual time?",
+        "ts": "1479384034.001036"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U0PB67X4K> , I am not very sure about time. \nMight be different! I need to check upon that.",
+        "ts": "1479391838.001037"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "By the way, lets forget about the way I am dealing with this for a moment. Can anyone suggest me the way to communicate two peers on two different machines in security enabled mode?",
+        "edited": {
+            "user": "U1RLZ5729",
+            "ts": "1479391925.000000"
+        },
+        "ts": "1479391899.001038"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's really nothing special about one machine versus multiple machines (other than making sure that the correct IP \/ hostnames are used)",
+        "ts": "1479393454.001040"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "Okay.. just to confirm, member services needed to run only on one machine and the other should just point that only?",
+        "ts": "1479394982.001041"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U1RLZ5729> : yes",
+        "ts": "1479396100.001042"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "Same setup is working for me but I tried with shell script",
+        "ts": "1479396166.001043"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "how ur docker-compose.yaml file looks like?",
+        "ts": "1479396366.001044"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I have used shell script to run Docker-run command",
+        "ts": "1479396425.001045"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1RLZ5729>  - right - you would only use a single instance of membership services.  You'll also want to make sure that the time is synced between the host machines because if the time is off by more than 1 minute (I believe), you can end up with certificates that appear to be expired",
+        "ts": "1479398896.001046"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "<@U0PB67X4K>, I will sync the time and then try again.",
+        "ts": "1479447616.001047"
+    },
+    {
+        "type": "message",
+        "user": "U31TA64TT",
+        "text": "How can we retrieve \"Affiliation\" value in membersrvc.yaml file by using GO? I found some function (getCertAttribute) in example chaincode that can retrieve \"attribute value\" from Cert. by supplying \"attribute name\". Is there any parameter or function  for \"Affiliation\"?",
+        "ts": "1479454996.001048"
+    }
+]

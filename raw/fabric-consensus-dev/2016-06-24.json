@@ -1,0 +1,1324 @@
+[
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "One of major engineering optimization of `raft` is to execute message sending and persistence in parallel. This could be seen from section `10.2.1` of [Ongaro's thesis](<https:\/\/ramcloud.stanford.edu\/~ongaro\/thesis.pdf>) .  During the code inspection, I've found there exists many data persistences during each step of consensus, including `recvRequest`, `sendPrePrepare`,`sendPrepare`,`maybeSendcommit`.  Could the persistence be refactored like the design of `raft` to improve the overall throughput?",
+        "ts": "1466754986.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U142E5N0P>: Remember we want to tolerate \"byzantine\" faults. Raft tolerates crashes. It is an interesting problem to find more efficient BFT protocols than PBFT, but there is no BFT version of Raft. (Yes I am aware there is a term paper with a protocol sketch titled BFT-Raft somewhere, but we are interested in protocols whose correctness is widely accepted.)",
+        "ts": "1466759685.000685"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XV1HDL3>:  I mentioned Raft here because I wonder if its existing engineering optimization could be applied to PBFT, since current throughput is far from satisfying for our production usage.",
+        "edited": {
+            "user": "U142E5N0P",
+            "ts": "1466761305.000000"
+        },
+        "ts": "1466761114.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: please show me data that pbft is the performance bottleneck",
+        "ts": "1466763954.000689"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: and we do message sending and execution in parallel.",
+        "ts": "1466763999.000690"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961> the  aim for our requirements is nearly 10k per peer node, do you think current pbft is enought to reach that aim?",
+        "edited": {
+            "user": "U142E5N0P",
+            "ts": "1466764799.000000"
+        },
+        "ts": "1466764786.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no idea",
+        "ts": "1466764799.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the chaincode execution cannot",
+        "ts": "1466764811.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the absolute maximum i could observe was 800tx\/sec",
+        "ts": "1466764827.000695"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with a null chaincode",
+        "ts": "1466764835.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with example02 i could get 400 i think",
+        "ts": "1466764847.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so no",
+        "ts": "1466764852.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you won't get 10k.",
+        "ts": "1466764858.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "unless you hack the system and not use chaincode containers, etc.",
+        "ts": "1466764871.000700"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "I also only get 700 for example02 using single peer. weeks before this value is 7000",
+        "ts": "1466765693.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1466766384.000702"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "never",
+        "ts": "1466766385.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you measured it wrong",
+        "ts": "1466766389.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you need to measure closed loop",
+        "ts": "1466766742.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/fabric\/tree\/telemetry>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/fabric",
+                "title_link": "https:\/\/github.com\/corecode\/fabric\/tree\/telemetry",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: corecode\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/fabric\/tree\/telemetry",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466766756.000706"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "try this branch",
+        "ts": "1466766760.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and use ?wait=20s on your invoke URL",
+        "ts": "1466766772.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then you will see the true performance",
+        "ts": "1466766780.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U142E5N0P> - this is why we will be separating execution from consensus",
+        "ts": "1466771341.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal",
+                "text": "fabric - Fabric is a blockchain project in Incubation proposed to the community and documented at <https:\/\/goo.gl\/RYQZ5N>. Information on what Incubation entails can be found in the Hyperledger Proj...",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/wiki\/Next-Consensus-Architecture-Proposal",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466771345.000712"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "while allowing chaincode to have an easy way to do parallel execution",
+        "ts": "1466772273.000714"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "however, if chaincode does not (or cannot) leverage this - bottleneck of a single chaincode will *almost always* be execution",
+        "ts": "1466772301.000715"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yet, we do not want a single chaincode execution to be blocking other hence we are moving away from monolitic design",
+        "ts": "1466772337.000716"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "in principle PBFT with small number of nodes, on a cluster will never be a bottleneck for a single chaincode",
+        "ts": "1466772392.000717"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so what's the next thing for me to work on?",
+        "ts": "1466776397.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "split request and message input",
+        "ts": "1466776406.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think that's certainly something that needs to be done",
+        "ts": "1466776784.000720"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "looking to merge 1951, 1971, and 1980 to the 0.5 branch today. They all look good to go, but please let me know if I should wait on any of these.",
+        "ts": "1466776886.000721"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sheehan: i have a suggestion for simplifying release management",
+        "ts": "1466777177.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd merge only to the release branch, and occasionally merge release to master",
+        "ts": "1466777202.000723"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and for next time i suggest feature freeze and first bug fixes only before branching off release",
+        "ts": "1466777228.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>:  Please also look at 1987, as the associated issue #1942 has been tagged for inclusion in 0.5",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466777245.000000"
+        },
+        "ts": "1466777232.000725"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0XR6J961>: yes, agree about feature freeze. Need that next time. I don\u2019t think it was communicated very well this time and I don\u2019t think the amount of outstanding consensus work was understood",
+        "ts": "1466778305.000727"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "They we\u2019re discussing a more formal process in the TSC call yesterday",
+        "ts": "1466778317.000728"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well the problem is that we didn't get testing well ahead",
+        "ts": "1466778405.000729"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for a month it looked like there were no more bugs",
+        "ts": "1466778420.000730"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "can we remove noops?",
+        "ts": "1466779041.000731"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "At the very least it would be nice to prevent noops with N &gt; 1",
+        "ts": "1466779136.000732"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but why even",
+        "ts": "1466779147.000733"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "pbft with N=1 F=0 works fine",
+        "ts": "1466779155.000734"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd be fine with aliasing noops to be n=1, f=0",
+        "ts": "1466779181.000735"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There may be some desire to leave multiple plugins in tree, that noops could be a good starting place for someone writing a new consensus plugin",
+        "ts": "1466779207.000736"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't know that that's actually true.  And I think it's important that we remove the direct ledger execution stuff from the consensus API, because it is not serialized against state transfer (and running both concurrently has been shown to cause panics and crashes)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466779335.000000"
+        },
+        "ts": "1466779318.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1466779531.000739"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so if i use a channel, i will have to introduce knowledge of transactions into the event manager",
+        "ts": "1466779893.000740"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or i need to create a new goroutine",
+        "ts": "1466779905.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Can you elaborate?",
+        "ts": "1466779932.000742"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Did you see my proposal to <@U0XQ35CDD> yesterday?",
+        "ts": "1466779954.000743"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[June 23rd, 2016 1:34 PM] jyellick: As I think about this, I might eliminate the delivery go routine, and instead, structure it as:\n\n1. REST API go routine enters `RecvLocalTran`\n2. It attempts to queue onto a buffered new tran channel of configurable size\n3. If successful, it then pushes a `newTranEvent` into the event manager\n * If  PBFT thread has a free virtual client spot, it reads a tran from the new tran channel\n * If the PFBT thread has no free virtual client spot, when one frees up, it will attempt to read from the new tran channel",
+                "author_subname": "jyellick",
+                "ts": "1466703263.000624",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "As I think about this, I might eliminate the delivery go routine, and instead, structure it as:\n\n1. REST API go routine enters `RecvLocalTran`\n2. It attempts to queue onto a buffered new tran channel of configurable size\n3. If successful, it then pushes a `newTranEvent` into the event manager\n * If  PBFT thread has a free virtual client spot, it reads a tran from the new tran channel\n * If the PFBT thread has no free virtual client spot, when one frees up, it will attempt to read from the new tran channel",
+                "author_name": "Jason Yellick",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jyellick",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/80fccad690b283483c3b5418b8b82b5b.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F272a%2Fimg%2Favatars%2Fava_0026-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1466703263000624",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1466779990.000744"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i see",
+        "ts": "1466779997.000745"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Right that seems like a good way to do it.",
+        "ts": "1466780008.000746"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "have the engine not enqueue a transaction, but a transaction event",
+        "ts": "1466780016.000747"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly, then the event thread can go read off the channel if it decides to",
+        "ts": "1466780031.000748"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that introduces knowledge of the event manager to that interface",
+        "ts": "1466780080.000749"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "need a piping goroutine that just translates the queue contents",
+        "ts": "1466780096.000750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The way things are structured now, is that the `external.go` is the only file which go routines not belonging to the event manager should enter.  Although it's not the case today, I also think that's the only place that should have a reference to the event manager.  [`external.go` purposefully does not have a reference to the PBFT structures, to discourage any methods in them from accessing them directly, their interaction is through the event manager, which does the serializing]",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466780426.000000"
+        },
+        "ts": "1466780158.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That `external.go` is where the `RecvMsg` lives today, and it puts message events into the manager",
+        "ts": "1466780211.000752"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If `RecvLocalTran` (or whatever better name) lives there with a buffered channel, it could queue that `newTranEvent` into the event manager.  Then the PBFT internals processes that event, checks if it can handle a new tran right now, and then goes and reads off the buffered tran chan (which I assume would live in `external.go`)",
+        "ts": "1466780300.000753"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not seeing the \"introduces knowledge of the event manager to that interface\"",
+        "ts": "1466780329.000754"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, enqueing a \"newTranEvent\" is introducing knowledge of the event manager",
+        "ts": "1466780609.000756"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I would not say 'introducing', because `RecvMsg` already has knowledge",
+        "ts": "1466780636.000757"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i mean the engine function",
+        "ts": "1466780648.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(as does every other call in `external.go`)",
+        "ts": "1466780648.000759"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, then I don't see it again",
+        "ts": "1466780679.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, why not have the engine call into `RecvLocalTran` in `external.go`",
+        "ts": "1466780682.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i am trying to export a chan",
+        "ts": "1466780685.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that the engine can decide what to do with it",
+        "ts": "1466780698.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, I see, you want the decision over blocking\/timing out\/rejecting to be at the engine level, and not at the PBFT level?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466780743.000000"
+        },
+        "ts": "1466780734.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think pbft should make that call",
+        "ts": "1466780814.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "otoh, we could just make it a blocking call",
+        "ts": "1466780824.000767"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and if somebody wants to drop messages, they can introduce a queue ahead of that?",
+        "ts": "1466780843.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or whatever other, maybe more fair data structure",
+        "ts": "1466780859.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm",
+        "ts": "1466780891.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, that also means that we don't need a channel",
+        "ts": "1466780900.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i like that better",
+        "ts": "1466780904.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I do agree, this is better configured in the engine in PBFT",
+        "ts": "1466780916.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then `RecvLocalTran` always blocks until PBFT reads it.  And, the engine should never call it in parallel?",
+        "ts": "1466780963.000774"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well it can",
+        "ts": "1466780983.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But it would lose ordering promises I would think?",
+        "ts": "1466780993.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but if it wants to establish some fairness, it will have to implement a different way",
+        "ts": "1466780999.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466781000.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also this matches better a possible RPC API",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1466781032.000000"
+        },
+        "ts": "1466781025.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What does the implementation of making that call block until PBFT is ready to receive a tran look like?",
+        "ts": "1466781034.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for now, just enqueue into the normal event queue",
+        "ts": "1466781105.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "later, have something that uses condition variables? counting semaphore, something",
+        "ts": "1466781134.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But then we are in the same situation as we are now? Not being able to defer receiving new transactions?",
+        "ts": "1466781138.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i want to first transform the interface, then transform behavior",
+        "ts": "1466781155.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah okay",
+        "ts": "1466781166.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What engine function do you refer to specifically?",
+        "attachments": [
+            {
+                "fallback": "[June 24th, 2016 11:04 AM] simon: i mean the engine function",
+                "author_subname": "simon",
+                "ts": "1466780648.000758",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "i mean the engine function",
+                "author_name": "Simon Schubert",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/simon",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/676aeb5acbd353b77e077be1b7bd1a6e.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0016-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1466780648000758",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1466781643.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the one that calls recvmsg",
+        "ts": "1466781957.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: 1987 CI finished successfully",
+        "ts": "1466782350.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "thanks, merged",
+        "ts": "1466782526.000790",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4",
+                    "U0UGH3X7X"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/corecode\/fabric\/tree\/split-request-ingress>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "corecode\/fabric",
+                "title_link": "https:\/\/github.com\/corecode\/fabric\/tree\/split-request-ingress",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: corecode\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/corecode\/fabric\/tree\/split-request-ingress",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466782891.000791"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When I see the duplicated deploy, they are both going into the same block, which I find a little odd\/interesting",
+        "ts": "1466789791.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "haha wat",
+        "ts": "1466790446.000794"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Think I've got it... think it may be from not taking the currentExec into account",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466790563.000000"
+        },
+        "ts": "1466790474.000795"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, it's only on deploy, because deploys take forever",
+        "ts": "1466790605.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or not, the fact that they're in the same block makes me think this isn't view change related",
+        "ts": "1466790667.000798"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0XQ35CDD|kostas> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F1L4FA51N\/behave.txt|behave.txt>",
+        "file": {
+            "id": "F1L4FA51N",
+            "created": 1466790741,
+            "timestamp": 1466790741,
+            "name": "behave.txt",
+            "title": "behave.txt",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0XQ35CDD",
+            "editable": true,
+            "size": 2478,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L4FA51N\/behave.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L4FA51N\/download\/behave.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F1L4FA51N\/behave.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1L4FA51N-bf7699d5a9",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F1L4FA51N\/behave.txt\/edit",
+            "preview": "@issue_1874c\n    Scenario: chaincode example02 with 4 peers, two stopped, bring back both\n      Given we compose \"docker-compose-4-consensus-batch.yml\"\n      And I register with CA supplying username \"binhn\" and secret \"7avZQLwcUe9q\" on peers:\n                            | vp0  |",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>@issue_1874c<\/pre><\/div>\n<div><pre>    Scenario: chaincode example02 with 4 peers, two stopped, bring back both<\/pre><\/div>\n<div><pre>      Given we compose &quot;docker-compose-4-consensus-batch.yml&quot;<\/pre><\/div>\n<div><pre>      And I register with CA supplying username &quot;binhn&quot; and secret &quot;7avZQLwcUe9q&quot; on peers:<\/pre><\/div>\n<div><pre>                            | vp0  |<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 51,
+            "lines_more": 46,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0XQ35CDD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0XQ35CDD|kostas>",
+        "bot_id": null,
+        "ts": "1466790741.000799"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0XR6J961>, <@U0UGH3X7X>: How many `REST invoking chaincode...` statements would you expect to see in the logs generated from this test?",
+        "ts": "1466790752.000800"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "in vp0's log,   9 invokes no ?",
+        "ts": "1466790889.000801"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yet we see 10. And to make matters even more interesting, we see two chaincode invocations when the two nodes are down.",
+        "ts": "1466790935.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "9 invokes from the behave log",
+        "ts": "1466791154.000803"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0XQ35CDD|kostas> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F1L4P1A93\/screen_shot_2016-06-24_at_14.00.12.png|Screen Shot 2016-06-24 at 14.00.12.png>",
+        "file": {
+            "id": "F1L4P1A93",
+            "created": 1466791228,
+            "timestamp": 1466791228,
+            "name": "Screen Shot 2016-06-24 at 14.00.12.png",
+            "title": "Screen Shot 2016-06-24 at 14.00.12.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0XQ35CDD",
+            "editable": false,
+            "size": 15742,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L4P1A93\/screen_shot_2016-06-24_at_14.00.12.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L4P1A93\/download\/screen_shot_2016-06-24_at_14.00.12.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1L4P1A93-23f6df26b5\/screen_shot_2016-06-24_at_14.00.12_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1L4P1A93-23f6df26b5\/screen_shot_2016-06-24_at_14.00.12_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1L4P1A93-23f6df26b5\/screen_shot_2016-06-24_at_14.00.12_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 110,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1L4P1A93-23f6df26b5\/screen_shot_2016-06-24_at_14.00.12_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 446,
+            "original_h": 136,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F1L4P1A93\/screen_shot_2016-06-24_at_14.00.12.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1L4P1A93-79788ddf10",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0XQ35CDD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0XQ35CDD|kostas>",
+        "bot_id": null,
+        "ts": "1466791229.000804"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If you try on my branch, can you tell me how many you get?",
+        "ts": "1466791249.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "on jyellick\/issue-1942 with kchristidis\/fix-184    ,  i see 9 invokes in vp0 log",
+        "ts": "1466791607.000806"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UGH3X7X|tuand> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F1L3B2L1Z\/1874c.zip|1874c.zip>",
+        "file": {
+            "id": "F1L3B2L1Z",
+            "created": 1466791769,
+            "timestamp": 1466791769,
+            "name": "1874c.zip",
+            "title": "1874c.zip",
+            "mimetype": "application\/zip",
+            "filetype": "zip",
+            "pretty_type": "Zip",
+            "user": "U0UGH3X7X",
+            "editable": false,
+            "size": 319311,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L3B2L1Z\/1874c.zip?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1L3B2L1Z\/download\/1874c.zip?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F1L3B2L1Z\/1874c.zip",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1L3B2L1Z-496f0c416c",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0UGH3X7X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UGH3X7X|tuand>",
+        "bot_id": null,
+        "ts": "1466791770.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Aha! 90% sure I've got it, checking now",
+        "ts": "1466792141.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Tuan, have a look at this: <https:\/\/github.com\/kchristidis\/fabric\/tree\/fix-1874-v0.5>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "kchristidis\/fabric",
+                "title_link": "https:\/\/github.com\/kchristidis\/fabric\/tree\/fix-1874-v0.5",
+                "text": "Blockchain fabric code",
+                "fallback": "GitHub: kchristidis\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/14876848?v=3&s=400",
+                "from_url": "https:\/\/github.com\/kchristidis\/fabric\/tree\/fix-1874-v0.5",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466792146.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Checking your logs now.",
+        "ts": "1466792156.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We do not clear the batch store on view change",
+        "ts": "1466792340.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So if we cycle 4 views, we look at our outstanding requests, see something, and so add it to the batchstore, but that 'something' is already in the batch store, so we get the duplicated deploys",
+        "ts": "1466792393.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there was so much churn recently",
+        "ts": "1466792440.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not surprised",
+        "ts": "1466792444.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think for the next iteration we should not try to meet a deadline - it just makes it more likely that bugs slip through",
+        "ts": "1466792472.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I don't think deadlines make for great code.  That's supposed to be the whole point of agile... push what's ready",
+        "ts": "1466792554.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and we need to have continuous testing",
+        "ts": "1466792631.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now we have waterfall testing",
+        "ts": "1466792637.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And yet another bug... our request timer, and our batch timer are set to equal values.... if you fire exactly one request into the system, it will generally never execute, because we will view change before the batch expires",
+        "ts": "1466792708.000820"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Clearing the batch store on viewchange, and dropping the batch timeout to be 1 second fix the behavior for busywork.  I could instead increase the request timeout, what do you guys think? (<@U0XR6J961> <@U0UGH3X7X> <@U0XQ35CDD>)",
+        "ts": "1466792830.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "increase request timeout ...  less code changes ?",
+        "ts": "1466793503.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Code changes are needed regardless",
+        "ts": "1466793538.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's \"decrease batch timeout\" or \"increase request timeout\"",
+        "ts": "1466793548.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If they are the same value, as they are today, then a single transaction will never execute",
+        "ts": "1466793562.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i'd still go with increase request timeout  ... might even help us if we run again into a huge transaction that takes too long to broadcast",
+        "ts": "1466793730.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Any other votes? <@U0XQ35CDD> <@U0XR6J961>",
+        "ts": "1466793842.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No particular preference here.",
+        "ts": "1466793870.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: I'm thinking it needs to be the batch timeout, not the request timeout.  In particular, if people want to turn  on null requests, in order to have the outstanding request timer work with today's code, the null requests must come less frequently than the request timeout, so, increasing the timeout means increasing the minimum value of the null requests, which seems problematic",
+        "ts": "1466797315.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "agreed  ...  should add a warning in config.yaml to have diff values for the timeouts ?  don't cross the streams :grin:",
+        "ts": "1466797567.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> Would you mind adding that to <https:\/\/github.com\/hyperledger\/fabric\/pull\/2007> ? I will respond with an update",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Clear the batch store on view change by jyellick \u00b7 Pull Request #2007 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/2007",
+                "text": "Description This changeset clears the batch store on view change, does not start the request timer when not in an active view, and decreases the batch timeout to be less than the request timeout. ...",
+                "fallback": "GitHub: Clear the batch store on view change by jyellick \u00b7 Pull Request #2007 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/2007",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466798185.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "done.",
+        "ts": "1466798815.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks, and pushed the fix",
+        "ts": "1466799378.000834"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XQ35CDD>: I retested 1942 using 9f5666f. Code looks much improved: no duplicates and all three peers sync up correctly - BUT querying the bounced peer (before and after stopping a 4th peer) still produces the initially deployed values (inaccurate responses) for at least a minute or two, even though after it becomes a functioning member of the 3-peer consensus network.",
+        "ts": "1466801456.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> I commented on the issue, this is \"working as designed\" from a PBFT perspective",
+        "ts": "1466801638.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the future we may want to make some optimizations to help the rejoined peer recover faster, but if you wish to know a definitive point in time value, you must perform this as an invocation which is ordered by the network and wait for the result of that invocation.  This is commonly referred to as a 'strong read'",
+        "ts": "1466801830.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U1B2FF8LR>: This is also a point we bring up the in the BMX documentation and a common source of confusion. Jason has covered it nicely in the Github issue.",
+        "ts": "1466801915.000838"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "Sure I will read more. Intuitively, I can accept that at the time when the peer joins the network when there are already 3 nodes working and reaching consensus without it. But when one of them drops, and that restarted node continues onwards as one of the remaining three AND there is consensus on subsequent transactions, then I would think at that time then it would have to be caught up in sync (and should give responses same as the other two peers would give).  How can that NOT be true?",
+        "ts": "1466802185.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When the peer rejoins the network, it knows the state the network was last in, and that was \"ordering requests 1 through 8\".  So, it gets a message from the primary saying \"Let's all agree to put request A in position 3\", and the replica says \"Okay, that's between 1 and 8, I've got nothing in slot 3, that's fine with me\", and then the primary says \"Let's all agree to put request B in position 4\",  and likewise the new peer says \"Okay, that's between 1 and 8, and I've got nothing in slot 4, that's fine with me\" and so on.\n\nThe old nodes, they've already agreed on what goes in positions 1 and 2, so they executed them, so when the position is agreed on for 3 through 8, they simply execute them.  The recently restarted one doesn't know what goes in position 1 or 2, so, it keeps a log of what goes into 3 through 8, but, it can't execute anything yet, because it must execute in sequence.",
+        "ts": "1466802505.000840"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Now, eventually, the primary says \"Let's all agree to put request H in slot 9\", and the restarted replica says \"Nope, we're ordering requests 1 through 8 now, and I still don't have requests 1 or 2, maybe I missed those requests, or maybe the primary is being a jerk, either way, I'm not going to order this new request\".  So, now the network doesn't have enough nodes to make progress, and, this triggers a view change, where everyone agrees on a starting point, and a new leader.  Once they agree on the starting point, the restarted replica realizes it doesn't have that starting point, so it performs state transfer, and because it's been listening from the beginning of this new starting point, it won't miss any transactions, and will be able to execute up to date once state transfer finishes.",
+        "ts": "1466802712.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the TL;DR version is, the restarted peer will help the network,  and some new transactions may execute, but eventually the restarted peer gets in sync",
+        "ts": "1466802840.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'll get sth up in the Wiki as well. ",
+        "ts": "1466802921.000843",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "so they \"help\" the network with a \"yes\" vote but they don't really know if it makes sense with previous state. So if I was a peer who wanted to take over the world, I could zap and restart all the other peers, and while they were restarting I would advance my transactions and they would all blindly vote as zombies for awhile after they recover and then they would initiate their own state transfers eventually all matching mine. MuuuaHaHa.",
+        "ts": "1466803363.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "well, the zap and restart part might be a wee bit complicated :wink:",
+        "ts": "1466803462.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR>: The PBFT ordering is agnostic to content.  We want to make sure no one is getting censored, but beyond that, it is really about everyone agreeing on a total ordering",
+        "ts": "1466803496.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The danger in something like bitcoin is that the blockchain forks and you end up being able to spend the same coin twice",
+        "ts": "1466803521.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So long as everyone agrees you give the coin to person A, and then you submit a transaction to give the coin to person B, there's really no problem",
+        "ts": "1466803561.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because everyone agrees on the order, the second transaction will not execute successfully",
+        "ts": "1466803576.000849"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the same sense, in the bitcoin network, you could control 100% of the mining nodes, but you still could not falsify a transaction",
+        "ts": "1466803631.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Consensus is about getting everyone a consistent global ordering, and then the chaincode\/ledger is what determines whether a transaction is 'valid'",
+        "ts": "1466803672.000851"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0UGH3X7X>: If I was an evil genius, I would have a big laser zapper. OK, So, Back to my specific case: what you are saying is I cannot query a node that has restarted until it sync's, but I don't know how\/when\/why that happens. How big is the queue of ordered transactions (1 through 8, in your example)? Can I expect it to sync up after a certain number of transactions after recovering, or in lieu of that maybe after a certain timer pops after 1 minute? How can I write a reliable repeatable maintainable predictable deterministic test case for this?",
+        "ts": "1466804017.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you want to know the ledger's point in time state, you need to submit an invoke transaction who's output contains your desired value.  Then wait for it to appear in the ledger, and you will know the value in the network at the point in time that transaction executed.",
+        "ts": "1466804153.000853"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "or rather, \" a certain number of transactions, plus the time it takes to complete the viewchange and also for that node to do a state transfer\"",
+        "ts": "1466804178.000854"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the future, we hope to add a 'strong read' API which will be like a query, but go through consensus, unlike a normal query, which executes without ordering",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1466804247.000000"
+        },
+        "ts": "1466804202.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is a checkpoint interval and log size multiplier in config.yaml",
+        "ts": "1466804293.000857"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you multiply those together, you will get the number of PBFT sequence numbers that may execute while not being up to date",
+        "ts": "1466804312.000858"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Multiply this by the batch size for an upper bound on the number of transactions",
+        "ts": "1466804335.000859"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "right now in my view, that would 80.   K: 10    logmultiplier: 4     batchsize: 2.",
+        "edited": {
+            "user": "U1B2FF8LR",
+            "ts": "1466805607.000000"
+        },
+        "ts": "1466804553.000860"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "OK, so if I am a user, and I query and it looks like I have $100, I cannot believe it (using the type of Query that we have implemented today). And if I try to withdraw it, you are saying that I won't get anything from my peer (or ledger) until enough transactions occur for my peer to sync with the ledger. So if my peer who told me I had $100 was recently restarted, it could have been wrong, so I just have to accept that my next request (withdrawal) might simply be rejected, depending on whatever happened while it was restarting. But overall if the other peers knew I had only $9, then the right result would occur (i.e. my $100 withdrawal request would be rejected, because I didn't actually have $100).",
+        "ts": "1466805047.000861"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "But after that, once I know a peer is in sync (40 transactions), my test scripts can believe and depend on any query results, right?",
+        "ts": "1466805107.000862"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "However... at any point in time, a client today would never really know if the peer it is querying was just restarted (and thus possibley out of sync) or rather if it was in sync (and therefore supplying reliable data).  Hmmmm...",
+        "ts": "1466805447.000863"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "I really appreciate your explanations!  Very helpful.",
+        "ts": "1466805552.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> Your transactions should always validate their inputs.  Think about it like writing a check, you may check your account balance online and it says $100, but you wrote 12 checks for $50 each, that haven't been cashed yet.  There's nothing stopping you from writing another check.  The nice thing about the blockchain is that your check is now associated with a complete transaction like \"transfer $50 in exchange for X\", so it executes atomically, if you don't have the funds to back it up, then the transaction won't occur (unlike with a real check, where these things are detached)",
+        "ts": "1466805859.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Even discount the restarted peer, you can't guarantee that between your query and your transaction that something hasn't changed.  Your queries should always return data that was \"right at some point\", but may not be \"right when it was sent\", and certainly not \"right when it was received\"",
+        "ts": "1466805942.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd love to see the API expanded to include a timestamp about the data, that \"This was your balance at XXXX time\"",
+        "ts": "1466805986.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And I know there is some work pending in this area.",
+        "ts": "1466806005.000869"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "yes, and if there were any transactions pending at that point in time too (so I could determine if my last n transactions are still in queue or not, so I know how to interpret the info I receive back).  \nOr, to know when a given transaction is processed and entered into the ledger, not just received. (Tuan explained to me there is an event notification system being planned too.) Then I could check my checkbook transactions and determine if the query response makes sense for that point in time.",
+        "ts": "1466807730.000870"
+    }
+]

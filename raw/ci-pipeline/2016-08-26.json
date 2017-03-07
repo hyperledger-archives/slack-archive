@@ -1,0 +1,572 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0UHG4VP1>, <@U0KM61BCP> pointed me to a jenkins failure: <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/608\/console>",
+        "ts": "1472216560.000626"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems in this case, we had fabric-src built twice",
+        "ts": "1472216580.000627"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i wanted to ask: can you confirm if this particular run would have had the sed patch in place?",
+        "ts": "1472216597.000628"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for reasons that are unclear, it decided at 09:27:34 that it needed to rebuild fabric-src even though this had already happened",
+        "ts": "1472216670.000629"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(at 08:46:09)",
+        "ts": "1472216720.000630"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> have to step away for about an hour, but ill follow up on this",
+        "ts": "1472217345.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this is my patch isn't it? it does have the sed in it",
+        "ts": "1472218366.000632"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\n\t@cat images\/src\/Dockerfile.in \\\n\t\t| sed -e 's\/_TAG_\/$(DOCKER_TAG)\/g' \\\n```\nquoted from the gerrit Makefile",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472218423.000000"
+        },
+        "ts": "1472218408.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U11HH3P7Y> ^^",
+        "ts": "1472219182.000636"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "I am looking into this..",
+        "ts": "1472219709.000637"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> sorry, i was referring to a different sed patch",
+        "ts": "1472221719.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=ci-management.git;a=commitdiff;h=e2df78cb3f912317b8a9a0dd8bad6e0a45ea2a7c>",
+        "ts": "1472221759.000639"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "sed patch is part of ci-management repo and it was merged..",
+        "ts": "1472221789.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there was an issue earlier where the ci-management.git tree had a suboptimally placed sed that would have been likely to cause rebuilds",
+        "ts": "1472221804.000641"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that was the only known\/understood issue that would cause fabric-src to behave like that",
+        "ts": "1472221821.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh wait, was this failure in <@U0ZJZBJLF>\u2019s patch?",
+        "ts": "1472221841.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if so, i probably know whats wrong",
+        "ts": "1472221849.000644"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "could be..",
+        "ts": "1472221858.000645"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP> what patch was that build from?",
+        "ts": "1472221875.000646"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U0KPFAZNF> <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/611\/>",
+        "ts": "1472221908.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, ok, i know whats wrong then",
+        "ts": "1472221923.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> this is that thing we talked about yesterday (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/611\/9\/Makefile>, line 188)",
+        "ts": "1472221952.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\u201cprotos\u201d is a .PHONY target, it will always trigger subordinate rebuilds",
+        "ts": "1472221989.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmmm",
+        "ts": "1472221990.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so how to resolve this?",
+        "ts": "1472221999.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all we need to do is change that to $(PB_GOS)",
+        "ts": "1472222001.000653"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "og",
+        "ts": "1472222005.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh i see",
+        "ts": "1472222008.000655"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "will do, give me a min",
+        "ts": "1472222014.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sure thing",
+        "ts": "1472222018.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "btw this was there for a week and many of the builds passed",
+        "ts": "1472222036.000658"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The sed tagging thing effected it",
+        "ts": "1472222047.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sent 4 review and jenkins",
+        "ts": "1472222156.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF> it was the confluence of your change and one I had merged yesterday",
+        "ts": "1472222425.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah that's what i meant",
+        "ts": "1472222440.000662"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to be clear, the \u201cprotos\u201d dep would always be suboptimal and always cause a double build, but it had no obvious consequences until my merge went in yesterday",
+        "ts": "1472222462.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, ok",
+        "ts": "1472222463.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "glad that\u2019s resolved!",
+        "ts": "1472223122.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I reverted the attempt at docker 1.11 last night, it hangs in the same way as 1.12. so we\u2019re still on 1.8",
+        "ts": "1472229456.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So weird",
+        "ts": "1472230268.000667"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I didn't see the 1.11 run, but 12 looked like it was hanging in the common.sh script.  I wonder if we can increase the verbosity and figure out what's stuck",
+        "ts": "1472230323.000668"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "that\u2019s the same place 1.11 was hanging.",
+        "ts": "1472230617.000669"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Did anything change lately regarding the python packages of the jenkins image?",
+        "ts": "1472231601.000670"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the image is the same one from when I added protoc",
+        "ts": "1472231716.000671"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "This looks like an environment issue, what do you think?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472231757.000000"
+        },
+        "ts": "1472231726.000672"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZJZBJLF|yacovm> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F25BVTWAF\/jenkins_failure.txt|jenkins failure>",
+        "file": {
+            "id": "F25BVTWAF",
+            "created": 1472231749,
+            "timestamp": 1472231749,
+            "name": "jenkins_failure.txt",
+            "title": "jenkins failure",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0ZJZBJLF",
+            "editable": true,
+            "size": 2830,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F25BVTWAF\/jenkins_failure.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F25BVTWAF\/download\/jenkins_failure.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F25BVTWAF\/jenkins_failure.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F25BVTWAF-b847def749",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/yacovm\/F25BVTWAF\/jenkins_failure.txt\/edit",
+            "preview": "17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.1 Consensus Options failed. Getting container logs\r\n17:04:11 Decomposing with yaml 'docker-compose-4-consensus-noops.yml' after scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.1 Consensus Options, \r\n17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.2 Consensus Options failed. Getting container logs\r\n17:04:11 Decomposing with yaml 'docker-compose-4-consensus-batch.yml' after scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.2 Consensus Options, \r\n17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #680 (State transfer) -- @1.1 Consensus Options failed. Getting container logs\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.1 Consensus Options failed. Getting container logs<\/pre><\/div>\n<div><pre>17:04:11 Decomposing with yaml 'docker-compose-4-consensus-noops.yml' after scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.1 Consensus Options, <\/pre><\/div>\n<div><pre>17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.2 Consensus Options failed. Getting container logs<\/pre><\/div>\n<div><pre>17:04:11 Decomposing with yaml 'docker-compose-4-consensus-batch.yml' after scenario chaincode example02 with 4 peers and 1 membersrvc, issue #567 -- @1.2 Consensus Options, <\/pre><\/div>\n<div><pre>17:04:11 Scenario chaincode example02 with 4 peers and 1 membersrvc, issue #680 (State transfer) -- @1.1 Consensus Options failed. Getting container logs<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 40,
+            "lines_more": 35,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0YMWRX19"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ZJZBJLF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZJZBJLF|yacovm>",
+        "bot_id": null,
+        "ts": "1472231750.000673"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the last rebuild: `Ubuntu 14.04.4 - fabric - DOCKER 1.8 PROTOC 3.0 - 20160824.2059`",
+        "ts": "1472231900.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so 9pm two days ago",
+        "ts": "1472231913.000676"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>: I've been seeing that error sporadically ",
+        "ts": "1472232093.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "In my builds as well as others",
+        "ts": "1472232112.000678"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Thanks, I'll retrigger then",
+        "ts": "1472232118.000679"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "bdd tests are really fragile...",
+        "ts": "1472232157.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "do they add any value? flaky tests should be disabled, IMHO",
+        "ts": "1472232216.000681"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you mean the BDD tests in general?",
+        "ts": "1472232806.000682",
+        "reactions": [
+            {
+                "name": "laughing",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "the fragile ones, yes",
+        "edited": {
+            "user": "U0UHG4VP1",
+            "ts": "1472232870.000000"
+        },
+        "ts": "1472232858.000683"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i don't know them well enough to know which are fragile and which are not.",
+        "ts": "1472232885.000685"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "OK, so the BDD tests in general then",
+        "ts": "1472232910.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "have they prevented any regressions?",
+        "ts": "1472232937.000687"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No idea, I only submitted a couple of PRs so far and they were related to threading change or to configuration extension so I don't know, but I think that in theory they should because unit tests don't cover orchestration stuff",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1472233326.000000"
+        },
+        "ts": "1472233300.000688"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so for instance, the last 3-4 merge jobs have failed in similar ways. <https:\/\/jenkins.hyperledger.org\/view\/fabric\/job\/fabric-merge-x86_64\/>",
+        "ts": "1472234735.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "so dockerhub is behind master by several commits",
+        "ts": "1472234748.000691"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the jenkins build is also fragile:\n```\n  0     0    0     0    0     0      0      0 --:--:--  0:00:39 --:--:--     0curl: (6) Could not resolve host: <http:\/\/github.com|github.com>\n18:28:15 make: *** [build\/bin\/chaintool] Error 6\n18:28:15 Build step 'Execute shell' marked build as failure\n18:28:15 [ssh-agent] Stopped.\n18:28:15 Archiving artifacts\n18:28:15 Recording test results\n18:28:15 ERROR: Step \u2018Publish JUnit test result report\u2019 failed: No test report files were found. Configuration error?\n18:28:15 Skipping Cobertura coverage report as build was not UNSTABLE or better ...\n18:28:31 Finished: FAILURE\n```",
+        "ts": "1472241193.000692"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes it is",
+        "ts": "1472241634.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "it looks like the host for our infra is having network issues",
+        "ts": "1472246037.000694"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "ok",
+        "ts": "1472246052.000695"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so, looking at the build, seems as if we are defeating some of the build improvements to optimize what we build and when",
+        "ts": "1472258623.000696"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "are these recent changes in ci or fabric?",
+        "ts": "1472258658.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we run make dist-clean which deletes all of the docker images",
+        "ts": "1472258705.000698"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "hence we cannot reuse the baseimage (which almost never changes)",
+        "ts": "1472258719.000699"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "and that takes the longest to build",
+        "ts": "1472258728.000700"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I don\u2019t know when the build changed",
+        "ts": "1472258763.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "the Makefile was changed recently to avoid having to build baseimage every time",
+        "ts": "1472258793.000702"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "line 8 in ci-management\/jjb\/fabric\/include-raw-fabric-clean-environment.sh",
+        "ts": "1472258853.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "yes",
+        "ts": "1472258867.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "need to make that smarter",
+        "ts": "1472258886.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I could change the fabric Makefile so that baseimage has its own clean target",
+        "ts": "1472258909.000706"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "that isn\u2019t triggered by dist-clean",
+        "ts": "1472258935.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok. is there a better target than dist-clean?",
+        "ts": "1472258963.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "I think if I run dist-clean and the baseimage gets skipped, that would not be what I expected",
+        "ts": "1472258985.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I am thinking remove base-image-clean from images-clean and add a scrub target",
+        "ts": "1472259395.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "ok",
+        "ts": "1472259403.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "needs a bit more untangling because the build needs to be dependent on baseimage",
+        "ts": "1472259418.000712"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I think I see how this can work",
+        "ts": "1472259430.000713"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "a reminder, I\u2019m on vacation until 06 September, so you will need to talk to bram.welt and ram.esh about CI stuff in the interim (if you need changes)",
+        "ts": "1472259506.000714"
+    }
+]

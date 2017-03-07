@@ -1,0 +1,1246 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U13Q594J2>: did you copy `\/var\/hyperledger\/production\/.membersrvc\/tlsca.cert` to `$GOPATH\/src\/github.com\/hyperledger\/fabric\/sdk\/node`?",
+        "ts": "1466061442.000002"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U11HTMW0H>, <@U0S5KF44D>, <@U0Z81GL6S>: I have checkout out the current master, setup the vagrant environment from scratch and I still see this error:",
+        "ts": "1466061575.000003"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "vagrant@hyperledger-devenv:v0.0.10-eaec080:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ make node-sdk-unit-tests\ncp .\/protos\/*.proto .\/sdk\/node\/lib\/protos\ncp .\/membersrvc\/protos\/*.proto .\/sdk\/node\/lib\/protos\ncd .\/sdk\/node &amp;&amp; npm install &amp;&amp; sudo npm install -g typescript &amp;&amp; sudo npm install typings --global &amp;&amp; typings install\nnpm WARN package.json hlc@0.0.11 No repository field.\nnpm WARN package.json hlc@0.0.11 No license field.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\"\nnpm ERR! node v0.12.7\nnpm ERR! npm  v2.11.3\nnpm ERR! path ..\/har-validator\/bin\/har-validator\nnpm ERR! code EPROTO\nnpm ERR! errno -71\n\nnpm ERR! EPROTO, symlink '..\/har-validator\/bin\/har-validator'\nnpm ERR!\nnpm ERR! If you need help, you may report this error at:\nnpm ERR!     &lt;https:\/\/github.com\/npm\/npm\/issues&gt;\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\"\nnpm ERR! node v0.12.7\nnpm ERR! npm  v2.11.3\nnpm ERR! path npm-debug.log.2a82a5b7d731587fad861792986bfa47\nnpm ERR! code ETXTBSY\nnpm ERR! errno -26\n\nnpm ERR! ETXTBSY, rename 'npm-debug.log.2a82a5b7d731587fad861792986bfa47'\nnpm ERR!\nnpm ERR! If you need help, you may report this error at:\nnpm ERR!     &lt;https:\/\/github.com\/npm\/npm\/issues&gt;\n\nnpm ERR! Please include the following file with any support request:\nnpm ERR!     \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/npm-debug.log\nmake: *** [node-sdk] Error 185",
+        "ts": "1466061575.000004"
+    },
+    {
+        "user": "U0Z81GL6S",
+        "inviter": "U0ZR63HLK",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0Z81GL6S|anya> has joined the channel",
+        "ts": "1466061588.000005"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "any idea why?",
+        "ts": "1466061616.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "btw, I also see the following:",
+        "ts": "1466067428.000007"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "vagrant@hyperledger-devenv:v0.0.10-eaec080:~$ node -v\nv0.12.7",
+        "ts": "1466067429.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it that version of node the one that we require?",
+        "ts": "1466067442.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "do you see the same version?",
+        "ts": "1466067459.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I have also noticed that testing in dev mode does not work. After deploy, the chaincodeID is not set to mycc1. I noticed this because I wasn't seeing any activity from the chaincode.",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1466071697.000000"
+        },
+        "ts": "1466070351.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Either Anya removed a change later or it didn\u2019t get checked in some how, but I see one think missing from the Makefile given Angelo\u2019s input above.  I also just checked the repo.   This line in the Makefile:",
+        "ts": "1466077526.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "cd .\/sdk\/node &amp;&amp; npm install &amp;&amp; sudo npm install -g typescript &amp;&amp; sudo npm install typings --global &amp;&amp; typings install",
+        "ts": "1466077532.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "should also install npm or else Travis will fail, so the line should be as follows",
+        "ts": "1466077557.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "cd .\/sdk\/node &amp;&amp; sudo apt-get install npm &amp;&amp; npm install &amp;&amp; sudo npm install -g typescript &amp;&amp; sudo npm install typings --global &amp;&amp; typings install",
+        "ts": "1466077584.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "But Angelo, in your case, obviously npm is installed and should be the same since you\u2019re in vagrant.  Did you create a new vagrant env?",
+        "ts": "1466077686.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I just did that and ran \u201cmake node-sdk-unit-tests\u201d and it didn\u2019t work because of some other changes to the Makefile that are also missing.   It is not building the peer &amp; membersrvc executable",
+        "ts": "1466077804.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I thought Anya and Ramesh had this working yesterday, but it seems to me that there are changes which didn\u2019t make it into the master.  I see changes missing from run-unit-tests.sh which should look for the executables in fabric\/build\/bin directory and other things missing from the Makefile to make it build the exe\u2019s before trying to run the tests",
+        "ts": "1466077934.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0S5KF44D>: Thanks for the feedback. Actually, this is also another issue. The ubuntu version that vagrant bootstraps come with a very old version of node",
+        "ts": "1466078158.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's another problem",
+        "ts": "1466078167.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "then we have upgraded that manually and rerun the make",
+        "ts": "1466078201.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and npm install failed",
+        "ts": "1466078205.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "because of grpc",
+        "ts": "1466078212.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "are you on windows?",
+        "ts": "1466078221.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "really strange!",
+        "ts": "1466078222.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, I'm",
+        "ts": "1466078226.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "You don\u2019t have a C compiler",
+        "ts": "1466078233.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "There is native code in grpc",
+        "ts": "1466078243.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "don't we compile in vagrant?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1466078258.000000"
+        },
+        "ts": "1466078246.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "gcc is there",
+        "ts": "1466078269.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "i know that it should work, but apparently some windows support for vagrant bleed thru",
+        "ts": "1466078310.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "wow",
+        "ts": "1466078317.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "i haven\u2019t yet looked into build of grpc, but that is what we need to do",
+        "ts": "1466078377.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I can\u2019t reproduce on mac",
+        "ts": "1466078387.000036"
+    },
+    {
+        "user": "U0KM61BCP",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KM61BCP|cbf> has joined the channel",
+        "ts": "1466078411.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Need to leave for office",
+        "ts": "1466078424.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, have you tried editing the makefile to add \"--no-bin-links\" to the npm commands?  Example:",
+        "ts": "1466088566.000039"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "cd .\/sdk\/node &amp;&amp; npm install --no-bin-links &amp;&amp; sudo npm install -g typescript --no-bin-links &amp;&amp; sudo npm install typings --global --no-bin-links &amp;&amp; typings install",
+        "ts": "1466088582.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "around like 201 of the Makefile for me",
+        "ts": "1466088592.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "This gets me past the symlink problem but unfortunately, I am blocked by a different problem further along",
+        "ts": "1466088641.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1AJV5S2G>: thanks for the advice. I have tried it and now grpc fails the compilation",
+        "ts": "1466089276.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":disappointed:",
+        "ts": "1466089278.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, how can you tell grpc fails the compilation?",
+        "ts": "1466089632.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right, it is just an intuition looking at the following error:",
+        "ts": "1466089683.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "npm ERR! grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\nnpm ERR! spawn ENOENT\nnpm ERR!\nnpm ERR! Failed at the grpc@0.13.2-pre1 install script 'node-pre-gyp install --fallback-to-build'.\nnpm ERR! Make sure you have the latest version of node.js and npm installed.\nnpm ERR! If you do, this is most likely a problem with the grpc package,\nnpm ERR! not with npm itself.\nnpm ERR! Tell the author that this fails on your system:\nnpm ERR!     node-pre-gyp install --fallback-to-build\nnpm ERR! You can get information on how to open an issue for this project with:\nnpm ERR!     npm bugs grpc\nnpm ERR! Or if that isn't available, you can get their info via:\nnpm ERR!     npm owner ls grpc\nnpm ERR! There is likely additional logging output above.\n\nnpm ERR! Please include the following file with any support request:\nnpm ERR!     \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/npm-debug.log",
+        "ts": "1466089684.000047"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "sh: 1: node-pre-gyp: not found\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v0.12.7\nnpm ERR! npm  v2.11.3\nnpm ERR! file sh\nnpm ERR! code ELIFECYCLE\nnpm ERR! errno ENOENT\nnpm ERR! syscall spawn\n\nnpm ERR! grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\nnpm ERR! spawn ENOENT\nnpm ERR!\nnpm ERR! Failed at the grpc@0.13.2-pre1 install script 'node-pre-gyp install --fallback-to-build'.\nnpm ERR! This is most likely a problem with the grpc package,\nnpm ERR! not with npm itself.\nnpm ERR! Tell the author that this fails on your system:\nnpm ERR!     node-pre-gyp install --fallback-to-build\nnpm ERR! You can get their info via:\nnpm ERR!     npm owner ls grpc\nnpm ERR! There is likely additional logging output above.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v0.12.7\nnpm ERR! npm  v2.11.3\nnpm ERR! path npm-debug.log.e720e703440708a7b245cbe3df80f191\nnpm ERR! code ETXTBSY\nnpm ERR! errno -26\n\nnpm ERR! ETXTBSY, rename 'npm-debug.log.e720e703440708a7b245cbe3df80f191'\nnpm ERR!\nnpm ERR! If you need help, you may report this error at:\nnpm ERR!     &lt;https:\/\/github.com\/npm\/npm\/issues&gt;",
+        "ts": "1466089869.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, look familiar? Ths is where I ams tuck",
+        "ts": "1466089880.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "But I looked at Control Panel Programs and Features and see I have had MS Visual C++ installed all along:",
+        "ts": "1466089918.000050"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1AJV5S2G|jjjjibm> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jjjjibm\/F1HHHFAMP\/pasted_image_at_2016_06_16_11_12_am.png|Pasted image at 2016-06-16, 11:12 AM>",
+        "file": {
+            "id": "F1HHHFAMP",
+            "created": 1466089950,
+            "timestamp": 1466089950,
+            "name": "Pasted image at 2016_06_16 11_12 AM.png",
+            "title": "Pasted image at 2016-06-16, 11:12 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1AJV5S2G",
+            "editable": false,
+            "size": 82804,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HHHFAMP\/pasted_image_at_2016_06_16_11_12_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HHHFAMP\/download\/pasted_image_at_2016_06_16_11_12_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 146,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 194,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 291,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 389,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHHFAMP-598b8803a8\/pasted_image_at_2016_06_16_11_12_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 414,
+            "image_exif_rotation": 1,
+            "original_w": 1280,
+            "original_h": 518,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jjjjibm\/F1HHHFAMP\/pasted_image_at_2016_06_16_11_12_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1HHHFAMP-7b130f709d",
+            "channels": [
+                "C1GSVKK1U"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1AJV5S2G",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1AJV5S2G|jjjjibm>",
+        "bot_id": null,
+        "ts": "1466089953.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "Do you mind checking your Control Panel Programs and Features?",
+        "ts": "1466089974.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "FYI, I\u2019m currently seeing the following failure in the peer",
+        "ts": "1466090125.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "14:31:10.705 [main] serve -&gt; INFO 015^[[0m Starting peer with id=name:\"jdoe\" , network id=dev, address=0.0.0.0:30303, discovery.rootnode=[[]], validator=true\n2016\/06\/16 14:31:21 transport: http2Server.HandleStreams failed to receive the preface from client: read tcp 127.0.0.1:30303-&gt;127.0.0.1:49916: read: connection reset by peer\n^[[31m14:31:22.198 [ledger] sendProducerBlockEvent -&gt; ERRO 017^[[0m Error unmarshalling deployment transaction for block event: proto: protos.ChaincodeDeploymentSpec: wiretype end group for non-group",
+        "ts": "1466090151.000054"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ZR63HLK|adc> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/adc\/F1HHDB72B\/pasted_image_at_2016_06_16_05_16_pm.png|Pasted image at 2016-06-16, 5:16 PM> and commented: I have this",
+        "file": {
+            "id": "F1HHDB72B",
+            "created": 1466090195,
+            "timestamp": 1466090195,
+            "name": "Pasted image at 2016_06_16 05_16 PM.png",
+            "title": "Pasted image at 2016-06-16, 5:16 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ZR63HLK",
+            "editable": false,
+            "size": 31505,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HHDB72B\/pasted_image_at_2016_06_16_05_16_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1HHDB72B\/download\/pasted_image_at_2016_06_16_05_16_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 68,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 90,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F1HHDB72B-c36a55a4a8\/pasted_image_at_2016_06_16_05_16_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 135,
+            "image_exif_rotation": 1,
+            "original_w": 804,
+            "original_h": 151,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/adc\/F1HHDB72B\/pasted_image_at_2016_06_16_05_16_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1HHDB72B-c914749992",
+            "channels": [
+                "C1GSVKK1U"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc1HH33G20",
+                "created": 1466090195,
+                "timestamp": 1466090195,
+                "user": "U0ZR63HLK",
+                "is_intro": true,
+                "comment": "I have this",
+                "channel": ""
+            }
+        },
+        "user": "U0ZR63HLK",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ZR63HLK|adc>",
+        "bot_id": null,
+        "ts": "1466090197.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Actually, <@U0S5KF44D>, I don't even reach that level :disappointed:",
+        "ts": "1466090218.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0S5KF44D>, nor do I",
+        "ts": "1466090244.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1AJV5S2G>: I see that you have still a very old version of nodejs",
+        "ts": "1466090320.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "npm ERR! node v0.12.7\nnpm ERR! npm  v2.11.3",
+        "ts": "1466090322.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "have you tried to updated them",
+        "ts": "1466090328.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "?",
+        "ts": "1466090328.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "This can be done using the following instructions: <https:\/\/davidwalsh.name\/upgrade-nodejs>",
+        "attachments": [
+            {
+                "service_name": "David Walsh Blog",
+                "title": "Upgrade Node.js via NPM",
+                "title_link": "https:\/\/davidwalsh.name\/upgrade-nodejs",
+                "text": "Learn how to upgrade Node.js with the NPM package system!",
+                "fallback": "David Walsh Blog: Upgrade Node.js via NPM",
+                "image_url": "https:\/\/davidwalsh.name\/wp-content\/themes\/punky\/images\/logo.png",
+                "ts": 1362657602,
+                "from_url": "https:\/\/davidwalsh.name\/upgrade-nodejs",
+                "image_width": 250,
+                "image_height": 194,
+                "image_bytes": 20875,
+                "service_icon": "https:\/\/davidwalsh.name\/wp-content\/themes\/punky\/images\/favicon-32.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466090346.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "btw, have you tried to run 'make peer'? Does it work?",
+        "ts": "1466090402.000064"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "OK, that updates nodejs",
+        "ts": "1466090521.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "abric$ node --version\nv6.2.1",
+        "ts": "1466090523.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "good",
+        "ts": "1466090578.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I think this doesn't solve our problem yet",
+        "ts": "1466090594.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but we need the latest version of node installed anyway",
+        "ts": "1466090602.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what about 'make peer'? does it work in your environment?",
+        "ts": "1466090635.000070",
+        "reactions": [
+            {
+                "name": "grinning",
+                "users": [
+                    "U1AJV5S2G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "I haven't tried make peer since I just updated npm and node:grinning:",
+        "ts": "1466090716.000071"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "but it had worked just fine",
+        "ts": "1466090727.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "trying make node-sdk now and WOW i looks diferent!",
+        "ts": "1466090760.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "sh: 1: node-pre-gyp: not found\nnpm WARN hlc@0.0.11 No repository field.\nnpm WARN hlc@0.0.11 No license field.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.5\nnpm ERR! file sh\nnpm ERR! code ELIFECYCLE\nnpm ERR! errno ENOENT\nnpm ERR! syscall spawn\n\nnpm ERR! grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\nnpm ERR! spawn ENOENT\nnpm ERR!\nnpm ERR! Failed at the grpc@0.13.2-pre1 install script 'node-pre-gyp install --fallback-to-build'.",
+        "ts": "1466090852.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "This is in the log:",
+        "ts": "1466090988.000075"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "10512 verbose stack Error: grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\n10512 verbose stack spawn ENOENT\n10512 verbose stack     at ChildProcess.&lt;anonymous&gt; (\/usr\/local\/lib\/node_modules\/npm\/lib\/utils\/spawn.js:17:16)\n10512 verbose stack     at emitTwo (events.js:106:13)\n10512 verbose stack     at ChildProcess.emit (events.js:191:7)\n10512 verbose stack     at maybeClose (internal\/child_process.js:852:16)\n10512 verbose stack     at Process.ChildProcess._handle.onexit (internal\/child_process.js:215:5)\n10513 verbose pkgid grpc@0.13.2-pre1",
+        "ts": "1466090990.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "'spawn' doesn't say 'compilation error' to me",
+        "ts": "1466091023.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "cool :slightly_smiling_face:",
+        "ts": "1466091161.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I got this now:",
+        "ts": "1466091601.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "npm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.3\nnpm ERR! path \/home\/vagrant\/.npm\/_locks\/staging-141d78fedc8427dc.lock\nnpm ERR! code EACCES\nnpm ERR! errno -13\nnpm ERR! syscall open\n\nnpm ERR! Error: EACCES: permission denied, open '\/home\/vagrant\/.npm\/_locks\/staging-141d78fedc8427dc.lock'\nnpm ERR!     at Error (native)\nnpm ERR!  { Error: EACCES: permission denied, open '\/home\/vagrant\/.npm\/_locks\/staging-141d78fedc8427dc.lock'\nnpm ERR!     at Error (native)\nnpm ERR!   errno: -13,\nnpm ERR!   code: 'EACCES',\nnpm ERR!   syscall: 'open',\nnpm ERR!   path: '\/home\/vagrant\/.npm\/_locks\/staging-141d78fedc8427dc.lock' }\nnpm ERR!\nnpm ERR! Please try running this command again as root\/Administrator.\n\nnpm ERR! Please include the following file with any support request:\nnpm ERR!     \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/npm-debug.log\nmake: *** [node-sdk] Error 243",
+        "ts": "1466091602.000080"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "<@U0ZR63HLK> can you run 'sudo make node-sdk' , not really sure if this works , atleast I see it is working on one of the Ububntu machine",
+        "ts": "1466091680.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is running right now :slightly_smiling_face:",
+        "ts": "1466091715.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "This is the output:",
+        "ts": "1466091773.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "cp .\/protos\/*.proto .\/sdk\/node\/lib\/protos\ncp .\/membersrvc\/protos\/*.proto .\/sdk\/node\/lib\/protos\ncd .\/sdk\/node &amp;&amp; npm install --no-bin-links &amp;&amp; sudo npm install --no-bin-links -g typescript &amp;&amp; sudo npm install typings --no-bin-links --global &amp;&amp; typing\ns install\n\n&gt; grpc@0.13.2-pre1 install \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\n&gt; node-pre-gyp install --fallback-to-build\n\nsh: 1: node-pre-gyp: not found\nnpm WARN hlc@0.0.11 No repository field.\nnpm WARN hlc@0.0.11 No license field.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.3\nnpm ERR! file sh\nnpm ERR! code ELIFECYCLE\nnpm ERR! errno ENOENT\nnpm ERR! syscall spawn\n\nnpm ERR! grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\nnpm ERR! spawn ENOENT\nnpm ERR!\nnpm ERR! Failed at the grpc@0.13.2-pre1 install script 'node-pre-gyp install --fallback-to-build'.\nnpm ERR! Make sure you have the latest version of node.js and npm installed.\nnpm ERR! If you do, this is most likely a problem with the grpc package,\nnpm ERR! not with npm itself.\nnpm ERR! Tell the author that this fails on your system:\nnpm ERR!     node-pre-gyp install --fallback-to-build\nnpm ERR! You can get information on how to open an issue for this project with:\nnpm ERR!     npm bugs grpc\nnpm ERR! Or if that isn't available, you can get their info via:\nnpm ERR!     npm owner ls grpc\nnpm ERR! There is likely additional logging output above.\n\nnpm ERR! Please include the following file with any support request:\nnpm ERR!     \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/npm-debug.log\nmake: *** [node-sdk] Error 1",
+        "ts": "1466091774.000084"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": ":disappointed:",
+        "ts": "1466091797.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "what is node-pre-gyp?",
+        "ts": "1466091813.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it seems missing",
+        "ts": "1466091817.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sh: 1: node-pre-gyp: not found",
+        "ts": "1466091826.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<https:\/\/www.npmjs.com\/package\/node-pre-gyp-github>",
+        "attachments": [
+            {
+                "service_name": "npm",
+                "title": "node-pre-gyp-github",
+                "title_link": "https:\/\/www.npmjs.com\/package\/node-pre-gyp-github",
+                "text": "A node-pre-gyp module which provides the ability to publish to GitHub releases.",
+                "fallback": "npm: node-pre-gyp-github",
+                "thumb_url": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/open-graph.png",
+                "from_url": "https:\/\/www.npmjs.com\/package\/node-pre-gyp-github",
+                "thumb_width": 1200,
+                "thumb_height": 630,
+                "service_icon": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/apple-touch-icon-57x57.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466091863.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "just installed",
+        "ts": "1466091865.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm retrying now the make",
+        "ts": "1466091872.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it failed, but why do we need it?",
+        "ts": "1466092009.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, I think that is a rabbit hole ... I installed that explicitly yesterday and it did not help",
+        "ts": "1466092034.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I see",
+        "ts": "1466092049.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "interesting",
+        "ts": "1466092053.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "I just tried this:  npm install grpc with this result:",
+        "ts": "1466092066.000097"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "abric\/sdk\/node$ npm install grpc\nhlc@0.0.11 \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\n\u251c\u2500\u2500 lodash@3.10.1  extraneous\n\u251c\u2500\u2500 nan@2.3.5  extraneous\n\u2514\u2500\u2500 protobufjs@4.1.3  extraneous\n\nnpm WARN hlc@0.0.11 No repository field.\nnpm WARN hlc@0.0.11 No license field.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"grpc\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.5\nnpm ERR! path \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\/node_modules\/node-pre-gyp\/node_modules\/mkdirp\/bin\/cmd.js\nnpm ERR! code ENOENT\nnpm ERR! errno -2\nnpm ERR! syscall chmod\n\nnpm ERR! enoent ENOENT: no such file or directory, chmod '\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\/node_modules\/node-pre-gyp\/node_modules\/mkdirp\/bin\/cmd.js'\nnpm ERR! enoent ENOENT: no such file or directory, chmod '\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\/node_modules\/node-pre-gyp\/node_modules\/mkdirp\/bin\/cmd.js'\nnpm ERR! enoent This is most likely not a problem with npm itself\nnpm ERR! enoent and is related to npm not being able to find a file.\nnpm ERR! enoent\n\nnpm ERR! Please include the following file with any support request:\nnpm ERR!     \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/npm-debug.log\nroot@hyperledger-devenv:v0.0.10-fbb0f3d:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node$",
+        "ts": "1466092088.000098"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "Breaking the problem down into parts",
+        "ts": "1466092105.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I saw it in the past, actually",
+        "ts": "1466092135.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "uhhhh",
+        "ts": "1466092195.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I made some progress",
+        "ts": "1466092198.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "actually when you install node-pre-gyp-github",
+        "ts": "1466092208.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "you don't really get node-pre-gyp avaialble",
+        "ts": "1466092224.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I mean in \/usr\/local\/bin you have node-pre-gyp-github",
+        "ts": "1466092250.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but you need node-pre-gyp",
+        "ts": "1466092255.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I create a symbolic link",
+        "ts": "1466092261.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and now I npm does not fail anymore",
+        "ts": "1466092271.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "by I see this",
+        "ts": "1466092274.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "\/bin\/sh: 1: typings: not found\nmake: *** [node-sdk] Error 127",
+        "ts": "1466092292.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm trying to install typings manually",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1466092327.000000"
+        },
+        "ts": "1466092313.000111"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "Trying npm install node-pre-gyp",
+        "ts": "1466092329.000113"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "If that works, we should add it to the package.json",
+        "ts": "1466092337.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "indeed",
+        "ts": "1466092392.000115"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "In fabric directory, npm install node-pre-gyp?",
+        "ts": "1466092507.000116"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "npm WARN hlc@0.0.11 No repository field.\nnpm WARN hlc@0.0.11 No license field.\nnpm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"--no-bin-links\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.5\nnpm ERR! file sh\nnpm ERR! code ELIFECYCLE\nnpm ERR! errno ENOENT\nnpm ERR! syscall spawn\n\nnpm ERR! grpc@0.13.2-pre1 install: `node-pre-gyp install --fallback-to-build`\nnpm ERR! spawn ENOENT\nnpm ERR!\nnpm ERR! Failed at the grpc@0.13.2-pre1 install script 'node-pre-gyp install --fallback-to-build'.",
+        "ts": "1466092588.000117"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "I installed node-pre-gyp, no improvement",
+        "ts": "1466092600.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "recall that I have installed node-pre-gyp-github",
+        "ts": "1466092667.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "plus the trick with the symbolic link",
+        "ts": "1466092675.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no I have an issue with typings",
+        "ts": "1466092682.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I cannot invoke it",
+        "ts": "1466092690.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it says permission denied",
+        "ts": "1466092695.000123"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "what is node-pre-gyp-github?",
+        "ts": "1466092697.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is a module to public node package to github",
+        "ts": "1466092737.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I don't really now why we need it actually",
+        "ts": "1466092748.000126"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "npm install node-pre-gyp-github?",
+        "ts": "1466092758.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1466092776.000128"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "YOu were able to install grpc?",
+        "ts": "1466092777.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I did that",
+        "ts": "1466092778.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1466092781.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "now grpc is fine",
+        "ts": "1466092787.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I have problems with typings now",
+        "ts": "1466092796.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":disappointed:",
+        "ts": "1466092797.000134"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "Just installed your version of node-pre-gyp, trying again",
+        "ts": "1466092836.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "What problems ?",
+        "ts": "1466092850.000136"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "npm install grpc  (trying otuside makefile...)",
+        "ts": "1466092996.000137"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "npm ERR! Linux 3.13.0-86-generic\nnpm ERR! argv \"\/usr\/local\/bin\/node\" \"\/usr\/local\/bin\/npm\" \"install\" \"grpc\"\nnpm ERR! node v6.2.1\nnpm ERR! npm  v3.9.5\nnpm ERR! path \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\/node_modules\/node-pre-gyp\/node_modules\/mkdirp\/bin\/cmd.js\nnpm ERR! code ENOENT\nnpm ERR! errno -2\nnpm ERR! syscall chmod\n\nnpm ERR! enoent ENOENT: no such file or directory, chmod '\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/grpc\/node_modules\/node-pre-gyp\/node_modules\/mkdirp\/bin\/cmd.js'",
+        "ts": "1466093016.000138"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "ah, forgot to add '--no-bin-links' .. now back to original failure",
+        "ts": "1466093346.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it says permission denied",
+        "ts": "1466093447.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "did you created the symbolik link&gt;",
+        "ts": "1466093701.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "?",
+        "ts": "1466093703.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "in \/usr\/local\/bin",
+        "ts": "1466093710.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ln -s node-pre-gyp-github node-pre-gyp",
+        "ts": "1466093724.000144"
+    },
+    {
+        "user": "U0KN2SSKE",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KN2SSKE|binhn> has joined the channel",
+        "ts": "1466093731.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "guys, guys, I got working 'make node-sdk'",
+        "ts": "1466094333.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "it is a miracle",
+        "ts": "1466094339.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so you need to add --no-bin-links",
+        "ts": "1466094361.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "only to the first npm install",
+        "ts": "1466094372.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the others don't need that flag",
+        "ts": "1466094385.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if you put that flag that they will not run correctly",
+        "ts": "1466094394.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I will now try to run the tests",
+        "ts": "1466094414.000152"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": ":+1::skin-tone-6: :slightly_smiling_face:",
+        "ts": "1466094541.000153"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "Query fails with nodesdk , We have raised an issue for the same <https:\/\/github.com\/hyperledger\/fabric\/issues\/1872>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "nodesdk: chaincode query fails \u00b7 Issue #1872 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1872",
+                "text": "chaincode query fails on nodesdk Query on node-sdk fails unit tests on asset_management, gist of error message as below: not ok 8 Failure: [Alice query]: [[object Object]] --- operator: ...",
+                "fallback": "GitHub: nodesdk: chaincode query fails \u00b7 Issue #1872 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/18034452?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1872",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1466095047.000000"
+        },
+        "ts": "1466094571.000154"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, are you running as root  ?  sudo bash; make node-sdk or sudo make node-sdk?",
+        "ts": "1466095736.000157"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "raised PR to fix binary path <https:\/\/github.com\/hyperledger\/fabric\/pull\/1875>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "path correction for both membersrvc and peer binaries by ratnakar-asara \u00b7 Pull Request #1875 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1875",
+                "text": "Description Path correction in node-sdk unit test script Motivation and Context As per the Makefile changes, membersrv and peer binaries will be generated and placed under $FABRIC\/build\/bin f...",
+                "fallback": "GitHub: path correction for both membersrvc and peer binaries by ratnakar-asara \u00b7 Pull Request #1875 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/18034452?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1875",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466096966.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "it ran successfully on my Mac now",
+        "ts": "1466097868.000160"
+    },
+    {
+        "type": "message",
+        "user": "U1AJV5S2G",
+        "text": "<@U0ZR63HLK>, can you summarize everything you did?  it is still not working for me",
+        "ts": "1466102244.000161"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "I did a make clean and I see the below issue with \"make peer\"",
+        "edited": {
+            "user": "U13Q594J2",
+            "ts": "1466103204.000000"
+        },
+        "ts": "1466103080.000162"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "make peer\nmake: *** No rule to make target `sdk\/node\/doc\/assets\/js\/modernizr.js', needed by `build\/image\/src\/.dummy'.  Stop.",
+        "ts": "1466103080.000163"
+    },
+    {
+        "type": "message",
+        "user": "U13Q594J2",
+        "text": "Does anybody know the problem ?",
+        "ts": "1466103100.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U1AJV5S2G>: To summarize, starting from a fresh clone of my fork I did the following:",
+        "ts": "1466144467.000002"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "1. Setup the vagrant environment",
+        "ts": "1466144472.000003"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "2. Inside vagrant, I have updated node using the instructions described here: <https:\/\/davidwalsh.name\/upgrade-nodejs>",
+        "attachments": [
+            {
+                "service_name": "David Walsh Blog",
+                "title": "Upgrade Node.js via NPM",
+                "title_link": "https:\/\/davidwalsh.name\/upgrade-nodejs",
+                "text": "Learn how to upgrade Node.js with the NPM package system!",
+                "fallback": "David Walsh Blog: Upgrade Node.js via NPM",
+                "image_url": "https:\/\/davidwalsh.name\/wp-content\/themes\/punky\/images\/logo.png",
+                "ts": 1362657602,
+                "from_url": "https:\/\/davidwalsh.name\/upgrade-nodejs",
+                "image_width": 250,
+                "image_height": 194,
+                "image_bytes": 20875,
+                "service_icon": "https:\/\/davidwalsh.name\/wp-content\/themes\/punky\/images\/favicon-32.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466144520.000004"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "3. Then, I installed <https:\/\/www.npmjs.com\/package\/node-pre-gyp-github>",
+        "attachments": [
+            {
+                "service_name": "npm",
+                "title": "node-pre-gyp-github",
+                "title_link": "https:\/\/www.npmjs.com\/package\/node-pre-gyp-github",
+                "text": "A node-pre-gyp module which provides the ability to publish to GitHub releases.",
+                "fallback": "npm: node-pre-gyp-github",
+                "thumb_url": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/open-graph.png",
+                "from_url": "https:\/\/www.npmjs.com\/package\/node-pre-gyp-github",
+                "thumb_width": 1200,
+                "thumb_height": 630,
+                "service_icon": "https:\/\/www.npmjs.com\/static\/images\/touch-icons\/apple-touch-icon-57x57.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466144534.000006"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "4. I created a symbolic link in \/usr\/local\/bin",
+        "ts": "1466144550.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ln -s node-pre-gyp-github node-pre-gyp",
+        "ts": "1466144593.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "5. I modifed the Makefile to have the following line: cd .\/sdk\/node &amp;&amp; npm install --no-bin-links &amp;&amp; sudo npm install  -g typescript &amp;&amp; sudo npm install typings -g  --global &amp;&amp; typings install",
+        "ts": "1466144650.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "6. I run 'sudo make node-sdk-unit-tests'",
+        "ts": "1466144689.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I still have the test failing but at list it compiles",
+        "ts": "1466144715.000012"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I also want to understand why we need node-pre-gyp-github",
+        "ts": "1466144735.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and why we need the --no-bin-links",
+        "ts": "1466144745.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's strange",
+        "ts": "1466144749.000015"
+    }
+]

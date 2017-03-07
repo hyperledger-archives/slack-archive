@@ -1,0 +1,409 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you around?",
+        "ts": "1464789401.002710"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am",
+        "ts": "1464789410.002711"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm looking at a mock event manager",
+        "ts": "1464789429.002712"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the issue seems to be that queue() returns a chan, which implies that there needs to be a goroutine somewhere to service that chan",
+        "ts": "1464789454.002713"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the real event manager does have a goroutine",
+        "ts": "1464789479.002714"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes i know",
+        "ts": "1464789483.002715"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For the mock, I think that thread should be the test thread",
+        "ts": "1464789492.002716"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is, there needs to be one goroutine per manager",
+        "ts": "1464789514.002717"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why?",
+        "ts": "1464789530.002718"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because there need to be as many queues as managers",
+        "ts": "1464789531.002719"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i can't select on an array of queues",
+        "ts": "1464789553.002720"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, it's possible via reflection, though a bit slower",
+        "ts": "1464789582.002721"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(which might be fine for tests, though I'd keep it out of the production path)",
+        "ts": "1464789596.002722"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how?",
+        "ts": "1464789601.002723"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/stackoverflow.com\/questions\/19992334\/how-to-listen-to-n-channels-dynamic-select-statement>",
+        "attachments": [
+            {
+                "title": "how to listen to N channels? (dynamic select statement)",
+                "title_link": "https:\/\/stackoverflow.com\/questions\/19992334\/how-to-listen-to-n-channels-dynamic-select-statement",
+                "text": "to start an endless loop of executing two goroutines, I can use the code below:after receiving the msg it will start a new goroutine and go on for ever. c1 := make(chan string)c2 := make(chan",
+                "fallback": "how to listen to N channels? (dynamic select statement)",
+                "thumb_url": "https:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "https:\/\/stackoverflow.com\/questions\/19992334\/how-to-listen-to-n-channels-dynamic-select-statement",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1464789640.002724"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh god",
+        "ts": "1464789680.002726"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if queue() would work like inject(), then this wouldn't be necessary",
+        "ts": "1464789695.002727"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If this is a good reason to make `queue` accept a parameter rather than return a channel, then I'm fine with changing it.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1464789820.000000"
+        },
+        "ts": "1464789785.002728"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The channel initially seemed more flexible, but in this case, I can see where the function call is",
+        "ts": "1464789806.002729"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1464789829.002731"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll change it to see how the code looks",
+        "ts": "1464789840.002732"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've also got some pending changes which pulls the manager out of `pbft-core.go` which I'll post once I work the bugs out of it",
+        "ts": "1464789891.002733"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(basically just moves it out a layer, so the consumer, or pbftendpoint are the ones holding the reference)",
+        "ts": "1464789940.002734"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the timer factory is still passed in?",
+        "ts": "1464790029.002735"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, the timerfactory is now a parameter",
+        "ts": "1464790040.002736"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so... timer events don't work without the queue",
+        "ts": "1464790046.002737"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1464790047.002738"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What do you mean?",
+        "ts": "1464790061.002739"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the timer events know the implementation",
+        "ts": "1464790076.002740"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They do",
+        "ts": "1464790080.002741"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and can use the events chan directly",
+        "ts": "1464790082.002742"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1464790084.002743"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmmm",
+        "ts": "1464791206.002744"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then i can't mock it for the tests",
+        "ts": "1464791215.002745"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why not?",
+        "ts": "1464792022.002746"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if queue() does not return a chan, then the timer implementation needs to reach inside the manager to access the queue",
+        "ts": "1464792500.002747"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but to reach inside the mananger, it cannot use an interface, but needs to use the impl type",
+        "ts": "1464792527.002748"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which means that for testing the timer, we cannot use a mock manager.",
+        "ts": "1464792542.002749"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so, hm.",
+        "ts": "1464792889.002750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, hmm",
+        "ts": "1464793021.002751"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, it might be worth going ahead and try to start turning the non-mock manager into a timer wheel",
+        "ts": "1464793043.002752"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think essentially, it will still need one of the current style event timers, which is simply set to fire at the next most target event time",
+        "ts": "1464793084.002753"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But might simplify the mocking",
+        "ts": "1464793090.002754"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1464794092.002755"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i just would like to keep the changes small",
+        "ts": "1464794104.002756"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess i could introduce an internal interface",
+        "ts": "1464794120.002757"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> <https:\/\/github.com\/hyperledger\/fabric\/pull\/1675>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Move event manager out of pbft core by jyellick \u00b7 Pull Request #1675 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1675",
+                "text": "Description This changeset removes the instantiation of the event manager from pbft-core and pushes it into the plugin layer. The tests are correspondingly updated. Motivation and Context This ...",
+                "fallback": "GitHub: Move event manager out of pbft core by jyellick \u00b7 Pull Request #1675 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1675",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1464795548.002758"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1464796110.002760"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "setReceiver seems odd",
+        "ts": "1464796191.002761"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but yea",
+        "ts": "1464796201.002762"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's the weird bidirectional dependency between the event manager and event receiver.  The receiver needs some way to create timers the event manager understands, which means the timer factory needs a reference to the manager, which needed a reference to the receiver.  So, the `setReceiver` is a little odd, but was the cleanest way I could come up with breaking that cycle.",
+        "ts": "1464800960.002763"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "Hi <@U0XPR4NP4> <@U0XR6J961> - are there any consensus PRs ready for review?",
+        "ts": "1464805853.002764"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think 1605 is good to go, I can add a comment to that effect",
+        "ts": "1464805938.002765"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "thanks",
+        "ts": "1464806028.002766"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think 1623 could be closed, while <@U0UGH3X7X> reworks it, maybe he can chime in yay or nay",
+        "ts": "1464806039.002767"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "np to leave it open. whatever works best for you",
+        "ts": "1464806075.002768"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i'll close it ... waiting for kostas to update 756",
+        "ts": "1464806095.002769"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "it can be closed regardless of 756 updates",
+        "ts": "1464806114.002770"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure what <@U0XR6J961>'s response to 1675 in channel meant, I think it was tacit approval, but we can wait for more review from him, or maybe <@U0XQ35CDD> or <@U0UGH3X7X> can review now, was going to take a look at 1663 now that it's been rebased",
+        "ts": "1464806194.002771"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "1623 closed",
+        "ts": "1464806228.002772"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "taking a look at 1675 now  ... can't find simon's slack comment but probably better if documented in PR",
+        "ts": "1464806550.002773"
+    },
+    {
+        "user": "U1DFU0M32",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1DFU0M32|chenhua> has joined the channel",
+        "ts": "1464840821.002774"
+    }
+]

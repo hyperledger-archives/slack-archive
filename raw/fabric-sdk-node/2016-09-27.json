@@ -1,0 +1,408 @@
+[
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Hey All, I'm having some trouble with using `registerAndEnroll()` - when I submit a request to r &amp; e a new user called 'brian' this happens:\n\n```\n\/home\/tom\/go-workspace\/hfc-app\/app.js:129\n        if (err) throw Error(\" Failed to register and enroll \" + userName + \": \" + err);\n                 ^\n\nError:  Failed to register and enroll brian: Error: sql: no rows in result set\n    at Error (native)\n    at \/home\/tom\/go-workspace\/hfc-app\/app.js:129:24\n    at \/home\/tom\/go-workspace\/hfc-app\/node_modules\/hfc\/lib\/hfc.js:545:28\n    at \/home\/tom\/go-workspace\/hfc-app\/node_modules\/hfc\/lib\/hfc.js:787:24\n    at \/home\/tom\/go-workspace\/hfc-app\/node_modules\/hfc\/lib\/hfc.js:729:24\n    at \/home\/tom\/go-workspace\/hfc-app\/node_modules\/hfc\/lib\/hfc.js:1988:24\n    at \/home\/tom\/go-workspace\/hfc-app\/node_modules\/hfc\/node_modules\/grpc\/src\/node\/src\/client.js:414:9\n```\n\nDoes anyone know what `sql: no rows in result set` means and how to remedy it?",
+        "ts": "1474966048.000056"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Code:\n\n```\nchain.enroll(\"WebAppAdmin\", \"DJY27pEnl16d\", function(err, webAppAdmin)\n{\n\n    var userName = \"brian\";\n\n\n    \/\/ Make a registration request like so\n    var registrationRequest = {\n        enrollmentID: userName,\n        affiliation: \"bank_a\",\n        attributes: [{\"name\": \"account\", \"value\": \"Romanes eunt domus\"}]\n    };\n\n    \/\/Send it off to registerAndEnroll()\n    chain.registerAndEnroll(registrationRequest, function(err, dark) {\n        if (err) throw Error(\" Failed to register and enroll \" + userName + \": \" + err);\n        console.log(\"Registered and Enrolled %s successfully\\n\", userName);\n    });\n});\n```",
+        "ts": "1474966506.000057"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "On a separate node, I'm also getting this error: `Error:  Failed to register and enroll: Error: Identity or token does not match.`",
+        "ts": "1474969770.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2DHRR4TE>  - in my experience, I have seen this error for the following reasons:\n\n1) The version of hfc and the version of the fabric don't match.  Not sure how you are running the peer and membersrvcs, but if you are using the v0.6 Docker images, then you'll need to make sure you install hfc 0.6.x\n\n2) This can also occur if you are missing parameters in your request - you might need to add `roles: [\"client\"]` to your registration request",
+        "ts": "1474970053.000059"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "just checked versions, they are both 0.6.x",
+        "ts": "1474970169.000060"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "the adding the roles bit sounds about right though - thanks! :slightly_smiling_face:",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1474970225.000000"
+        },
+        "ts": "1474970218.000061"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Do you have any idea about the second error?",
+        "ts": "1474970240.000063"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "```\nfunction registerUsers()\n{\n    chain.enroll(\"foodmart\", \"CMS10pEQlB16\", function(err, pep)\n    {\n        if (err) throw Error(\" Failed to register and enroll: \" + err);\n\n        console.log(\"Enrolled \" + pep.name + \" successfully\\n\");\n\n        deployChaincode(pep);\n    });\n}\n\n```",
+        "ts": "1474970272.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "for the second error, my guess is that this user was never actually added to membership services (either via the YAML or via the register function) or you are using the wrong password",
+        "ts": "1474970478.000065"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right - I'll see about restarting them",
+        "ts": "1474970504.000066"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "thanks! :slightly_smiling_face:",
+        "ts": "1474970510.000067"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "As a follow up to this I've changed the function a bit to this:\n\n```\n    chain.getUser(\"foodmart\", function (err, userObject)\n    {\n        if(err)\n        {\n            \/\/ Doesn't exist\n            console.log(\"\\nNo user named foodmart\\n\");\n        }\n        else if (userObject.isEnrolled())\n        {\n            \/\/ Already enrolled\n            console.log(\"\\nFoodmart is already enrolled\\n\");\n        }\n        else\n        {\n            chain.enroll(\"foodmart\", \"CMS10pEQlB16\", function(err, pep)\n            {\n                if (err) throw Error(\" Failed to register and enroll: \" + err);\n\n                console.log(\"Enrolled \" + pep.name + \" successfully\\n\");\n\n                deployChaincode(pep);\n            });\n        }\n    });\n```\n\nI'm still getting the `Error:  Failed to register and enroll: Error: Identity or token does not match.` error :confused:\n\nMy yaml is as follows:\n\n```\neca:\n    users:\n        foodmart: 1 CMS10pEQlB16 institution_a      # buyer\n\n...\n\naca:\n    attributes:\n        attribute-entry-12: foodmart;institution_a;username;foodmart;2015-01-01T00:00:00-03:00;;\n\n```",
+        "ts": "1474971460.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2DHRR4TE>   - how are you running membersrvc?  Are you running the binary directly?",
+        "ts": "1474972610.000069"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0PB67X4K> sorted it out - deleting the \/var\/hyperledger\/production sorted it out",
+        "ts": "1474972685.000070",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K",
+                    "U0Z81GL6S"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep",
+        "ts": "1474972693.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that was going to be my suggestion",
+        "ts": "1474972699.000072"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": ":slightly_smiling_face:",
+        "ts": "1474972708.000073"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "but to answer your question I was running the binary directly yes",
+        "ts": "1474972719.000074"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "is it possible to decrypt the payload in node sdk when privacy is set to true??",
+        "ts": "1474986432.000075"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Hi, I followed steps in \"Self Contained Node.js Environment\"  and ran app (chaincode_example02) successfully with query result. However i'm seeing below errors\/warnings? in the logs..",
+        "ts": "1474990179.000076"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1F3CQ2HX|nhrishi> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GFFNF0B\/-.txt|Untitled>",
+        "file": {
+            "id": "F2GFFNF0B",
+            "created": 1474990186,
+            "timestamp": 1474990186,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1F3CQ2HX",
+            "editable": true,
+            "size": 353,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2GFFNF0B\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2GFFNF0B\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GFFNF0B\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2GFFNF0B-7a5135889e",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GFFNF0B\/-.txt\/edit",
+            "preview": "2016\/09\/27 09:57:49 transport: http2Server.HandleStreams failed to receive the preface from client: read tcp 172.17.0.3:7051->172.17.0.4:48770: read: connection reset by peer\r\n2016\/09\/27 09:58:19 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = \"transport: write tcp 172.17.0.3:7051->172.17.0.4:48774: write: broken pipe\"\r\n",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>2016\/09\/27 09:57:49 transport: http2Server.HandleStreams failed to receive the preface from client: read tcp 172.17.0.3:7051-&gt;172.17.0.4:48770: read: connection reset by peer<\/pre><\/div>\n<div><pre>2016\/09\/27 09:58:19 grpc: Server.Serve failed to create ServerTransport:  connection error: desc = &quot;transport: write tcp 172.17.0.3:7051-&gt;172.17.0.4:48774: write: broken pipe&quot;<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 3,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C1GSVKK1U"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1F3CQ2HX",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1F3CQ2HX|nhrishi>",
+        "bot_id": null,
+        "ts": "1474990187.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Any idea what is this about. Can provide detailed log if required.",
+        "ts": "1474990212.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0W7D64LC",
+        "text": "New SDK playback on <#C28M6TC90|playbacks>",
+        "ts": "1475000047.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0W7D64LC",
+        "text": "<@U13TWBRBL> <@U1KFBBWG1> Hey Guys, check out <@U1F3CQ2HX> request above",
+        "ts": "1475000084.000080"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1F3CQ2HX> more detailed logs would be helpful. were you trying to deploy a chaincode when this happened?",
+        "ts": "1475003093.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U13TWBRBL> I renamed the fabric-sdk-node image as we discussed. I also left it as JUST a Dockerfile that needs configuring <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1231\/>",
+        "ts": "1475017218.000082",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U13TWBRBL"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so <@U1KFBBWG1> change to publish the fabric-sdk-node image should probably be put on hold. We will get this merged, and cherry pick into v0.6 and publish as a top-level starter kit.",
+        "ts": "1475017282.000083"
+    },
+    {
+        "user": "U1KFBBWG1",
+        "inviter": "U0KM61BCP",
+        "text": "<@U1KFBBWG1|harrisob> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475017291.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "also <@U13TWBRBL> we should rename this channel to align with the other sdk channels",
+        "ts": "1475017344.000085"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U11HTMW0H> can you rename this channel to \u201cfabric-sdk-node\u201d to be consistent with other SDK channel names?",
+        "ts": "1475030661.000086"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "<@U13TWBRBL>: here is a log. Yes I think first error is at deploy and other at invoke. <https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2GCPG020\/-.txt>",
+        "edited": {
+            "user": "U1F3CQ2HX",
+            "ts": "1475030816.000000"
+        },
+        "ts": "1475030773.000087"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Pls let me know if you can't access the link.",
+        "ts": "1475030880.000089"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1F3CQ2HX> can you check the link? clicking it doesn\u2019t do anything and copy\/pasting it results in 404",
+        "ts": "1475032571.000090"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i suspect though that the message is caused by the peer code destroying the grpc connection on failed deploy\/invoke (I asked <@U0ULK2JPP> about similar errors before and was told as such)",
+        "ts": "1475032750.000091"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1F3CQ2HX|nhrishi> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GRSCMK4\/-.txt|Untitled>",
+        "file": {
+            "id": "F2GRSCMK4",
+            "created": 1475032858,
+            "timestamp": 1475032858,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1F3CQ2HX",
+            "editable": true,
+            "size": 54423,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2GRSCMK4\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2GRSCMK4\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GRSCMK4\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2GRSCMK4-9d80155d7b",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/nhrishi\/F2GRSCMK4\/-.txt\/edit",
+            "preview": "09:52:55.251 [crypto] Debugf -> DEBU 039 [validator.vp] Storing TLS key and certificate for user [vp]...\r\n09:52:55.252 [crypto] Debug -> DEBU 03a [validator.vp]  Registering node crypto engine...done!\r\n09:52:55.252 [crypto] Debugf -> DEBU 03b [validator.vp] Registration of node [%!s(crypto.NodeType=2)] with name [vp] completed\r\n09:52:55.252 [crypto] Debug -> DEBU 03c [validator.vp]  Closing keystore...\r\n09:52:55.252 [crypto] Debug -> DEBU 03d [validator.vp]  Closing keystore...done!\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>09:52:55.251 [crypto] Debugf -&gt; DEBU 039 [validator.vp] Storing TLS key and certificate for user [vp]...<\/pre><\/div>\n<div><pre>09:52:55.252 [crypto] Debug -&gt; DEBU 03a [validator.vp]  Registering node crypto engine...done!<\/pre><\/div>\n<div><pre>09:52:55.252 [crypto] Debugf -&gt; DEBU 03b [validator.vp] Registration of node [%!s(crypto.NodeType=2)] with name [vp] completed<\/pre><\/div>\n<div><pre>09:52:55.252 [crypto] Debug -&gt; DEBU 03c [validator.vp]  Closing keystore...<\/pre><\/div>\n<div><pre>09:52:55.252 [crypto] Debug -&gt; DEBU 03d [validator.vp]  Closing keystore...done!<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 563,
+            "lines_more": 558,
+            "preview_is_truncated": true,
+            "channels": [
+                "C1GSVKK1U"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1F3CQ2HX",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1F3CQ2HX|nhrishi>",
+        "bot_id": null,
+        "ts": "1475032859.000092"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and the reason for failed deploy might be that (guessing without seeing your logs) the peer is set to dev mode (\u2014peer-chaincodedev) instead of network mode, and as a result you can\u2019t do normal deploy with the \u2014path parameter",
+        "ts": "1475032866.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Line 91 and 537",
+        "ts": "1475032869.000094"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "yes it was in dev mode",
+        "ts": "1475033000.000095"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i see you are deploying using \u2014name mycc, seems to be working fine except for those two lines. so I\u2019m not sure now.",
+        "ts": "1475033110.000096"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "are there anything that\u2019s not working properly?",
+        "ts": "1475033148.000097"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "yes thats correct.  i managed to get query results but just these 2 errors.",
+        "ts": "1475033178.000098"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok, then i think you can either ignore them or ask <@U0ULK2JPP> if there\u2019s anything to be concerned with",
+        "ts": "1475033253.000099"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "or <@U0UKTPMG8>",
+        "ts": "1475033298.000100"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "I got similar grpc error when i try to enroll a user",
+        "ts": "1475033333.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "ok sure",
+        "ts": "1475033346.000102"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "Thanks Jim",
+        "ts": "1475033365.000103"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "yw, if you don\u2019t mind please let us know what you found out (and thanks)",
+        "ts": "1475033393.000104"
+    },
+    {
+        "type": "message",
+        "user": "U1F3CQ2HX",
+        "text": "sure",
+        "ts": "1475033405.000105"
+    },
+    {
+        "user": "U2GRGCQ7P",
+        "text": "<@U2GRGCQ7P|mikedeshazer> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475033451.000106"
+    }
+]

@@ -1,0 +1,473 @@
+[
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "As per my remarks in <#C0J02NU1E|general> discussion, vagrant up constantly fails when it tried to pull fabric-baseimage from <http:\/\/docker.io|docker.io>",
+        "ts": "1472906157.000043"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "==&gt; default: Building docker src-image\n==&gt; default: docker build -t hyperledger\/fabric-src build\/image\/src\n==&gt; default: Sending build context to Docker daemon 557.1 kB\n==&gt; default: Sending build context to Docker daemon 1.114 MB\n==&gt; default: Sending build context to Docker daemon 1.671 MB\n==&gt; default: Sending build context to Docker daemon 2.228 MB\n==&gt; default: Sending build context to Docker daemon 2.785 MB\n==&gt; default: Sending build context to Docker daemon 3.342 MB\n==&gt; default: Sending build context to Docker daemon 3.899 MB\n==&gt; default: Sending build context to Docker daemon 4.456 MB\n==&gt; default: Sending build context to Docker daemon 5.014 MB\n==&gt; default: Sending build context to Docker daemon 5.571 MB\n==&gt; default: Sending build context to Docker daemon 6.128 MB\n==&gt; default: Sending build context to Docker daemon 6.685 MB\n==&gt; default: Sending build context to Docker daemon 7.242 MB\n==&gt; default: Sending build context to Docker daemon 7.799 MB\n==&gt; default: Sending build context to Docker daemon 8.356 MB\n==&gt; default: Sending build context to Docker daemon 8.913 MB\n==&gt; default: Sending build context to Docker daemon  9.47 MB\n==&gt; default: Sending build context to Docker daemon 10.03 MB\n==&gt; default: Sending build context to Docker daemon 10.58 MB\n==&gt; default: Sending build context to Docker daemon 11.14 MB\n==&gt; default: Sending build context to Docker daemon  11.4 MB\n==&gt; default: Step 1 : FROM hyperledger\/fabric-baseimage:latest\n==&gt; default: Pulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n==&gt; default: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n==&gt; default: make: *** [build\/image\/src\/.dummy] Error 1\nThe SSH command responded with a non-zero exit status. Vagrant\nassumes that this means the command failed. The output for this command\nshould be in the log above. Please read the output to determine what\nwent wrong.\nmatanyahu@fabric-dev:~\/go\/src\/github.com\/hyperledger\/fabric\/devenv$",
+        "ts": "1472906170.000044"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1P1ZV6RF> this is quite odd\u2026can you tell me what branch\/sha you are on?  also, can you confirm if you have a .\/build directory present before you do the vagrant up?",
+        "ts": "1472921603.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "note, the image missing on dockerhub is FAD, but that should have been built for you locally before the src-image was compiled",
+        "ts": "1472921654.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i speculate that the problem is you have an old .\/build laying around",
+        "ts": "1472921671.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, actually yes I bet this is exactly whats wrong.",
+        "ts": "1472921700.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a beer at the next hackathon says you have a .\/build directory present before trying to do the vagrant up\u2026the fix would be to \u201cmake clean\u201d or manually delete it before running vagrant up",
+        "ts": "1472921744.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but please confirm its there before blowing it away",
+        "ts": "1472921752.000050"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0KPFAZNF> : I already owe you and <@U0ZJZBJLF> a beer for previous help :slightly_smiling_face: Should I run make clean from inside a vagrant VM? Interestingly, I had a git clone on 27th of August which I removed in order to pull the newest vagrant setup. Curiously, vagrant up from 27th August was downloading baseimage v 0.11 from hashicorp whereas the current setup downloads v. 0.10.",
+        "ts": "1472926997.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I now deleted the \/fabric folder from my host and did a clean git clone. Starting my vagrant up now",
+        "ts": "1472927034.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "It doesn't matter where you run it, as long as the .\/build dir gets removed",
+        "ts": "1472927161.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "We had to revert a patch that upgraded to 11, that's why you saw that",
+        "ts": "1472927186.000054"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "where is .\/build directory located?",
+        "ts": "1472928255.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Top level of fabric repo",
+        "ts": "1472928877.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Where the Makefile is",
+        "ts": "1472928888.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "there it is",
+        "ts": "1472928906.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "thanks",
+        "ts": "1472928908.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "how have we made this so complex for people?  seems like new folks are having a lot of trouble.  I was able to wade through things and was pretty easily able to get the whole build process running natively (i.e. no VirtualBox) on Ubuntu 16.04  (I actually did this on 3 different hosts)",
+        "ts": "1472929008.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(because I refuse to use VirtualBox)  :wink:",
+        "ts": "1472929059.000061"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0PB67X4K> : I am interested how your deployment topology looks like and what was your approach to deployment process. I will soon have to make architectural decisions for a PoC and I am torn apart between various pre-existing choices (Bluemix, devenv) and DIY.",
+        "ts": "1472929117.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1P1ZV6RF>  - for me, it is pretty simple.   I actually (occasionally) contribute code to the fabric so in that case I run my build environment straight on Ubuntu 16.04 on my host system.    For building chaincode, I simply pull the Docker images and use Docker Compose to get a local peer and member services up and running.  I also deploy my chaincode and apps to Bluemix  (btw - I actually own development of the Bluemix service so it would be sad if I didn't use it myself)",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1472929409.000000"
+        },
+        "ts": "1472929358.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1P1ZV6RF>: I think my theory was wrong.  I just looked in devenv\/setup.sh and we do in fact call \"make clean\"",
+        "ts": "1472930874.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "This should have fixed the issue I was concerned with",
+        "ts": "1472930888.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So, not sure what's going on with your setup yet",
+        "ts": "1472930904.000067"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "<@U0KPFAZNF> : I ran my setup again and it worked out fine, at least there was no fatal error this time. My virtualbox vm is up and running. I will now do tests to make sure that I am not blocked in the same place as couple of days ago",
+        "ts": "1472931334.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ok.  Well, glad it's working",
+        "ts": "1472931359.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'm not sure what went wrong though ",
+        "ts": "1472931373.000070"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I think it had to be somehow related to an improper cleanup before I did git clone to pull newest devenv files. The cleanup process I applied was: vagrant halt, vagrant destroy, rm -rf .\/fabric",
+        "ts": "1472931627.000071"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "What seems to help was a snapshot I did on my VM before doing the first vagrant up couple of days ago which cloned files from 27th August",
+        "ts": "1472931670.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I did snapshot rollback to return to the moment just before vagrant up. I removed .\/fabric folder, did git clone again and eventually, vagrant up with newest files. Seems to work now",
+        "ts": "1472931719.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I will run make behave now",
+        "ts": "1472931774.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1P1ZV6RF>  - if you just did a git pull from master, then unit tests are broken",
+        "ts": "1472931859.000079"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I messed up with unit tests, will redo them after make behave ends",
+        "ts": "1472931935.000080"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I ran it while a peer was already running",
+        "ts": "1472931948.000081"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "my fault",
+        "ts": "1472931952.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - but in any case, they are broken  :slightly_smiling_face:",
+        "ts": "1472931969.000083"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "what do you suggest then?",
+        "ts": "1472931990.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well that won't stop you from building and running the peer images",
+        "ts": "1472932010.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "e.g. `make peer` and make `make peer-image`  (or something like that)",
+        "ts": "1472932037.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but unit tests will fail when you get to the chaincode unit tests",
+        "ts": "1472932056.000087"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "so, to understand it well, what you suggest is to skip tests as in the manual: <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/dev-setup\/build\/> and go straight to network setup and chaincode setup",
+        "ts": "1472932110.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep",
+        "ts": "1472932130.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "should be able to do that",
+        "ts": "1472932135.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "out of curiosity : why is it suggested to perform these tests and why are tests broken ?",
+        "ts": "1472932186.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there was a change introduced which broke the tests -   <https:\/\/jira.hyperledger.org\/browse\/FAB-305>",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1472932284.000000"
+        },
+        "ts": "1472932275.000092"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "fyi: Failing scenarios:\n  peer_basic.feature:582  chaincode example02 with 4 peers and 1 membersrvc, issue #680 (State transfer) -- @1.1 Consensus Options\n  peer_basic.feature:628  chaincode example02 with 4 peers and 1 membersrvc, issue #724 -- @1.1 Consensus Options\n  peer_basic.feature:1081  chaincode example02 with 4 peers, stop and start alternates, reverse\n  peer_basic.feature:1380  chaincode authorizable_counter with 4 peers, two stopped, bring back both -- @1.1 Consensus Options\n  peer_basic.feature:1381  chaincode authorizable_counter with 4 peers, two stopped, bring back both -- @1.2 Consensus Options\n  peer_logging.feature:12  Invoke is attempted after deploy in Dev Mode\n  peer_logging.feature:22  Query is attempted after deploy in Dev Mode\n  peer_logging.feature:32  Invoke is attempted before deploy in Dev Mode\n  peer_logging.feature:40  Query is attempted before deploy in Dev Mode\n\n3 features passed, 2 failed, 3 skipped\n29 scenarios passed, 9 failed, 8 skipped\n449 steps passed, 9 failed, 293 skipped, 0 undefined\nTook 35m17.095s\nmake: *** [behave] Error 1",
+        "ts": "1472934281.000094"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "but I assume this is normal",
+        "ts": "1472934290.000095"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "are variables CORE_PEER_ID and CORE_VM_ENDPOINT in <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/> referring to core.yaml? If yes, where can I find it within vagrant box? I do not see it in .\/fabric . From what I understand, these two variables should be written into docker compose yml file which has to be created before running the first (root) node.",
+        "edited": {
+            "user": "U1P1ZV6RF",
+            "ts": "1472936121.000000"
+        },
+        "ts": "1472935597.000096"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I also need core.yaml in order to switch from noops to pbft consensus but it is not clear where should this file be located or created. EDIT: I found it in .\/peer folder.",
+        "edited": {
+            "user": "U1P1ZV6RF",
+            "ts": "1472937587.000000"
+        },
+        "ts": "1472936181.000100"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "there is one additional thing that is not clear to me : if I want to run PBFT consensus, in addition to editing\/creating core.yaml file as per <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/#assigning-a-value-for-core_peer_id> , should I also update docker-compose file by adding the third and fourth VPx like this:",
+        "edited": {
+            "user": "U1P1ZV6RF",
+            "ts": "1472937619.000000"
+        },
+        "ts": "1472936355.000101"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "vp2:\n  extends:\n    service: vp0\n  environment:\n    - CORE_PEER_ID=vp2\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n  links:\n    - vp0",
+        "ts": "1472936371.000102"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "vp3:\n  extends:\n    service: vp0\n  environment:\n    - CORE_PEER_ID=vp3\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:7051\n  links:\n    - vp0",
+        "ts": "1472936387.000103"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "after editing core.yaml and docker-compose.yaml I ran docker compose up and I found 4 nodes up and running. However, how can I distinguish PBFT from NOOPs within log stream?",
+        "ts": "1472937672.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "At the beginning of the peer log, you'll see the consensus config values printed out. Look for the string [consensus]",
+        "ts": "1472939293.000108"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I am not sure if my setup is correct",
+        "ts": "1472939874.000109"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1P1ZV6RF|matanyahu> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F28252ULQ\/docker-compose_yml.txt|docker-compose.yml> and commented: My docker-compose.yml file (no CA integrated yet)",
+        "file": {
+            "id": "F28252ULQ",
+            "created": 1472939955,
+            "timestamp": 1472939955,
+            "name": "docker-compose_yml.txt",
+            "title": "docker-compose.yml",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1P1ZV6RF",
+            "editable": true,
+            "size": 729,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28252ULQ\/docker-compose_yml.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28252ULQ\/download\/docker-compose_yml.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F28252ULQ\/docker-compose_yml.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F28252ULQ-2f4d765b70",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F28252ULQ\/docker-compose_yml.txt\/edit",
+            "preview": "vp0:\r\n  image: hyperledger\/fabric-peer\r\n  environment:\r\n    - CORE_PEER_ID=vp0\r\n    - CORE_PEER_ADDRESSAUTODETECT=true\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vp0:<\/pre><\/div>\n<div><pre>  image: hyperledger\/fabric-peer<\/pre><\/div>\n<div><pre>  environment:<\/pre><\/div>\n<div><pre>    - CORE_PEER_ID=vp0<\/pre><\/div>\n<div><pre>    - CORE_PEER_ADDRESSAUTODETECT=true<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 36,
+            "lines_more": 31,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2824RMAS",
+                "created": 1472939955,
+                "timestamp": 1472939955,
+                "user": "U1P1ZV6RF",
+                "is_intro": true,
+                "comment": "My docker-compose.yml file (no CA integrated yet)",
+                "channel": ""
+            }
+        },
+        "user": "U1P1ZV6RF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1P1ZV6RF|matanyahu>",
+        "bot_id": null,
+        "ts": "1472939956.000110"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1P1ZV6RF|matanyahu> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F282EK0DV\/my_core_yaml_file_in___peer_folder.txt|My core.yaml file in .\/peer folder>",
+        "file": {
+            "id": "F282EK0DV",
+            "created": 1472940057,
+            "timestamp": 1472940057,
+            "name": "My_core_yaml_file_in___peer_folder.txt",
+            "title": "My core.yaml file in .\/peer folder",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1P1ZV6RF",
+            "editable": true,
+            "size": 56,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F282EK0DV\/my_core_yaml_file_in___peer_folder.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F282EK0DV\/download\/my_core_yaml_file_in___peer_folder.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F282EK0DV\/my_core_yaml_file_in___peer_folder.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F282EK0DV-105d2d923b",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/matanyahu\/F282EK0DV\/my_core_yaml_file_in___peer_folder.txt\/edit",
+            "preview": "peer.validator.consensus=pbft\r\npeer.id=vp0,vp1,vp2,vp3\r\n",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>peer.validator.consensus=pbft<\/pre><\/div>\n<div><pre>peer.id=vp0,vp1,vp2,vp3<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 3,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1P1ZV6RF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1P1ZV6RF|matanyahu>",
+        "bot_id": null,
+        "ts": "1472940057.000111"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "Any ideas as to how to set it up correctly ad integrate CA into docker-compose would be greatly appreciated",
+        "ts": "1472940279.000112"
+    },
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "I currently see nothing to edit in membersrvc.yaml file - the default content seems to be ok",
+        "ts": "1472940399.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "Take a look at the docker-compose files in hyperledger\/fabric\/bddtests for examples",
+        "ts": "1472943514.000114"
+    }
+]

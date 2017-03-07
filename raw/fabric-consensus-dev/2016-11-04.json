@@ -1,0 +1,892 @@
+[
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, when a client issues a Broadcast RPC, I would expect that all envelopes that are getting pushed to that RPC belong to the same channel\/`ChainID`. This means that the first envelope to be sent over that session effectively sets the channel for that session. Then, in the case of receiving an envelope that corresponds to a different channel, I want to simply send back a `BAD_REQUEST` response and ignore that message. The other approach, that <@U0XPR4NP4> favors, would be to not ignore that message but route it to the proper channel instead. What do we think is the right way to go? <@U0N1D1UAE> and <@U0PB67X4K> may have thoughts on this.",
+        "ts": "1478268253.003232"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Any potential performance issues aside, I like the idea of asking\/expecting the client to issue a different RPC per channel.",
+        "ts": "1478268335.003233"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "separate RPC streams for separate channels",
+        "ts": "1478268520.003234"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "define channel ID on RPC",
+        "ts": "1478268530.003235"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That makes more sense to me as well.",
+        "ts": "1478268551.003236"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "drop RPC connection when you detect an invalid message",
+        "ts": "1478268551.003237"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Drop or `BAD_REQUEST` and move on?",
+        "ts": "1478268560.003238"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The latter is what I do now.",
+        "ts": "1478268568.003239"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "return BAD_REQUEST when closing the RPC stream?",
+        "ts": "1478268595.003240"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Return BAD_REQUEST and keep serving the stream.",
+        "ts": "1478268608.003241"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Later on, I want to have a threshold that says:",
+        "ts": "1478268617.003242"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "If you issue more than X BAD_REQUESTS during that session, I'm going to close the stream.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478268651.000000"
+        },
+        "ts": "1478268631.003243"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "But I don't want to get too clever about it.",
+        "ts": "1478268636.003244"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what?",
+        "ts": "1478268658.003246"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that is insane",
+        "ts": "1478268689.003247"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "one bad request, drop it",
+        "ts": "1478268700.003248"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "What exactly makes it \"insane\"?",
+        "ts": "1478268707.003249"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's way complicated",
+        "ts": "1478268718.003250"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That I cannot argue against, which is why I said I don't want to get too clever about it. One BAD_REQUEST and the stream drops, it is.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1478268827.000000"
+        },
+        "ts": "1478268747.003251"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wouldn't even send a response",
+        "ts": "1478268770.003252"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Heh.",
+        "ts": "1478268778.003253"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd close the stream with BAD_REQUEST",
+        "ts": "1478268780.003254"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "unless that's not an option to have a single value on rpc close",
+        "ts": "1478268810.003255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all of this project is way complicated",
+        "ts": "1478268837.003257"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well then shouldn't we make Broadcast a unary service rather than a streaming service?",
+        "ts": "1478269168.003258"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think the idea was to provide a stream of acks",
+        "ts": "1478269211.003259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "garisingh: or do you mean outgoing?",
+        "ts": "1478269229.003260"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i did benchmarks, and RPC setup overhead is significant",
+        "ts": "1478269247.003261"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "factor 10 i remember?",
+        "ts": "1478269260.003262"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is one of the shortcoming of the proto service definitions to me.  We cannot define 'initial stream parameters', like \"This broadcast is for channel X\", they must be implicitly set after the fact.  So from an API usage perspective, it's non-obvious that you cannot mix trans destined for different chains.  My proposal was to say a client _should_ open a stream per channel for broadcast, but as there's no way to prevent the client from simply connecting sending one, disconnecting, and repeating, that there was no real advantage to disallowing mixed chain IDs.",
+        "ts": "1478269275.003263"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you can tell from the message what channel it goes to?",
+        "ts": "1478269378.003264"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1478269381.003265"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes.",
+        "ts": "1478269382.003266"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well then why do you need separate channels at all&gt;?",
+        "ts": "1478269390.003267"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; well then why do you need separate channels at all&gt;?\n\nI don't follow",
+        "ts": "1478269415.003268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "&gt; So, when a client issues a Broadcast RPC, I would expect that all envelopes that are getting pushed to that RPC belong to the same channel\/`ChainID`.",
+        "ts": "1478269433.003269"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Every request has a chainID embedded in it.  The question is, do we implicitly 'lock' a stream to the first chainID we observe and error on subsequent requests if that chainID changes, or do we tolerate it and route it correctly.  ~I think from a Kafka perspective, routing involves building a producer for the channel, and since the client is not disconnecting, it's nonobvious whether to destroy the old producer.~",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1478269625.000000"
+        },
+        "ts": "1478269537.003270"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Not really. I was thinking that from a performance perspective, mixing and matching doesn't really hurt us.",
+        "ts": "1478269582.003271"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh, my mistake. I assumed it was a Kafka resource allocation\/destruction problem.",
+        "ts": "1478269606.003272"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And you check every envelope for the chainID in its header anyway, so routing it to the right channel (for block creation) is not really a problem.",
+        "ts": "1478269625.003274"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(At least the way I'm writing it now.)",
+        "ts": "1478269662.003275"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so seems there is no reason not to support multiple channels over the same session?",
+        "ts": "1478269668.003276"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so while everybody is here",
+        "ts": "1478269707.003277"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Other than enforcing a \"right\" behavior, no: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478268335003233>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1478268335003233",
+                "fallback": "[November 4th, 2016 7:05 AM] kostas: Any potential performance issues aside, I like the idea of asking\/expecting the client to issue a different RPC per channel.",
+                "ts": "1478268335.003233",
+                "author_subname": "kostas",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "Any potential performance issues aside, I like the idea of asking\/expecting the client to issue a different RPC per channel.",
+                "author_name": "Kostas Christidis",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/kostas",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-04-05\/31983107923_80db5353e9278df980c7_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1478269712.003278"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have only a few days left before i leave",
+        "ts": "1478269716.003280"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":disappointed:",
+        "ts": "1478269727.003281"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it would make sense to get sbft in and have some people get familiar with it",
+        "ts": "1478269735.003282"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also once gabor's sbft application is in, testers should tear it apart",
+        "ts": "1478269788.003283"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it takes forever to get any patch in",
+        "ts": "1478269821.003284"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's ridiculous",
+        "ts": "1478269825.003285"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I don't have any issues with trying to get it in.  We are doing the same thing with the couchdb stuff on the ledger - may not make v1.0 cut, but still being merged in",
+        "ts": "1478269844.003286"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the core of that sbft application is half a year old",
+        "ts": "1478269851.003287"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "block chain without bft...",
+        "ts": "1478269886.003288"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not just use database replication then",
+        "ts": "1478269901.003289"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0XR6J961> - are these they only open requests:    <https:\/\/gerrit.hyperledger.org\/r\/#\/q\/owner:%22Simon+Schubert%22+status:open>",
+        "ts": "1478270147.003290"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea somebody merged some commits in the last minutes",
+        "ts": "1478270196.003291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah chris ferris is merging",
+        "ts": "1478270331.003292"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you have a particular changeset that is having problems, you can always post to <#C1K16MW77|fabric-pr-review> which seems to push review quickly",
+        "ts": "1478270375.003293"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well i guess gerrit is working out exactly as i predicted it would work out",
+        "ts": "1478270451.003294"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the idea of reviews is that people familiar with the code review...",
+        "ts": "1478270609.003295"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "that's honestly why I have not review the sbft code other than looking through it.  I am no expert in that area.  Other areas I can be helpful",
+        "ts": "1478271468.003296"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well now it is in",
+        "ts": "1478271501.003297"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and hopefully we can merge the sbft app as well",
+        "ts": "1478271514.003298"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I +2-ed because at least once it's in, we can more easily test\/hack, but to Chris's point, there is almost no test attached to it",
+        "ts": "1478271629.003299"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because it is glue logic",
+        "ts": "1478271781.003300"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you test it by running the app",
+        "ts": "1478271789.003301"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, could hook it into the behave tests though",
+        "ts": "1478271922.003302"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Since they already exercise the ab api)",
+        "ts": "1478271940.003303"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for example",
+        "ts": "1478272043.003304"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "tho i think behave is way sluggish",
+        "ts": "1478272055.003305"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there must be a reason that the test team used go for scripting their scenarios",
+        "ts": "1478272089.003306"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "some of the new BDD tests are written in Go now (but using the behave meta language - at least I think that's the case)",
+        "ts": "1478272747.003307"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but 100% agree - there were plenty of Go BDD \/ test frameworks available",
+        "ts": "1478272785.003308"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i call BS on BDD",
+        "ts": "1478272808.003309"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's what was called integration test before",
+        "ts": "1478272817.003310"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":slightly_smiling_face:",
+        "ts": "1478272818.003311"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I agree",
+        "ts": "1478272828.003312"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0XR6J961> I disagree - everything should have unit tests, period",
+        "ts": "1478272920.003313"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we should not be relying on integration\/bdd tests to know whether the code is broken or not",
+        "ts": "1478272938.003314"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but we can rely on unit tests?",
+        "ts": "1478272953.003315"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not everything is a nail",
+        "ts": "1478272971.003316"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "note also that I was only submitting the patches that had already been 2+2\u2019ed and there was no comment as to why not merged\u2026",
+        "ts": "1478272983.003317"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "different code needs different ways of testing",
+        "ts": "1478272986.003318"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i appreciate the merging",
+        "ts": "1478272999.003319"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "of course, but this project has a lot to learn about testing\u2026 our code coverage is just over 50% which for a mature open source project is abysmal",
+        "ts": "1478273025.003320"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well good that this is not a mature open source project",
+        "ts": "1478273043.003321"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we are also dealing with largely broken bdd tests which are not contributing to validation, so again, major fail",
+        "ts": "1478273061.003322"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1478273089.003323"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also the bdd tests took so long to run for me that it was impossible to use them in the development loop",
+        "ts": "1478273107.003324"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "all the more reason to have unit tests that at least help developers know when they are breaking stuff - immediately if they are developing with a watch on the code",
+        "ts": "1478273131.003325"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i totally agree",
+        "ts": "1478273140.003326"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but not every piece of code benefits equally much from a unit test",
+        "ts": "1478273157.003327"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sometimes an integration test works better",
+        "ts": "1478273174.003328"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we also accumulate significant TD by lack of tests as code drifts yet we have no idea what we are breaking until we hit an edge case that isn\u2019t part of happy path testing that seems to be all that we currently have",
+        "ts": "1478273188.003329"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the sbft code barely has any unit tests",
+        "ts": "1478273231.003330"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "it catches stupid errors faster and again, much of our integration testing is not testing edge cases effectively",
+        "ts": "1478273233.003331"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "essentially all tests are integration tests",
+        "ts": "1478273237.003332"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because a distributed system implementation just can't be tested thoroughly with unit tests",
+        "ts": "1478273251.003333"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "only - I agree",
+        "ts": "1478273261.003334"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I am not asking or saying only",
+        "ts": "1478273267.003335"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I am saying that all code should have unit tests",
+        "ts": "1478273275.003336"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, that's where i disagree",
+        "ts": "1478273294.003337"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is not a closed source project - it is open source\u2026 code will come from many sources - in fact, we want that",
+        "ts": "1478273348.003338"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "and when developers see code without unit tests, it gives them little confidence and often they don\u2019t engage",
+        "ts": "1478273376.003339"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah?",
+        "ts": "1478273400.003340"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you have any links that support that claim?",
+        "ts": "1478273415.003341"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "look at any other mature open source project - they will have test coverage in the high 80 or low 90s",
+        "ts": "1478273416.003342"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this is human nature",
+        "ts": "1478273425.003343"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but this is not a mature project!",
+        "ts": "1478273427.003344"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "that is evident",
+        "ts": "1478273434.003345"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the design isn't even finalized",
+        "ts": "1478273442.003346"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, the sbft code has almost no unit tests, but has almost complete test coverage safe error returns\/panics",
+        "ts": "1478273673.003347"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all done via integration tests",
+        "ts": "1478273688.003348"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you claim it still needs unit tests?",
+        "ts": "1478273706.003349"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U1AU8DRQR>: <https:\/\/jira.hyperledger.org\/browse\/FAB-967>",
+        "ts": "1478273908.003350"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<http:\/\/jepsen.io\/analyses.html> Maybe ask this chap :slightly_smiling_face:",
+        "ts": "1478274059.003351"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe first build the system until we're confident that it works flawlessly, then get our dreams crushed by jepsen",
+        "ts": "1478274112.003352"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "crushed _in public_",
+        "ts": "1478274133.003353"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "same thing",
+        "ts": "1478274162.003354"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i'm out for the next week",
+        "ts": "1478274476.003355"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "good that we got the sbft stuff in",
+        "ts": "1478274481.003356"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That's the aphyer guy? ",
+        "ts": "1478275072.003357"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Yes.",
+        "ts": "1478275084.003358"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "He had a really funny profile pic on github",
+        "ts": "1478275104.003359"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Why can't we have integration tests in unit tests?",
+        "ts": "1478275153.003360"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In gossip i have tests that spawn 20 nodes and kill some of them, check they all replicate information, etc.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1478275278.000000"
+        },
+        "ts": "1478275187.003361"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "If it was easty to configure fabric peers in pure go that could have been done",
+        "ts": "1478275242.003362"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea but that's not a unit test",
+        "ts": "1478275349.003364"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's an integration test",
+        "ts": "1478275354.003365"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Yeah i mean- that they will run as a unit test",
+        "ts": "1478275382.003366"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well they run in go test, but i wouldn't call it a unit test",
+        "ts": "1478275401.003367"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Go\u2019s http has an interesting package that makes testing easier:\n<https:\/\/golang.org\/pkg\/net\/http\/httptest\/>\nSeems like a good model to emulate?",
+        "ts": "1478275485.003368"
+    },
+    {
+        "user": "U2XNKMF24",
+        "text": "<@U2XNKMF24|james> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478276147.003369"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "For the glue code in sbft app, I will try to add tests next week. Hope I will have enough time to finish them ",
+        "ts": "1478280518.003372",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "user": "U11MANG9G",
+        "text": "<@U11MANG9G|jonathanlevi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1478285408.003373"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Just to drop a line here: I am of the opinion that in the long run, tests accelerate development time\/time to market. It builds confidence in existing code\/modules\/helps updating\/extending\/refactoring and re-using\u2026",
+        "ts": "1478289107.003374"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Even if the code is not \u201cmature\u201d or in \u201cproduction\u201d yet\u2026 or some would say: especially when the code is not \u201cmature\u201d or in \u201cproduction\u201d it should be tested as much as possible.",
+        "ts": "1478289160.003375"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Unit-tests are really great. Especially during\/for development\/developers.",
+        "ts": "1478289179.003376",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OK, OK, 2 lines (if you have like a 65\u201d monitor probably :wink:. Not true for my laptop).",
+        "ts": "1478289215.003377"
+    }
+]

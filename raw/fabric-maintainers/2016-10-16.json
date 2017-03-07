@@ -1,0 +1,365 @@
+[
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> I think some of the confusion was because of  ChaincodeInvokeChaincode failure in DEV env - due to developers having files in that folder (\u201clog\u201d file, \u201cchaincode_example02\u201d exe etc) which were  leftovers from some previous runs. This caused users to \u201cfix\u201d it by changing the hash to make it work in the dev env and submitting it. This of course caused it to fail in CI. Later it was reverted\u2026 when dust settled down CI began to work again but of course the DEV failed again when chaincode_example02 folder was not cleaned up.",
+        "ts": "1476622438.001257"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that\u2019s the one error I know of\u2026 there may be others. Went into details so we can avoid this in future",
+        "ts": "1476622480.001258"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "FYI, I dont think we are out of the woods",
+        "ts": "1476628640.001259"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1413\/>",
+        "ts": "1476628642.001260"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "theres no way that patch should fail",
+        "ts": "1476628652.001261"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there\u2019s some anecdotal evidence to suggest there might be a race condition in the code, and that would explain the unreliable results",
+        "ts": "1476628679.001262"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "this is the second build failure ive seen that implied a timing problem",
+        "ts": "1476628696.001263"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> right. I remember seeing that once a way when working with <@U11MANG9G>",
+        "ts": "1476628816.001264"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "should we do a reverify to see if it clears up ? (just a datapoint\u2026 not saying we submit if it does)",
+        "ts": "1476628879.001265"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my recommendation, we force V+1 1413 so we at least get the metadata for the release managed properly",
+        "ts": "1476628894.001266"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there\u2019s virtually no scenario I can think of where we would not want 1413 applied on top of the tag",
+        "ts": "1476628930.001267"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and many bad ones if we dont",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1476629105.000000"
+        },
+        "ts": "1476628942.001268"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok. It should have no bearing on the failure anyway",
+        "ts": "1476629009.001269"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in terms of the branch stability, my guess is that there is a real bug w.r.t timing but we should address that as a v0.6.2 follow up",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1476629115.000000"
+        },
+        "ts": "1476629012.001270"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there should be consensus that this is the right approach, though, so please make sure its discussed before taking that action",
+        "ts": "1476629061.001271"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so this is what I gather (1) merge prev to 1413 at least passed CI once (2) 1413 is a tagging change that should not affect that outcome",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1476629172.000000"
+        },
+        "ts": "1476629140.001274"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF> did I say that right ?",
+        "ts": "1476629152.001275"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sounds good",
+        "ts": "1476629197.001277"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I might also add (3) its important that 1413 immediately proceed the release tag, which is current HEAD",
+        "ts": "1476629236.001278"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thus the urgency",
+        "ts": "1476629245.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right\u2026 I don\u2019t think we have choice",
+        "ts": "1476629504.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "given 1413 did not introduce code\/bug, we cannot use it to debug. might as well debug post 0.6.2.",
+        "ts": "1476629570.001281"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KM61BCP> <@U0PB67X4K> <@U11MANG9G> what do you think.. ?",
+        "ts": "1476629619.001282"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "one more datapoint\u2026 that unit-test failure from CI is because of this",
+        "ts": "1476629875.001283"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2PUUCE9L\/pasted_image_at_2016_10_16_10_57_am.png|Pasted image at 2016-10-16, 10:57 AM>",
+        "file": {
+            "id": "F2PUUCE9L",
+            "created": 1476629880,
+            "timestamp": 1476629880,
+            "name": "Pasted image at 2016_10_16 10_57 AM.png",
+            "title": "Pasted image at 2016-10-16, 10:57 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 645155,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2PUUCE9L\/pasted_image_at_2016_10_16_10_57_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2PUUCE9L\/download\/pasted_image_at_2016_10_16_10_57_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 230,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 307,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 460,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 614,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2PUUCE9L-2afb38c01e\/pasted_image_at_2016_10_16_10_57_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 655,
+            "image_exif_rotation": 1,
+            "original_w": 1868,
+            "original_h": 1194,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F2PUUCE9L\/pasted_image_at_2016_10_16_10_57_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2PUUCE9L-ba41bf9563",
+            "channels": [
+                "C28CXQXD5"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1476629884.001284"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I believe this is known problem with the logging",
+        "ts": "1476629933.001285"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-481>",
+        "ts": "1476630084.001286"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so one more reason not to hold this up...",
+        "ts": "1476630138.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF> <@U0ULK2JPP>  - re 1413 - so want exactly do we want to do here?  force the verify and merge it?",
+        "ts": "1476631478.001288"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats my proposal: should have majority agreement though",
+        "ts": "1476631541.001289"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh - the error in there is a race condition as <@U0ULK2JPP> pointed out.",
+        "ts": "1476631544.001290"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, im guessing that was at least part of the flakiness observed leading up to v0.6.1 release",
+        "ts": "1476631564.001291"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it does not happen all the time but does occasionally pop up",
+        "ts": "1476631564.001292"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yes, and its in the go-logging package (or in our use of it)",
+        "ts": "1476631600.001293"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BTW - for v1, I still propose we move to logrus for logging  :wink:",
+        "ts": "1476631603.001294",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "certainly would be worth an investigation after this I\u2019m sure :slightly_smiling_face:",
+        "ts": "1476631642.001295"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it's a nice package and already used by the godockerclient  since docker uses it as well",
+        "ts": "1476631657.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I see",
+        "ts": "1476631665.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "good recommendation then",
+        "ts": "1476631672.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it handles concurrency, etc",
+        "ts": "1476631677.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "YES!!!",
+        "ts": "1476631683.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1476631684.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "plus actually supports outputting to different sources like mature logging should  :wink:",
+        "ts": "1476631695.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I assume its performant as well \u2026not a big tradeoff for concurrency etc.",
+        "ts": "1476631717.001303"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1476631723.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "of course, we\u2019d have to wrap up serialization if its not concurrency safe\u2026 which will likely be less performant at the higher level.. so scratch the above question please",
+        "ts": "1476631830.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "btw, that  is what <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1261\/> does for FAB-481",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1476631901.000000"
+        },
+        "ts": "1476631866.001306"
+    }
+]

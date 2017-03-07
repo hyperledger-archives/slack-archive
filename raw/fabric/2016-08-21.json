@@ -1,0 +1,466 @@
+[
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "Hi guys, i am trying to set up a 4 peer network in docker containers....but i always get this error at deploy:\n[dockercontroller] Start -&gt; DEBU 0e5^[[0m start - cannot create client invalid endpoint\nAny idea?",
+        "ts": "1471781594.001464"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it can't find the endpoint for the docker daemon",
+        "ts": "1471781867.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what is the value of `CORE_VM_ENDPOINT`",
+        "ts": "1471782082.001466"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "<@U0PB67X4K>: 172.17.0.1",
+        "ts": "1471782473.001468"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "172.17.0.1:2375  ?",
+        "ts": "1471782498.001470"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "did you start the Docker daemon with the -H option?",
+        "ts": "1471782509.001471"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "yepp",
+        "ts": "1471782510.001472"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "yes",
+        "ts": "1471782517.001473"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what OS are you running on?",
+        "ts": "1471782536.001474"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "RHEL 7.2",
+        "ts": "1471782581.001475"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`ifconfig docker0`",
+        "ts": "1471782702.001476"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "i ve restarted the docker daemon  to be sure its with -H",
+        "ts": "1471782704.001477"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "yepp: inet 172.17.0.1",
+        "ts": "1471782761.001478"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`telnet 172.17.0.1 2375`",
+        "ts": "1471782914.001479"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "172.17.0.1: Connection refused",
+        "ts": "1471782981.001480"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "hmmm",
+        "ts": "1471782995.001481"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`ps -ef|grep dockerd`",
+        "ts": "1471783029.001482"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`ss -l |grep 237`",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1471783097.000000"
+        },
+        "ts": "1471783088.001483"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "root     48751 34794  0 08:40 pts\/1    00:00:00 grep --color=auto dockerd",
+        "ts": "1471783224.001485"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hmm - maybe `ps -ef|grep docker`",
+        "ts": "1471783247.001486"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "docker daemon -H <tcp:\/\/0.0.0.0:4243> -H unix:\/\/\/var\/run\/docker.sock",
+        "ts": "1471783361.001487"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "nothing for ss",
+        "ts": "1471783413.001488"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah - you are running on 4243",
+        "ts": "1471783513.001489"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "CORE_VM_ENDPOINT=172.17.0.1:4243",
+        "ts": "1471783531.001490"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "yepp thanks I just realised it :smile:",
+        "ts": "1471783557.001491",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "i still get the same error though :disappointed:",
+        "ts": "1471784393.001492"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "are you using Docker compose?  how are you starting the peers?",
+        "ts": "1471784427.001493"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "nw something changed",
+        "ts": "1471784488.001494"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "http:\/\/ was missing from the CORE_VM_ENDPOINT variable",
+        "ts": "1471784547.001495"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oops - sorry about that",
+        "ts": "1471784574.001496"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "thats fine",
+        "ts": "1471784612.001497"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "now we know",
+        "ts": "1471784619.001498"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "i wrote a script to clear up docker, the cert db and start the mebership service and 4 peers up",
+        "ts": "1471784682.001499"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "for each peer i have an .env file with environment variables",
+        "ts": "1471784734.001500"
+    },
+    {
+        "type": "message",
+        "user": "U1D9R3WAX",
+        "text": "now it seems to be working except test_vp3 , which cannot register...",
+        "ts": "1471784794.001501"
+    },
+    {
+        "user": "U23CGEC7N",
+        "text": "<@U23CGEC7N|rafael> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1471790773.001502"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Looking for some suggestions, I have a chaincode that builds fine locally but when I try to deploy it over the network to the fabric, I get a build error during the \"go install \" step of the docker image construction",
+        "ts": "1471816380.001505"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "Looking for suggestions on how to get better insight into what the actual build error is",
+        "ts": "1471816407.001506"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0N13GKRP> the docker env makes it difficult to get that error \u2026 <http:\/\/stackoverflow.com\/questions\/38913758\/error-on-ibm-blockchain\/38919950#38919950> has some suggestions",
+        "attachments": [
+            {
+                "title": "error on IBM Blockchain",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/38913758\/error-on-ibm-blockchain\/38919950#38919950",
+                "text": "When I import and run my smart contract on the IBM Blockchain, it looks normal and runs successfully. However, I see the following error again and again: [31m07:51:14.774 [dockercontroller]",
+                "fallback": "error on IBM Blockchain",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/38913758\/error-on-ibm-blockchain\/38919950#38919950",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1471818712.001507"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "At least I'm not missing anything obvious. I vendored all the dependencies which should have taken care of it. Thanks for the suggestions",
+        "ts": "1471818823.001509"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure thing",
+        "ts": "1471820821.001510"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "I figured out something that worked for me.\n\nThe root cause is there was an unvendored dependency\n\nI used a bunch of tools like govendor that promise to check if your build is properly vendored\n\nWhat ended up surfacing the error was changing to a free `$GOPATH` directory, copying in my chaincode and then running `go install [path to chaincode]`",
+        "ts": "1471821139.001511"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "which explicitly showed what the error was as you don\u2019t resolve the dependency thru the vendored packag",
+        "ts": "1471822747.001512"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right ?",
+        "ts": "1471822772.001513"
+    },
+    {
+        "type": "message",
+        "user": "U0N13GKRP",
+        "text": "yep",
+        "ts": "1471826214.001514"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0N13GKRP|zaki> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/zaki\/F23EJ9X4P\/chaincode_preflight_checklist.txt|Chaincode Preflight checklist> and commented: Quick summary of the things I learned this weekend about chaincode development",
+        "file": {
+            "id": "F23EJ9X4P",
+            "created": 1471827009,
+            "timestamp": 1471827009,
+            "name": "Chaincode_Preflight_checklist.txt",
+            "title": "Chaincode Preflight checklist",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0N13GKRP",
+            "editable": true,
+            "size": 592,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F23EJ9X4P\/chaincode_preflight_checklist.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F23EJ9X4P\/download\/chaincode_preflight_checklist.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/zaki\/F23EJ9X4P\/chaincode_preflight_checklist.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F23EJ9X4P-dc158ae093",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/zaki\/F23EJ9X4P\/chaincode_preflight_checklist.txt\/edit",
+            "preview": "1. Develop chaincode and unit test\r\n\r\n2. Verify the chaincode works locally under \"peer peer --chaincode-dev\"\r\n\r\n3. Vendor all dependencies into \/vendor\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>1. Develop chaincode and unit test<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>2. Verify the chaincode works locally under &quot;peer peer --chaincode-dev&quot;<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<div><pre>3. Vendor all dependencies into \/vendor<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 13,
+            "lines_more": 8,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0Y4PEU22"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc23CV3M1R",
+                "created": 1471827009,
+                "timestamp": 1471827009,
+                "user": "U0N13GKRP",
+                "is_intro": true,
+                "comment": "Quick summary of the things I learned this weekend about chaincode development",
+                "channel": ""
+            },
+            "num_stars": 1
+        },
+        "user": "U0N13GKRP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0N13GKRP|zaki>",
+        "bot_id": null,
+        "ts": "1471827009.001515"
+    },
+    {
+        "type": "message",
+        "user": "U22TU39U1",
+        "text": "Hi I started peers and i am able to deploy chaincode and do the transaction but when query i am getting the following error",
+        "ts": "1471840762.001517"
+    },
+    {
+        "type": "message",
+        "user": "U22TU39U1",
+        "text": "Error:Failed to launch chaincode spec(Could not get deployment transaction for 4ad4adda2c07741aabee4021762f2051d4d1beb3035ee834caa1768c56226a24eedf532a056b65e62a2ed00e417830076450ccfd29de6251a73b46220f5d4dd1 - LedgerError - ResourceNotFound: ledger\n6:54 in debug console i am getting   13:21:39.323 [dockercontroller] Start -&gt; ERRO 064 start-could not start container API error (400): {\"message\":\"starting container with HostConfig was deprecated since v1.10 and removed in v1.12\"}",
+        "ts": "1471840769.001518"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "<@U22TU39U1> If you pull the latest code from Gerrit that issue should be fixed",
+        "ts": "1471841759.001519"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "When I query chaincode, I got this (the SECURITY is enabled).  How to decrypt it,  thanks for any help.    \nCORE_PEER_ADDRESS=172.17.0.4:30303 peer chaincode query -u jim -n a5389f7dfb9efae379900a41db1503fea2199fe400272b61ac5fe7bd0c6b97cf10ce3aa8dd00cd7626ce02f18accc7e5f2059dae6eb0786838042958352b89fb -c '{\"Function\": \"query\", \"Args\": [\"a\"]}'\n\ufffdQj\ufffd#\t\ufffd\ufffdr\ufffdz\ufffd\ufffd)\ufffd\ufffd\t\ufffd\u00efn\ufffd\ufffd\/\ufffd\ufffdL",
+        "ts": "1471842749.001520"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "<@U1TA5FDU7> It looks like you are trying to query the GRPC port, not the REST port. Try `CORE_PEER_ADDRESS=172.17.0.4:5000` (note that the port should be 7050 if you are using the latest code, but it looks like you aren't)",
+        "ts": "1471843647.001521"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "<@U1M7K67EV>  I tried the CORE_PEER_ADDRESS=172.17.0.4:5000, but I got an error: \nError: Error building chaincode: Error trying to connect to local peer: grpc: timed out trying to connect\nI think \"CORE_PEER_ADDRESS=172.17.0.4:30303\" is correct, and the query result may be encrypted. I just want to know how to get the plaintext of it\nThanks anyway",
+        "ts": "1471844070.001524"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "The fact you got a plain text response to your request on port 5000 indicates you have successfully queried the REST server. The error tells you more. It seems that the chaincode you deployed was not able to build because it was not able to communicate properly.",
+        "ts": "1471844245.001525"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "How did you start your peers?",
+        "ts": "1471844249.001526"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "I set up 4 peers and membersrvc,  all configs in a compose files",
+        "ts": "1471844876.001529"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "docker-compose-with-membersrvc.yml\nvp0:\n  extends:\n    file: peer-pbft.yml\n    service: vp\n  hostname: vp0\n  environment:\n    - CORE_PEER_ID=vp0\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:50051\n  ports:\n    - \"5000:5000\"\n  links:\n    - membersrvc\n\nvp1:\n  extends:\n    file: peer-pbft.yml\n    service: vp\n  hostname: vp1\n  environment:\n    - CORE_PEER_ID=vp1\n    - CORE_SECURITY_ENABLED=true\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:30303\n    - CORE_SECURITY_ENROLLID=test_vp1\n    - CORE_SECURITY_ENROLLSECRET=5wgHK9qqYaPy\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:50051\n  links:\n    - membersrvc\n    - vp0\n\nvp2:\n  extends:\n    file: peer-pbft.yml\n    service: vp\n  hostname: vp2\n  environment:\n    - CORE_PEER_ID=vp2\n    - CORE_SECURITY_ENABLED=true\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:30303\n    - CORE_SECURITY_ENROLLID=test_vp2\n    - CORE_SECURITY_ENROLLSECRET=vQelbRvja7cJ\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:50051\n  links:\n    - membersrvc\n    - vp0\n\nvp3:\n  extends:\n    file: peer-pbft.yml\n    service: vp\n  hostname: vp3\n  environment:\n    - CORE_PEER_ID=vp3\n    - CORE_SECURITY_ENABLED=true\n    - CORE_PEER_DISCOVERY_ROOTNODE=vp0:30303\n    - CORE_SECURITY_ENROLLID=test_vp3\n    - CORE_SECURITY_ENROLLSECRET=9LKqKH5peurL\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:50051\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:50051\n  links:\n    - membersrvc\n    - vp0\n\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc:latest\n  restart: unless-stopped\n  expose:\n    - \"50051\"\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  command: membersrvc\n----------------------------------------------\npeer-pbft.yml\n\nvp:\n  image: hyperledger\/fabric-peer:latest\n  restart: unless-stopped\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_PEER_NETWORKID=dev\n    - CORE_LOGGING_LEVEL=debug  #critical, error, warning, notice, info, debug\n    - CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft  # noops, pbft\n    - CORE_PBFT_GENERAL_MODE=batch  # batch. classic and sieve will be not supported again.\n    - CORE_PBFT_GENERAL_N=4\n    - CORE_PBFT_GENERAL_BATCHSIZE=2  # only useful when in batch mode\n    - CORE_PBFT_GENERAL_TIMEOUT_REQUEST=2s\n  expose:\n    - \"30303\"\n    - \"30304\"\n    - \"31315\"\n  volumes: # docker.sock is mapped as the default CORE_VM_ENDPOINT\n    - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n  command: sh -c \"sleep 5; peer node start\"",
+        "ts": "1471845099.001530"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "Hmm that seems to look OK. I've never used `CORE_VM_ENDPOINT` as the unix socket before, I've always set it to `CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375>` in `environment`",
+        "ts": "1471845510.001531"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "can you give that a shot?",
+        "ts": "1471845515.001532"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "and remove the volume section from the peer-pbft.yml",
+        "ts": "1471845588.001533"
+    },
+    {
+        "type": "message",
+        "user": "U1TA5FDU7",
+        "text": "ok, I go to try it,  thanks~~",
+        "ts": "1471845823.001534"
+    },
+    {
+        "type": "message",
+        "user": "U22TU39U1",
+        "text": "Hi jcarrivick i took latest from github not working",
+        "ts": "1471847888.001535"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "We're in a bit of a funny situation at the moment, the development code base has moved to gerrit: <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric> which means Github is out of date",
+        "ts": "1471847984.001536"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "The plan I think is to get github to mirror gerrit at some point, but it hasn't got there yet",
+        "ts": "1471848002.001537"
+    },
+    {
+        "type": "message",
+        "user": "U1M7K67EV",
+        "text": "So you will need to pull the latest code from Gerrit rather than github for now",
+        "ts": "1471848081.001538"
+    }
+]

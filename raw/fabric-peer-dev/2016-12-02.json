@@ -1,0 +1,41 @@
+[
+    {
+        "user": "U32LDD9JA",
+        "text": "<@U32LDD9JA|ledger888> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480701208.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "A potential chaincode interface change that I am contemplating: \n\nThe current interface `Invoke(stub shim.ChaincodeStubInterface) ([]byte, error) ` doesn\u2019t differentiate error codes; every error is equal, which is not right as we need to differentiate between different classes of errors, like HTTP codes.  We want status codes in general to indicate result of the execution of a chaincode.\n\nSo I am thinking about the following changes:  `Invoke(stub shim.ChaincodeStubInterface) Response`  where\n```type Response struct {\n    int32 status = 1;   \/\/ HTTP status code\n\tstring message = 2;   \/\/ A message associated with the response code.\n\tbytes payload = 3;   \/\/ Any additional data\n}```\n\nThis `Response` would be part of the `ProposalResponse` on endorsement, which automatically makes it part of the transaction if the app decides to submit the transaction.\n\nAn alternative (without changing the interface) is to create a convention on error message, where we encode the `status` in the message,  like `status-code \u2014 reason-message`.\n\nAppreciate any feedback.",
+        "ts": "1480719095.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "rather than breaking the chaincode interface again, what about implementing a custom error type?\n\n```\ntype ChaincodeError struct {\n    int32 status\n    string message\n   \/\/you could add additional fields\n}\n\nfunc (ce *ChaincodeError) Error() string {\n    return ce.message\n}\n\n\/\/any other additional methods \/ getters\n```",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1480724639.000000"
+        },
+        "ts": "1480724515.001281",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF",
+                    "U1HFNJB50"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "error is simply an interface that requires Error() string",
+        "ts": "1480724671.001283"
+    }
+]

@@ -1,0 +1,109 @@
+[
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XQ35CDD> <@U0XPR4NP4> can you pls remind me why one needs to use blockcutter in sbft",
+        "ts": "1484299532.001456"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0Y14MWA2> means that I implemented the Chain interface and this `HandleChain` for SBFT. so SBFT uses the ledger passed to it inside that support structure, and supports multiple chains. do we need block cutter? or can we leave it out and rely on sbft's internal batching?",
+        "ts": "1484299637.001457"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "put differently:  how dependent are consuming components on the current impl in \/orderer\/common\/blockcutter",
+        "ts": "1484301980.001458"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "a side comment - \"Ordered\" is a bit obscure naming when the function should be used prior to ordering",
+        "ts": "1484302094.001459"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "especially since what the function is doing is Validation (applying filters), Appending to block and (possibly) Cutting",
+        "ts": "1484302272.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Is there an ordering service system channel?",
+        "ts": "1484317438.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0Y14MWA2> <@U1AU8DRQR> \n\n&gt; <@U0XQ35CDD> <@U0XPR4NP4> can you pls remind me why one needs to use blockcutter in sbft\n\nIt is two fold.  One, block cutter applies second pass filters to messages to ensure that only properly signed and otherwise well formed messages make it into the block.\n\nSecondly, the filters produce Committer objects which are the driving force behind the executable transactions on the orderer.  The configuration transactions and a special internal orderer transaction are the executable types.  This is what drives chain creation, as well as updates to ACLs etc.\n\n&gt; <@U0Y14MWA2> means that I implemented the Chain interface and this HandleChain for SBFT. so SBFT uses the ledger passed to it inside that support structure, and supports multiple chains. do we need block cutter? or can we leave it out and rely on sbft's internal batching?\n\nYou can certainly re-implment block cutter on your own, but I'm still looking for a reason why you might do this.  What technical problems does block cutter cause?  My suspicion is that it's much easier to fix blockcutter to also support your use cases than to re-impliment it\n\n&gt; a side comment - \"Ordered\" is a bit obscure naming when the function should be used prior to ordering\n\nAgreed, this is a rather horrid name.  In Solo\/Kafka it's accurate, but I'd be happy to see it renamed.  I'd also point out it should probably be called `batchcutter` or somethig similar.  The `blockcutter` name came from some discussions that were ongoing about Kafka at the time.\n\n<@U0ZJZBJLF>\n&gt; Is there an ordering service system channel?\n\nYes, the ordering system chain is the first chain that the orderer starts with.  In general, peer orgs will not have access to this channel.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484320330.000000"
+        },
+        "ts": "1484320154.001462"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Thanks <@U0XPR4NP4> . I have another small question- when an application creates a channel, does it pass the channel's ID at creation? I guess it rolls a random ID and hopes it's not taken, right?\nBecause- i don't see any other option (you can't call \"Deliver\" after the Broadcast because you don't know the channel ID)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1484345891.000000"
+        },
+        "ts": "1484345868.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> Yes, it should be some form of UUID, such as FQDN+timestamp or something",
+        "ts": "1484345904.001467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If it exists, it will get back a FORBIDDEN",
+        "ts": "1484345921.001468"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "FQDN? what? why?",
+        "ts": "1484345922.001469"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It can be a true UUID if it likes",
+        "ts": "1484345930.001470"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Whatever scheme will be globally unique",
+        "ts": "1484345937.001471"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok tnx",
+        "ts": "1484345943.001472",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1 last question to make sure I understand- so essentially if we have 3 apps in 3 different orgs, they agree out of band who will send the `Broadcast`, and then the app's \"user\" tells via slack\/email\/whatever the channel's ID to the other 2 orgs, so they can all call `Deliver`, right?",
+        "ts": "1484346178.001473"
+    }
+]

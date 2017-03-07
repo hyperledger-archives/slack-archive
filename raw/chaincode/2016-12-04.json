@@ -1,0 +1,208 @@
+[
+    {
+        "user": "U3AFRMY68",
+        "text": "<@U3AFRMY68|donjohnny> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480887247.000013"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "Hello everyone! I need a little help to get going. I'm running my hyperledger in the vagrant box and I'm trying to deploy chaincode_example01. I built it and executed it. But when I send 'peer chaincode deploy -n mycc -c '{\"Args\": [\"init\", \"a\",\"100\", \"b\", \"200\"]}'' for deployment I get the following error: \"Error: Error getting chaincode code chaincode: Error getting chaincode package bytes: Cannot collect files from empty chaincode path\". However in the docs is mentioned that the path flag isn't needed... What can I do?",
+        "ts": "1480888184.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3AFRMY68> what release are you on v0.6 or latest master ?",
+        "ts": "1480889344.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in either case you need the \u201c-p\u201d option if you are not running peer in \u201c\u2014peer-chaincodedev\u201d mode",
+        "ts": "1480889402.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "suggest you work with v0.6 (especially if you are new to this) as master is being worked upon and will be changing",
+        "ts": "1480889488.000017"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "<@U0ULK2JPP> i'm on 0.7 snapshot.  I am running with --peer-chaincodedev mode",
+        "ts": "1480889533.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1480889540.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then you are doing the right thing",
+        "ts": "1480889574.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "how are you running the peer and the chaincode ?",
+        "ts": "1480889584.000021"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "So specifically I run vagrant, then start the peer node start --peer-chaincodedev, following I execute the chaincode_example01 which attaches successfully and then I execute the deploy with peer chaincode deploy -n mycc -c '...'",
+        "ts": "1480889713.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so 3 vagrant windows",
+        "ts": "1480889818.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "peer, chaincode and the CLI doing deploy ?",
+        "ts": "1480889829.000024"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "exactly, three ssh windows to the same vagrant box",
+        "ts": "1480889849.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "did you try adding `-p <http:\/\/github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example01|github.com\/hyperledger\/fabric\/examples\/chaincode\/go\/chaincode_example01>` ?",
+        "ts": "1480889949.000026"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "After a while I get: panic: runtime error: invalid memory address or nil pointer dereference\n[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x73f9c7]",
+        "ts": "1480890108.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you paste the entire stack trace ?",
+        "ts": "1480890188.000028"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "the chaincode was deployed btw, but here's the stacktrace: panic: runtime error: invalid memory address or nil pointer dereference\n[signal SIGSEGV: segmentation violation code=0x1 addr=0x0 pc=0x73f9c7]\n\ngoroutine 1 [running]:\npanic(0xa49540, 0xc42000e0d0)\n        \/opt\/go\/src\/runtime\/panic.go:500 +0x1a1\n<http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*ClientConn).Close|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc.(*ClientConn).Close>(0x0, 0x3, 0x4)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc\/clientconn.go:454 +0x37\n<http:\/\/github.com\/hyperledger\/fabric\/peer\/chaincode.Send(0xc4201b7360|github.com\/hyperledger\/fabric\/peer\/chaincode.Send(0xc4201b7360>, 0xc, 0xc420202300, 0xe29380, 0xc4201ef770)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer\/chaincode\/noopsordererclient.go:65 +0x299\n<http:\/\/github.com\/hyperledger\/fabric\/peer\/chaincode.sendTransaction(0xc420202300|github.com\/hyperledger\/fabric\/peer\/chaincode.sendTransaction(0xc420202300>, 0xc420202300, 0x0)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer\/chaincode\/common.go:303 +0x64\n<http:\/\/github.com\/hyperledger\/fabric\/peer\/chaincode.chaincodeDeploy(0xe55080|github.com\/hyperledger\/fabric\/peer\/chaincode.chaincodeDeploy(0xe55080>, 0xc4201fea80, 0x0, 0x6, 0x0, 0x9)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer\/chaincode\/deploy.go:122 +0x61\n<http:\/\/github.com\/hyperledger\/fabric\/peer\/chaincode.glob..func1(0xe55080|github.com\/hyperledger\/fabric\/peer\/chaincode.glob..func1(0xe55080>, 0xc4201fea80, 0x0, 0x6, 0x0, 0x0)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer\/chaincode\/deploy.go:44 +0x49\n<http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).execute(0xe55080|github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).execute(0xe55080>, 0xc4201fe720, 0x6, 0x6, 0xe55080,                                               0xc4201fe720)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra\/command.go:599 +0x234\n<http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).ExecuteC(0xe567e0|github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).ExecuteC(0xe567e0>, 0x7, 0xc4201f05a0, 0x42)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra\/command.go:689 +0x367\n<http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).Execute(0xe567e0|github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra.(*Command).Execute(0xe567e0>, 0xc4201f05a0, 0x42)\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/github.com\/spf13\/cobra\/command.go:648 +0x2b\nmain.main()\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/peer\/main.go:137 +0x646",
+        "ts": "1480890239.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "this is not v0.7",
+        "ts": "1480890827.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "it is master under dev",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1480891543.000000"
+        },
+        "ts": "1480890846.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "peer\/chaincode\/noopsordererclient.go is not in 0.7",
+        "ts": "1480890851.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I suspect a mix up of some sort",
+        "ts": "1480890877.000035"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "Could be, I just followed the docs:latest",
+        "ts": "1480891067.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1480891209.000037"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "I downloaded source with git clone <https:\/\/github.com\/hyperledger\/fabric>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1480891236.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok. That\u2019s the master in dev",
+        "ts": "1480891369.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "suggest you try download 0.6 from <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric,branches>",
+        "ts": "1480891386.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/dev-setup\/devenv\/> would apply to that",
+        "ts": "1480891413.000042"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "Thank you, I'll try that. I probably messed up as I got authentication errors when cloning from gerrit and decided to get it from the master branch on github",
+        "ts": "1480892529.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure, no worries",
+        "ts": "1480892837.000047"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "will the fabric-baseimage also be different or can I copy it from the master folder ?",
+        "ts": "1480893346.000048"
+    },
+    {
+        "type": "message",
+        "user": "U3AFRMY68",
+        "text": "(for vagrant)",
+        "ts": "1480893350.000049"
+    }
+]

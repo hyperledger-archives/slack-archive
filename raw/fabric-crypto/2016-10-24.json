@@ -1,0 +1,383 @@
+[
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U1BC5A0F9> <@U0ZR63HLK> <@U26T99AQ4> have you guys seen my question about re: \u201cpkChain\u201d from enrollment?",
+        "ts": "1477317657.000406"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hi; sorry. So, as of now we are focusing on having fabric work without it supporting confidentiality mechanisms on the fabric side.",
+        "ts": "1477317759.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Hi <@U13TWBRBL>, the latter I would say.",
+        "ts": "1477317766.000408"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That said, confidentiality mechanisms would be shifted to the application layer, and may make sense to be based on endorser long term encryption keys and proper use of transient-data field of the proposal.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477317921.000000"
+        },
+        "ts": "1477317794.000409"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Of course we can also have pkChain be distributed by the membership services, but that would need to be on a per-channel basis and not sure for the first release of this code would make sense.",
+        "ts": "1477317891.000410"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Also one could use externally decided keys... key-management would be (in my view) on the application.",
+        "ts": "1477318116.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1BC5A0F9> <@U13TWBRBL> <@U0S5KF44D>  - IMHO \"fabric-cop\" (at least the server portion) should no longer be handing out encryption keys.  My take is that the crypto libs will need to be able to generate and wrap keys as required and we'll likely need to leverage a distribution mechanism within fabric (similar to some work <@U0ZR63HLK> already did) to \"share\" keys as appropriate",
+        "ts": "1477318140.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "this is definitely the high level direction, I would say",
+        "ts": "1477318188.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I agree",
+        "ts": "1477318219.000415"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, i agree that pkChain should not be generated\/managed\/distributed by the membership service. But do we also want to not have membership service engage to the enrollment certificate including public encryption keys of  peers\/clients? If so, then we would need to assume that there is some offline-interaction among applications, that leverage their signing keys (reflected in their ECerts) to announce public encryption keys of users. Auditability becomes slightly more complex there, but it is simple enough to work.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477318585.000000"
+        },
+        "ts": "1477318443.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1BC5A0F9> - I guess I will put it this way - we need to make sure that there is no dependency on membership services for these things",
+        "ts": "1477318586.000420"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so do i understand this flow correctly like this: app\/sdk encrypts using each endorser certificate \u2014&gt; endorser received and decrypts using its individual private key \u2014&gt; execute \u2014&gt; encrypts result using app\/sdk certificate \u2014&gt; app\/sdk receives and decrypts, package up and encrypts using committer certificate \u2014&gt; send to orderer \u2014&gt; delivers to commiter \u2014&gt; committer decrypts and applies the changes",
+        "ts": "1477318608.000421"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "\u2026 as far as where encryption\/decryption happens with what keys, is the above accurate or am I off?",
+        "ts": "1477318698.000422"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "that\u2019s assuming we don\u2019t have a \u201cchain-wide\u201d (or \u201cchannel-wide\u201d) key like \u201cpkChain\u201d today any longer",
+        "ts": "1477318745.000423"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K>, what do you mean by dependency? pkChain, or pkEndorser (public enecyrption key that is generated exactly like the signing key and included currently in enrollment certificate)?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477318939.000000"
+        },
+        "ts": "1477318798.000424"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Cause, to do any type of key-distribution, there has to be some anker of trust  (e.g., exchanged enrollment certificates that contain signature key-pairs) to have the application do the encrytpion key generation etc.",
+        "ts": "1477318923.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "meaning a peer node should never need to call out to membership services at runtime and if I choose to use my own certificate authority I should be able to do that",
+        "ts": "1477318952.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - but that can be any trusted root authority that the members of the blockchain choose to support",
+        "ts": "1477318979.000428"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "agreed",
+        "ts": "1477318996.000429"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "there should be no dependency on the specifics of the membership service currently available in fabric, but (at least in my mind) it could have some dependency on the membership service as an entity \/ component of the system (assuming that this component is expressed via the membership service interface).",
+        "ts": "1477319097.000430"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U0PB67X4K>, am I capturing the (non-)dependency requirement correctly?",
+        "ts": "1477319136.000431"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U13TWBRBL>: the specification of a flow provided by a confidentiality library is part of the FAB-830",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477319321.000000"
+        },
+        "ts": "1477319277.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U13TWBRBL>, interesting. That's definitely a possible flow. Multiple details are hidden here and there but it looks reasonable as a very high level overview of a candidate message flow",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1477319427.000000"
+        },
+        "ts": "1477319408.000434"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But overall, I would see two levels of a confidentiality library to be plugged in: (i)at  the application\/chaincode level where keys would need to be part of the transient data of proposal, that are passed to the chaincode at execution time (the chaincode here is supposed to know\/understand how to use these keys to encrypt its state), (ii) at the ESCC level and assuming extension of the interface of the client to the endorser.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1477319446.000000"
+        },
+        "ts": "1477319436.000436"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Option (ii) is closer to what you describe <@U13TWBRBL>, but option (i) is easier to implement.",
+        "ts": "1477319481.000438"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok, i\u2019ll take a look at FAB-830",
+        "ts": "1477319506.000439"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "are we currently leaning one way or another?",
+        "ts": "1477319515.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I think I'd agree.   If I am a bit more explicit, from the peer perspective, a peer should NEVER have to call out to membership services like it does today (e.g. for the register\/enroll, to pull down public keys, encryption keys, etc).  I would also say should hold true for the ordering service  and I would also say for the client SDKs as well.  Per <@U1BC5A0F9> , one way to do this would be to have an interface and one of the implementations could be to call remotely and one could be to use locally available material.   We'll need to work through this especially as fabric-cop developes",
+        "ts": "1477319571.000441"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Agreed. Btw, added <https:\/\/jira.hyperledger.org\/browse\/FAB-829> and some tentative description of a membership service interface\/component as discussed with <@U0S5KF44D>, <@U0ZR63HLK>, <@U26T99AQ4> already from June.",
+        "ts": "1477319748.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "having the client SDK not connecting to the fabric-cop for TCerts is challenging at the current stage",
+        "ts": "1477319751.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yes - tcerts I agree with",
+        "ts": "1477319807.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but not everyone needs them",
+        "ts": "1477319817.000445"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, but also TCerts can be generically defined.",
+        "ts": "1477319834.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "true",
+        "ts": "1477319838.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "with option 2\/2.1",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477319852.000000"
+        },
+        "ts": "1477319843.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "they should be generically defined",
+        "ts": "1477319864.000450"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "And thus their form not to depend on the exact implementation of membership service.",
+        "ts": "1477319875.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "did we ever decide on that?  seems we are the only people who talk about it",
+        "ts": "1477319876.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "like it is already in 0.5, the crypto package has a CertificateHandler that can handle ECert, TCerts and so on",
+        "ts": "1477319903.000453"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "We have been discussing the interface (as a starting point) defined in <https:\/\/jira.hyperledger.org\/browse\/FAB-829> with <@U0S5KF44D>. I know that Keith had some first version of it at some point, but maybe without considering generic representation of TCerts.",
+        "ts": "1477319934.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so Keith and team have been working to extract the current TCert implemention and make it into a library but have not changed how we generate them at this point",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477320025.000000"
+        },
+        "ts": "1477320012.000455"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Ah sorry, you meant the TCert key-generation process.",
+        "ts": "1477320034.000457"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I thought you referred to have a generic TCert interface enabled. Sorry, it take it back then. True, not sure if we have converged on this and when\/if we should start implementing it.",
+        "ts": "1477320094.000458"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Related discussion is here <https:\/\/jira.hyperledger.org\/browse\/FAB-635>",
+        "ts": "1477320134.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "correct, Ash should push the current impl later today, and the plan is to do version 2 of your doc as a configurable option",
+        "ts": "1477323356.000460"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Ad hoc meeting with Keith Smith, Gari Singh, Elli- Fabric 829 , next sprint-- this is an interface tat describes membership services component.  It has to be defined so that if someone has a different version of membership services, they can write connectors so they can leverage everything implemented.  This is an interface into ms into transaction processing and ledger infrastructure. This interface would be used to encourage our bscsp.  An application developer that just uses membership services instance- they don't need to know what interface we should use  .",
+        "ts": "1477324075.000461"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "On Jira boards-  there are 3 groups for next two weeks 1) implementation of  blockchain crypto service provider and integration to fabric--- one has to be done in golang and nodejs part that gets used by the client. A large part of golang has been implemented and submitted in 11 changes into branch 0.6 but has to be rebased into master.  Items associated with bscsp to server code he tried to build some classes that cfssl can look at bscsp code without problem.",
+        "ts": "1477324237.000462"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "BSCSP is good for abstracting a single one.  Keith was looking at what Jason Yellick has done in signature validation-- Gari said that looks like it is higher level.",
+        "ts": "1477324285.000463"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We need to define who the consumers of that library is done.  You can have simple thing in peer- endorsement chaincode- simple sign code (Murali could take this for endorser).  There also might be a higher level abstraction that reads policy like Jason looks to have implemented, but it would ultimately call the verify function.",
+        "ts": "1477324376.000464"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Elli- from the abstraction and using the bccsp- in fab 829, we are working towards implementing nodejs client sdk and need to converge the genericf interace and run it with membership services.  There is dependency on this with the 2nd group of issues highlighted for next spring- validation of transactions on commiting side, validation of security proposal at the endorser side... all of these should be using abstract interface.  We need to specify that interface",
+        "ts": "1477324494.000465"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "This is for the sdk level as well as the touch point within the peer.",
+        "ts": "1477324606.000466"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Example- they use x509 and use extension filled for certs to store additional data .  The extension filled that the current fabric can understand.This transaction cert is acquired using some interaction with client with server side,.. the client will need to create transactions creating keys.  The peer code would have to pass the code at membership services... Let's say someone comes and say I need to use not your fabric defined membership services, but want to use a different Membership services plugin. I do not want to rewrite the transaction processing code- I would need to plugin my code implementing the same interface as fabric code and allow transaction processing to issue signatures on behalf the cert structure that that other instance of membership services-- and peer code validating those sigs .",
+        "ts": "1477324869.000467"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "It does not separate the cert infrastructure and the way that another membership services are used by transaction processing component.  These have to be separated using an interface and needs to be generic enough.",
+        "ts": "1477324948.000468"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Something like here is the cert and verify it--- Fab 829 has some ideas on this.",
+        "ts": "1477324972.000469"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Binh- what is fabric client? code of membership service that could be useful for the client.(we need to complete by Wednesday to try to help get first draft of SDK spec for Friday) ...the peer donates the part of the membership service that could be useful for the peer... Binh suggesting a GRPC definition or somekind of document that we can make specification of SDK on that design doc, and we can post the document on googledocs",
+        "ts": "1477325115.000470"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Today in Nodejs sdk- there is membersip servcies impl... this interface was not generic enough (from memory)- it did not specify type for certificate and would not be able to parse appropriately and provide ability to say whether generic or not.  Elli said she has to look into detail- felt it did not have attributes included.  Keith did mention there is an interface with Tcerts with attributes.  Keith suggesting her to review to make recommendation on what we need in addition in this area.",
+        "ts": "1477325618.000471"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are trying to do ACL design for events and chaincodes for multichannel (fab 637, 634, and 633)",
+        "ts": "1477325757.000472"
+    },
+    {
+        "user": "U0YNFB22X",
+        "text": "<@U0YNFB22X|satheesh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477344753.000473"
+    }
+]

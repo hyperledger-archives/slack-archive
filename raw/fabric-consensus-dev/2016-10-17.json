@@ -1,0 +1,194 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "guys, today we are having some long internal meetings but I will try to join the scrum if I can. this week, I will have to work on some internal tasks but will try to have a look at SBFT bug fix and take care of the comments there (<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1737\/>). <@U0XPR4NP4> please see my answer for you from Oct 15th :slightly_smiling_face:",
+        "ts": "1476693492.002160"
+    },
+    {
+        "user": "U2GEGKXJA",
+        "text": "<@U2GEGKXJA|stchrysa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476702786.002161"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "Hi I have a question about the interaction between chaincode and transactions that are processed when interacting with chaincode:  \nA) I understand that consensus is applied to new chaincode that is being added - if i add new chaincode, and then interact with it, say to add a new transaction type that is handled by that new chaincode, does the transaction itself get validated according to PBFT?\nB) on what basis do validating nodes decide if new chaincode is valid\/safe?",
+        "edited": {
+            "user": "U0KM0C3M3",
+            "ts": "1476707853.000000"
+        },
+        "ts": "1476707837.002162"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "anyone able to join the hangout ?",
+        "ts": "1476712991.002164"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0KM0C3M3> I think that <@U0ULK2JPP> is a better person to answer this, but I will do my best\n\nA) In v0.5\/v0.6 a chaincode deployment goes through PBFT consensus just like an invocation.  In the v1 architecture, chaincode deployment is managed through the lifecycle chain code, someone who wishes to deploy a chaincode follows the normal invocation path of sending it to the desired endorsers for endorsement, then sends it through ordering and once the transaction makes it onto the chain, the chaincode is finally deployed.\nB) In general, validity\/safety is assured by virtue of the deployer being trusted with deployment privileges.",
+        "ts": "1476713003.002165"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> post it here?",
+        "ts": "1476713009.002166"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<https:\/\/hangouts.google.com\/call\/y5a5k7qcs5fchmzrkhc7n3yteqe>",
+        "attachments": [
+            {
+                "title": "Google Hangouts",
+                "title_link": "https:\/\/hangouts.google.com\/call\/y5a5k7qcs5fchmzrkhc7n3yteqe",
+                "text": "Click to join now. If the call is over, start a new one with up to 10 friends.",
+                "fallback": "Google Hangouts",
+                "thumb_url": "https:\/\/www.gstatic.com\/images\/icons\/material\/product\/2x\/hangouts_64dp.png",
+                "from_url": "https:\/\/hangouts.google.com\/call\/y5a5k7qcs5fchmzrkhc7n3yteqe",
+                "thumb_width": 128,
+                "thumb_height": 128,
+                "service_icon": "https:\/\/hangouts.google.com\/favicon.ico",
+                "service_name": "hangouts.google.com",
+                "id": 1
+            }
+        ],
+        "ts": "1476713030.002167"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "forget that one ... let's use this  <https:\/\/hangouts.google.com\/hangouts\/_\/miica46hq5be7epnl3d5vmz5dqe>",
+        "ts": "1476713066.002169"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U1KDAMDJ7>  <@U0XQ35CDD> add your 1-liner scrum summary here",
+        "ts": "1476713507.002170"
+    },
+    {
+        "type": "message",
+        "user": "U1KDAMDJ7",
+        "text": "I will continue looking into FAB-708 today.",
+        "ts": "1476714368.002171"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476502749002154> <@U0XPR4NP4> I think I misunderstood your comment. how does a node know if \"All online nodes have come to an agreement on the world state\" to stop its 'periodical pull synch protocol timer'?",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1476502749002154",
+                "fallback": "[October 14th, 2016 8:39 PM] jyellick: <@U1AU8DRQR> From earlier you said:\n\n&gt; problem: the pull protocol was meant to be periodical, node has to periodically send a pull to one of its random neighbours. now only a 'one shot' version is implemented (after node start). this solves the problem (not just the testcase but the root cause, a specific situation) I had and does no harm to other test cases. BUT if the protocol would be periodical, the test would never terminate.\n\nI have been thinking about this.  Because we have a stateful network protocol, we can tell when a connection is established\/ended.  All online nodes have come to an agreement on the world state, would it be safe to stop this timer? It could always be restarted once someone joins.  I dislike the idea of the network operating in a 'special' mode for tests (like having a limited number of times this timer can pop, or disabling it for some tests) so a solution like that would preferable to me.",
+                "ts": "1476502749.002154",
+                "author_subname": "jyellick",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "<@U1AU8DRQR> From earlier you said:\n\n&gt; problem: the pull protocol was meant to be periodical, node has to periodically send a pull to one of its random neighbours. now only a 'one shot' version is implemented (after node start). this solves the problem (not just the testcase but the root cause, a specific situation) I had and does no harm to other test cases. BUT if the protocol would be periodical, the test would never terminate.\n\nI have been thinking about this.  Because we have a stateful network protocol, we can tell when a connection is established\/ended.  All online nodes have come to an agreement on the world state, would it be safe to stop this timer? It could always be restarted once someone joins.  I dislike the idea of the network operating in a 'special' mode for tests (like having a limited number of times this timer can pop, or disabling it for some tests) so a solution like that would preferable to me.",
+                "author_name": "Jason Yellick",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/jyellick",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/80fccad690b283483c3b5418b8b82b5b.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F272a%2Fimg%2Favatars%2Fava_0026-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1476716782.002172"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, presumably, all nodes report the same sequence number and associated hashes?",
+        "ts": "1476716818.002174"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Note, this may never be the case under byzantine conditions, but usually would be the end state of our tests)",
+        "ts": "1476716860.002175"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "So e.g. I am node i and all the other nodes seem to have the same last batch when I pull. That's why I decide to stop my timer.. Do you think of this? ",
+        "ts": "1476717789.002176"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I think that sounds right, that it should stop when you have no outstanding requests, and everyone is reporting the same last batch on the pull",
+        "ts": "1476718162.002177"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Btw pull synchronization uses random nodes. I am not sure we can suppose that everyone has the same batches ",
+        "ts": "1476718751.002178"
+    },
+    {
+        "user": "U184J2R7S",
+        "text": "<@U184J2R7S|weeds> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476719525.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> Please see <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1817\/> for static genesis block generation",
+        "ts": "1476719700.002180"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> Could you not track the last pulled state from each node in the network?",
+        "ts": "1476719735.002181"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I could but that would but a lot of messaging ",
+        "ts": "1476719766.002182"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's not that there is an urgency for this timer to stop though? Just that we would like for it to eventually terminate in our tests?",
+        "ts": "1476719808.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe this is the wrong approach, maybe we should do a special deviation for the tests",
+        "ts": "1476719845.002184"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We obviously do not want to complicate the real code path unnecessarily just to simplify our tests",
+        "ts": "1476719863.002185"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Yes, but then what to do in the tests? That is what I said, that the test's System implementation could terminate after it thinks it is only receiving pull and hello messages ",
+        "ts": "1476723783.002186"
+    },
+    {
+        "user": "U234U0A5U",
+        "text": "<@U234U0A5U|ruslan.ardashev> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476728335.002187"
+    }
+]

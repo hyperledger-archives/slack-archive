@@ -1,0 +1,315 @@
+[
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0PB67X4K> and I were discussing (lamenting, more like;-) the current project structure",
+        "ts": "1473691407.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we started down the path of one repo to rule them all, and a single build",
+        "ts": "1473691422.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "however, for some aspects of the project, this is starting to become problematic",
+        "ts": "1473691445.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "for instance, the SDKs introduce build dependencies that are likely better handled as independent repositories. The chaincode shim dependency is slightly compromised because while you can go get <http:\/\/github.com\/hyperledger\/fabric\/etc|github.com\/hyperledger\/fabric\/etc> etc\/shim it pulls the entire fabric codebase with it",
+        "ts": "1473691640.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "then, as I was exploring the potential for carving out an independent binary for the CLI (distinct from the peer binary) I found that there is no way to build it without having to build rocksdb (even though there is nothing in the direct dependency tree)",
+        "ts": "1473691726.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we are already starting down the path of extracting the SDKs (fabric-sdk-py, fabric-sdk-node, etc)",
+        "ts": "1473692280.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "here was <@U0PB67X4K>\u2019s initial proposal: I was thinking we have top level repos like:\n\n1) fabric-crypto\n2) fabric-ledger\n3) fabric-chaincode-shim\n4) fabric-protos\n5) fabric-core\n6) fabric-orderer\n7) fabric-peer\n8) fabric-membersrvcs\n9) fabric-node-sdk",
+        "ts": "1473692369.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "this will mean that stitching things together will be a bit of work, but I think in the end, will help us greatly by keeping clean interfaces",
+        "ts": "1473692456.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "it will definitely help versioning",
+        "ts": "1473692467.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "Thoughts?",
+        "ts": "1473692505.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U0KPFAZNF> <@U0KN2SSKE> <@U11MANG9G> <@U0MT4CBHB> <@U1AU8DRQR> <@U0XR6J961> <@U0ULK2JPP> <@U0TFEHX8E> ^^",
+        "ts": "1473692610.000285"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Good idea, and I guess there will be some kind of integration in Jenkins, yeah? ",
+        "ts": "1473693200.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes, that's the challenging bit, but we will want to have the main project be the point of having integration",
+        "ts": "1473693856.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "note that IMO, fabric\/core is bloated and I don\u2019t think that the concept really holds for all of the bits in there",
+        "ts": "1473694128.000288",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1AU8DRQR"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I know that ledger is basically coming in with a re-boot, so maybe that work could transition from fabric\/convergence branch to a separate repo",
+        "ts": "1473694193.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: also fabric-py-sdk and fabric-baseimage",
+        "ts": "1473694572.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Though I think I like fabric-sdk-[node|py{ better",
+        "ts": "1473694615.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Oh sorry, just saw you mentioned that prior to the list",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1473694689.000000"
+        },
+        "ts": "1473694677.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "So just baseimage missing",
+        "ts": "1473694702.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "yes, it will be fabric-sdk&lt;lang&gt;",
+        "ts": "1473694759.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "right fabric-baseimage",
+        "ts": "1473694774.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "so, I gather you are supportive?",
+        "ts": "1473694789.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Absolutely ",
+        "ts": "1473694924.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I wasn't thinking _that_ fine grained, but I am not against it either",
+        "ts": "1473694952.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I was thinking the sdks and shim def need to come out.  Also wondering about ca ",
+        "ts": "1473694992.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The others seem logical to me, especially if we can do something nice with gopkg",
+        "ts": "1473695028.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "membersrv should be standalone package for sure.   it will actually help us a lot if it is done that way.",
+        "ts": "1473699359.000302",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G",
+                    "U1AU8DRQR",
+                    "U0KM61BCP"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, I too believe that membersrvc can\/should be separate already.",
+        "ts": "1473699665.000303"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We should work out the API, move the stuff out of `core\/`, etc.",
+        "ts": "1473699687.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "given the strong dependency, should fabric-peer contain core, ledger ? Would core and ledger be used anywhere else ?",
+        "ts": "1473700183.000305"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "We should work out the details. I think the first thing indeed is define the \u2018boundary\u2019 of the components and the cross-component API.",
+        "ts": "1473701037.000306"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I would move the interface to the ECA\/TCA out of the core, and expose a layer.",
+        "ts": "1473701058.000307"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "They should all use the same underlying primitives (e.g. Crypto)",
+        "ts": "1473701076.000308"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It might be easier (but we can discuss it based on use-cases, and other people\u2019s views) to have a separation between MS and the ledger.",
+        "ts": "1473701135.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019m thinking that we are embarking on refactor of consensus, ledger and membersrvc",
+        "ts": "1473702063.000310",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "we could do this gradually",
+        "ts": "1473702082.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "set up camp for the new world, and pull over what we need and if we find something needs to be common, we put in fabric-core or fabric-common or whatever",
+        "ts": "1473702129.000312"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, I like the `common` option, over `core`",
+        "ts": "1473702179.000313"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It will be also be clearer in the `new` camp\u2026 so that we don\u2019t just carry stuff that we don\u2019t need on one hand, nor introduce extra (new) dependencies because we overlooked something...",
+        "ts": "1473702235.000314"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I think that defining refactoring `milestones`, will help a lot (as part of the planning).",
+        "ts": "1473702274.000315"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Assuring that the gradual changes converge.",
+        "ts": "1473702300.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we\u2019d probably also want to break the shim out into golang, java, etc",
+        "ts": "1473711021.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe fabric-ccshim-[golang|java|etc]",
+        "ts": "1473711052.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1473711060.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "+1",
+        "ts": "1473716603.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I\u2019d like to hear from others <@U0MT4CBHB>? <@U0TFEHX8E>? <@U0KN2SSKE>?",
+        "edited": {
+            "user": "U0KM61BCP",
+            "ts": "1473716657.000000"
+        },
+        "ts": "1473716644.000321"
+    }
+]

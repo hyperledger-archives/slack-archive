@@ -1,0 +1,580 @@
+[
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Seems the pin is invalid for the weekly call",
+        "ts": "1479384642.002102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U12452RAP> \"make checks\" is still the general target to select all validations...but note that the behave check has frequently returned unreliable results and is thus disabled in V+1 voting in jenkins.  Therefore, if all the other checks pass and it doesn't look like behave is failing in a way related to your change, you are probably good to go",
+        "ts": "1479389010.002103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "since its not officially checked in the pipeline right now, you have to use judgement",
+        "ts": "1479389023.002104"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if unsure, you can re-run just behave with \"make behave\"",
+        "ts": "1479389062.002105"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "<@U0KPFAZNF>: got it.",
+        "ts": "1479390589.002106"
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "I just noticed on the V 1.0 spec that peers have a name. Is this something we expect the end user to set ?\nIf not, how is it derived? \n\nAlso it appears Orderer does not have name. Seems to be an imbalance.",
+        "ts": "1479406413.002107"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "seeing this deploying chaincode from peer command: \"vp1_1     | 01:41:42.880 [peer] beforePeers -&gt; DEBU 8c3 Received PeersMessage with Peers: peers:&lt;ID:&lt;name:\"vp1\" &gt; address:\"172.17.0.4:7051\" type:VALIDATOR &gt; \nvp0_1     | 01:41:43.117 [dockercontroller] deployImage -&gt; ERRO b15 Error building images: Tag x86_64-0.7.0-snapshot-8c2064e not found in repository <http:\/\/docker.io\/hyperledger\/fabric-ccenv|docker.io\/hyperledger\/fabric-ccenv>\nvp0_1     | 01:41:43.117 [dockercontroller] deployImage -&gt; ERRO b16 Image Output:\n\"",
+        "ts": "1479433426.002108"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "this is the latest fabric master branch",
+        "ts": "1479433523.002109"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KQ9QKH6> I think I know",
+        "ts": "1479434300.002110"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "try a \"make clean\" first, and then rebuild your setup",
+        "ts": "1479434320.002111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I need to address this problem",
+        "ts": "1479434326.002112"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it has to do with the fact that the makefile is satisfied by .\/build\/images\/ccenv\/.dummy but the git sha can change if you commit more stuff",
+        "ts": "1479434372.002113"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "fyi: got some errors on \"make clean\"",
+        "ts": "1479434402.002114"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, make thinks the docker image is built, but the docker image that was built was a different sha and thus unreacable",
+        "ts": "1479434404.002115"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "Error response from daemon: No such image: e84da3e0f63c:latest\nMakefile:239: recipe for target 'orderer-image-clean' failed\nmake: [orderer-image-clean] Error 123 (ignored)",
+        "ts": "1479434406.002116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats fine (thats why its \"ignored\"",
+        "ts": "1479434421.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its an optimistic delete, cant tell if theres anything there to delete until it tries",
+        "ts": "1479434437.002118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "wish there was a better way to output that though",
+        "ts": "1479434472.002119"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its the same as doing \"rm *\", there might not be any files",
+        "ts": "1479434497.002120"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "right",
+        "ts": "1479434533.002121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I suppose I could re-work it so it gathers the list of targets first or something",
+        "ts": "1479434539.002122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "would be less confusing to users if that output wasnt there",
+        "ts": "1479434552.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "is it in the makefile?",
+        "ts": "1479434553.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, see the \"clean\" target",
+        "ts": "1479434563.002125"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I thought you could nix the output for things like that - its been awhile :slightly_smiling_face:",
+        "ts": "1479434584.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe...i know I tell it to expect\/ignore failures",
+        "ts": "1479434600.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats why it doesnt bail, but keeps running",
+        "ts": "1479434608.002128"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im sure I could snarf output too",
+        "ts": "1479434613.002129"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "ok I did a \"make clean;make peer;make images\" and now:",
+        "ts": "1479434669.002130"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KQ9QKH6|pmullaney> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/pmullaney\/F34AJ9QUV\/-.txt|Untitled>",
+        "file": {
+            "id": "F34AJ9QUV",
+            "created": 1479434727,
+            "timestamp": 1479434727,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KQ9QKH6",
+            "editable": true,
+            "size": 363,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F34AJ9QUV\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F34AJ9QUV\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/pmullaney\/F34AJ9QUV\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F34AJ9QUV-67dcd7ef33",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/pmullaney\/F34AJ9QUV\/-.txt\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.2.1-13fc74f:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ docker-compose -f bddtests\/docker-pat.yml up --force-recreate\r\nWARNING: The CORE_PEER_NETWORKID variable is not set. Defaulting to a blank string.\r\nRecreating bddtests_orderer_1\r\nERROR: No such image: sha256:e84da3e0f63cb1616409bbe7b599771c41116e414b8292f314566bf6239bcd9e\r\n",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vagrant@hyperledger-devenv:v0.2.1-13fc74f:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ docker-compose -f bddtests\/docker-pat.yml up --force-recreate<\/pre><\/div>\n<div><pre>WARNING: The CORE_PEER_NETWORKID variable is not set. Defaulting to a blank string.<\/pre><\/div>\n<div><pre>Recreating bddtests_orderer_1<\/pre><\/div>\n<div><pre>ERROR: No such image: sha256:e84da3e0f63cb1616409bbe7b599771c41116e414b8292f314566bf6239bcd9e<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 5,
+            "lines_more": 0,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KQ9QKH6",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KQ9QKH6|pmullaney>",
+        "bot_id": null,
+        "ts": "1479434727.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ive seen that on rare occasion, but I am not sure what causes it",
+        "ts": "1479434756.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "nor how I got past it",
+        "ts": "1479434768.002135"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I think I saw this earlier today too",
+        "ts": "1479434781.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "hmm, i do remember it was something weird though",
+        "ts": "1479434790.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I ended up bailing and trying the latest fabric :slightly_smiling_face:",
+        "ts": "1479434815.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh i remember!",
+        "ts": "1479434847.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its a docker compose thing",
+        "ts": "1479434851.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "make sure you \"docker-compose down\" that thing",
+        "ts": "1479434861.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "oh ok",
+        "ts": "1479434879.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you run \"docker-compose ps\" (IIRC) the containers dont \"go away\" after the up stops",
+        "ts": "1479434893.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its like \"docker run\" without the \"--rm\" option",
+        "ts": "1479434908.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the containers persist after they stop running",
+        "ts": "1479434921.002145"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and, depending on whatever malarky you may be up to (like building new ccenv:snapshots) it gives that error sometimes",
+        "ts": "1479434943.002146"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "some kind of bad juju between the container that is still there and the fact that you deleted it with the \"make clean\", I would guess",
+        "ts": "1479434969.002147"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "totally stupid..i wish compose had a --rm option for up",
+        "ts": "1479434993.002148"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as a matter of fact, I have started launching my tests like \"docker-compose up &amp;&amp; docker-compose down\" for this reason",
+        "ts": "1479435042.002149"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not bullet proof, but largely mitigates the phenomenon",
+        "ts": "1479435056.002150"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "docker-compose ps returned nothing",
+        "ts": "1479435092.002151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "try \"-a\"",
+        "ts": "1479435098.002152"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or maybe \"docker-compose status\"",
+        "ts": "1479435107.002153"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont recall exactly, but the problem is the containers are still there",
+        "ts": "1479435120.002154"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "ok, docker ps shows them",
+        "ts": "1479435150.002155"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "now try \"docker-compose down\" and I think they will go away",
+        "ts": "1479435164.002156"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im pretty sure there is a docker-compose subcommand that will show them though",
+        "ts": "1479435177.002157"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just not remembering which one",
+        "ts": "1479435181.002158"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "<@U0KPFAZNF> thanks for help. the error was triggered by legacy files. after clean these files 'make protos' run normally. But it will change fileDescriptor0 of every *.pb.go.",
+        "ts": "1479435249.002159"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "I manually removed them with docker vs docker-compose",
+        "ts": "1479435251.002160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VG8LNP3> this might be normal, or it might be a discrepancy with the environment you are trying to run the \"make protos\" in vs what the last person did",
+        "ts": "1479435317.002161"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "fwiw, I am working on a fix that will normalize this so its the same environment for all",
+        "ts": "1479435336.002162"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U0KPFAZNF> : thanks looking good",
+        "ts": "1479435338.002163"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but today, it is assuming some coherence in the execution environment",
+        "ts": "1479435351.002164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VG8LNP3> can I ask if you are running within vagrant?",
+        "ts": "1479435367.002165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in theory, if everyone runs in the same vagrant, that should have coherence",
+        "ts": "1479435389.002166"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, not everyone runs vagrant, and even those who do, the revlevel is not guarnateed",
+        "ts": "1479435409.002167"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "and the chaincode deploys - thanks again",
+        "ts": "1479435410.002168"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KQ9QKH6> awesome",
+        "ts": "1479435415.002169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KQ9QKH6> could you do me a favor and file a jira related to the \"cant find snapshot-xxxxx\" error",
+        "ts": "1479435444.002170"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i know what that is, and know how to improve it",
+        "ts": "1479435455.002171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just need to remember to actually fix it :wink:",
+        "ts": "1479435463.002172"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "sure np",
+        "ts": "1479435472.002173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "feel free to assign to me",
+        "ts": "1479435481.002174"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "<@U0KPFAZNF> no, on my computer. it depends on something in os?",
+        "ts": "1479435513.002175"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes... it depends to a degree on the version of protoc you are running (we use v3.1.0 currently) and _very_ much depends on the version of protoc-gen-go you have",
+        "ts": "1479435548.002176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you use the devenv, this is somewhat controlled for you, but if you build your own environment, that could be anything",
+        "ts": "1479435569.002177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and any variance may result in .pb.go churn",
+        "ts": "1479435582.002178"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "my protoc is v3.1.0. and protoc-gen-go is cloned and built from <https:\/\/github.com\/golang\/tools>. maybe i should check the version of protoc-gen-go.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "golang\/tools",
+                "title_link": "https:\/\/github.com\/golang\/tools",
+                "text": "tools - [mirror] Go Tools",
+                "fallback": "GitHub: golang\/tools",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/4314092?v=3&s=400",
+                "from_url": "https:\/\/github.com\/golang\/tools",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1479435756.002179"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-1145>",
+        "ts": "1479435795.002181"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VG8LNP3> yeah, that is most likely the problem",
+        "ts": "1479436042.002182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what you should do is run \"make gotools\"",
+        "ts": "1479436049.002183"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that will build, amoung other things, protoc-gen-go from fabric.git\/vendor",
+        "ts": "1479436065.002184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "then you can be sure you are running the same one that was bundled with the code",
+        "ts": "1479436078.002185"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1VG8LNP3> also note, that I think in master, \"make gotools\" will output the binary to $GOPATH\/bin",
+        "ts": "1479436216.002186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, you will need to ensure that is in your $PATH and also that its not eclipsed by the other install you have",
+        "ts": "1479436236.002187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might go to .\/build\/bin, alternatively",
+        "ts": "1479436259.002188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i cant recall as its changed over time",
+        "ts": "1479436265.002189"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "short answer, whereever it goes, make sure you are picking it up :wink:",
+        "ts": "1479436280.002190"
+    },
+    {
+        "type": "message",
+        "user": "U1VG8LNP3",
+        "text": "<@U0KPFAZNF> thanks. I'll try to clean gotools\/build dir and run \"make gotools\" again.",
+        "ts": "1479436722.002191"
+    }
+]

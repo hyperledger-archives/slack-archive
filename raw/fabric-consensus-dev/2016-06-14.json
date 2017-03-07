@@ -1,0 +1,497 @@
+[
+    {
+        "user": "U1CK6522F",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1CK6522F|zuowang> has joined the channel",
+        "ts": "1465905084.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: <@U0XQ35CDD> <@U0Y14MWA2> What do you think of the correctness of replying with a VIEW-CHANGE immediately if it is the primary of the view who sends it?",
+        "ts": "1465906300.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what does this address?",
+        "ts": "1465906333.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess that would be correct",
+        "ts": "1465906355.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm also wondering what this addresses",
+        "ts": "1465906491.000078"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Just helps with the liveliness of the network, if the primary has sent a view change, then it is either in a new view, or byzantine, we should move on",
+        "ts": "1465906588.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In particular, the primary times out waiting for a reply to its pre-prepare, and switches views",
+        "ts": "1465906670.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The rest of the network prepares\/commits that request, and then thinks the world is good",
+        "ts": "1465906691.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Definitely an optimization and not a correctness thing.  Just see this frequently in the busywork tests",
+        "ts": "1465906747.000082"
+    },
+    {
+        "user": "U1GN670VD",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1GN670VD|thiruworkspace> has joined the channel",
+        "ts": "1465907254.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "FYI all, I've got that class today unfortunately, so I'll have very limited availability throughout the day",
+        "ts": "1465907585.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "<@U0XPR4NP4>: does  this VIEW-CHANGE optimization take place in the context of the PBFT algorithm as in the TOCS paper (p.411)? If yes, then I would note that the leader doesnt ever send a VIEW-CHANGE there, neither in the figure nor in the text. It just remains correct and satisfied by itself.",
+        "ts": "1465907758.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XV1HDL3>: Then our code is wrong, as the leader will send view changes based on request timers, or it's own failure to generate a new view",
+        "ts": "1465914009.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: <@U0XQ35CDD> I can fix the above issue, but likely won't be able to get to it until tomorrow, if one of you has a chance and chooses to submit a PR, please make sure you base it off of <https:\/\/github.com\/hyperledger\/fabric\/pull\/1798>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "No complaints preview PR by jyellick \u00b7 Pull Request #1798 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1798",
+                "text": "Description This changeset is targeted at eliminating bugs discovered while working through the busywork stress2b test. First, this changeset removes the old custody framework from batch, and r...",
+                "fallback": "GitHub: No complaints preview PR by jyellick \u00b7 Pull Request #1798 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1798",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1465914396.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you mean add view change when the primary does?",
+        "ts": "1465915200.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "jyellick: i would not think \"wrong\", it seems there is no harm except for unnecessary view changes. but not exactly like in the paper and perhaps unnecessarily cautious. certainly, the suggested fix shouldn't happen, because the problem is better dealt with by eliminating the source.",
+        "ts": "1465918432.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XV1HDL3> <@U0XR6J961> I meant fix by preventing the leader from sending timeout based view change messages.  <@U0XV1HDL3> Are there exceptions to this? Should the primary still respond with VIEW-CHANGE when it received f+1 VIEW-CHANGE messages (I would think so)?",
+        "ts": "1465920362.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe we should hold off on this until after this June freeze, the code as written seems to be working, and unless it fixes a critical bug, it might not be worth the potential regressions.",
+        "ts": "1465920423.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand what you mean by timeout based view change messages",
+        "ts": "1465920425.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "are you saying that the primary shouldn't maintain a view change timer?",
+        "ts": "1465920436.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For instance, request timeouts.  The primary sends a pre-prepare, and if it is not committed within the timeout window, then it sends a view change.",
+        "ts": "1465920452.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Per <@U0XV1HDL3> it sounds like the primary should _not_ send under this scenario.",
+        "ts": "1465920466.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(I would also assume the primary should not send a VIEW-CHANGE in response to a new view timeout, I would check the paper, but only snuck off to do real work during a lunch break)",
+        "ts": "1465920510.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why shouldn't send a view change?",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1465920721.000000"
+        },
+        "ts": "1465920707.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, I assume because we know that we are not byzantine, and we may have started the view change timer sooner than the backups.  Also, because it is apparently specified as such in the Castro paper, and if it is causing problems to deviate from it, we should not.",
+        "ts": "1465920856.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "As a primary i will operate under the assumption that i am able to perform the job, and not give up voluntarily. it is left to the others to kick me out. if my request does not get through (primary has sent pre-prepare but request does not commit), then i can't do anything because something like n-f nodes are reachable by assumption. if i cannot reach them, they should kick me out by triggering view change.",
+        "ts": "1465921106.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "When I get f+1 VIEW-CHANGE msgs from others, then I would chime in as leader, yes, as I cannot prevent my expulsion any more.",
+        "ts": "1465921147.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XV1HDL3> Since you here, so another quick question to you and <@U0XR6J961> .  On view change, we would like to not perform state transfer if we have all the needed requests less than the initial checkpoint selected by the new view.  The only way we know that a particular request was committed is if we have a commit certificate in the previous view, we cannot deduce this from the pSets\/qSets in general?",
+        "ts": "1465921242.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "sure!",
+        "ts": "1465921248.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "are your psets\/qsets exactly like in the TOCS paper?",
+        "ts": "1465921297.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That is my understanding, <@U0XQ35CDD> I believe is primarily responsible for that code.",
+        "ts": "1465921324.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "that would be <@U0XR6J961> actually",
+        "ts": "1465921336.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "and the answer to <@U0XV1HDL3> is yes",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1465921400.000000"
+        },
+        "ts": "1465921345.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(The problem is on state transfer, we must necessarily clear some state like outstanding requests, as we cannot tell if they were included in one of the transferred blocks [or older, still transferring blocks], so it can lead to us needlessly orphaning requests, also, state transfer is slower than execution in general.  So if we have the knowledge to get to the current state without state transfer, that is preferable)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1465921419.000000"
+        },
+        "ts": "1465921352.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is slower?",
+        "ts": "1465921506.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "aha - but i dont understand this one yet - state transfer would mean on the ledger level, the KVS and everything? or some history of committed (decided) requests?",
+        "ts": "1465921516.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sync the ledger",
+        "ts": "1465921554.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "the ledger is state that you want to transfer?",
+        "ts": "1465921588.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, so, the particularly nasty scenario is as follows:",
+        "ts": "1465921602.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We are at block 5, the network is at block 1,000,000.  We end up doing state transfer, and, because it would take us hours to get all million blocks, we only have say, blocks 0-5, and 999,999,990-1,000,000, and a copy of the current state.  Ignoring the possibility of missing chaincode, there is nothing which prevents us from executing transactions and writing new blocks.",
+        "ts": "1465921681.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, unless we have all million blocks, the ledger can't tell us which transactions have committed, it is part of the chain, not part of the state.",
+        "ts": "1465921706.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but why do we need to know which transactions have committed?",
+        "ts": "1465921774.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, because we collect requests as they come in, and remove them from the outstanding list as they execute.",
+        "ts": "1465921804.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "[ P = set of requests that have prepared according to my knowledge, in previous views; Q = set of requests that have pre-prepared; even from all those sets sent in all VIEW-CHANGE msgs that I receive, I cannot infer which ones have also committed... ]",
+        "ts": "1465921819.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, so we need an R set",
+        "ts": "1465921844.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is local use only",
+        "ts": "1465921852.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is the set of requests we sent to the executor",
+        "ts": "1465921865.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "On view change, almost always one replica ends up doing state transfer, and must discard all its outstanding requests.",
+        "ts": "1465921866.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, it must",
+        "ts": "1465921894.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When we have periodic view changes and large numbers of outstanding requests, every replica ends up (after a few iterations) discarding its outstanding requests, and we end up orphaning some.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1465921916.000000"
+        },
+        "ts": "1465921895.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "If almost always a replica does state transfer on view change, you suggest that it could avoid this by receiving the committed requests that it missed, and apply those?",
+        "ts": "1465921951.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1465921959.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In many cases, I would expect that it already has commit certs for these",
+        "ts": "1465921969.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "well, if it has commit certs, then it can just run through them, not?",
+        "ts": "1465921988.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "or is something else missing?",
+        "ts": "1465921994.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, that was my first thought, my only concern is that view change calls for moving the watermarks to the h specified by the view change",
+        "ts": "1465922046.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The view change is obviously a complicated procedure, I'm just wary I'm missing something here.",
+        "ts": "1465922082.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but you could just delay processing the view change message (in\/out)",
+        "ts": "1465922110.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and execute",
+        "ts": "1465922118.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "yes, but i would not accept and perform the view change yet, if i peek at this and see that I can get there without state transfer, then I could just pretend the view-change has not yet arrived and work through my requests until I get there as well. once there, when I start doing the view-change, i will have the correct state already",
+        "ts": "1465922119.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "(my suggestion == simon's)",
+        "ts": "1465922139.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1465922142.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks, looks like they are telling me to get off my laptop, I'll think about it more, but that seems like a reasonable solution.",
+        "ts": "1465922164.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oppressive!",
+        "ts": "1465922178.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "sure... but flow control remains an important topic for the protocol",
+        "ts": "1465922188.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "this would just be an optimization that does not change it semantics",
+        "ts": "1465922199.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea flow control :confused:",
+        "ts": "1465922230.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "with more experience we will probably need to deal with the \"lagging\" peer in a different way... like, when it still sends I-am-alive signals, delaying the fast ones a bit, so that the lagging one can catch up",
+        "ts": "1465922239.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're missing flow control for requests forwarded to primary",
+        "ts": "1465922243.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in other news, i can now prove what the problem is with poor performance",
+        "ts": "1465922282.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and it is exactly what i thought it was:",
+        "ts": "1465922297.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "goroutine scheduling issues",
+        "ts": "1465922303.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "aha, good to know.",
+        "ts": "1465922308.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "make sure it becomes known beyond this channel",
+        "ts": "1465922320.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep, i will",
+        "ts": "1465922331.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think we will be able to work around this easily",
+        "ts": "1465922346.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<#C113WK2A1>  channel",
+        "ts": "1465922373.000156"
+    }
+]

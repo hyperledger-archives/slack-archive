@@ -1,0 +1,101 @@
+[
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U1FDTCEUR> : here's a tentative set of answers\n\n1) Where is the code in the node sdk in reference to the protobufmessagesandflow.pdf doc? It appears not to have implemented this. \n\nThere's no code so far, only the definitions of the various messages here <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1561\/1>\n\n2) There appears to be no concept of dynamic endorsers (where the endorsers are defined by the client or context of the information. Is this planned on being supported? \n\nThere is indeed no notion of an endorser set (yet) and the requirements aren't fully clear yet (at least to us). Here's some ideas: this may either be handled by the existing chainID field in the ProposalHeader message (assuming a static set of endorsers has been assigned to a particular chainID); or it may be handled via channels by a (yet-to-be-defined) channelID field; or by an extension of the ProposalHeader where endorsers are somehow listed.\n\n3) There is no concept of channels yet. Any idea when it will be reflected? \n\nSee above\n\n4) How is external peer information expected to be configured \/ maintained?\n\nYou've lost me here",
+        "ts": "1476264962.000078"
+    },
+    {
+        "type": "message",
+        "user": "U1FDTCEUR",
+        "text": "<@U26T99AQ4> <@U0KM61BCP> - Thanks for the responses. Regarding question 2 (dynamic endorsers). Our Use Case uses a single user chaincode to process transactions for mulitple trading pairs. By trading pair I mean the party and counter party to a particular transaction. We will need to use the channels to isolate these into separate ledgers. May I suggest that the easiest way to provide a dynamic endorsement set is to include the endorser list as an input attribute to the SDK. This would be fine for our use case. The only potential downside would be a malicious client sending in a bad endorser set. As we are doing bi-lateral contract processing this would have no impact. Another way that we could make it work is associating the endorser set with a channel id.",
+        "ts": "1476267187.000079"
+    },
+    {
+        "type": "message",
+        "user": "U1FDTCEUR",
+        "text": "<@U26T99AQ4> Regarding question 4 about external peer configuration. The question is for any given peer, how does it know the end points for a particular endorser? For example - Client A wants an endorsement from Client B and C. How does Client A know the endpoints for B and C to make the endorsement request? Is it expected to be obtained from Member Services? Manual Configuration? Public Blockchain information?",
+        "ts": "1476267493.000080"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U1FDTCEUR> thx for the clarification. On point 2: if I understood correctly, you are saying that at the application level, this will be handled by accepting an additional input identifying a set of endorsers. Internally, this will be mapped into _something_ that the fabric understands, potentially a channel ID or a chain ID.",
+        "ts": "1476274236.000081"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "On point 4: gotcha and yes, personally I know no way in which this is accomplished today. I had a quick look and I tentatively convinced myself that the message definitions aren't directly impacted by this, though. Provided that there is a way of listing endorsers (and we're back to your previous observation), the translation mechanism between this list and actual service endpoints is orthogonal imho - would you agree?",
+        "ts": "1476274614.000082"
+    },
+    {
+        "type": "message",
+        "user": "U1FDTCEUR",
+        "text": "<@U26T99AQ4> On point 2 - the endorser set would need to be associated with a channel ID, not a chain ID. The same chain ID would be used for ALL trading pairs (channel IDs).",
+        "ts": "1476281485.000083",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U26T99AQ4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1FDTCEUR",
+        "text": "<@U26T99AQ4>  On point 4 - Not sure what definition for orthogonal you are using here, so not sure if I agree or dont agree. The whole point of the question was how does the SDK implementation know the endpoint to send an endorsement to? In our situation this would be compounded by the need to either translate the endorsement set from either a method attribute input list of endorser ids, or by associating the endorser list to a channel id. So at some level the SDK needs to be able to obtain a grpc connection to an endpoint that is identified by the endorser id. This endorser is probably a Member. I guess the key is that somehow the SDK needs to be able to either manage this or accept the configuration as input.",
+        "ts": "1476282257.000084"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "on point 4: what I was trying to say was that I think your observations don't directly impact the message definition. As long as the channel ID is part of the fields of the relevant messages, we're fine from a message perspective. However I agree that the SDK interfaces need to be changed to include the notion of endorser set or channel ID.",
+        "ts": "1476289129.000085"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U1FDTCEUR> : For point 4, i think <@U0S5KF44D> mentioned that the client has the luxury of querying the membership service to indeed find out \"contact\" info on the endorsers that relate to a specific chaincode.  But as <@U26T99AQ4> says, after the client learns this information, the message structure is not impacted :slightly_smiling_face:",
+        "ts": "1476303394.000086"
+    },
+    {
+        "user": "U0S5KF44D",
+        "inviter": "U1BC5A0F9",
+        "text": "<@U0S5KF44D|keithsmith> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476303413.000087"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "I have a question in slide Endorser message flow in the Fabric proto slide deck. I am not sure if I understand the difference between three visibility modes. 1)Identity function 2) cryptographic hash function 3) function returning a zero-length byte array",
+        "ts": "1476307579.000088"
+    },
+    {
+        "type": "message",
+        "user": "U24M29R4G",
+        "text": "we have a `visibility field` in the ```ChaincodeproposalHeaderExtension```. Is there a more detailed description of each of these three modes?",
+        "ts": "1476307690.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "<@U1BC5A0F9> This isn\u2019t ringing any bells.  A single membership services (aka \u201ccop server\u201d) is per-participant, but there will be chaincode which manages all of the participants trusted CA roots.  I\u2019m not sure if that is what you were thinking of",
+        "ts": "1476307705.000090"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm, ok i remember we had a discussion over how a client who wishes to invoke chaincode with identifier, say chaincodeID, can find out which endorsers to contact. And then there was a question of whether this client should do a query to a peer \/endorser it trusts to give it this information (given a system chaincode state), and then locally ask the client-side of membership service (that can extend the request to the server) to list the network information of that endorser.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1476309083.000000"
+        },
+        "ts": "1476308760.000091"
+    }
+]

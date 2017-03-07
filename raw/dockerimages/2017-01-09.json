@@ -1,0 +1,517 @@
+[
+    {
+        "user": "U3CBDC0JG",
+        "text": "<@U3CBDC0JG|kenzhang> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1483997760.000157"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "Hi, I am getting error when running \"make dist-clean all\":\n\n`ERROR: for vp  b'No such image: sha256:f409834569e5b0d1207b1c27da1540c4e5a389961840e428d8e6cec9fb0c0f8a'\nERROR: Encountered errors while bringing up the project.\nmake: *** [unit-test] Error 1`",
+        "ts": "1483997790.000158"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "does anyone know when\/how this image `sha256:f409834569e5b0d1207b1c27da1540c4e5a389961840e428d8e6cec9fb0c0f8a` is built?",
+        "ts": "1483997843.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U3CBDC0JG> I think the issue is in docker-compose",
+        "ts": "1484000089.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "try this",
+        "ts": "1484000093.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cd unit-test &amp;&amp; docker-compose down",
+        "ts": "1484000103.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then try again",
+        "ts": "1484000106.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have seen this before...the best I can describe it is that \"docker-compose up\" persists some state even after the composition exits",
+        "ts": "1484000169.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "normally its not a problem, but if you then also \"make clean\" it orphans those resources and compose gets confused on subsequent operations",
+        "ts": "1484000210.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "however, running \" ... down\" fully cleans those up",
+        "ts": "1484000233.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I am not sure what the best long-term fix is",
+        "ts": "1484000244.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but this is a known workaround",
+        "ts": "1484000250.000168"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "<@U0KPFAZNF> thx, will try this next time. I fixed it be removing all of the existing aborted container",
+        "ts": "1484000261.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, yes, that is essentially what ... down does",
+        "ts": "1484000274.000170"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "cd unit-test &amp;&amp; docker-compose up --abort-on-container-exit --force-recreate &amp;&amp; docker-compose down should be changed to :\n\ncd unit-test &amp;&amp; docker-compose up --abort-on-container-exit --force-recreate; docker-compose down",
+        "ts": "1484000296.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "compose needs the equivelent of \"--rm'",
+        "ts": "1484000314.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as in docker-run",
+        "ts": "1484000317.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, yes, that is a good observation",
+        "ts": "1484000324.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that is indeed a bug that would lead to this happening",
+        "ts": "1484000343.000175"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "which would make sure the docker-compose down is run whenever the previous cmd exists, currently if previous cmd fails, down won't get executed",
+        "ts": "1484000347.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yep, i agree",
+        "ts": "1484000355.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it might need even further refinement, but that is a step in the right direction",
+        "ts": "1484000408.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that might actually mute the failure though",
+        "ts": "1484000465.000179"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "agree. if the cmd fails before docker-compose up, the \"down\" would be cleaning nothing, I guess for now it's as u said, a step in the right direction :slightly_smiling_face:",
+        "ts": "1484000467.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the issue is we need the error to propagate out so things like CI know the process failed",
+        "ts": "1484000484.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but you are on to something",
+        "ts": "1484000488.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "one thought: we could do the down before the up (and get rid of the --force-recreate",
+        "ts": "1484000511.000183"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "uh, ic, we need to keep the exit code",
+        "ts": "1484000514.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah",
+        "ts": "1484000517.000185"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "that's for sure doable :slightly_smiling_face:",
+        "ts": "1484000519.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "kinda hacky though",
+        "ts": "1484000531.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, give it some more thought",
+        "ts": "1484000540.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think your observation is astute, now we just need to find a good solution",
+        "ts": "1484000549.000189"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "surprised the \"--force-recreate\" is not cleaning up properly",
+        "ts": "1484000599.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, that was my attempt to beat it over the head",
+        "ts": "1484000616.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that did improve things in certain circumstances, but a few were still slipping through (probably what you just found)",
+        "ts": "1484000642.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you happened to have a test failure AND did a clean, blammo",
+        "ts": "1484000663.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "honestly, its probably partly a docker-compose bug too",
+        "ts": "1484000701.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "because I agree the force-recreate should obviate caring",
+        "ts": "1484000716.000195"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "I would recommend some kind of convention, either by naming,  namespace, tag, etc, on both the image and container name, to make the clean up easier",
+        "ts": "1484000726.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not following: as best I can ascertain, we already do",
+        "ts": "1484000749.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, the typical image has -snapshot-$sha in it already",
+        "ts": "1484000772.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or did you mean something else?",
+        "ts": "1484000776.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it seems, to me, part of the problem is that docker-rmi is allowed to pull the rug out from under docker-compose",
+        "ts": "1484000809.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that is likely a bug in docker\/compose",
+        "ts": "1484000831.000201"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "uh, right, sorry",
+        "ts": "1484000844.000202"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "for the $sha part, it makes \"docker ps\" really hard to read",
+        "ts": "1484000864.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my perception is that docker-compose is only maintaining a weak reference to the container SHA",
+        "ts": "1484000886.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and rmi is free to GC it, leaving the reference dangling until the next time it tries to re \"up\"",
+        "ts": "1484000919.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I would have thought --force-recreate basically ignores the previous reference, but that doesnt always appear to be the case",
+        "ts": "1484000948.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im confused though, I thought you were advocating for more precise naming",
+        "ts": "1484001009.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "are you saying it should be more generic",
+        "ts": "1484001014.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1484001016.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "like if we always used peer:latest rather than peer:....-snapshot-$sha\" ?",
+        "ts": "1484001047.000210"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "wish I have the images so that I can show you, and I can't remember exactly. there are cases (I think it's the chain code container) where the image name is really long, it scrambles the \"docker ps\" output and make it really hard to read",
+        "ts": "1484001196.000211"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "maybe we can come up with a shorter version of $sha?",
+        "ts": "1484001226.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we are already using the short-name, i think the sha isnt really the problem though",
+        "ts": "1484001652.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its the entire tag",
+        "ts": "1484001658.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mean, the sha is adding more, yes, but overall the tag is fairly long to begin with",
+        "ts": "1484001679.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually I am looking now, it seems the tag isnt displayed anyway",
+        "ts": "1484001789.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(in docker-ps output, i mean)",
+        "ts": "1484001797.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you elaborate on where the problem comes up?",
+        "ts": "1484001806.000218"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3PAW5V9T\/-.txt|Untitled> and commented: This is what I see right now",
+        "file": {
+            "id": "F3PAW5V9T",
+            "created": 1484001858,
+            "timestamp": 1484001858,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 3120,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3PAW5V9T\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3PAW5V9T\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3PAW5V9T\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3PAW5V9T-7ea77a2a58",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F3PAW5V9T\/-.txt\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.2.2-edd6258:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ docker ps\r\nCONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                                                      NAMES\r\n79f275dc3e45        hyperledger\/fabric-peer      \"\/bin\/sh -c 'peer nod\"   4 minutes ago       Up 4 minutes        0.0.0.0:7051->7051\/tcp, 0.0.0.0:7053-7054->7053-7054\/tcp   test_vp_1\r\nd596a073451f        hyperledger\/fabric-orderer   \"\/bin\/sh -c orderer\"     4 minutes ago       Up 4 minutes        7050\/tcp                                                   test_orderer_1\r\n8e9201f206e7        hyperledger\/fabric-cop       \"\/bin\/sh -c 'cop serv\"   4 minutes ago       Up 4 minutes        0.0.0.0:8888->8888\/tcp                                     test_cop_1\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vagrant@hyperledger-devenv:v0.2.2-edd6258:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric$ docker ps<\/pre><\/div>\n<div><pre>CONTAINER ID        IMAGE                        COMMAND                  CREATED             STATUS              PORTS                                                      NAMES<\/pre><\/div>\n<div><pre>79f275dc3e45        hyperledger\/fabric-peer      &quot;\/bin\/sh -c 'peer nod&quot;   4 minutes ago       Up 4 minutes        0.0.0.0:7051-&gt;7051\/tcp, 0.0.0.0:7053-7054-&gt;7053-7054\/tcp   test_vp_1<\/pre><\/div>\n<div><pre>d596a073451f        hyperledger\/fabric-orderer   &quot;\/bin\/sh -c orderer&quot;     4 minutes ago       Up 4 minutes        7050\/tcp                                                   test_orderer_1<\/pre><\/div>\n<div><pre>8e9201f206e7        hyperledger\/fabric-cop       &quot;\/bin\/sh -c 'cop serv&quot;   4 minutes ago       Up 4 minutes        0.0.0.0:8888-&gt;8888\/tcp                                     test_cop_1<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 25,
+            "lines_more": 20,
+            "preview_is_truncated": true,
+            "channels": [
+                "C2QPNU83B"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc3PAKGYSY",
+                "created": 1484001858,
+                "timestamp": 1484001858,
+                "user": "U0KPFAZNF",
+                "is_intro": true,
+                "comment": "This is what I see right now",
+                "channel": ""
+            }
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1484001858.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "The docker containers that are created to run chaincode have names that include the hash of the chaincode source code and as well as any deployment parameters (my understanding anyway).\n\nExample: dev-jdoe-example01-0-48baa00e355e6db1648cff44e28f1dbf322523a99ffe283fd99a00348466eb78075559488e372409bb691aab29cfa894645c9c2737781367012e0c816eb227b7",
+        "ts": "1484004791.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ah yes, that could be what <@U3CBDC0JG> is talking about ",
+        "ts": "1484005685.000221"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "<@U0YK3KKCY> thx, yes that's what I am referring to",
+        "ts": "1484006012.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "<@U3CBDC0JG> I'm not sure whether you can control the chaincode container names or not",
+        "ts": "1484006072.000223"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "docker image\/containers supports lables, we could use that to store the SHA if it's only for informational purpose",
+        "ts": "1484006094.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "you have some control over some components of the name, but I'm not sure about the hash part",
+        "ts": "1484006116.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "in core.yaml i believe",
+        "ts": "1484006143.000226"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "I am assuming he chaincode container names are comming from the core\/container\/util\/vm.go",
+        "ts": "1484006146.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "I believe so",
+        "ts": "1484006160.000228"
+    },
+    {
+        "type": "message",
+        "user": "U3CBDC0JG",
+        "text": "could be just me, but I do find the long name more than just annoying",
+        "ts": "1484006234.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "the id and networkId in core.yaml are used in the naming of the chaincode container",
+        "ts": "1484006241.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0YK3KKCY",
+        "text": "heh",
+        "ts": "1484006257.000231"
+    },
+    {
+        "user": "U2UUDQP7F",
+        "text": "<@U2UUDQP7F|michaelwang> has left the channel",
+        "type": "message",
+        "subtype": "channel_leave",
+        "ts": "1484018023.000232"
+    },
+    {
+        "user": "U3E300R6Z",
+        "text": "<@U3E300R6Z|abhinav.garg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484032176.000233"
+    }
+]

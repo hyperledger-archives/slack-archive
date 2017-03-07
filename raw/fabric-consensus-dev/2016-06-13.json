@@ -1,0 +1,319 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1465814478.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U142E5N0P>: Remember that Invoke is an asynchronous call, submitting 8000 TPS for a half hour may queue all requests, but if the underlying chaincodes are only able to be executed at 30TPS, then no amount of batching etc. will help.  It sounds like you have hit a bottleneck which is not related to consensus, but rather chaincode execution.",
+        "ts": "1465822666.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we really need to make this closed loop",
+        "ts": "1465823098.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i don't know how",
+        "ts": "1465823103.000020"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't think you'll find support for that from the distributed guys",
+        "ts": "1465824652.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Really, the simpler solution to me would be to start rejecting requests once our queue is X full",
+        "ts": "1465824706.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but what queue",
+        "ts": "1465824724.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, we need a queue",
+        "ts": "1465824730.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1465824733.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but we forward requests to the primary",
+        "ts": "1465824740.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We do, so hold them in the queue until they are executed?",
+        "ts": "1465824756.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay",
+        "ts": "1465824765.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how large is the queue then?",
+        "ts": "1465824777.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd say configurable, but, a few thousand seems like a reasonable first guess",
+        "ts": "1465824795.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1465824802.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hey slack, stop replacing my inverse smileys",
+        "ts": "1465824827.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: do you know why batch main loop keeps looping without printing anything else?",
+        "ts": "1465825372.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Nothing else at all? Is this a unit test or live?",
+        "ts": "1465825466.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "test",
+        "ts": "1465825471.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "TestNetworkBatch is racy",
+        "ts": "1465825508.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "should i just add a timeout?",
+        "ts": "1465825518.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, a sleep",
+        "ts": "1465825522.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which piece of it is racy?",
+        "ts": "1465825700.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In unit tests, we send `nil` events to basically flush the event thread (make sure it has finished processing the last event we gave it)",
+        "ts": "1465825723.000040"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so what happens is this:",
+        "ts": "1465825902.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```\n[36m13:28:09.132 [consensus\/obcpbft\/custodian] Register -&gt; DEBU 06b[0m Registering EPeABAdNkwfyAX8LB2i+fuLedvzVDNDhcYscmFYymcBuCc8i3ngXIqmnVVUOFv3Dr+pA1ZE5NPzGeUBjwkKtig== into custody with timeout 2016-06-13 13:28:11.132112257 +0200 CEST\n13:28:09.132 [consensus\/obcpbft] processMessage -&gt; INFO 06c[0m Batch replica 2 received new consensus request: EPeABAdNkwfyAX8LB2i+fuLedvzVDNDhcYscmFYymcBuCc8i3ngXIqmnVVUOFv3Dr+pA1ZE5NPzGeUBjwkKtig==\n--- FAIL: TestNetworkBatch (0.10s)\n\tobc-batch_test.go:65: 0 messages expected in primary's batchStore, found [timestamp:&lt;seconds:1465817289 nanos:31448813 &gt; payload:\"\\010\\001\\032\\00112\\002\\010\\001\" replica_id:1 ]\n```",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1465825941.000000"
+        },
+        "ts": "1465825917.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's this:",
+        "ts": "1465825959.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```\n\terr = net.endpoints[2].(*consumerEndpoint).consumer.RecvMsg(createOcMsgWithChainTx(2), broadcaster)\n\tnet.process()\n```",
+        "ts": "1465825969.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the process somehow doesn't last long enough for the message to be sent to the primary, which then would create a new batch block",
+        "ts": "1465826009.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm, that's a single threaded path I think? I don't see how it could process that nil event without having already queued a message",
+        "ts": "1465826111.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is it possible that you hit the batch timeout on the first request?",
+        "ts": "1465826139.000052"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(So that the second request didn't fill the batch size)",
+        "ts": "1465826151.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nope",
+        "ts": "1465826821.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no, interesting.  replacing the fatalf with errorf, it turns out that the batch replica never receives the message?",
+        "ts": "1465827049.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm.",
+        "ts": "1465827050.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah nm, i need to process more",
+        "ts": "1465827071.000057"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: so if i call process() twice, it works :slightly_smiling_face:",
+        "ts": "1465828121.000058"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "haha",
+        "ts": "1465828213.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what a hack",
+        "ts": "1465828216.000060"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm, it should be harmless to call it 'extra', but that's odd.  We still need to just fix the test framework to be entirely deterministic",
+        "ts": "1465828216.000061"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465828221.000062"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Obviously lower priority than fixing actual bugs in the real code, but hopefully we can find some time to do this after this June release",
+        "ts": "1465828271.000063"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or maybe during the period of code stabilization, merging new tests should be safe",
+        "ts": "1465828295.000064"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1465828378.000065"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Are you around?",
+        "ts": "1465838274.000066"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i am",
+        "ts": "1465839615.000067"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "seems that scheduling latency for me is in the order of 32us",
+        "ts": "1465844407.000068"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> What do you think should be the procedure when we get a view change, and have all the commit certs we need to reach a checkpoint, but do not have it yet?",
+        "ts": "1465844464.000069"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Whenever I try to turn on the periodic view change stuff, invariably, it triggers a ton of state transfer as one of the replicas is necessarily the slowest, and gets told to change views before it can reach a checkpoint)",
+        "ts": "1465844519.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we should execute instead of state transfer",
+        "ts": "1465845270.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "My concern is that this is off paper, and we might not have enough room in our execution window say for everything in the Xset",
+        "ts": "1465845727.000072"
+    },
+    {
+        "user": "U12452RAP",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U12452RAP|grapebaba> has joined the channel",
+        "ts": "1465879514.000073"
+    }
+]

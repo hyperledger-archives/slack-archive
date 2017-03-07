@@ -1,0 +1,2029 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "donovanhide: correct",
+        "ts": "1474273038.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "donovanhide: i think contention is contention.  short of implementing field calls, this is unavoidable",
+        "ts": "1474273066.000501"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XR6J961> Thanks for the response! Can you define what you mean by field calls? \nMy question revolves around whether batching transactions together, and the batch itself is endorsed, would mean the probability of contention is reduced. Are you saying that hyperledger consensus would theoretically perform badly for use cases like shared orderbooks?",
+        "ts": "1474277123.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not inherently",
+        "ts": "1474277165.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you just need to write your code so that you don't stomp on the state of parallel transactions",
+        "ts": "1474277183.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "field calls is if you tell your database \"add 5 to this field\", instead of doing the adding yourself",
+        "ts": "1474277218.000505"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Do you have any ideas for an orderbook data structure that could handle that kind of parallel mutation?",
+        "ts": "1474277229.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what is an orderbook?",
+        "ts": "1474277237.000507"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "An orderbook is a set of offers made by accounts to buy or sell an asset. It typically sees lots of activity at the best price as traders contend to be the best offer. So if you had offers as data type in the ledger, you\u2019d probably also need an index to order them by price and time created.",
+        "ts": "1474277318.000508"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The index would see a lot of contention on popular orderbooks.",
+        "ts": "1474277340.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think you should maintain an index",
+        "ts": "1474277394.000510"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "How would you iterate the orderbook when a crossing offer comes in without one?",
+        "ts": "1474277423.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, that's difficult",
+        "ts": "1474277445.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you could do a database query",
+        "ts": "1474277455.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but a scan of the table means that you produce a readset",
+        "ts": "1474277476.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe <@U0XRC0KLH> has a good idea",
+        "ts": "1474277484.000515"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s probably worth researching Ripple a bit to get some ideas of potential issues:\n<https:\/\/ripple.com\/build\/ledger-format\/#offer>\nRipple has a Directory node type in the ledger which is a linked list of pointers to offers. Contention on them is reduced by processing\/endorsing multiple transactions at a time.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474277667.000000"
+        },
+        "ts": "1474277660.000516"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "One possible solution is that if indexes are stored externally to the ledger and don\u2019t alter the world state hash, but are automatically updated when a qualifying data type changes, then you could have a very efficient system. General purpose indexes are hard though :slightly_smiling_face:",
+        "ts": "1474277802.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474277973.000520"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The index would also have to be accessible from chaincode.",
+        "ts": "1474277975.000521"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think as little as possible should be part of the chaincode",
+        "ts": "1474277993.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, it doesn't",
+        "ts": "1474277996.000523"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "imagine this:",
+        "ts": "1474278000.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you have an application, and it consumes the incoming list of (purchase\/sell) offers",
+        "ts": "1474278024.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "now you want to perform a purchase",
+        "ts": "1474278038.000526"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you pick a matching sell that you like (maybe you don't want to trade with specific entities)",
+        "ts": "1474278052.000527"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then you formulate a \"match existing sell with this purchase\" transaction",
+        "ts": "1474278082.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the chaincode just checks whether that sell is still available, and endorses the transaction",
+        "ts": "1474278100.000529"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or, if the sell expired or was consumed by somebody else, the chaincode does not endorse, you receive an error (basically you lost a race), and then you retry",
+        "ts": "1474278146.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no contention",
+        "ts": "1474278153.000531"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "does that make sense?",
+        "ts": "1474278162.000532"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "So you are suggesting storing the set of buy and sell offers as an unordered bag in the ledger, and the event stream feeds additions and deletions to that set, the client maintains the ordering and selects specific offers to attempt to consume?",
+        "ts": "1474278209.000533"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "That works until a buy offer is submitted which is higher than an existing sell offer. Also offers may consume one *or more* existing offers. So it does get complicated quickly.",
+        "ts": "1474278270.000534"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The question fundamentally boils down to random access vs sequential access of entities in the ledger. If sequential access is required an index will be contended due to concurrent, but one by one, transaction processing.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474278429.000000"
+        },
+        "ts": "1474278427.000535"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Maybe it\u2019s not a huge issue if all nodes are close to each other on a network, but if they are geo-disparate the network latency will amplify the contention.",
+        "ts": "1474278490.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, don't maintain an index",
+        "ts": "1474278646.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "imagine how you would do this on bitcoin",
+        "ts": "1474278653.000539"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you'd parse specific transactions to see which ones are sell or buy offers, and then you'd create a transaction that matches",
+        "ts": "1474278692.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what you are describing is an inherently contending application",
+        "ts": "1474278732.000541"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I think what you are saying is just do the trade settlement in hyperledger and store the orderbook externally?",
+        "ts": "1474278778.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, you can store the orderbook in hyperledger",
+        "ts": "1474278799.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh, maybe you could do this:",
+        "ts": "1474278817.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you partition offers and matching",
+        "ts": "1474278827.000545"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you have one chaincode (or a section), which records the sequence of offers (buy and sell)",
+        "ts": "1474278855.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm, sequence is a problem with the current architecture",
+        "ts": "1474278888.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which means that we need to reify a primitive that exposes the total order broadcast nature of consensus",
+        "ts": "1474278933.000548"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if that primitive existed, you would have a defined order, and you could deterministically perform the matching",
+        "ts": "1474278971.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then run this matching through another chaincode transaction",
+        "ts": "1474278996.000550"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, just skimmed your paper, I think \"Execute-then-order\u201d with speculative execution might not perform well on contended resources, compare to \"Order-then-execute\u201d. Ripple chooses the latter. I strongly think that an orderbook example would be a great benchmarking testcase for hyperledger. It\u2019s a fun, but difficult problem :slightly_smiling_face:",
+        "ts": "1474279064.000551"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "order-then-execute is what we have right now",
+        "ts": "1474279100.000552"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "External indexes is one possible solution. Ripple made the mistake of internalising them, which uses a huge amount of data storage.",
+        "ts": "1474279118.000553"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I read this document:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md#23-an-endorser-receives-and-endorses-a-transaction>\nWhich suggested \u201cExecute then order\"",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474279158.000000"
+        },
+        "ts": "1474279149.000554"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is that hyperledger uses go as implementation language for chaincode",
+        "ts": "1474279151.000556"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which means people keep implementing non-deterministic code",
+        "ts": "1474279177.000558"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which just breaks order-then-execute systems",
+        "ts": "1474279192.000559"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "You can write deterministic code in Go, just have to make sure all your inputs are deterministic :slightly_smiling_face:",
+        "ts": "1474279223.000560"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nope",
+        "ts": "1474279228.000561"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Really?",
+        "ts": "1474279232.000562"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not only that",
+        "ts": "1474279234.000563"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maps are non-deterministic",
+        "ts": "1474279237.000564"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "memory addresses are non-deterministic",
+        "ts": "1474279245.000565"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Don\u2019t use maps :slightly_smiling_face:",
+        "ts": "1474279245.000566"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it is easy to have global state",
+        "ts": "1474279261.000567"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ordered slices!",
+        "ts": "1474279262.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my experience is that in 100% of the cases where people said \"something is wrong with consensus, the network just stops\", it actually was caused by non-deterministic chaincode",
+        "ts": "1474279302.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you need to be an expert programmer to do it right",
+        "ts": "1474279316.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and still you might get it wrong",
+        "ts": "1474279321.000571"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and then your whole network stops",
+        "ts": "1474279325.000572"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's a terrible DoS vector",
+        "ts": "1474279334.000573"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, maybe drawing up some coding guidelines and providing some deterministic random access data structures (OrderedSet and OrderedMap) would help.",
+        "ts": "1474279403.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it wouldn't be able to rule out the problems",
+        "ts": "1474279433.000575"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Are you suggesting using a functional language instead? Or something more locked down like Solidity?",
+        "ts": "1474279459.000576"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something designed to be deterministic",
+        "ts": "1474279472.000577"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Sounds like a research paper :slightly_smiling_face:",
+        "ts": "1474279505.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sounds like a solved problem",
+        "ts": "1474279514.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because, solidity",
+        "ts": "1474279521.000580"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "But then, you are just rewriting Ethereum :slightly_smiling_face:",
+        "ts": "1474279543.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh didn't you notice that hyperledger is just a copy of ethereum?",
+        "ts": "1474279563.000582"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": ":slightly_smiling_face:",
+        "ts": "1474279569.000583"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Still a bit confused by \"order-then-execute\u201d in current implementation. Is that linked document saying that the next version will be \u201cexecute-then-order\u201d?",
+        "ts": "1474279626.000584"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Also, no one has successfully yet written a working distributed orderbook in Ethereum.",
+        "ts": "1474279720.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, you read the design of the next architecture",
+        "ts": "1474279828.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "currently transactions come in, are ordered, and then every validating peer executes them in the same order",
+        "ts": "1474279864.000587"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "There\u2019s currently no checking of previous key values in the endorsement step?",
+        "ts": "1474279913.000588"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s difficult to summarise this, but I think the design choice of processing transactions individually and checking world state hashes and changed key\/values after each execution, rather than grouping transactions by submission time and updating the world state hash after successful transactions have executed, will lead to some difficult contention issues.",
+        "ts": "1474280170.000589"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m not saying Ripple has done everything right, it\u2019s just a question of whether similar use cases to Ripple can be served by hyperledger.",
+        "ts": "1474280238.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think you're raising an interesting use case",
+        "ts": "1474280509.000591"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, banks like orderbooks :slightly_smiling_face:",
+        "ts": "1474280532.000592"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they do?",
+        "ts": "1474280539.000593"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s the truth :slightly_smiling_face:",
+        "ts": "1474280548.000594"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so far what i heard was that banks want to do the settlement",
+        "ts": "1474280564.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the order matching happens elsewhere",
+        "ts": "1474280574.000596"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, there is a huge market for corporate client cash pooling, which involves moving funds, cross-currency from subsidiary accounts to primary accounts. For the cross-currency exchange to occur, an orderbook is needed. If the orderbook can be in the same system as the bank account balances, it can all run at the same tick and be atomic. Can\u2019t be too detailed, but happy to discuss privately :slightly_smiling_face:",
+        "ts": "1474280680.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so this involves buy\/sell offer matching?",
+        "ts": "1474280783.000598"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or just keeping record of transactions",
+        "ts": "1474280793.000599"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Both.",
+        "ts": "1474280801.000600"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Basically, we have used Ripple extensively for testing, it has some major issues we\u2019d like to address. Hyperledger is potentially a useful platform for authoring an alternative.",
+        "ts": "1474280873.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I have a golang orderbook library - pretty small but performant.  double auction market\/price time priority.  I havent decide how I want to license it yet though",
+        "ts": "1474280876.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what major issues?",
+        "ts": "1474280888.000603"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ability to submit a complete ladder of offers and to be able to update them in a reasonable amount of time. Hyperledger would allow us to write custom transactions, such as UpdateLadder, rather than submit 20 separate offers individually.",
+        "ts": "1474280955.000604"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i see",
+        "ts": "1474280978.000605"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> Would be interested in looking at what you\u2019ve got!",
+        "ts": "1474280982.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "would you say that if you had a way to order offers through one chaincode, the system wouldn't suffer from contention?",
+        "ts": "1474281027.000607"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I wrote it a while back - I doubt I'd be able to sell it as is -will think on it tonight.",
+        "ts": "1474281041.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it would have to percolate through the system twice",
+        "ts": "1474281045.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "once to order, and a second time to confirm the matches",
+        "ts": "1474281069.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "in my experience, the matches can be returned from a call to process the order.  the orderbook itself can be threadsafe using locks, but the order of entering the orders absolutely matters.",
+        "ts": "1474281172.000611"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Basically, what will happen is that you have multiple market makers all submitting offers to an orderbook as external prices change. If they do so at the same time, the contention will kick in and retries might dominate.",
+        "ts": "1474281183.000612"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> are we talking about an orderbook running in hyperledger?",
+        "ts": "1474281226.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I disagree - you should use a lock on the orderbook state, and just deal with contention that way",
+        "ts": "1474281229.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "the orderbook - in hyperledger or elsewhere - will need to process orders in order to achieve the same state.  so if it's being run in shared state, the ordering of transactions needs to be determined prior to processing those orders",
+        "ts": "1474281306.000615"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "the contention i am referring to is actually more about the case where multiple threads are dropping orders into the book.  that may or may not apply in this situation.",
+        "ts": "1474281355.000616"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "byzantine distributed systems can't use locks",
+        "ts": "1474281357.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that just moves the contention elsewhere",
+        "ts": "1474281367.000618"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "if you can guarantee ordering of transactions, you dont need the lock",
+        "ts": "1474281396.000619"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I think we\u2019re talking about different things. This discussion is about how to implement an orderbook in hyperledger and index the offers without contending updates.",
+        "ts": "1474281396.000620"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I designed for different use case, but it should still work",
+        "ts": "1474281408.000621"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i still maintain that indexing should happen elsewhere",
+        "ts": "1474281413.000622"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I don't understand the problem of indexing and contention?",
+        "ts": "1474281505.000623"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XR6J961> I agree that the index is the nub of the problem. If it was possible to have a peer provide a API calls to update and range scan external indexes, that would be one possible solution.",
+        "ts": "1474281510.000624"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> hyperledger consensus (at least the next version) intends to check previous key values during the endorsement stage. If multiple clients are submitting offer transactions at the same time to different peers, each peer might have different key values and mark the transaction as stale. The endorsement happens before the total order is created. That is my understanding anyway...",
+        "ts": "1474281599.000625"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "external = non-deterministic",
+        "ts": "1474281613.000626"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "index is just a performance thing",
+        "ts": "1474281631.000627"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "not if the peer is responsible for the indexing?",
+        "ts": "1474281631.000628"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not perform the indexing and matchmaking in an outside application?",
+        "ts": "1474281657.000629"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and use a chaincode to validate the matchmaking",
+        "ts": "1474281675.000630"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XR6J961> how do you then ensure atomicity between the orderbook and the balances? You\u2019re in interledger territory then :slightly_smiling_face:",
+        "ts": "1474281698.000631"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "If multiple clients are submitting offer transactions at the same time to different peers, the order of those transactions certainly must be decided, prior to placing them in the orderbook.",
+        "ts": "1474281699.000632"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> Read this first:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md#23-an-endorser-receives-and-endorses-a-transaction>",
+        "ts": "1474281728.000633"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "If I am understanding that correctly, it seems like the endorser is meant to execute the transaction right away against it's own state before relaying it to other peers?",
+        "ts": "1474281923.000634"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XR6J961> to validate external match-making, you\u2019d still need to be able to range over the offers.",
+        "ts": "1474281924.000635"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> That\u2019s my understanding.",
+        "ts": "1474281936.000636"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "that wont work",
+        "ts": "1474281942.000637"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Hence the discussion :slightly_smiling_face:",
+        "ts": "1474281952.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "the transactions need to be ordered by the consensus protocol - surely that's something it already provides for, no?",
+        "ts": "1474281995.000639"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "*After* the endorsement(s).",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474282045.000000"
+        },
+        "ts": "1474282010.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "if that's not possible to change, then the actual state update should only occur after correct order is established.",
+        "ts": "1474282063.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I dont think this problem is unique to orderbooks - it is basically the double spending problem, with more complicated state",
+        "ts": "1474282092.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "donovanhide: i guess...",
+        "ts": "1474282148.000644"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Once transactions are endorsed, they can still fail during execution, as I understand it. It\u2019s just the endorsement is a kind of \u201cpre-filter\"",
+        "ts": "1474282149.000645"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "but one that won\u2019t work well with contended resources.",
+        "ts": "1474282180.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "tendermint works this way too - it's not more useful than a spam filter",
+        "ts": "1474282184.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the endorsement 1) shows that the chaincode executed correctly, and 2) proves that the stakeholders agree with the transaction",
+        "ts": "1474282220.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, i agree that this design is not good",
+        "ts": "1474282260.000649"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, that\u2019s progress :slightly_smiling_face: Good to identify issues early :slightly_smiling_face:",
+        "ts": "1474282286.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but i can't do anything about it",
+        "ts": "1474282296.000651"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XR6J961> because the design is fixed?",
+        "ts": "1474282401.000652"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, and my opinions do not influence the design",
+        "ts": "1474282442.000653"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Who is the design lead? Can I make a case to that person?",
+        "ts": "1474282468.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there is <@U0PB67X4K> and <@U0KN2SSKE>",
+        "ts": "1474282684.000655"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Cool, thanks! Will try and engender some further discussion.",
+        "ts": "1474282763.000656"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "great",
+        "ts": "1474282822.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "as an example of the problem: I have $100.  I make two, otherwise completely valid transactions sending the whole amount - one to Bob, and one to Alice.  I send them at the same time to different peers.  Each executes them against their local state before socializing them.  Hilarity does not ensue.",
+        "ts": "1474282907.000658"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> I believe those transactions might succeed in the transaction simulation stage, but will fail in the ordered execution stage. It\u2019s ok if some payments fail as they happen much less frequently than offer updates, which will happen all the time by multiple parties.",
+        "ts": "1474283033.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "correct",
+        "ts": "1474283070.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "one is a double spend attack",
+        "ts": "1474283078.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "more precisely, one of them will fail in ordered execution.",
+        "ts": "1474283082.000662"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, one has to fail",
+        "ts": "1474283099.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "and one should succeed.  if that's the case, why could the same procedure not apply to an orderbook?",
+        "ts": "1474283129.000664"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "it's just more complicated state - but state that depends on order, all the same",
+        "ts": "1474283148.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because your example is an application bug or a try to exploit something",
+        "ts": "1474283166.000666"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "while an orderbook is defined by this behavior",
+        "ts": "1474283178.000667"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> Because for an orderbook to be meaningful, it requires the offers are ordered. To maintain that ordered state, you need an index. If multiple offers affect the same orderbook at the same time, the index is a contended resource.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474283239.000000"
+        },
+        "ts": "1474283226.000668"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "i dont understand what you mean by index?",
+        "ts": "1474283246.000670"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Offer A 200 USD\/EUR @ 1.3\nOffer B 100 USD\/EUR @ 1.31\nIndex maintains that Offer A is a better price than Offer B",
+        "ts": "1474283298.000671"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "oh.  I see.  so you mean A's index is 0 and B's is 1",
+        "ts": "1474283327.000672"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "or something",
+        "ts": "1474283331.000673"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yep, the world state is just a big map of buckets. To put an orderbook in there, you need an index that points to all the offers in a useful order.",
+        "ts": "1474283375.000674"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I would suggest using a different data structure.  I dont think a map or array is the best.  I used a B-tree which has O(log n) inserts, and easy access to the top of the stack",
+        "ts": "1474283425.000675"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "and maintains order",
+        "ts": "1474283435.000676"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, if you have a btree that can be serialised into the hyperledger key value store, that would be interesting :slightly_smiling_face:",
+        "ts": "1474283458.000677"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "the index is pretty irrelevant, as long as inserts are done in the correct order",
+        "ts": "1474283459.000678"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "hmmm",
+        "ts": "1474283477.000679"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Perhaps we need a Merkle-B-Tree :slightly_smiling_face:",
+        "ts": "1474283504.000680"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the index is just for quick access",
+        "ts": "1474283515.000681"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "thing is you never actually need to know the index - you only ever need the best order (when executing) plus a guarantee that the stack remains ordered correctly when you are not (menaing just adding an order)",
+        "edited": {
+            "user": "U0KM0C3M3",
+            "ts": "1474283578.000000"
+        },
+        "ts": "1474283562.000682"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "You might need the second and third best offer if the incoming offer crosses and consumes more than one existing offer.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474283610.000000"
+        },
+        "ts": "1474283596.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "after the first is consumed, the second best becomes the first",
+        "ts": "1474283611.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "so no",
+        "ts": "1474283613.000687"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "So you are saying a linked-list?",
+        "ts": "1474283633.000688"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I also looked at using a skip list - but decided on the b-tree as ideal (in my opinion).  linked lists have O(n) inserts",
+        "ts": "1474283675.000689"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yep, there is all the theoretical data structure knowledge :slightly_smiling_face: The test is how to apply it to a merkle tree for efficient access and updating.",
+        "ts": "1474283736.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "i used <https:\/\/github.com\/google\/btree>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "google\/btree",
+                "title_link": "https:\/\/github.com\/google\/btree",
+                "text": "Contribute to btree development by creating an account on GitHub.",
+                "fallback": "GitHub: google\/btree",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/1342004?v=3&s=400",
+                "from_url": "https:\/\/github.com\/google\/btree",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1474283753.000691"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I have also used that package :slightly_smiling_face: How would you serialise it into the merkle tree so that is uncontended? If you put it into a single key, it would have terrible contention :slightly_smiling_face:",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474283901.000000"
+        },
+        "ts": "1474283801.000693"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I have thought about putting an orderbook in a consensus based system a fair bit, and unfortunately my conclusion is that because the state of the art in real financial systems pushes the boundaries of what is possible in centralized systems, we are probably already around the bend on being able to do it via consensus.  Still, to answer your question, I would not even try to serialize the whole structure.  why not just run consensus on the new state?",
+        "ts": "1474283990.000695"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, it is possible, because Ripple. You should examine the hoops jumped through to make it work. The key entity is the DirectoryNode LedgerEntry type:\n<https:\/\/ripple.com\/build\/ledger-format\/#directorynode>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474284080.000000"
+        },
+        "ts": "1474284070.000696"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "If this was mapped to hyperledger, the DirectoryNode updates would be highly contended. Which is my key point.",
+        "ts": "1474284128.000700"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "What is more, all DirectoryNode updates are persisted in the log of changed nodes, so it uses an insane amount of storage.",
+        "ts": "1474284180.000701"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "why is it necessary though?",
+        "ts": "1474284245.000702"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "An ephemeral and external index of ledger entries would be a cool feature.",
+        "ts": "1474284253.000703"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> Because an orderbook needs to be ordered :slightly_smiling_face: Unless you can prove to me otherwise, I\u2019ll leave the burden of proof with you :slightly_smiling_face:",
+        "ts": "1474284296.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "If I understand the argument correctly, you are saying that the entire orderbook state needs to be serialized and stored as a part of a merkle tree because it is otherwise difficult (impossible?) to maintain consensus about the order of elements within that orderbook state.",
+        "ts": "1474284472.000705"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I certainly agree that if you tried to store that whole structure as a value of a single key, it will end in tears",
+        "ts": "1474284577.000706"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0KM0C3M3> Think about how you\u2019d write the chaincode to process an incoming offer. You need to examine the existing offers on the other side of the book to see if it crosses. If it does you need to iterate that side of the book and remove the crossing offers and update the appropriate balances. If it doesn\u2019t, you need to work out which position it takes on this side of the orderbook. Both operations require ranging over orderbooks. Without an index, or maybe a linked list, you\u2019d have to range scan over the whole merkle tree.",
+        "ts": "1474284715.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I have no experience writing chaincode for hyperledger.  I have written the exact code you describe, however, did not use any index (other than 0) to do so.  I think the real question is \"where is the state relating to open orders persisted?\"  If the orders are persisted in the merkle tree, that can be done with something that helps order them (which would allow the correct state to be (re)constructed).  Once the orderbook state is constructed, and as long as it can be reconstructed via individual transactions (orders) that have been stored in the merkle treet, I don't see that updating the actual state in a persistent fashion on the merkle tree is something that needs to be done.",
+        "ts": "1474285117.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "sure, it means old (filled) orders are there, but who cares - if you reconstruct the state correctly, you have the set of currently open orders",
+        "ts": "1474285167.000709"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "and anyway you need the audit trail of what happened, which can also be constructed",
+        "ts": "1474285182.000710"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, there are a myriad of issues that come up when you start trying to map things into a merkle tree. Persistence (as in Bagwell) does mean that previous states are maintained forever. In Ripple this is done by hashing the contents of a value and using that as a key, and then using a radix tree to map those keys to actual indexes. In hyperledger, key versioning is used. An index (like the DirectoryNode) reduces access reads required. Say you want to change the worst offer of a large orderbook. It will be very slow using your method\u2026 It\u2019s not simple. Intelligent people have suffered greatly trying to solve these problems :slightly_smiling_face:",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474285492.000000"
+        },
+        "ts": "1474285439.000711"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "\"Say you want to change the worst offer of a large orderbook.\"  cancel and replace (you lose your place in line) is the standard procedure in many markets - though admittedly not government bonds, in which I have some experience. I chose not to assume it was required in my (toy) library.  Point being, it's open for debate as to wether the state of an order should be allowed to change - apart from cancellation.  That said, either deletion or update in a decent implementation must have a separate time associated with it, and I see no reason why processing it couldn't be O(log n), since you should always be able to find a given open order based on price\/time using the insertion algorithm, because if it has a different price or time, it is, by definition, a different order.  I don't have much knowledge of the ripple approach, but I'm interested, and will look into it more.",
+        "edited": {
+            "user": "U0KM0C3M3",
+            "ts": "1474285988.000000"
+        },
+        "ts": "1474285964.000713"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well, it has been an interesting discussion :slightly_smiling_face: In summary, unless someone can author a world-changing, merkle-tree friendly, DOS-proof orderbook data structure, it seems like the next hyperledger consensus design might have issues with index contention which it would be great to discuss further with <@U0PB67X4K> and others. Thanks for everyone\u2019s time!",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474286355.000000"
+        },
+        "ts": "1474286316.000715"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>, <@U0Y14MWA2>: so with ecdsa signatures, one sbft cycle takes ~0.8ms for a one node network, ~4ms for a 4-node nework, and 640ms for a 80-node network",
+        "ts": "1474286693.000717"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Have you considered ed25519?",
+        "ts": "1474286733.000718"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/godoc.org\/github.com\/golang\/crypto\/ed25519>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474286798.000000"
+        },
+        "ts": "1474286794.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm just adding a test",
+        "ts": "1474286833.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd like to use ed25519, but my guess is other forces would want to use NIST stuff",
+        "ts": "1474286870.000723"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I know a chap from Intel made ECDSA a lot faster recently for Go 1.7 (I think). I had a lot of fun helping speed up ed25519 :slightly_smiling_face:\n<https:\/\/github.com\/agl\/ed25519\/commits\/master>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1474286926.000000"
+        },
+        "ts": "1474286919.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how much did that gain?",
+        "ts": "1474286999.000727"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i gotta check out for a while - need to eat",
+        "ts": "1474287090.000728"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Can\u2019t find the old benchmarks\u2026 Seem to remember it was nearly 2.5x faster and not far off the C implementation. djb\u2019s assemby version was 2x faster than the C\u2026 Long time ago :slightly_smiling_face:",
+        "ts": "1474287114.000729"
+    },
+    {
+        "type": "message",
+        "user": "U0KM0C3M3",
+        "text": "I compared that implementation to P256 from go standard lib recently - seem to recall it was impressively quick.",
+        "ts": "1474288356.000730"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>, <@U1AU8DRQR>: do you think we should augment the `Deliver` function between sbft and app to include a sequence number?",
+        "ts": "1474296105.000731"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's not going to be the batch number, unless we can skip it",
+        "ts": "1474296133.000732"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "how will we generate the seq number?",
+        "ts": "1474296199.000733"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sbft has an internal seq number",
+        "ts": "1474297092.000734"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the advantage of this is not clear for me",
+        "ts": "1474297213.000735"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "crash restart",
+        "ts": "1474297493.000736"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961> We need to talk about how we do config, whether it's part of the `Deliver` chain or not",
+        "ts": "1474297543.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If it is, then we need to either a) modify the block structure, or b) define some sort of wrapping data structure for the data in the block",
+        "ts": "1474297569.000738"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474297591.000739"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The other thing that gets to be really tricky is pruning",
+        "ts": "1474297592.000740"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What seems far easier would be to instead have a second chain only for config",
+        "ts": "1474297605.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it should use request and deliver",
+        "ts": "1474297608.000742"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And checkpoint on both of them",
+        "ts": "1474297609.000743"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That way, we never need to worry about pruning config, and, we don't have to modify the block or wrap the binary blobs",
+        "ts": "1474297633.000744"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It would grow the checkpoint message slightly, but minimally relative to the overall message sizes",
+        "ts": "1474297665.000745"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1474297675.000746"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but would you still use request\/deliver?",
+        "ts": "1474297695.000747"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Do you mean `Broadcast`\/`Deliver`?",
+        "ts": "1474297711.000748"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1474297714.000749"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "this is consensus internal",
+        "ts": "1474297721.000750"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, so `request` is an internal function to grab a batch?",
+        "ts": "1474297754.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sec",
+        "ts": "1474297758.000752"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And I would say, yes)",
+        "ts": "1474297758.000753"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "```type Receiver interface {\n\tReceive(msg *Msg, src uint64)\n}\n\ntype System interface {\n\tSend(msg *Msg, dest uint64)\n\tTimer(d time.Duration, t timerFunc) Canceller\n\tDeliver(batch [][]byte)\n\tSetReceiver(receiver Receiver)\n\tPersist(key string, data proto.Message)\n\tRestore(key string, out proto.Message) bool\n\tSign(data []byte) []byte\n\tCheckSig(data []byte, src uint64, sig []byte) error\n}\n```",
+        "ts": "1474297771.000754"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "actually, it also implements Request",
+        "ts": "1474297811.000755"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that's missing info",
+        "ts": "1474297822.000756"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Presumably `Request` is for state transfer?",
+        "ts": "1474297848.000757"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "func (s *SBFT) Request(req []byte) {\n\ts.broadcast(&amp;Msg{&amp;Msg_Request{&amp;Request{req}}})\n}",
+        "ts": "1474297867.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "atomic `Broadcast` -&gt; sbft `Request`",
+        "ts": "1474297896.000759"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, okay",
+        "ts": "1474297900.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So very much the `Request` from obcpbft",
+        "ts": "1474297925.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "later, sbft calls `sys.Deliver`, which persists the raw chain and itself does the atomic `Deliver`",
+        "ts": "1474297929.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474297932.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So the basic problem is we want `Deliver` and persisting the sequence number to be atomic",
+        "ts": "1474298021.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we should use Request\/Deliver from sbft to sequence the config",
+        "ts": "1474298027.000765"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my feeling is that we need to change Deliver to pass out the signatures as well",
+        "ts": "1474298086.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I agree we could use `Request` to sequence the config, but I think it is dependent on how would want to store the config",
+        "ts": "1474298105.000767"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we could pass in a config flag with request",
+        "ts": "1474298135.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or some metadata",
+        "ts": "1474298147.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We could make the message use `oneof`",
+        "ts": "1474298154.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474298175.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we can even do that from the outside",
+        "ts": "1474298181.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and to sbft it is completely opaque",
+        "ts": "1474298189.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I am backtracking on this second chain in my head now, we should encode validation policy in the chain, and if we need to handle pruning and that, it would not be that much harder to handle it for the rest of config",
+        "ts": "1474298480.000774"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i agree, but i'm not sure what you are saying",
+        "ts": "1474298669.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sorry if I am scattered, in a room of about 20 people right now who are talking about bootstrapping",
+        "ts": "1474298764.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Basically, I am thinking that the bft network is going to need to retain some amount of the 'rawledger' thing that gets sent via `Deliver`",
+        "ts": "1474298798.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, for state transfer",
+        "ts": "1474298829.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and config",
+        "ts": "1474298837.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We should make sure we support pruning of this chain",
+        "ts": "1474298839.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This chain should be self validating, which means it should encode a validation policy (set of keys) into it",
+        "ts": "1474298854.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in the config",
+        "ts": "1474298882.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This means, if we want to support pruning, and retain the validation policy (and config), we're going to need to do something clever.  Either periodically re-asserting it at a frequency greater than the pruning, or, something else?",
+        "ts": "1474298911.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why?",
+        "ts": "1474298959.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, if the config\/validation is encoded in the chain, and we only retain... 10k blocks, after 10k blocks since the config changed, how do we do the validation? How do we know our config?",
+        "ts": "1474298999.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we write the config out separately as well",
+        "ts": "1474299018.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that we don't have to parse the whole chain to find the latest config",
+        "ts": "1474299028.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But how do we validate the config? How do we know it hasn't changed since we were last up?",
+        "ts": "1474299051.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's valid because it is stored in our store",
+        "ts": "1474299080.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we don't know whether it changed until we contact the network",
+        "ts": "1474299092.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the network can tell us the latest config",
+        "ts": "1474299122.000791"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So this is some extra process of consenting on config?",
+        "ts": "1474299150.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1474299156.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "when i come up, i say \"hey, i just restarted.  what's the last batch we're at, and what's the last config?\"",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1474299190.000000"
+        },
+        "ts": "1474299186.000794"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And you require f+1 same config responses?",
+        "ts": "1474299212.000796"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(I'd argue that is an extra process of consenting on config)",
+        "ts": "1474299241.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, you only require one, because it contains the signatures required for config change",
+        "ts": "1474299286.000798"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But you don't know if that's stale config",
+        "ts": "1474299303.000799"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "fine, then wait for f+1",
+        "ts": "1474299313.000800"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all this complication would go away if we co-located consensus and committer, and just maintained one single blockchain",
+        "ts": "1474299361.000801"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there wouldn't be 3 copies of the data",
+        "ts": "1474299370.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "nor pruning",
+        "ts": "1474299373.000803"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why would pruning go away?",
+        "ts": "1474299382.000804"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because you always maintain the one blockchain",
+        "ts": "1474299398.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or your history is lost",
+        "ts": "1474299428.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "for all kinds of regulatory reasons that's not allowed anyways",
+        "ts": "1474299439.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think there will likely still be some notion of pruning\/archiving",
+        "ts": "1474299440.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but since that design won't happen anyways, we don't have to talk about it",
+        "ts": "1474299576.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "One solution would be if we have some notion of encoding a more total policy on the chain, something like; \"This is the set of valid public keys for signing, we require signatures for k of them, in order to validate this chain, you should not prune this block until a new config is written, which will be in at most L blocks.\", but I'm not certain I like this.  Sticking everything on one chain drastically simplifies things by not having to coordinate between chain state and config, but makes supporting pruning very tricky.  Splitting them into two chains of course has the exact opposite problem.",
+        "ts": "1474299874.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then let's not prune",
+        "ts": "1474299934.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That is what I was about to say \"Maybe we say screw pruning\"",
+        "ts": "1474299948.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we should advise that the design as it is is space inefficient and pruning is very difficult",
+        "ts": "1474299975.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe you can bring that up during the meetings this week",
+        "ts": "1474300000.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I know it is on the agenda for later, I'd like to know how the validated ledger side sees pruning working <@U1KFCPFQA>",
+        "ts": "1474300009.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i won't be able to join on account of sickness",
+        "ts": "1474300011.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, sorry you are still not feeling well, hope you get better soon",
+        "ts": "1474300029.000817"
+    },
+    {
+        "user": "U1KFCPFQA",
+        "inviter": "U0XPR4NP4",
+        "text": "<@U1KFCPFQA|dave.enyeart> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474300033.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so do i - i keep getting sick on the weekend, which is very frustrating",
+        "ts": "1474300049.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea, how would the validated ledger be pruned?",
+        "ts": "1474300075.000820"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do you build your world state?",
+        "ts": "1474300083.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you need a full copy",
+        "ts": "1474300102.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I feel like maybe some sort of special transaction, possibly specifying the set of data for archiving, but it seems hard, much harder even than in the sbft config case",
+        "ts": "1474300176.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bitcoin doesn't do that",
+        "ts": "1474300234.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think any ad hoc solution will work out right",
+        "ts": "1474300251.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well anyways, what's on the agenda to hack for me?",
+        "ts": "1474300286.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought about implementing the application state (chain) interface, and then go to state transfer",
+        "ts": "1474300327.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so the `Deliver`  API will have to change a bit",
+        "ts": "1474300400.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "include a sequence number, and signatures",
+        "ts": "1474300417.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe deliver a block directly?",
+        "ts": "1474300429.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in case we decided on that format",
+        "ts": "1474300440.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but how does the consensus config fit in there",
+        "ts": "1474300473.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "probably deliver from sbft won't provide a block",
+        "ts": "1474300489.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's what the application would do",
+        "ts": "1474300493.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Bitcoin has no real remedy to unbounded growth, right? Presumably in 500 years someone will reference one of the early bitcoins that hasn't been touched and everyone will need the beginning of the chain?",
+        "ts": "1474300501.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1474300509.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think they say that storage will grow faster",
+        "ts": "1474300523.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "anyways, does that seem like a reasonable thing to do next?",
+        "ts": "1474300540.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was hoping to get around to hacking on the state transfer stuff, but with everyone visiting this week, that seems like an unlikely dream",
+        "ts": "1474300624.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1474300630.000840"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't think I saw any comments from you on the rawledger interface?",
+        "ts": "1474300634.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you mean the block interface?",
+        "ts": "1474300647.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=orderer\/rawledger\/rawledger.go;h=2bb1eec2862fe56e452b184a029ee8b94b9a3338;hb=refs\/heads\/feature\/convergence>",
+        "ts": "1474300694.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ok i gotta run",
+        "ts": "1474300718.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "say hi to everybody",
+        "ts": "1474300724.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Bye Simon, get well soon",
+        "ts": "1474300767.000846"
+    }
+]

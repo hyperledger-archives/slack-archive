@@ -1,0 +1,142 @@
+[
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U1B9E51R8> yes overall throughput will be lower when a client must submit many transactions with many dependencies. Maybe the client applications can implement a resend mechanism; just send many transactions with assumption that the order will remain the same and most will complete fine, which is probably true, and just be prepared to re-propose any  transactions that fail validation.\nIn v1.0, the client can register for event notification, It is not fully developed yet. For example, client could request all notifications for a particular transaction - such as when client has other transactions to send which are dependent on the results being settled. Or maybe could request all event notifications per transaction classification - such as all successes or all failures, etc. That is my understanding of the intentions, but I must mention that I do not really know the full API how it will work. Maybe you could get more answers from the authors of the Common SDK API <https:\/\/docs.google.com\/document\/d\/1R5RtIBMW9fZpli37E5Li5_Q9ve3BnQ4q3gWmGZj6Sv4\/edit#heading=h.z6ne0og04bp5>",
+        "ts": "1482505281.001114"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U1SHFS1Q9> v0.6 does not have separate endorser peers. the architecture is much simpler and all functions are combined into a single set of peer nodes. If using a secure and fault-tolerant consensus algorithm such as PBFT, as is provided with the BlueMix networks for example, then clients submit transactions to any peer of a network of 4 peers, which talk to each other to create batches. Imagine many users sending Invoke Transactions to the peers in parallel; the peer consensus network needs to order them, peers all compute and agree on answers, and then commit to ledger. And there is only one chain in v0.6, whereas v1.0 has multiple concurrent chains for different business transaction networks established by clients. Note (in both v0.6 and v1.0) the complexity with ordering is from the distributed network and the parallel processing; but the true difficulties and problems arise when there are breakdowns such as when one or more peer nodes are disconnected or restarted - which causes some transactions to get queued or even lost. And then peer nodes must re-sync with the network when they reconnect, which causes more delays and catch-up algorithms that could lead to unexpected ordering of transactions (different than the order proposed\/requested by clients).",
+        "ts": "1482506325.001116"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Thank you so much for the detailed explanation <@U1B2FF8LR>.  This is very helpful. As a follow up question, if all peers are executing the transaction, how is the data privacy maintained? I understood one of the aspects is that the peers will have visibility to data on needs basis.  How is that achieved in v 0.6 (and 1.0)",
+        "ts": "1482511980.001117"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "This is not achieved in v0.6, because of what you pointed out - all validating peers need to execute the transaction. In v1.0, this concept of channels cannot be carried over to the SBFT work for the same reasons. You're probably looking at a sidechains-like construct if you want data privacy at a BFT-based network.",
+        "ts": "1482512695.001118"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The `ab.proto` defines different kinds of ways to pull blocks from the ordering service. In example, you can pass max UINT64+block_until_ready and get a never-ending stream of blocks as they are created.\nBut- what is the default behavior of the ordering service client? has it ever been discussed?",
+        "ts": "1482512971.001119"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "In v1.0, only the authorized users\/peers\/organizations of a particular channel can access that channel ledger. Based on that, if we abstract out the orderer service (since it will be a protected portion of the entire network), then from customer perspective, this answers the question at a high level.",
+        "ts": "1482513036.001120"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Ok. in V0.6 all peer will have equal access to data",
+        "ts": "1482513069.001121"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: \"Default\"? It's essentially a server responding to your requests, right? There is no default.",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1482513098.000000"
+        },
+        "ts": "1482513074.001122"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "There is a default because you can ask `block until ready`, or specify seek behavior: `FAIL_IF_NOT_READY = 1;`",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1482513203.000000"
+        },
+        "ts": "1482513143.001124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "And you can simply not pass max UINT64 but only pass the next block you need, etc. etc.",
+        "ts": "1482513160.001125"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I asked about the client's behavior",
+        "ts": "1482513173.001126"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "If I am using Blockchain for say an health insurance claim, then all  parties need not see all data of the patient.  That is the context in whic eI was asking about data privacy.",
+        "ts": "1482513204.001128"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I understand that. I would expect that \"block until ready\" is the way you want to roll (so this is a \"sensible default\" if you wish), but again, it's up to the client.",
+        "ts": "1482513262.001129"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah this is exactly what I'm asking about- \"it's up to the client\"- the client is implemented in the peer, do you or anyone around here know what is the behavior? has it been discussed?",
+        "ts": "1482513300.001130"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Explicitly no, not that I'm aware of. Implicitly, it's the sensible default I referred to above.",
+        "ts": "1482513374.001131"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U0XQ35CDD>, do we have the side-chain support or preview in 0.6?  I guess not.  Correct me if I am wrong",
+        "ts": "1482513648.001132"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Correct.",
+        "ts": "1482513659.001133"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U1SHFS1Q9> the security certificates obtained by the users from the COP (Certificate Authority) will allow users to read or write only what they are supposed to do. Each transaction request will be accompanied by the users certs, and it will be enforced by the peers, which are configured with the endorsement policies and validation policies that dictate who can see and change what things on that channel. Think of it as the peers fulfiling a query request during endorsement or validation steps, but only if the peer knows the user is allowed to see it.",
+        "ts": "1482513789.001134"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "<@U1B2FF8LR>, that is at the transaction level and not at atomic data element level, right? Also, do we support the endorsement policy confifurations in V0.6? Currently we are evaluating v0.6 through a PoC for one of the clients. Apologies for asking too many questions",
+        "ts": "1482514051.001135"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "yes; I believe the certs will be useful at transaction level, which is what you asked about different parties (users) in an insurance claim.\nno; the policies are new in v1.0.\nYou might want to go read this white paper, if you have not already done so:  <http:\/\/www.the-blockchain.com\/docs\/Hyperledger%20Whitepaper.pdf> \nand maybe <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/biz\/usecases\/>",
+        "ts": "1482515495.001136"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Thank you so much <@U1B2FF8LR> for the pointers.",
+        "ts": "1482516771.001137"
+    },
+    {
+        "type": "message",
+        "user": "U1SHFS1Q9",
+        "text": "Thanks <@U0XQ35CDD> for the clarifications.",
+        "ts": "1482516813.001138"
+    }
+]

@@ -1,0 +1,127 @@
+[
+    {
+        "user": "U26T99AQ4",
+        "text": "<@U26T99AQ4|aso> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477991763.000156"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "folks I'm having some trouble with java_test.go after some changes to endorser\/escc\n```\nvagrant@hyperledger-devenv:v0.2.0-b1b9439:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test$ go test -ldflags=\"-X <http:\/\/github.com\/hyperledger\/fabric\/metadata.Version=0.7.0-snapshot-b1b9439|github.com\/hyperledger\/fabric\/metadata.Version=0.7.0-snapshot-b1b9439>\"\n2016\/11\/01 09:18:13 setting Number of procs to -1, was 2\n2016\/11\/01 09:18:13 rootDirectory = ..\/..\/..\/..\/..\/examples\/chaincode\/java\/SimpleSample\n2016\/11\/01 09:18:13 Failed Chaincode docker build:\n\n--- FAIL: TestJava_BuildImage (0.11s)\n        java_test.go:48: Error building Chaincode container: API error (500): {\"message\":\"The Dockerfile (Dockerfile) cannot be empty\"}\n\nFAIL\nexit status 1\nFAIL    <http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test|github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test>        0.161s\n```\nDoes it ring any bell?",
+        "edited": {
+            "user": "U26T99AQ4",
+            "ts": "1477992473.000000"
+        },
+        "ts": "1477991973.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U26T99AQ4> did you make images ? Do you have javaenv image locally available ?",
+        "ts": "1477992962.000159"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "thanks <@U0YNFB22X> - I'll give that a try",
+        "ts": "1477993028.000160"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "but if I make peer, shouldn't they get build automatically?",
+        "ts": "1477993054.000161"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "also, how can I obtain(?) the javaenv? I'm entirely clueless about all java aspects I'm afraid..",
+        "ts": "1477993174.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "Ideally it should, because peer has dependency on all the images.",
+        "ts": "1477994681.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "What version are you working on ? Could you please send the output of this command `docker images | grep javaenv`",
+        "ts": "1477994704.000164"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "```\nvagrant@hyperledger-devenv:v0.2.0-18a44d0:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test$ docker images | grep javaenv\nhyperledger\/fabric-javaenv      latest                          a5e339b7a7ed        7 minutes ago       771.5 MB\nhyperledger\/fabric-javaenv      x86_64-0.7.0-snapshot-18a44d0   a5e339b7a7ed        7 minutes ago       771.5 MB\n```",
+        "ts": "1477998527.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U26T99AQ4> You have the images now.",
+        "ts": "1478001933.000166"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "right, but I still get the same error..",
+        "ts": "1478003367.000167"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "```\nvagrant@hyperledger-devenv:v0.2.0-18a44d0:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test$ go test\n2016\/11\/01 12:29:46 setting Number of procs to -1, was 2\n2016\/11\/01 12:29:46 rootDirectory = ..\/..\/..\/..\/..\/examples\/chaincode\/java\/SimpleSample\n2016\/11\/01 12:29:46 Failed Chaincode docker build:\n\n--- FAIL: TestJava_BuildImage (0.07s)\n        java_test.go:48: Error building Chaincode container: API error (500): {\"message\":\"The Dockerfile (Dockerfile) cannot be empty\"}\n\nFAIL\nexit status 1\nFAIL    <http:\/\/github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test|github.com\/hyperledger\/fabric\/core\/chaincode\/platforms\/java\/test>        0.119s\n```",
+        "ts": "1478003391.000168"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "which part of the code is producing that error? if someone can let me know I'll try to debug myself",
+        "ts": "1478003908.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U26T99AQ4> its coming from fabric\/container\/vm.go",
+        "ts": "1478004591.000170"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "correct, more specifically I tracked it down to \n```\n\tdefer resp.Body.Close()\n\tif resp.StatusCode &lt; 200 || resp.StatusCode &gt;= 400 {\n\t\treturn newError(resp)\n\t}\n```\nin `vendor\/github.com\/fsouza\/go-dockerclient\/client.go`",
+        "ts": "1478004828.000171"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "thing is, I don't know what's on the other end of that line",
+        "ts": "1478004837.000172"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "i.e. which component answers with a status code of 500 and that failure message",
+        "ts": "1478004871.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "do me a favor ?",
+        "ts": "1478005265.000174"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "sure!",
+        "ts": "1478005281.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0YNFB22X",
+        "text": "<@U26T99AQ4> <@U0ULK2JPP> I'm working on that commit, trying to run the sane tests",
+        "ts": "1478005406.000176"
+    }
+]

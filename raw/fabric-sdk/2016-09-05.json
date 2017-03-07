@@ -1,0 +1,482 @@
+[
+    {
+        "user": "U10SJMAHH",
+        "text": "<@U10SJMAHH|sachikoy> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473059349.000006"
+    },
+    {
+        "user": "U21PYLBH7",
+        "text": "<@U21PYLBH7|mint> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473098806.000009"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "mint [1:52 AM]  \nhi, everyone, I have a question. We know that fabric rest api is based on swagger. And so I am using swagger client generator to generate client sdk for golang. The generated code looks seems good, but can't be use.\n```\"ConfidentialityLevel\":{\n            \"type\": \"string\",\n            \"default\": \"PUBLIC\",\n            \"example\": \"PUBLIC\",\n            \"enum\":[\n                \"PUBLIC\",\n                \"CONFIDENTIAL\"\n              ],\n            \"description\": \"Confidentiality level of the Chaincode.\"\n        },```\n\n[1:53]  \nConfidentialityLevel will be generated as\n``` \n\/*ConfidentialityLevel Confidentiality level of the Chaincode.\n\nswagger:model ConfidentialityLevel\n*\/\ntype ConfidentialityLevel string\n\n\/\/ for schema\nvar confidentialityLevelEnum []interface{}\n\nfunc (m ConfidentialityLevel) validateConfidentialityLevelEnum(path, location string, value ConfidentialityLevel) error {\n    if confidentialityLevelEnum == nil {\n        var res []ConfidentialityLevel\n        if err := json.Unmarshal([]byte(`[\"PUBLIC\",\"CONFIDENTIAL\"]`), &amp;res); err != nil {\n            return err\n        }\n        for _, v := range res {\n            confidentialityLevelEnum = append(confidentialityLevelEnum, v)\n        }\n    }\n    if err := validate.Enum(path, location, value, confidentialityLevelEnum); err != nil {\n        return err\n    }\n    return nil\n}\n\n\/\/ Validate validates this confidentiality level\nfunc (m ConfidentialityLevel) Validate(formats strfmt.Registry) error {\n    var res []error\n\n    \/\/ value enum\n    if err := m.validateConfidentialityLevelEnum(\"\", \"body\", m); err != nil {\n        return err\n    }\n\n    if len(res) &gt; 0 {\n        return errors.CompositeValidationError(res...)\n    }\n    return nil\n}\n```\n\n[1:54]  \nbut vp will get\n```[rest] ProcessChaincode -&gt; ERRO 04f Error unmarshalling chaincode request payload: json: cannot unmarshal string into Go value of type protos.ConfidentialityLevel ```\nIs there a solution to avoid the bug?\n\nmint [2:05 AM]  \nI registered an account in <https:\/\/jira.hyperledger.org>, but it seems avoid me to login. And GitHub can not open a issue,  make me creazy",
+        "ts": "1473098840.000010"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U21PYLBH7> I have not used swagger so don\u2019t know exactly what the problem is",
+        "ts": "1473099251.000011"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I do know others have used it though so wonder what could be the difference in usage",
+        "ts": "1473099282.000012"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "<@U0ULK2JPP> tks for your answer. Now there aren't lots of developers using fabric, so help each other seems untouchable, hopes more and more developers pay attention into fabric.",
+        "ts": "1473100313.000013"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you give me exact steps to recreate and I can try help ?",
+        "ts": "1473100466.000014"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "That would be wonderful",
+        "ts": "1473100551.000015"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "I'm using command ``` swagger generate client -f $GOPATH\/src\/github.com\/hyperledger\/fabric\/core\/rest\/rest_api.json -A fabricGoSDK``` to generate client code",
+        "ts": "1473100587.000016"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "Next is just using the client, to deploy a chaincode, but the param ```opParams := chaincode.NewChaincodeOpParams().WithChaincodeOpPayload(&amp;models.ChaincodeOpPayload{\n\t\tID:      &amp;cli.requestID,\n\t\tJsonrpc: &amp;jsonrpc,\n\t\tMethod:  &amp;deployMethod,\n\t\tParams: &amp;models.ChaincodeSpec{\n\t\t\tChaincodeID: &amp;models.ChaincodeID{\n\t\t\t\tName: name,\n\t\t\t\tPath: path,\n\t\t\t},\n\t\t\tConfidentialityLevel: confidentialityLevel,\n\t\t\tSecureContext:        secureContext,\n\t\t\tCtorMsg: &amp;models.ChaincodeInput{\n\t\t\t\tArgs: []string{\"deploy\"},\n\t\t\t},\n\t\t\tType: &amp;chaincodeType,\n\t\t},\n\t})``` can be fit with fabric poroto",
+        "ts": "1473100741.000017"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "can't fit,sorry",
+        "ts": "1473100802.000018"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "proto enum is integer, swagger generated code enum is string",
+        "ts": "1473100851.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you are using this <https:\/\/github.com\/go-swagger\/go-swagger.git> ?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "go-swagger\/go-swagger",
+                "title_link": "https:\/\/github.com\/go-swagger\/go-swagger.git",
+                "text": "go-swagger - Swagger 2.0 implementation for go",
+                "fallback": "GitHub: go-swagger\/go-swagger",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/10362650?v=3&s=400",
+                "from_url": "https:\/\/github.com\/go-swagger\/go-swagger.git",
+                "thumb_width": 315,
+                "thumb_height": 315,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1473101538.000020"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "yes",
+        "ts": "1473101706.000022"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "<https:\/\/goswagger.io\/generate\/client.html>",
+        "ts": "1473101721.000024"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F28CN414L\/pasted_image_at_2016_09_05_03_08_pm.png|Pasted image at 2016-09-05, 3:08 PM> and commented: have you seen these kind of errors ?",
+        "file": {
+            "id": "F28CN414L",
+            "created": 1473102533,
+            "timestamp": 1473102533,
+            "name": "Pasted image at 2016_09_05 03_08 PM.png",
+            "title": "Pasted image at 2016-09-05, 3:08 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 110110,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28CN414L\/pasted_image_at_2016_09_05_03_08_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28CN414L\/download\/pasted_image_at_2016_09_05_03_08_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 115,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 153,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 230,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 306,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28CN414L-606aa4d62f\/pasted_image_at_2016_09_05_03_08_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 327,
+            "image_exif_rotation": 1,
+            "original_w": 1134,
+            "original_h": 362,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F28CN414L\/pasted_image_at_2016_09_05_03_08_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F28CN414L-404d4210c4",
+            "channels": [
+                "C14011Q9M"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc28CQTY30",
+                "created": 1473102533,
+                "timestamp": 1473102533,
+                "user": "U0ULK2JPP",
+                "is_intro": true,
+                "comment": "have you seen these kind of errors ?",
+                "channel": ""
+            }
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1473102537.000025"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U21PYLBH7|mint> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/mint\/F28BALQG3\/goswagger_cli_generate.txt|goswagger cli generate>",
+        "file": {
+            "id": "F28BALQG3",
+            "created": 1473102676,
+            "timestamp": 1473102676,
+            "name": "goswagger_cli_generate.txt",
+            "title": "goswagger cli generate",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U21PYLBH7",
+            "editable": true,
+            "size": 4616,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28BALQG3\/goswagger_cli_generate.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28BALQG3\/download\/goswagger_cli_generate.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/mint\/F28BALQG3\/goswagger_cli_generate.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F28BALQG3-c89c568ea1",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/mint\/F28BALQG3\/goswagger_cli_generate.txt\/edit",
+            "preview": "```MacBook-Pro common\/fabricGoSDK \u2039coin*\u203a \u00bb swagger generate client -f $GOPATH\/src\/github.com\/hyperledger\/fabric\/core\/rest\/rest_api.json -A fabricGoSDK\r\n2016\/09\/05 18:01:53 building a plan for generation\r\n2016\/09\/05 18:01:53 planning definitions\r\n2016\/09\/05 18:01:54 planning operations\r\n2016\/09\/05 18:01:54 grouping operations into packages\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>```MacBook-Pro common\/fabricGoSDK \u2039coin*\u203a \u00bb swagger generate client -f $GOPATH\/src\/github.com\/hyperledger\/fabric\/core\/rest\/rest_api.json -A fabricGoSDK<\/pre><\/div>\n<div><pre>2016\/09\/05 18:01:53 building a plan for generation<\/pre><\/div>\n<div><pre>2016\/09\/05 18:01:53 planning definitions<\/pre><\/div>\n<div><pre>2016\/09\/05 18:01:54 planning operations<\/pre><\/div>\n<div><pre>2016\/09\/05 18:01:54 grouping operations into packages<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 59,
+            "lines_more": 54,
+            "preview_is_truncated": true,
+            "channels": [
+                "C14011Q9M"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U21PYLBH7",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U21PYLBH7|mint>",
+        "bot_id": null,
+        "ts": "1473102676.000026"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "no errors",
+        "ts": "1473102700.000027"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I did that",
+        "ts": "1473102704.000028"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and it generated the go code",
+        "ts": "1473102715.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "looked like the above",
+        "ts": "1473102732.000030"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F28D21RMX\/pasted_image_at_2016_09_05_03_12_pm.png|Pasted image at 2016-09-05, 3:12 PM>",
+        "file": {
+            "id": "F28D21RMX",
+            "created": 1473102777,
+            "timestamp": 1473102777,
+            "name": "Pasted image at 2016_09_05 03_12 PM.png",
+            "title": "Pasted image at 2016-09-05, 3:12 PM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 629376,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28D21RMX\/pasted_image_at_2016_09_05_03_12_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28D21RMX\/download\/pasted_image_at_2016_09_05_03_12_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 207,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 276,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 414,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 553,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28D21RMX-2ce351e157\/pasted_image_at_2016_09_05_03_12_pm_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 589,
+            "image_exif_rotation": 1,
+            "original_w": 2634,
+            "original_h": 1516,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F28D21RMX\/pasted_image_at_2016_09_05_03_12_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F28D21RMX-b04c5c5b70",
+            "channels": [
+                "C14011Q9M"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1473102781.000031"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "```go get <http:\/\/github.com\/go-openapi\/swag|github.com\/go-openapi\/swag>```",
+        "ts": "1473102810.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thanks",
+        "ts": "1473103120.000033"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "do you have client driver program ?",
+        "ts": "1473103132.000034"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "client driver program ?",
+        "ts": "1473103156.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let me ask this",
+        "ts": "1473103180.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I have generated the code and the packages build",
+        "ts": "1473103196.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what now",
+        "ts": "1473103199.000038"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "?",
+        "ts": "1473103200.000039"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "well, swagger generated client lib has no error, all the error is runtime error",
+        "ts": "1473103288.000040"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "build is ok",
+        "ts": "1473103291.000041"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "right",
+        "ts": "1473103296.000042"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "how do you run the test ?",
+        "ts": "1473103305.000043"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "I just fit the client into a chaincode client struct, the chaincode client has deploy function.",
+        "ts": "1473103377.000044"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "test main function call the chaincode client deploy function",
+        "ts": "1473103400.000045"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so you wrote a go file to call the generated code  ?",
+        "ts": "1473103456.000046"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "```\ntype ExampleClient struct {\n\t*client.FabricGoSDK\n\tchaincodeID string\n\trequestID   int64\n}```",
+        "ts": "1473103527.000047"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "```\nfunc main() {\n\tdeploy()\n}\n\n\/\/ deploy\nfunc deploy() {\n\tcode, err := cli.Deploy(\"mycc\", \"\", \"\", \"PUBLIC\")\n\tif err != nil {\n\t\tlog.Panicf(\"deploy error: %v\", err)\n\t}\n\n\tlog.Printf(\"deploy code: %s\", code)\n}\n```",
+        "ts": "1473103560.000048"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1473103565.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if possible can you attach the above file here ?",
+        "ts": "1473103610.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I need to step out for a few hours and can come back and check",
+        "ts": "1473103659.000051"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "sorry, it seems impossible, the work belongs the company",
+        "ts": "1473103758.000052"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "The error is sample: swagger client code enum can\u2019t fit fabric protobuffer enum",
+        "ts": "1473103828.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1473103956.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "Ill check and get back",
+        "ts": "1473103972.000055"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "en, thanks. If I solve the error, I will @ you.",
+        "ts": "1473104017.000056"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "works",
+        "ts": "1473104056.000057"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "LOL, I need to goto bed, midnight in china.:joy:",
+        "ts": "1473104081.000058"
+    },
+    {
+        "user": "U0NLP5909",
+        "text": "<@U0NLP5909|hanhzf> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473139261.000061"
+    }
+]

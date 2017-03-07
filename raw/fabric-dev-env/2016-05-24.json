@@ -1,0 +1,140 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0TFEHX8E>: FYI, i should probably respin all the base images to 0.0.10 since the s390x support modified the baseimage code\u2026but ill wait for 1533 to go in so I can use the new versioning facilities without conflict",
+        "ts": "1464122617.001560"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "I\u2019m working on 1533 now",
+        "ts": "1464122636.001561"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "technically the changes are a no-op for x86, but its most prudent to rebuild everything I think",
+        "ts": "1464122658.001562"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0KPFAZNF>: when I run `make unit-test` with 1533 and I see `docker: Error response from daemon: driver failed programming external connectivity on endpoint goofy_brahmagupta (fdf4fccd27b2b4c4305f00f612c4cf0b62bfd5a862a1392c06316f14a1ec4615): Bind for 0.0.0.0:30303 failed: port is already allocated.`",
+        "ts": "1464123382.001563"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "I haven\u2019t run `vagrant destroy` `vagrant up`. Is that required for this PR?",
+        "ts": "1464123403.001564"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "it sounds like you might have a peer already running?",
+        "ts": "1464123406.001565"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, but there is a bug in the make unit-test that may leave the peer running from a previous session",
+        "ts": "1464123423.001566"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/issues\/1534>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "&quot;make unit-test&quot; can leave docker-based peer instance running \u00b7 Issue #1534 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1534",
+                "text": "Description The current Makefile will fire up a temporary peer instance during unit-test execution and then shut it down at the conclusion. However, if the unit-tests fail or are otherwise interr...",
+                "fallback": "GitHub: \"make unit-test\" can leave docker-based peer instance running \u00b7 Issue #1534 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/367132?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/1534",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1464123443.001567"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "check \u201cdocker ps\"",
+        "ts": "1464123447.001569"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if one is still running, you can docker kill it",
+        "ts": "1464123473.001570"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i plan on fixing 1534 ASAP",
+        "ts": "1464123485.001571"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "ok, my unit tests failed previously due to that obcpbft race condition",
+        "ts": "1464123513.001572"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, that makes sense",
+        "ts": "1464123522.001573"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think what I will do for 1534 is move the logic out of the unit-test target into a script, and just have \u201cmake unit-test\u201d call the script.   That way I should be able to register an error handler in bash and have the docker cleaned up even if the test fails",
+        "ts": "1464123565.001574"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but for now, docker ps\/kill is the workaround",
+        "ts": "1464123586.001575"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "what\u2019s the diff between kill and rm?",
+        "ts": "1464123603.001576"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "good question, im not sure",
+        "ts": "1464123612.001577"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me look into that",
+        "ts": "1464123618.001578"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "so I think `rm` stops and removes where as `kill` sends a kill signal and removes? And maybe `rm -f` is the same as `kill`?",
+        "ts": "1464124029.001579"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "lol, even the docker devs agree it\u2019s confusing <https:\/\/github.com\/docker\/docker\/issues\/6533>",
+        "edited": {
+            "user": "U0TFEHX8E",
+            "ts": "1464124226.000000"
+        },
+        "ts": "1464124111.001580"
+    }
+]

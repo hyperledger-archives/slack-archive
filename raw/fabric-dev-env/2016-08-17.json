@@ -1,0 +1,1800 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why does  the ``` make peer ``` command go through all the apt-get install the entire world each time (assuming the make fails), isn't it possible somehow to create an intermediate image with all the apt-get stuff and build the code-related actions on top of it?",
+        "ts": "1471432021.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it should be possible",
+        "ts": "1471432154.000084"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>: re: proto3 will def happen, just a matter of resources",
+        "ts": "1471435523.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "re: artifact (re)build avoidance, it should be doing this today",
+        "ts": "1471435544.000086"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm doing it now...",
+        "ts": "1471435554.000087"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I needed to upgrade the vendor grpc and net libraries because protobuf v3 needs a newer grpc version and the newer grpc version needed a new net version",
+        "ts": "1471435602.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "can you run two builds like \u201cmake peer 2&gt;&amp;1 | tee first-build.log\u201d  and \u201c \u2026 second-build.log\u201d and post them?",
+        "ts": "1471435611.000089"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, what for?",
+        "ts": "1471435636.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, you said its rebuilding too much each iteration",
+        "ts": "1471435659.000091"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "id like to see what is getting rebuilt",
+        "ts": "1471435666.000092"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think it's enough running only the first-build because i am doing it for the last hour, fixing new compilation error(s) each time",
+        "ts": "1471435710.000093"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, heres the thing: the build tries to detect what needs to be rebuilt based on what you changed",
+        "ts": "1471435742.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the thing that happens again and again is the apt-get stuff",
+        "ts": "1471435763.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when the intermediate containers are built",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1471435783.000000"
+        },
+        "ts": "1471435772.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so whats happening is either a) its working correctly and you changed a dependency, or b its broken and being overly aggressive when it doesn\u2019t need to be",
+        "ts": "1471435784.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "im trying to figure out which scenario this falls under",
+        "ts": "1471435799.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i'll post it (the log), np",
+        "ts": "1471435840.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "that said, some others modified the makefiles so perhaps they introduced some inefficiencies I need to straighten out",
+        "ts": "1471435847.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, one thing that jumps out at me is I see compile-protos being invoked",
+        "ts": "1471436644.000102"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i assume that is something you added?",
+        "ts": "1471436653.000103"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>:",
+        "ts": "1471436676.000104"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course",
+        "ts": "1471436695.000105"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because now you don't have pb.go files",
+        "ts": "1471436705.000106"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats _probably_ what is triggering the rebuild",
+        "ts": "1471436707.000107"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "really?",
+        "ts": "1471436710.000108"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure, its a guess",
+        "ts": "1471436715.000109"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i don't see how",
+        "ts": "1471436720.000110"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "when i run the compile protos stuff it doesn't print all that apt-get stuff",
+        "ts": "1471436733.000111"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no no, thats not what I mean",
+        "ts": "1471436750.000112"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you want me to send you the Makefile I edited?",
+        "ts": "1471436759.000113"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I mean is, the flow of logic is causing later dependencies to perceive that baseimage now needs to be rebuilt",
+        "ts": "1471436779.000114"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I needed to make a small change there so that the pb.go files will be generated prior to the peer compilation",
+        "ts": "1471436781.000115"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but you see, the baseimage is never successfully built.",
+        "ts": "1471436803.000116"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, please post the makefile",
+        "ts": "1471436804.000117"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think",
+        "ts": "1471436807.000118"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, well then that is part of the problem too",
+        "ts": "1471436814.000119"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but all I want is all the system ubuntu stuff to be built once and not each time, I think it's in the same \"job\" as the peer binary, isn't it?",
+        "ts": "1471436848.000120"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, step back for a second",
+        "ts": "1471436859.000121"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "from the log you sent, it does look like baseimage was successfully built",
+        "ts": "1471436875.000122"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, i think this is purely a case of the system believing it needs to rebuild baseimag\u2026now its question of \u201cwhy\"",
+        "ts": "1471436903.000123"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "baseimage should very rarely need to be rebuilt, so the fact that its building every time is what we need to solve",
+        "ts": "1471436920.000124"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok you were right :slightly_smiling_face:",
+        "ts": "1471437135.000125"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it was that thing exactly",
+        "ts": "1471437141.000126"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which part?",
+        "ts": "1471437151.000127"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I added the protos to the base image accidently",
+        "ts": "1471437160.000128"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I only needed to add it to the src-image",
+        "ts": "1471437222.000129"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, cool",
+        "ts": "1471437345.000130"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "btw: I would highly suggest that you get rid of the compile-protos script and make these pure makefile directives",
+        "ts": "1471437367.000131"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats what I would have done, and what I would be more open to approve merging",
+        "ts": "1471437388.000132"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "let me know if that is unclear and I can walk you through it",
+        "ts": "1471437411.000133"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I edited it, because it tries to compile the proto files in the protbuf vendor folder and they can't be compiled in a single 1-liner",
+        "ts": "1471437545.000134"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not?",
+        "ts": "1471437608.000135"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it doesn't work because they have different packages, it works if you compile each package in its own command",
+        "ts": "1471437638.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no idea why, but when i cd-ed to that test directory (it's a test dir...) and did protoc- bla bla *.proto it complained, but when I protoc'd each file, it worked.",
+        "ts": "1471437680.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i use",
+        "ts": "1471437697.000138"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`protoc --go_out=plugins=grpc:. -I ~\/go\/src -I . *.proto`",
+        "ts": "1471437708.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what's -I?",
+        "ts": "1471437728.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "include",
+        "ts": "1471437828.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well the compile protos script doesn't use the -I",
+        "ts": "1471437918.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it doesn't matter anyway, I see no reason to compile protobuf test files in the protobuf vendor folder, no one uses them",
+        "ts": "1471437948.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, we probably want to use an explicit list of .proto files, not something like $(shell find *.proto)",
+        "ts": "1471438012.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for that reason",
+        "ts": "1471438021.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "at the moment i simply added a crude grep -v, i'm working now on compilation errors, when I'm done I can look for something more elegant...",
+        "ts": "1471438050.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wat",
+        "ts": "1471438058.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "?",
+        "ts": "1471438072.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why are there multiple directories we have to compile proto files in?",
+        "ts": "1471438086.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "umm there are many",
+        "ts": "1471438096.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i don't know why",
+        "ts": "1471438102.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, its just how it is right now",
+        "ts": "1471438109.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I thought there were 2 - one for the core fabric and one for the CA",
+        "ts": "1471438121.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a few components installed them down in the tree",
+        "ts": "1471438127.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K>: i think there are dozens last time I looked",
+        "ts": "1471438140.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "also consensus, Gari",
+        "ts": "1471438150.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "oh - but not directly created by us?",
+        "ts": "1471438152.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and examples",
+        "ts": "1471438154.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "lol this is like a frat house",
+        "ts": "1471438158.000159",
+        "reactions": [
+            {
+                "name": "laughing",
+                "users": [
+                    "U0ZJZBJLF",
+                    "U0KM61BCP"
+                ],
+                "count": 2
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont recall, looking now",
+        "ts": "1471438161.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "everybody just throws in their smelly stuff into some corner",
+        "ts": "1471438178.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this is exactly why we should be using a completely new project structure for the next version of the fabric",
+        "ts": "1471438201.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nfind . -name *.proto | grep -v vendor\n.\/core\/crypto\/attributes\/proto\/attributes.proto\n.\/core\/chaincode\/shim\/chaincode.proto\n.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto\n.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincodeevent.proto\n.\/membersrvc\/protos\/ca.proto\n.\/protos\/chaincode.proto\n.\/protos\/server_admin.proto\n.\/protos\/devops.proto\n.\/protos\/api.proto\n.\/protos\/fabric.proto\n.\/protos\/chaincodeevent.proto\n.\/protos\/events.proto\n.\/consensus\/pbft\/messages.proto\n.\/examples\/chaincode\/go\/utxo\/util\/dah.proto\n```",
+        "ts": "1471438212.000163"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0KPFAZNF|ghaskins> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F22565CTS\/-.sh|Untitled>",
+        "file": {
+            "id": "F22565CTS",
+            "created": 1471438217,
+            "timestamp": 1471438217,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U0KPFAZNF",
+            "editable": true,
+            "size": 546,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F22565CTS\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F22565CTS\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F22565CTS\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F22565CTS-99d74e8ad3",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ghaskins\/F22565CTS\/-.sh\/edit",
+            "preview": "Gregorys-MBP:fabric ghaskins$ find . -name \"*.proto\"\r\n.\/consensus\/pbft\/messages.proto\r\n.\/core\/chaincode\/shim\/chaincode.proto\r\n.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto\r\n.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincodeevent.proto\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Gregorys-MBP:fabric ghaskins<span class=\"cm-def\">$ find<\/span> . <span class=\"cm-attribute\">-name<\/span> <span class=\"cm-string\">&quot;*.proto&quot;<\/span><\/pre><\/div>\n<div><pre>.\/consensus\/pbft\/messages.proto<\/pre><\/div>\n<div><pre>.\/core\/chaincode\/shim\/chaincode.proto<\/pre><\/div>\n<div><pre>.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincode.proto<\/pre><\/div>\n<div><pre>.\/core\/chaincode\/shim\/java\/src\/main\/proto\/chaincodeevent.proto<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 15,
+            "lines_more": 10,
+            "preview_is_truncated": null,
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0KPFAZNF",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0KPFAZNF|ghaskins>",
+        "bot_id": null,
+        "ts": "1471438217.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "opps, sorry <@U0ZJZBJLF>",
+        "ts": "1471438226.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "crossed messages",
+        "ts": "1471438229.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we even need a script to compile all of these?",
+        "ts": "1471438255.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: we dont, thats what I was saying",
+        "ts": "1471438264.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah yes",
+        "ts": "1471438273.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "good",
+        "ts": "1471438276.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "before we had a makefile, the script was manually driven",
+        "ts": "1471438278.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "after I wrote the makefile, I didnt have a chance to tackle the script, so the makefile just invokes the script, but that should go away",
+        "ts": "1471438298.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(ideally)",
+        "ts": "1471438324.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "honestly, i dont have a problem with the .proto files being dispersed per se\u2026.we should be able to handle that intelligently with the build",
+        "ts": "1471438388.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(for one thing, having them dispersed is a more natural namespacing)",
+        "ts": "1471438404.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1471438410.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but then we don't need to compile them centrally",
+        "ts": "1471438435.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the fact that some are dispersed and some arent is a bit sloppy I suppose",
+        "ts": "1471438438.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, yes and no",
+        "ts": "1471438449.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for a traditional language\/environment thats probably true\u2026id have them be compiled with the compilation unit",
+        "ts": "1471438475.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "golang is kind of weird",
+        "ts": "1471438480.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "since the top level build just does something like \u201cgo build foo\u201d and then the transitive dependencies via go imports cause the build to meander all over your tree",
+        "ts": "1471438519.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so there isnt really a non-central build, ever",
+        "ts": "1471438533.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but do that point, perhaps we say \u201cwell the build is centrally oriented, so the protos should be too\"",
+        "ts": "1471438570.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just someone will have to come up with a more distinguished name for .\/consensus\/pbft\/messages.proto :wink:",
+        "ts": "1471438591.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think in `proto\/` should be the stuff that defines the network\/storage API that is supposed to be fixed",
+        "ts": "1471438606.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats fine with me",
+        "ts": "1471438619.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the stuff you could use to write your own implementation of everything",
+        "ts": "1471438626.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just someone needs to clean up the ones floating around like consensus",
+        "ts": "1471438633.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, that's really internal to this specific implementation of consensus",
+        "ts": "1471438648.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of pbft",
+        "ts": "1471438654.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, understood",
+        "ts": "1471438658.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but now you are arguing both sides",
+        "ts": "1471438663.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh, i see",
+        "ts": "1471438675.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i misunderstood your statement above",
+        "ts": "1471438680.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, i'm still trying to understand what we're solving",
+        "ts": "1471438682.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-dev-env\/p1471438606000186>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-dev-env\/p1471438606000186",
+                "fallback": "[August 17th, 2016 5:56 AM] simon: i think in `proto\/` should be the stuff that defines the network\/storage API that is supposed to be fixed",
+                "ts": "1471438606.000186",
+                "author_subname": "simon",
+                "channel_id": "C0YQ1NHGD",
+                "channel_name": "fabric-dev-env",
+                "is_msg_unfurl": true,
+                "text": "i think in `proto\/` should be the stuff that defines the network\/storage API that is supposed to be fixed",
+                "author_name": "Simon Schubert",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/simon",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/676aeb5acbd353b77e077be1b7bd1a6e.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0016-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-dev-env"
+            }
+        ],
+        "ts": "1471438701.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i took that as \u201call protos\"",
+        "ts": "1471438711.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but you were classifying certain types",
+        "ts": "1471438721.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i expect there to be a protocol\/storage definition, implying that other parties can do their own compatible implementations",
+        "ts": "1471438765.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heres my 2 cents: i have no strong opinion on whether the current distribution of .proto files is correct\/ideal",
+        "ts": "1471438769.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if that's not the goal, fine",
+        "ts": "1471438781.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the \"recompile proto files\" makefile should be in `proto\/` though",
+        "ts": "1471438800.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "at least that's what i would do",
+        "ts": "1471438811.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "`cd proto; make`",
+        "ts": "1471438817.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or is it protos?",
+        "ts": "1471438821.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think that any mechanism that is going to dynamically recompile protos should be expressed as a standard make directive, like %.pb.go: %.proto\\n\\tprotoc $^",
+        "ts": "1471438828.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's not part of the normal build",
+        "ts": "1471438842.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "recompiling them is a rare event",
+        "ts": "1471438848.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "when you change a proto definition",
+        "ts": "1471438854.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, so we want the make deps to incorporate that",
+        "ts": "1471438868.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "we could try to move a makefile down into protos, but I am not sure that captures it properly since there are other proto files",
+        "ts": "1471438911.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's my point",
+        "ts": "1471438924.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why is there even a script?",
+        "ts": "1471438930.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's the goal",
+        "ts": "1471438935.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its legacy, it needs to go",
+        "ts": "1471438944.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or makefile target",
+        "ts": "1471438956.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "same thing",
+        "ts": "1471438957.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what should happen is that something like \u201cpeer\u201d depends on build\/protos\/foo.pb.go",
+        "ts": "1471438984.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then walk it backwards",
+        "ts": "1471439000.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but why?",
+        "ts": "1471439004.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we're committing the protoc outputs",
+        "ts": "1471439011.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so we don't have to compile it during build",
+        "ts": "1471439021.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no we're not",
+        "ts": "1471439022.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats the goal: to get rid of commited artifacts",
+        "ts": "1471439023.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh!",
+        "ts": "1471439029.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i didn't know",
+        "ts": "1471439032.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i mean",
+        "ts": "1471439036.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, np",
+        "ts": "1471439036.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we are at the moment",
+        "ts": "1471439038.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ZJZBJLF>: have the JIRA id handy?",
+        "ts": "1471439077.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somebody said that it is better that way because then developers do not need protobufs installed locally",
+        "ts": "1471439081.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah  1 sec",
+        "ts": "1471439085.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "i think 108, 109",
+        "ts": "1471439106.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XR6J961>: i have said that, more specifically I am torn because that is a nice side effect",
+        "ts": "1471439108.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/jira.hyperledger.org\/browse\/FAB-108>\n<https:\/\/jira.hyperledger.org\/browse\/FAB-109>",
+        "ts": "1471439116.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but it also has its own set of problems",
+        "ts": "1471439117.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "like what?",
+        "ts": "1471439123.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, we\u2019ve had a few bugs recently because devs were allowing the proto and pb.go to get out of sync",
+        "ts": "1471439155.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why bugs?",
+        "ts": "1471439166.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "isn't the pb.go the authoritative then?",
+        "ts": "1471439176.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or more specifically, i think they committed a .pb.go that was built with an out of spec compiler",
+        "ts": "1471439236.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(related to the fact that proto3 was alpha\/beta)",
+        "ts": "1471439246.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which i understand would be the case if they dynamically built it too, but the difference is, now their out of spec environment was corrupting everyone",
+        "ts": "1471439269.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well same the other way around",
+        "ts": "1471439319.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "since proto3 is now finalized, theres less risk of this happening (in either case) but committing the files is generally the way most projects are run",
+        "ts": "1471439324.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or maybe not the same way",
+        "ts": "1471439334.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't know",
+        "ts": "1471439340.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, committing makes sense",
+        "ts": "1471439357.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because then you can do a go get",
+        "ts": "1471439362.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if we _dont_ want to dynamically build them, we should at least add a jenkins check to ensure that the user didnt commit a .proto without updating the artifacts",
+        "ts": "1471439373.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, one of the two needs to happen",
+        "ts": "1471439378.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "either remove the artifacts and build dynamically, or check that they are synchronized",
+        "ts": "1471439405.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "honestly, i think this is receiving too much attention",
+        "ts": "1471439406.000255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there are so many other things that are way more pressing",
+        "ts": "1471439413.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "like, using this terrible viper + yaml",
+        "ts": "1471439421.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, why do you think I left it with the script ?",
+        "ts": "1471439427.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": ":wink:",
+        "ts": "1471439429.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or how it is essentially impossible to install + run this monster",
+        "ts": "1471439446.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, thats what I have been looking at",
+        "ts": "1471439467.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there needs to be a script (or any other executable) that the user can call, and everything works",
+        "ts": "1471439490.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "This isnt done, but since we are on the subject",
+        "ts": "1471439523.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/docs.google.com\/document\/d\/1MaBVoY0s2QVvA75ehKSFohvE6RNIzJD4PhPMKB9aFtA\/edit?usp=sharing>",
+        "ts": "1471439525.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "at least for demo and local dev purposes",
+        "ts": "1471439526.000265"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not done, nor even fully baked with what is there, but while we are discussing it",
+        "ts": "1471439568.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think viper needs to go",
+        "ts": "1471439581.000267"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and yaml",
+        "ts": "1471439585.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it may be easy for development",
+        "ts": "1471439592.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but not for the users",
+        "ts": "1471439595.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "also, many configs need to come from the blockchain, and not from a config file that can be changed on the fly",
+        "ts": "1471439623.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I have no strong opinion on viper or yaml, but I do think we need to have a retooling of what constututes \u201cthe config\u201d and how that maps into the docker stuff",
+        "ts": "1471439624.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and I suspect at least part of the way to get there is to reconsider viper",
+        "ts": "1471439646.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem with viper is that you can misspell a key, and nobody ever tells you",
+        "ts": "1471439665.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maximum user unfriendly",
+        "ts": "1471439676.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one, I think we need the notion of \u201c-c config\u201d as a command line option _before_ the config is loaded",
+        "ts": "1471439688.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "sure",
+        "ts": "1471439696.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but the config really only would specify log levels and some ports\/addresses, no?",
+        "ts": "1471439722.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my understanding is there is a chicken\/egg scenario in the current program-opts parsing that might make this difficult",
+        "ts": "1471439723.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "at this point, I have no strong opinion of what should be in there, but one of my main goals is to allow something like a version: to be specified and have that related to what images the docker engine consumes",
+        "ts": "1471439788.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, if we had hyperledger\/fabric-peer:v1.0.0 and hyperledger\/fabric-membersrvc:v1.0.0 in dockerhub, then the different components should all be using the same version",
+        "ts": "1471439859.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, its completely undefined\u2026chaincode tries to run \u201cbaseimage:latest\u201d which is arbitrary",
+        "ts": "1471439883.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1471439899.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "probably that shouldn't be in the config, but sort of hard coded somewhere in the source?",
+        "ts": "1471439925.000284"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I would like to see is the suite of images (peer, membersrvc, ccenv, etc) to be tagged with the same version",
+        "ts": "1471439929.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, i thought of that, and that is an option",
+        "ts": "1471439940.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I am thinking someone somewhere might want to reconfigure it",
+        "ts": "1471439951.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe here is a compromise",
+        "ts": "1471439957.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh you want everything be dockerized?",
+        "ts": "1471439958.000289"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not per se, but what I do want to address is that the current system implies it _is_ dockerized but its not fully baked",
+        "ts": "1471439984.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1471439990.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand why we have docker containers at all",
+        "ts": "1471440000.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, i am not advocating that everything needs to be docker, but what I am saying is the docker stuff we have should work",
+        "ts": "1471440007.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not just build and run a binary",
+        "ts": "1471440009.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "suddenly, much less complexity",
+        "ts": "1471440034.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, the docker stuff is interesting, for instance I am working on top of kubernetes\/openshift",
+        "ts": "1471440044.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and I would like fabric to be hosted there too",
+        "ts": "1471440053.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure, in some ways it reduces complexity, but point taken",
+        "ts": "1471440071.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but bottom line: we have an implied docker support, but its broken",
+        "ts": "1471440086.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and I aim to fix that (as well as making it conducive to building things like fabric-peer.rpm",
+        "ts": "1471440108.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, we cant do either",
+        "ts": "1471440116.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i mean docker to run chaincode",
+        "ts": "1471440170.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ah, well, that is another matter",
+        "ts": "1471440684.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i would love to see LXC instead, minimally",
+        "ts": "1471440696.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but that is a different conversation",
+        "ts": "1471440704.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats a runtime thing though..compilation wise, I dont think docker is a terrible idea",
+        "ts": "1471440731.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in fact, it works out nicely in many respects",
+        "ts": "1471440738.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KPFAZNF>:   we actually build docker containers for the BMX service and get everything working fine.  we don't use the fabric images because they are not conducive to actually running a service",
+        "ts": "1471444226.000308"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we run a Docker Swarm with overlay networking today",
+        "ts": "1471444240.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "actually 2 swarms - one for peers \/ CAs and one for chaincode",
+        "ts": "1471444265.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K>: i dont think its far away from working, but I cant imagine you are just blindly consuming whats in dockerhub",
+        "ts": "1471444270.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "nope",
+        "ts": "1471444279.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we build them ourselves",
+        "ts": "1471444284.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for one thing, the peer tries to reference \u201cbaseimage:latest\u201d to build chaincode",
+        "ts": "1471444288.000314"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which only exists if you either run the build, or modify the yaml",
+        "ts": "1471444298.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "also - we run with TLS, etc and all that sucks in fabric today",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1471444320.000000"
+        },
+        "ts": "1471444306.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but I would like to to talk to you about what you are doing as I want to do similar in kubernetes",
+        "ts": "1471444328.000318"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I assume you have your own pipeline \/ repository that is pushing the artifacts, including baseimage?",
+        "ts": "1471444367.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "kubernetes and even the new Docker Swarm mode add complexities because they are really based on scaling a set of containers together as a service.",
+        "ts": "1471444375.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Yep",
+        "ts": "1471444380.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "And actually we are now making them \"mostly\" public",
+        "ts": "1471444391.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "understood, though right now I dont care about the scaling aspects",
+        "ts": "1471444397.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we add one more layer internally for our certs",
+        "ts": "1471444399.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "happy to set up some time to chat",
+        "ts": "1471444415.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "peer is probably a better target for kubernetes petsets than it is for replica scaling anyway",
+        "ts": "1471444417.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yes",
+        "ts": "1471444424.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but right now, i would be happy with single ca\/peer",
+        "ts": "1471444431.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we actually even have a nice picture  now too :wink:",
+        "ts": "1471444441.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "oh nice",
+        "ts": "1471444446.000330"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anyway, regardless the stuff we push to dockerhub is broken and I want to fix that",
+        "ts": "1471444481.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think we need strong versioning, for one",
+        "ts": "1471444494.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep - and we should really look at using docker autobuilds",
+        "ts": "1471444503.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(actually kubernetes\/openshift have almost the same problems and they solve it quite nicely",
+        "ts": "1471444513.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "especially if we get the git clone working",
+        "ts": "1471444515.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for instance, kubernetes can be deployed as docker and itself uses docker",
+        "ts": "1471444528.000336"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0PB67X4K|garisingh> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/garisingh\/F226ULUSE\/architecture-2.jpg|architecture-2.jpg>",
+        "file": {
+            "id": "F226ULUSE",
+            "created": 1471444538,
+            "timestamp": 1471444538,
+            "name": "architecture-2.jpg",
+            "title": "architecture-2.jpg",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0PB67X4K",
+            "editable": false,
+            "size": 435456,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F226ULUSE\/architecture-2.jpg?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F226ULUSE\/download\/architecture-2.jpg?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 329,
+            "thumb_360_h": 360,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 438,
+            "thumb_480_h": 480,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 657,
+            "thumb_720_h": 720,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 876,
+            "thumb_960_h": 960,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F226ULUSE-42ae4476e8\/architecture-2_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 935,
+            "thumb_1024_h": 1024,
+            "image_exif_rotation": 1,
+            "original_w": 1932,
+            "original_h": 2117,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/garisingh\/F226ULUSE\/architecture-2.jpg",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F226ULUSE-591ec1964e",
+            "channels": [
+                "C0YQ1NHGD"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "num_stars": 1
+        },
+        "user": "U0PB67X4K",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0PB67X4K|garisingh>",
+        "bot_id": null,
+        "ts": "1471444548.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "here's a glimpse at what we do",
+        "ts": "1471444555.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we actually are running 1000 networks",
+        "ts": "1471444562.000339"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "per pod",
+        "ts": "1471444566.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1471444591.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(not easy BTW)  :wink:",
+        "ts": "1471444600.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hey, i'm working on the <https:\/\/jira.hyperledger.org\/browse\/FAB-109> issue, and when you do a \"make\" from scratch it needs to \"install\" \"protoc\"., from the issue: \n```\nThe disadvantage is that this requires developers to use Vagrant (it's hard not to already) or requires that they install and use the correct version of protobuf as defined in the Vagrant setup script.\n```\nprotoc can be either downloaded as prepared binaries or downloaded the source and then compiled but the compilation (from experience) takes ages.\nIf I include prepared binares, or have the makefile download them- that's kind of platform dependant:\n<https:\/\/github.com\/google\/protobuf\/releases>\n\nWhat can be (or is best to be) done?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "google\/protobuf",
+                "title_link": "https:\/\/github.com\/google\/protobuf\/releases",
+                "text": "protobuf - Protocol Buffers - Google's data interchange format",
+                "fallback": "GitHub: google\/protobuf",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/1342004?v=3&s=400",
+                "from_url": "https:\/\/github.com\/google\/protobuf\/releases",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1471445095.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "<@U0ZJZBJLF>: yes would be great to see someone tackle 108. Feel free to grab it.",
+        "ts": "1471446479.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "make sure you assign it to yourself - you should be able to?",
+        "ts": "1471446520.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "yeah, looks like people can do that now",
+        "ts": "1471446543.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I've already made all the needed changes for the code to migrate to V3",
+        "ts": "1471446555.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "nice!",
+        "ts": "1471446560.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's compiling but i need to somehow support the devenv now, it's tricky",
+        "ts": "1471446576.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and i don't know how to continue (see my comment ~ 3 comments above)",
+        "ts": "1471446598.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and Gari, I assigned to myself",
+        "ts": "1471446618.000352",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "minimally I think you need to make sure that it works with the Vagrant environment and I'd go with platform binaries for that (rather than compiling from source on startup).   I'll assume at some point as we move forward with the new architecture \/ projects we'll want to add support for working in the native environments?",
+        "ts": "1471446748.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "yes, agree would rather use binaries as compiling is painful",
+        "ts": "1471446793.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I'm happy to help \/ test for running code natively on OSX as well.  I do that already anyway so I always modify things to work",
+        "ts": "1471446844.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the other (maybe not so clever) option is to use Docker to build \/ compile on various platforms?   Since we require Docker anyway.  You could imagine having a Docker image which basically mounts the src dir as a volume and outputs platform binaries",
+        "ts": "1471446943.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "not uncommon these days",
+        "ts": "1471446949.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "platform binaries for the fabric and ca that is",
+        "ts": "1471446972.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "my 2.5 cents",
+        "ts": "1471447057.000359"
+    }
+]

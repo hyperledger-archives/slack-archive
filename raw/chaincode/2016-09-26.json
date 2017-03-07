@@ -1,0 +1,890 @@
+[
+    {
+        "user": "U15LJGQPN",
+        "text": "<@U15LJGQPN|arner> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474881611.000821"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "regular mode - just peer node start",
+        "ts": "1474881911.000822"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Another quick question - can anyone explain to me what the purpose of tables are?\n\nAs in why would I use CreateTable() and put data into it instead of just making a struct and using GetState()",
+        "ts": "1474882152.000823"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Another question on top of this - why do we bother writing a \n\n`type SimpleChaincode struct {}`\n\nand then attaching all the functions in our chaincode file to this? - what purpose does it serve?",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1474882865.000000"
+        },
+        "ts": "1474882824.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2DHRR4TE> tables give you query flexibility (though to be honest, the interface could be improved)",
+        "ts": "1474895271.000827"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0KPFAZNF> how do you mean 'query flexibility'?",
+        "ts": "1474895304.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i mean, if you break up your \u201cstruct\u201d into rows, you can query rows individually",
+        "ts": "1474895329.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you glom in into one struct, you have no choice but to return the entire object",
+        "ts": "1474895348.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for small objects, who cares",
+        "ts": "1474895358.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but if, for instance, you have 100k rows\u2026.",
+        "ts": "1474895373.000832"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right, so it's basically a way of returning bits of large objects as opposed to the entire thing?",
+        "ts": "1474895396.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "correct",
+        "ts": "1474895401.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(well, also for updates",
+        "ts": "1474895411.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "its a finer granularity of your data, thats all",
+        "ts": "1474895422.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you can read\/write smaller portions of it",
+        "ts": "1474895431.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which will matter (or not) depending on your data model",
+        "ts": "1474895437.000838"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right, I see - thanks! :slightly_smiling_face:",
+        "ts": "1474895457.000839"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Incidentally, I have another quick question",
+        "ts": "1474895466.000840"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "for fabric v0.6 how would I go about finding the name of the user whose made a chaincode invocation? (v0.5 had the common name it in the transaction certs but that's since been replaced with the string \"Transaciton Certificate\")",
+        "ts": "1474895511.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "First let me answer your second question",
+        "ts": "1474895546.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the SimpleChaincode struct is because you need to implement the interface that supports the Init\/Invoke\/Query calls",
+        "ts": "1474895577.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you also have the opportunity to attach data, technically in a pure go sense, though this is highly discouraged for chaincode",
+        "ts": "1474895608.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but having the one instance gives a convenient registration point",
+        "ts": "1474895619.000845"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "I see, ok fair enough",
+        "ts": "1474895630.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "third question, i havent been following the nuanced development of the tcert\/ecert stuff, but I know from a high level the idea is that a TCert is intended to be an obfuscation mechanism in front of the ecert...",
+        "ts": "1474895685.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so whether you can decode tcert -&gt; ecert is going to be a function of your privilege level and the configuration of the system",
+        "ts": "1474895718.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you are properly authorized, you should be able to correlate back to an underlying ecert identity\u2026as for how to do this, I dont know the specifics",
+        "ts": "1474895760.000849"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "righto - somewhat related but do you know if there is any documentation for the chaincode examples packaged with fabric other than the md files on their github pages?\n\n(I've been using them as a guide for how to do things like tcert handling)",
+        "ts": "1474895870.000850"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "(this is also somewhat related to the first question I posted about getting caller metadata)",
+        "ts": "1474895900.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, had stepped away",
+        "ts": "1474896454.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ill defer to someone more knowledgeable in the tcert space, though",
+        "ts": "1474896464.000853"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "that's fine - thanks for the help regardless :slightly_smiling_face:",
+        "ts": "1474897406.000854"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "for whoever may know about tcerts and usernames, basically I want to know how to find out a username since this was merged in:\n\n<https:\/\/github.com\/hyperledger-archives\/fabric\/pull\/2001>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Set the Subject.CommonName of each TCert to &#39;Transaction Certificate&#39; by JonathanLevi \u00b7 Pull Request #2001 \u00b7 hyperledger-archives\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger-archives\/fabric\/pull\/2001",
+                "text": "Set the Subject.CommonName of TCerts to 'Transaction Certificate' Description of Changes Introduce the constant TCERT_SUBJECT_COMMON_NAME_VALUE Create TCerts using the NewDefaultPeriodCertifi...",
+                "fallback": "GitHub: Set the Subject.CommonName of each TCert to 'Transaction Certificate' by JonathanLevi \u00b7 Pull Request #2001 \u00b7 hyperledger-archives\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/1161321?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger-archives\/fabric\/pull\/2001",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1474897483.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U11MANG9G> ^^^",
+        "ts": "1474897525.000857"
+    },
+    {
+        "user": "U11MANG9G",
+        "inviter": "U0KPFAZNF",
+        "text": "<@U11MANG9G|jonathanlevi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474897531.000858"
+    },
+    {
+        "user": "U296PJDD1",
+        "text": "<@U296PJDD1|vzhou> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474898497.000859"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "Hi; if we want to store a global variable with no access restrictions, should we use the shim to add a state to the ledger, or should we use a global variable?\nWhat's the difference between the two?I'm guessing that putting the variable on the ledger makes it more secure.",
+        "ts": "1474898682.000860"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think state can be read by the chaincode  (from any node) but global variable is local for the node, hmm?",
+        "ts": "1474898862.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "do not use a global variable period.  It would result in a source of non determinism",
+        "ts": "1474898916.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "all persistent state must be maintained in the ledger",
+        "ts": "1474898940.000863"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do we mean a golang global variable by global variable?",
+        "ts": "1474898951.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes",
+        "ts": "1474898957.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, really any \u201cglobal variable\u201d in chaincode, whatever platform you happen to be on",
+        "ts": "1474898974.000866"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I guess that it is a good or at least 'normal' practice to have a global var with a singleton in go",
+        "ts": "1474899010.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no, this is not a good idea for a chaincode app",
+        "ts": "1474899042.000868"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "oops sorry I forgot that it is only a private one, module variable or what is the real name",
+        "ts": "1474899042.000869"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I did not say that it is good for a chaincode app :slightly_smiling_face:",
+        "ts": "1474899073.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, ok",
+        "ts": "1474899078.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just to be clear",
+        "ts": "1474899080.000872"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "Ok, that's what I kind of figured. Looks like I got some rewriting to do :slightly_smiling_face:",
+        "ts": "1474899086.000873"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "Thanks for the help",
+        "ts": "1474899088.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yes, probably standard practice in pure golang app\u2026for chaincode, it would be a problem",
+        "ts": "1474899106.000875"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "right",
+        "ts": "1474899119.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "any mutation is simply a proposed mutation until the consensus protocol runs",
+        "ts": "1474899132.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the network may decide to drop your mutation on the floor\u2026and there is no communication to the chaincode app regarding the state rollback",
+        "ts": "1474899166.000878"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "is there anyone who knows how exactly cert attributes work? which is the right channel for this? who is the expert?",
+        "ts": "1474899227.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "try <#C1J0BM448|membership-services>",
+        "ts": "1474899285.000880"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "back to the tables - is anyone looking at adding unit test support for them? in the MockStub at the moment, those functions aren\u2019t implemented.",
+        "ts": "1474900402.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1MSZ37NK> its been added in the convergence branch \u2026 <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/999\/>",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1474900505.000000"
+        },
+        "ts": "1474900428.000882"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "is anymone here familiar with the asset management examples that come with fabric?",
+        "ts": "1474900480.000883"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U0ULK2JPP> great! will that become part of the v0.6 branch at some point, or is that for a future release?",
+        "ts": "1474900503.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1MSZ37NK> everything in convergence is future release",
+        "ts": "1474900557.000886"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "ah, that\u2019s a shame - thanks for the information anyway!",
+        "ts": "1474901079.000887"
+    },
+    {
+        "user": "U2B3A70TX",
+        "text": "<@U2B3A70TX|soldat> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474901120.000888"
+    },
+    {
+        "user": "U196R0LA2",
+        "text": "<@U196R0LA2|mikezaccardo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474901274.000889"
+    },
+    {
+        "user": "U2CC1NDT2",
+        "text": "<@U2CC1NDT2|lenh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474901558.000890"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U2DHRR4TE> I'm also looking at that example - may be I can help",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474902022.000000"
+        },
+        "ts": "1474902011.000891"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U1CTBUNEN> So in the md description of what is happening it says this a few times:\n\n\"Charlie obtains, via an out-of-band channel, a TCert of Dave, let us call this certificate DaveCert;\"\n\n<https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management>\n\nHow exactly would this work?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1474902398.000000"
+        },
+        "ts": "1474902390.000893"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "In the sense of if I wanted to write a demo that featured that happening, how would I implement it?",
+        "ts": "1474902436.000896"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Or even if I just wanted to manually step through the process",
+        "ts": "1474902446.000897"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "may be 'out-of-band channel' here is ambiguous",
+        "ts": "1474902580.000898"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "as for implementing a demo of it: just follow the example provided: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/examples\/chaincode\/go\/asset_management\/app\/app.go>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474902606.000000"
+        },
+        "ts": "1474902603.000899"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "charlie     crypto.Client\n\tcharlieCert crypto.CertificateHandler",
+        "ts": "1474902651.000902"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "you define your 'demo' clients and you can get Tcerts for them via the intefaces (Client, Transaction Handler, Certificate Handler) as described here: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/tech\/application-ACL.md>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474902738.000000"
+        },
+        "ts": "1474902734.000904"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right",
+        "ts": "1474902817.000907"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "the interfaces",
+        "ts": "1474902821.000908"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "are they all `crypto.*`",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1474902840.000000"
+        },
+        "ts": "1474902828.000909"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "well according to the documentation the Client interface offers a mean to get instances of Transaction Handler and Certificate Handler",
+        "ts": "1474903013.000911"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ok cool, I meant that more in the sense of lines 43 and 44 have `crypto.CertificateHandler` and `crypto.Client`",
+        "ts": "1474903246.000912"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "if I want to use a TransactionHandler do I declare one with `crypto.TransactionHandler`?",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1474903276.000000"
+        },
+        "ts": "1474903270.000913"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "(also could you link me where the docs mention this?) - thanks :slightly_smiling_face:",
+        "ts": "1474903294.000915"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/tech\/application-ACL.md>",
+        "ts": "1474903332.000916"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "charlieCert, err = charlie.GetTCertificateHandlerNext()",
+        "ts": "1474903361.000917"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "you define charlieCert as type crypto.CertificateHandler",
+        "ts": "1474903384.000918"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "but you use charlie.GetTCertificateHandlerNext() to set the variable",
+        "ts": "1474903395.000919"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "ah right ok",
+        "ts": "1474903411.000920"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "cool - thanks :slightly_smiling_face:",
+        "ts": "1474903458.000921"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U2DHRR4TE> np",
+        "ts": "1474903548.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U2DHRR4TE> you might try the <#C1J0BM448|membership-services> channel for tcert questions",
+        "ts": "1474906426.000923"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "When I try to deploy chaincode outside of development mode, I have been seeing this error:\n```\n20:03:01.041 [chaincode] Launch -&gt; ERRO 02f launchAndWaitForRegister failed Error starting container: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n```\nIs anyone else able to succesffully deploy production chaincode at the moment?",
+        "ts": "1474920477.000924"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "hmm.. someone posted this comment two months ago on the Docker Hub site for `hyperledger\/fabric-baseimage`:\n```\nTag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n```\nSo is it not possible to deploy chaincode in production mode at the moment?",
+        "ts": "1474921030.000925"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "it's possible, you need to manually pull the correct image on Docker Hub and retag it as latest",
+        "ts": "1474921373.000926"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "i'm not a project member, so I can't comment on which one is \"correct\" right now",
+        "ts": "1474921398.000927"
+    },
+    {
+        "type": "message",
+        "user": "U296PJDD1",
+        "text": "but two weeks ago it was 0.0.10",
+        "ts": "1474921437.000928"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "got it.. I'm newish to Docker but will try thatout",
+        "ts": "1474921458.000929"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "can anyone help me compile the asset_management_with_roles_test.go file",
+        "ts": "1474921490.000930"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": ".\/asset_management_with_roles_test.go:395: cannot use server (type *\"<http:\/\/google.golang.org\/grpc|google.golang.org\/grpc>\".Server) as type *\"<http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc>\".Server in argument to aca.Start",
+        "ts": "1474921500.000931"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "would be great if this example had a README: <https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management_with_roles>",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474921557.000000"
+        },
+        "ts": "1474921553.000932"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U0ULK2JPP> is the GetRows() functionality complete in the mock tables? I can\u2019t get the mock table GetRows() to work. I see that the test code for GetRows() is commented out in mockstub_test.go. Is that a problem with GetRows() in general, or just the mock?",
+        "ts": "1474922590.000935"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok if any runs into the same compile error - I tried compiling the package under the fabric repo and it compiled",
+        "ts": "1474924165.000936"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "ok, adding a local \"latest\" tag to the `hyperledger\/fabric-baseimage` fixed the problem.  Does anyone have insight into how to fix this permanently so others don't have to muddle through such configuration details?  Does a tag just need to be created in Docker Hub, or does something need to be changed in the Fabric code base to remove the dependency on this tag?",
+        "edited": {
+            "user": "U23S3DPFY",
+            "ts": "1474924197.000000"
+        },
+        "ts": "1474924165.000937"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "For chain code development, I would think the Docker baseimage should be pinned to be in-sync with the Fabric code.",
+        "ts": "1474924410.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U23S3DPFY> <@U0KPFAZNF> there is supposed to be one",
+        "ts": "1474925156.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The short answer is the only mode that is truly supported right now  is building from source",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1474925824.000000"
+        },
+        "ts": "1474925597.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If you do this, the baseimage is synthesized for you",
+        "ts": "1474925630.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "We are working on fixing this so you can just pull from dockerhub",
+        "ts": "1474925648.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "But the baseimage:latest  tag is not and (Imo) will never be on docker hub",
+        "ts": "1474925766.000945"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "What's happening is we are removing baseimage from runtime references ",
+        "ts": "1474925800.000946"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "<@U0KPFAZNF> I built my environment from source but it still has a dependency on the Docker Hub repository.  It sounds like you are saying that is unexpected?",
+        "ts": "1474925943.000948"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Can you describe your environment (branch, vagrant devenv or custom, steps performed, etc",
+        "ts": "1474927399.000949"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "I am running Fabric at AWS in an EC2 VM.  I wrote a wrapper script to invoke the steps that the Packer build process uses to create the base Vagrant VM, and the same for the Vagrant `vagrant up` provisioning process.",
+        "ts": "1474927944.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1MSZ37NK> there is a problem with GetRows in general where the implementation\u2019s go routine can outlive the transaction that kicked it off and can cause errors \u2026 (will step out of the way <@U0KPFAZNF> <@U23S3DPFY> )",
+        "ts": "1474927961.000951"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "My work is documented here <https:\/\/gist.github.com\/ccooper21\/fb9ee6dca018885a1ced87cd5c60a935>",
+        "ts": "1474927963.000952"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U23S3DPFY|ccooper21> shared a file: <https:\/\/hyperledgerproject.slack.com\/files\/ccooper21\/F2BD9GRDK\/setup-aws_sh.sh|setup-aws.sh>",
+        "file": {
+            "id": "F2BD9GRDK",
+            "created": 1473824312,
+            "timestamp": 1473824312,
+            "name": "setup-aws_sh.sh",
+            "title": "setup-aws.sh",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U23S3DPFY",
+            "editable": true,
+            "size": 2063,
+            "mode": "snippet",
+            "is_external": true,
+            "external_type": "unknown",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/gist.github.com\/fb9ee6dca018885a1ced87cd5c60a935#file-setup-aws-sh",
+            "url_private_download": "https:\/\/gist.github.com\/fb9ee6dca018885a1ced87cd5c60a935#file-setup-aws-sh",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/ccooper21\/F2BD9GRDK\/setup-aws_sh.sh",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/ccooper21\/F2BD9GRDK\/setup-aws_sh.sh\/edit",
+            "preview": "#!\/bin\/bash\n\n# Install \"git\"\nsudo apt-get update\nsudo apt-get -y install git",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-meta\">#!\/bin\/bash<\/span><\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre><span class=\"cm-comment\"># Install &quot;git&quot;<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-builtin\">sudo<\/span> apt-get update<\/pre><\/div>\n<div><pre><span class=\"cm-builtin\">sudo<\/span> apt-get <span class=\"cm-attribute\">-y<\/span> install <span class=\"cm-builtin\">git<\/span><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 53,
+            "lines_more": 48,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E",
+                "C0Y4PEU22",
+                "C19ABCKPW"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "reactions": [
+                {
+                    "name": "+1",
+                    "users": [
+                        "U2GT93M2T",
+                        "U2LH9UUSY"
+                    ],
+                    "count": 2
+                },
+                {
+                    "name": "100",
+                    "users": [
+                        "U2GT93M2T"
+                    ],
+                    "count": 1
+                }
+            ]
+        },
+        "user": "U23S3DPFY",
+        "upload": false,
+        "display_as_bot": false,
+        "username": "<@U23S3DPFY|ccooper21>",
+        "bot_id": null,
+        "ts": "1474927967.000953"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "(If you go to the Gist page it shows documentation along with the script)",
+        "ts": "1474927999.000955"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "In other words, my environment should be equivalent to the Vagrant devenv",
+        "ts": "1474928107.000956"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U23S3DPFY>: which branch of fabric?",
+        "ts": "1474928931.000957"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Master, 0.6, or convergence?",
+        "ts": "1474928947.000958"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "fabric repository master branch as of last Thursday.  last commit is \n```\ncommit 3cfaeb582e962e1c9a7c147ac0f87bde8c6e0933\nMerge: 3e74925 ac8ab84\nAuthor: Jonathan Levi &lt;jonathan@levi.name&gt;\nDate:   Thu Sep 22 20:46:44 2016 +0000\n\n    Merge \"Switch to new baseimage-pipeline\"\n```",
+        "edited": {
+            "user": "U23S3DPFY",
+            "ts": "1474929237.000000"
+        },
+        "ts": "1474929142.000959"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If you move to the latest, all references to baseimage should be gone ",
+        "ts": "1474936539.000961"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Replaced primarily with ccenv, but also note that we still do not publish this to dockerhub ",
+        "ts": "1474936568.000962"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "We will be soon, however",
+        "ts": "1474936575.000963"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "IIUC ",
+        "ts": "1474936579.000964"
+    },
+    {
+        "type": "message",
+        "user": "U23S3DPFY",
+        "text": "Ok.  I'll try rebuilding my environment and will let you know the result.",
+        "ts": "1474958070.000968"
+    }
+]

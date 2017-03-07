@@ -1,0 +1,374 @@
+[
+    {
+        "user": "U28VC160Z",
+        "text": "<@U28VC160Z|mbwhite> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473233061.000240"
+    },
+    {
+        "type": "message",
+        "user": "U14DA4NAD",
+        "text": "<@U1LES78TT> <@U1X9EK0BE> Antshares is a bitcoin\/blockchain startup company in China. They are a member of HL now.",
+        "ts": "1473239194.000241"
+    },
+    {
+        "type": "message",
+        "user": "U28GV4VQD",
+        "text": "Hi \nYesterday I asked about debugging and got some answerd from <@U0PB67X4K>, <@U21PYLBH7> , <@U26LN0GMV>, <@U1AU8DRQR>. Thank you for that. It helped to improve my development process.\nHowever it is still not ideal. Let me explain more precisely what I really would like to have:\nIdeally, I would like to be able to run debug for Go chaincode in my IDE (like LiteIDE for ex) and be able to use some standard features: breakpoints in the code,  Step Into &amp; Step Over commands, watch variables as any step, etc. Currently, if I do that in LiteIDE get error \"peer.address not configured, can't connect to peer\" somewhere in the     err := shim.Start(new(SimpleChaincode)) of the main() function.   Is there a way to avoid that error by some config changes or something? Or set up debug in any other way?",
+        "edited": {
+            "user": "U28GV4VQD",
+            "ts": "1473242447.000000"
+        },
+        "ts": "1473242401.000242"
+    },
+    {
+        "user": "U2919KTFB",
+        "text": "<@U2919KTFB|mdenavacc> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473242674.000244"
+    },
+    {
+        "text": "Christopher Ferris commented\n&gt;&gt;&gt;lf-sandbox (feature\/convergence): Patch Set 1: Verified+1 (<http:\/\/gerrit.hyperledger.org\/r\/753>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473244058.000245"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "Hey, all..\nI am running in non-dev mode. To deploy chaincodes via REST API, I needed to give the URL to the chaincode which is kept in some public repository. But the problem is that if there are some packages imported in that chaincode file, It throws error like:\n\n`Error when deploying chaincode: Error getting chaincode package bytes: Error getting code 'go get' failed with error: \\\"exit status 1\\\"\\npackage <http:\/\/github.com\/hyperledger\/fabric\/op\/go-logging|github.com\/hyperledger\/fabric\/op\/go-logging>: cannot find package \\\"<http:\/\/github.com\/hyperledger\/fabric\/op\/go-logging\\|github.com\/hyperledger\/fabric\/op\/go-logging\\>\" in any of:\\n\\t\/opt\/go\/src\/github.com\/hyperledger\/fabric\/op\/go-logging (from $GOROOT)\\n\\t\/opt\/gopath\/_usercode_\/193600567\/src\/github.com\/hyperledger\/fabric\/op\/go-logging (from $GOPATH)\\n\\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/op\/go-logging\\n`",
+        "ts": "1473244476.000246"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "where `<http:\/\/github.com\/hyperledger\/fabric\/op\/go-logging|github.com\/hyperledger\/fabric\/op\/go-logging>` is the package it is unable to find.",
+        "ts": "1473244542.000247"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "any help is highly appreciated.",
+        "ts": "1473244555.000248"
+    },
+    {
+        "text": "Christopher Ferris commented\n&gt;&gt;&gt;ci-management (master): Patch Set 4: Code-Review+1 (<http:\/\/gerrit.hyperledger.org\/r\/845>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473245427.000249"
+    },
+    {
+        "user": "U291AM4TE",
+        "text": "<@U291AM4TE|dselman> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473245517.000250"
+    },
+    {
+        "user": "U290KPB5Z",
+        "text": "<@U290KPB5Z|jakub.fijolek> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473249225.000251"
+    },
+    {
+        "type": "message",
+        "user": "U26FCDCTG",
+        "text": "Hi All - \n\nI'm following the network setup instructions <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/> to run multiple peers on a single VM (setup via Vagrant) and I was just wondering how the peer node decides which core.yaml file to read when it is launched? In other words when launching a peer node via the \"docker run ... hyperledger\/fabric-peer\" command what is the search path for determining the core.yaml file to read configuration from.\n\nKind Regards,\nGraham",
+        "ts": "1473250064.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U26FCDCTG>  -  the peer image itself contains the core.yaml file.  So technically if you start multiple peer containers they are actually using identical configurations.   Right now, there is no externally mounted volume to pick up a different core.yaml per container instance.   The simplest thing to do is to actually use something like Docker Compose and then override per container settings for core.yaml using environment variables - e.g.\n\n```\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"7054:7054\"\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"7050:7050\"\n    - \"7051:7051\"\n    - \"7053:7053\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"\n```",
+        "ts": "1473250578.000253"
+    },
+    {
+        "type": "message",
+        "user": "U26FCDCTG",
+        "text": "<@U0PB67X4K> Thank you. Just to make sure I understand correctly... if I use docker compose all settings will default from the core.yaml file associated with the docker image but I can override core.yaml settings using the docker-compose.yml file?",
+        "ts": "1473250980.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - the `environment` section will allow per container instance override - so for example you can give each peer container a different `CORE_PEER_ID`,`CORE_SECURITY_*`",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1473251087.000000"
+        },
+        "ts": "1473251040.000255"
+    },
+    {
+        "type": "message",
+        "user": "U26FCDCTG",
+        "text": "cheers. I think I understand this now. Many thanks again",
+        "ts": "1473251098.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the naming of environment variables is to use `CORE_` as the prefix and then just capitalize any parameter from the core.yaml and replace `.` with `_`",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1473251159.000000"
+        },
+        "ts": "1473251147.000259"
+    },
+    {
+        "text": "Gari Singh commented\n&gt;&gt;&gt;lf-sandbox (feature\/convergence): Patch Set 1:\n\nat times like this best to say nothing (<http:\/\/gerrit.hyperledger.org\/r\/753>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473251200.000261"
+    },
+    {
+        "user": "U292L0171",
+        "text": "<@U292L0171|felixa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473251393.000262"
+    },
+    {
+        "text": "Ramesh Babu proposed\n&gt;&gt;&gt;ci-management (master): FAB-277 enable ci setup on power node (<http:\/\/gerrit.hyperledger.org\/r\/845>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473253295.000263"
+    },
+    {
+        "text": "Hyperledger Jobbuilder commented\n&gt;&gt;&gt;ci-management (master): Patch Set 5:\n\nBuild Started <https:\/\/jenkins.hyperledger.org\/job\/ci-management-verify-jjb\/229\/> (<http:\/\/gerrit.hyperledger.org\/r\/845>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473253305.000264"
+    },
+    {
+        "text": "Hyperledger Jobbuilder commented\n&gt;&gt;&gt;ci-management (master): Patch Set 5: Verified+1\n\nBuild Successful \n\n<https:\/\/jenkins.hyperledger.org\/job\/ci-management-verify-jjb\/229\/> : SUCCESS (<http:\/\/gerrit.hyperledger.org\/r\/845>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473253308.000265"
+    },
+    {
+        "user": "U291JMB6X",
+        "text": "<@U291JMB6X|stephanbaur> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473255272.000266"
+    },
+    {
+        "text": "Gabor Hosszu commented\n&gt;&gt;&gt;lf-sandbox (feature\/convergence): Patch Set 1: Code-Review+2 (<http:\/\/gerrit.hyperledger.org\/r\/753>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473257905.000267"
+    },
+    {
+        "text": "Gabor Hosszu commented\n&gt;&gt;&gt;lf-sandbox (feature\/convergence): Patch Set 1:\n\nDid you push to the feature\/convergence branch of lf-sandbox? (<http:\/\/gerrit.hyperledger.org\/r\/753>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473257963.000268"
+    },
+    {
+        "user": "U294C6FDW",
+        "text": "<@U294C6FDW|echenrunner> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473261384.000269"
+    },
+    {
+        "user": "U294FECPQ",
+        "text": "<@U294FECPQ|lgrace896> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473261765.000270"
+    },
+    {
+        "text": "Christopher Ferris merged\n&gt;&gt;&gt;lf-sandbox (feature\/convergence): I don't know what to say. (<http:\/\/gerrit.hyperledger.org\/r\/753>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473261991.000271"
+    },
+    {
+        "user": "U294TV8R3",
+        "text": "<@U294TV8R3|anastasia.paterson> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473262452.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U269P9D8W> wrt to docker-compose.yml.... yes, docker-compose-4-batch.yml is a standard config for starting a 4 peer ndetwork with PBFT batch consensus and a memberservice instance.  These files are in fabric\/bddtests",
+        "edited": {
+            "user": "U0UKTPMG8",
+            "ts": "1473266397.000000"
+        },
+        "ts": "1473266377.000273"
+    },
+    {
+        "type": "message",
+        "user": "U269P9D8W",
+        "text": "<@U0UKTPMG8> Thanks a lot.",
+        "ts": "1473266665.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "yw",
+        "ts": "1473266671.000276"
+    },
+    {
+        "user": "U296J343F",
+        "text": "<@U296J343F|rjvanzanten> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473269716.000277"
+    },
+    {
+        "user": "U296A0JFN",
+        "text": "<@U296A0JFN|donna-dillenberger> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473269899.000278"
+    },
+    {
+        "type": "message",
+        "user": "U1H8ZDFQC",
+        "text": "make peer",
+        "ts": "1473270072.000279"
+    },
+    {
+        "user": "U29727YDD",
+        "text": "<@U29727YDD|capaez> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473271606.000280"
+    },
+    {
+        "text": "Mahesh Gutala proposed\n&gt;&gt;&gt;blockchain-explorer (master): Initial commit (<http:\/\/gerrit.hyperledger.org\/r\/761>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473273560.000281"
+    },
+    {
+        "text": "Mahesh Gutala commented\n&gt;&gt;&gt;blockchain-explorer (master): Patch Set 6:\n\nMade changes. Please review. (<http:\/\/gerrit.hyperledger.org\/r\/761>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473273773.000282"
+    },
+    {
+        "user": "U297NQFH6",
+        "text": "<@U297NQFH6|anarayan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473275441.000283"
+    },
+    {
+        "user": "U296PJDD1",
+        "text": "<@U296PJDD1|vzhou> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473277539.000284"
+    },
+    {
+        "user": "U298NTVPE",
+        "text": "<@U298NTVPE|robert_vieira> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473280558.000285"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "can someone explain  16:11:54.293 [shim] DEBU : [c99c1dd2]Received message QUERY from shim\n16:11:54.294 [shim] DEBU : [c99c1dd2]Handling ChaincodeMessage of type: QUERY(state:ready)\n16:11:54.295 [shim] DEBU : [c99c1dd2]Sending GET_STATE\n\u001b[31m16:11:54.309 [chaincode] func1 -&gt; ERRO 04f\u001b[0m [c99c1dd2]Got error (Decryption failed.) while decrypting. Sending ERROR\n16:11:54.309 [shim] DEBU : [c99c1dd2]Received message ERROR from shim",
+        "ts": "1473292507.000286"
+    },
+    {
+        "user": "U299SKHNF",
+        "text": "<@U299SKHNF|sanjay> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473297755.000287"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "<@U294C6FDW> so many possibilities, you can print some log to locate the error",
+        "ts": "1473298184.000288"
+    },
+    {
+        "user": "U29BAKE8L",
+        "text": "<@U29BAKE8L|xiejunan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473299537.000289"
+    },
+    {
+        "user": "U29BLNPQQ",
+        "text": "<@U29BLNPQQ|gucc1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473301735.000290"
+    },
+    {
+        "user": "U29BLQJ4Q",
+        "text": "<@U29BLQJ4Q|mizukisonoko> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473301757.000291"
+    },
+    {
+        "text": "Baohua Yang commented\n&gt;&gt;&gt;blockchain-explorer (master): Patch Set 6: Code-Review+1 (<http:\/\/gerrit.hyperledger.org\/r\/761>)",
+        "username": "hyperledger-gerrit",
+        "bot_id": "B27E40VB8",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1473304596.000292"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "what's with the gerrit bot being in <#C0J02NU1E|general>?",
+        "ts": "1473305016.000293"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "is it because it hasn't been configured for the new projects ... unlike fabric and <#C11SL9YDV|fabric-ci-status>?",
+        "ts": "1473305079.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "strange...",
+        "ts": "1473306392.000295"
+    },
+    {
+        "user": "U29CJNVT7",
+        "text": "<@U29CJNVT7|yonezu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473310639.000296"
+    }
+]

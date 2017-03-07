@@ -1,0 +1,2852 @@
+[
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "<@U2Q0HP4HY> : So, certificates represent transaction\/proposal creators and endorsers. Proposal creator certificates are hashed and included in what is signed by endorsers that results in the blockchain. On one hand, as <@U0PB67X4K> mentioned it is important that this hash is generated deterministically such that all endorsers sign the same thing, which is not possible if the creator is serialized using protobufs. On the other hand, as this creator certificate is included in a signature changing its representation before to it being included to the Blockchain \/ ledger would not  work as the creator and endorser signature verification would fail...",
+        "ts": "1481616706.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hi <@U0ZR63HLK>",
+        "ts": "1481626803.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Can I have a follow-up question ?",
+        "ts": "1481626812.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So, the peer boots up and has no knowledge of organizational CAs apart from itself, right? \nthen it gets a JoinChannel message, how can he verify that message?",
+        "ts": "1481626896.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I guess it *has to* verify that JoinChannel message since it is injected with root CA certs right?",
+        "ts": "1481626939.000327"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Also another question- The source of the problem is that the peer doesn't have the list of org CA certs at startup, and it expects to obtain the org CAs from the ledger's (meaning- from each channel it participates in).\nCan you please point me to a document where this is outlined?",
+        "ts": "1481627804.000328"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "And- does the peer have *at least* the root CA of its own org at boot time?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481627995.000000"
+        },
+        "ts": "1481627986.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZJZBJLF> - the peer itself will have it full \"identity\" available at boot time - which would include its private\/public key pair as well as the root CA for its own org.  Of course its possible that the peer would have a different cert for signing and for TLS - although we can either recommend and\/or mandate that it uses the same cert.  The trick of course is that this is only applicable in the case of X509 and of course we'd have to ensure that the TLS cert actually had the correct CN and\/or SANs for hostname verification.   \n\nFrom a TLS perspective, I'm still currently working on a GRPC server and client which can dynamically load up trusted roots at runtime",
+        "ts": "1481629663.000331"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Gari- actually that was a follow-up question for something else :slightly_smiling_face:",
+        "ts": "1481629708.000332"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But since you're here I'll ask you too",
+        "ts": "1481629743.000333"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So, I'm a peer `p` in org `A`. How do I obtain a certificate for root CA of org `B`?",
+        "ts": "1481629771.000334"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it should be in the latest config block for any channel\/chain of which org `B` is a member",
+        "ts": "1481629853.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so for example, in the GRPC client I'm working on, you can dynamically add trusted root certificates to its trust store",
+        "ts": "1481629892.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So if I'm `p` and I'm in org `A` but I'm not in *any channel with *  peer `q` in org `B` how can I verify messages signed by `q`?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481629951.000000"
+        },
+        "ts": "1481629917.000337"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you would get this from the various config blocks at startup and as they are updated (hopefully this works  )",
+        "ts": "1481629926.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "If two peers from different orgs don't share any mutual channels, is there a reason they would communicate in the first place?",
+        "ts": "1481629989.000341"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, this somehow creates a disjoint-ness in the membership views of gossip",
+        "ts": "1481630034.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that means that for the case of peers in different orgs but that have common channels, only they can \"see\" other peers from different orgs",
+        "ts": "1481630090.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Ah - yes - basically you end up building up a per channel\/chain membership view.   \n\nI guess the issue is whether or not we should build up a \"global\" view of all peers where they only exchange \"hello\" type messages ?   (of course they can only exchange blocks scoped at the chain\/channel level)",
+        "ts": "1481630253.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in that case, we'd need to have some option of knowing all orgs which are part of a network outside of channel\/chains",
+        "ts": "1481630329.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, we need to adjust to this new learned information because right now, when a peer gets an AliveMessage it simply blindly forwards it to a random subset of peers it considers alive",
+        "ts": "1481630344.000346"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "right now, there is a good proability this received AliveMessage will be discarded because it'll simply be received by a peer that has no way of validating it",
+        "ts": "1481630374.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nin that case, we'd need to have some option of knowing all orgs which are part of a network outside of channel\/chains\n```\nI thought at bootstrap time we get a list of root org CA certs or somehow the MSP takes care of that",
+        "ts": "1481630416.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "all of that info comes from the config blocks which are scoped by channel\/chain",
+        "ts": "1481630486.000349"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but you might want to check with Binh - he's currently working on the CSCC stuff which as far as I know is the only way to get the root CAs for the various orgs",
+        "ts": "1481630578.000350"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Bottom line- right now we have a problem. \n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2353\/>\n<@U0ZR63HLK> tries to implement this interface which currently the gossip code assumes the MSP gives it.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481630691.000000"
+        },
+        "ts": "1481630681.000351"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I guess the straight forward way of doing it in light of the recent information is that he'll simply return an error if the root CA of that per-channel-MSP isn't found or something?",
+        "ts": "1481630757.000353"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well what would actually happen if a peer got an AliveMessage from a peer it did not \"trust\"?",
+        "ts": "1481630761.000354"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it discards it",
+        "ts": "1481630767.000355"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and doesn't forward it",
+        "ts": "1481630783.000356"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and logs a warning message :disappointed:",
+        "ts": "1481630789.000357"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean, in theory, right? because that is in <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2681\/> which depends on <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3023\/> and already has merge conflict with c0rwin's code so I'll need to re-push it,  yet again",
+        "ts": "1481630891.000358"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so gossip need to have two \"views\" of the various MSPs:\n\n1) At the raw transport level (e.g. for AliveMessages) it needs to be able to access all of the root CAs across all of the channels to which a peer belongs\n\n2) For disseminating blocks, it needs to be able to have a view scoped by chain\/channel",
+        "ts": "1481630912.000359"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "frankly, the peer needs to build up these structures",
+        "ts": "1481630955.000360"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I've been concerned that we did not start with this - e.g. here's the various structures the peer will have (who cares how they get populated) in simple terms",
+        "ts": "1481631007.000361"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "for (1)- I don't know, it's as we want it to be. If we want peers of different orgs that have no intersection in channels not to communicate with each other, so be it.\nfor (2) - I of course take care of not disseminating blocks to peers of different channels.",
+        "ts": "1481631009.000362"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but for (1), I assume AliveMessage is not scoped to a channel - so you'd need to full list of trusted CAs that the peer knows about",
+        "ts": "1481631126.000363"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but I assume that MSP can do that for me, no?",
+        "ts": "1481631148.000364"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "somehow aggregate all certificates among all channel-MSPs",
+        "ts": "1481631165.000365"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "agreed - gossip layer should not need to worry about that",
+        "ts": "1481631184.000366"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "BTW regarding scoping - we have something much more generic. Each message sent in gossip declares its scope (any subgroup of: {channel, organization}, meaning 4 possibilities) and we \"route\" it to peers according to \"policies\"",
+        "ts": "1481631244.000367"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So, <@U0ZR63HLK>  - I think you can simply do the straight forward thing",
+        "ts": "1481631407.000368"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF> Is MessageCryptoService able to tell apart (1) from (2)?",
+        "ts": "1481631424.000369"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and <@U0PB67X4K>  yesterday you said that protobuf serialization isn't deterministic, can you please elaborate on this?",
+        "ts": "1481631431.000370"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK>  What do you mean?",
+        "ts": "1481631457.000371"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "(1) requires a lookup on all the MSPs, (2) requires a lookup to a specific MSP",
+        "ts": "1481631503.000372"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "well <@U0XPR4NP4> knows more than me, but as generally speaking the protobuf spec makes no guarantees about serialization (e.g. in terms of order of fields, etc)",
+        "ts": "1481631517.000373"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But if I have a message definition\nmessage X {\nA a = 1;\nB b = 2;\n... \n}\nIf it is the same order across different implementations, it should be deterministic right?",
+        "ts": "1481631574.000374"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "especially across languages.  in practice it turns out that all protobuf libraries implemented by Google actually have the same serialization but it's just not a guarantee",
+        "ts": "1481631583.000375"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<http:\/\/stackoverflow.com\/questions\/31208725\/is-protocol-buffer-serialization-output-fully-deterministic>",
+        "attachments": [
+            {
+                "title": "Is protocol buffer serialization output fully deterministic?",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/31208725\/is-protocol-buffer-serialization-output-fully-deterministic",
+                "text": "Given a protocol buffers schema and some data, is the protocol buffers serialization deterministic across libraries and languages?Basically, am I guaranteed that the same data will always seriali...",
+                "fallback": "Is protocol buffer serialization output fully deterministic?",
+                "thumb_url": "https:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/31208725\/is-protocol-buffer-serialization-output-fully-deterministic",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "service_icon": "https:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/favicon.ico?v=4f32ecc8f43d",
+                "service_name": "stackoverflow.com",
+                "id": 1
+            }
+        ],
+        "ts": "1481631644.000376"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK>  - Yeah I know but you don't need to think of that in terms of \"goals\" of (1) and (2),  we just need the interface implemented. We take care of the rest",
+        "ts": "1481631648.000378"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0ZR63HLK> - I think you need a to be able to scope to \"chain\" for (2) and \"all chains\" for (1)",
+        "ts": "1481631683.000379"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but basically yes",
+        "ts": "1481631690.000380"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "MSP for a chain or all MSPs for all chains to which a peer belongs",
+        "ts": "1481631708.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "with the current interface, there is no way to scope but <@U0ZJZBJLF> says that it can take care of this scoping",
+        "ts": "1481631739.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm missing something here",
+        "ts": "1481631744.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "If I need to verify a signature, I need to know against which PK",
+        "ts": "1481631763.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok wait let's go over the methods 1 by 1",
+        "ts": "1481631776.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/crypto.go#L27-L41>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/crypto.go#L27-L41",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/api\/crypto.go#L27-L41",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481631781.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1481631790.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Sign is obvious",
+        "ts": "1481631801.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "`GetPKIidOfCert(peerIdentity PeerIdentityType) common.PKIidType` is simply grabbing the public key and hashing it, right?",
+        "ts": "1481631813.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "It will generate a signature using the local signing identity which we assume to be unique",
+        "ts": "1481631821.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "something like that, right",
+        "ts": "1481631831.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "`VerifyBlock(signedBlock SignedBlock) error` We said can be implemented using something like Verify but that is more conext-aware, right?",
+        "ts": "1481631857.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "`Sign(msg []byte) ([]byte, error)` is obvious? why? which MSP do you use for sign?",
+        "ts": "1481631889.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right, not sure yet how that should work actually. Maybe <@U0XPR4NP4> <@U0XQ35CDD> can help here",
+        "ts": "1481631895.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "each peer has only one signing identity,",
+        "ts": "1481631912.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what about `Verify(peerIdentity PeerIdentityType, signature, message []byte) error` ?",
+        "ts": "1481631959.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "how to handle (2) there?",
+        "ts": "1481631992.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the process is something like this",
+        "ts": "1481632001.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "peerIdentity is the serialized version of an identity",
+        "ts": "1481632015.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so first, I need to deserialize it",
+        "ts": "1481632023.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so question is: who can do that? which MSPManager?",
+        "ts": "1481632037.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we know that each channel has an MSPManager",
+        "ts": "1481632050.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you only have MSP per channel?",
+        "ts": "1481632058.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I can scan all the MSPManagers and see who can do that",
+        "ts": "1481632061.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that was a semplification",
+        "ts": "1481632071.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Well, why not create a mapping in the \"MSP manager\":",
+        "ts": "1481632085.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "anyway, the scan achieves (1)",
+        "ts": "1481632091.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but two?",
+        "ts": "1481632092.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "OrgId --&gt; [] MSP",
+        "ts": "1481632097.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let's call it `m`. now, you take the certificate\/identity and use the MSP in `m[peerIdentity][0]`",
+        "ts": "1481632139.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because, the org participates in all the channels associated with the MSPs",
+        "ts": "1481632158.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and *any* MSP of these channels can verify that identity",
+        "ts": "1481632169.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if the mapping isn't found, you return error",
+        "ts": "1481632176.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no, it does not work like that",
+        "ts": "1481632182.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "was trying my best",
+        "ts": "1481632191.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "an MSP can verify certain signatures, not everything",
+        "ts": "1481632195.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "anyway, apart from that. At which point you want to enforce that a certain message is checked against a \" channel\" ?",
+        "ts": "1481632246.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "meaning against the MSPManager of that channel?",
+        "ts": "1481632256.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No, a message isn't checked against a channel",
+        "ts": "1481632278.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we just need to know if a certain peer is in a certain org, that's it",
+        "ts": "1481632301.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, that's out of context",
+        "ts": "1481632319.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "back to the interface- where is the problem?",
+        "ts": "1481632357.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm lost :disappointed:",
+        "ts": "1481632358.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hangout?",
+        "ts": "1481632364.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, please",
+        "ts": "1481632368.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let's re-use that last one",
+        "ts": "1481632395.000427"
+    },
+    {
+        "text": "<@U0ZR63HLK|adc> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/7nz3vrknvvcsnoa5gxv5q4b4hue|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1481632401.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh nvm",
+        "ts": "1481632407.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "OK so we decided that I'll list how gossip routes messages and <@U0ZR63HLK>  and other people can respond and point out holes in the concept, or say it's OK:",
+        "ts": "1481633992.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF>, thanks",
+        "ts": "1481634391.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Let's say I'm a peer `p` and I know I'm a part of channels `A`, `B`, `C` and I get a message `m` from some peer `q`.\nThat message can be signed, or not signed. \nIf it's signed, I verify it against the certificate of the peer that signed it. If the signature is invalid, I throw it away. \nNow, I (`p`) might want to send `m` to other peers, but I might also create `m` or a similar message for `m` myself.\nIf it should be signed, I sign it with my own private key and if I relay it, I don't touch the message structure. \n\nEach message has the following fields: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L29-L42> \nThe Tag specifies what peers that message can be routed to: {only to the channel and to organization, only to organization but to all channels in the org, to all orgs but in the same channel, and to all peers regardless of channels and orgs}\nThe channel specifies the channel, or it might be nil.\nnow, when a `p` selects to which peers to send `m` to it looks at the Tag, at the Channel and then selects peers according to it. \n`p` can query the MSP and obtain the following information:\n- Assuming it has the identity\/certificate of `q` it can obtain the org ID of `q` by invoking `OrgByPeerIdentity(PeerIdentityType) OrgIdentityType` from <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3179\/9\/gossip\/api\/channel.go>\n- Assuming it is in channel `C` it knows all organizations that belong to that channel from the `JoinChannel` message and\/or from the ledger's configuration blocks. \n- So, for each peer `q` that `p` knows about, it knows if that peer is in an organization that belongs to the channel, or not.\nBut how does `p` know that `q` is really a part of a channel? well - Each peer in a channel, disseminates *to all peers of the organizations of the channel* a message saying \"hey, I'm in this channel!\" and when `p` receives such a message from `q` and `q` is indeed in the org that's in the channel `C`, it believes `q` to be in the channel and it can select `q` to send the message to.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L29-L42",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L29-L42",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481635085.000000"
+        },
+        "ts": "1481634752.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF>, when p receives a message, is he supposed to route it only to the peer belonging to channel specified in the message?",
+        "ts": "1481635463.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "```But how does `p` know that `q` is really a part of a channel? well - Each peer in a channel, disseminates *to all peers of the organizations of the channel* a message saying \"hey, I'm in this channel!\" and when `p` receives such a message from `q` and `q` is indeed in the org that's in the channel `C`, it believes `q` to be in the channel and it can select `q` to send the message to.```",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1481635512.000000"
+        },
+        "ts": "1481635478.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "&gt;`q` is indeed in the org that's in the channel `C`  \u2026. <@U0ZJZBJLF> how does `p` verify that ? It goes and asks the orderer ?",
+        "ts": "1481635528.000440"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "why to ask orderer?",
+        "ts": "1481635573.000441"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I would say it only needs to check that q's identity (certificate) is valid under any of the MSPs that are listed within channel C",
+        "ts": "1481635646.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not saying it should <@U1HFNJB50> \u2026 just trying to (remember) understand how `p` knows `q` is in the channel",
+        "ts": "1481635684.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK> : ``` when p receives a message, is he supposed to route it only to the peer belonging to channel specified in the message? ```\nYeah, as long as the tag specifies that",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481635700.000000"
+        },
+        "ts": "1481635685.000444"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so it also depends on how you define \"a peer  is a member of channel C\". Is it the case that a peer is a member of a channel C if according to the ACLs of that channel the peer is allowed to read that channel's chain?",
+        "ts": "1481635692.000445"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF>, so we can assume that this message should come from a peer that belong to same channel, correct?",
+        "ts": "1481635732.000447"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "<@U0ULK2JPP> well, orderer doesn\u2019t have such information",
+        "ts": "1481635746.000448"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "maximum it will be able to provide you w\/ configuration block which has list of orgs",
+        "ts": "1481635775.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "``` I would say it only needs to check that q's identity (certificate) is valid under any of the MSPs that are listed within channel C ``` Yeah, we call the method provided by you guys for that. it receives a peer identity and returns error",
+        "ts": "1481635809.000450"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I think we said that genesis (configuration block) is the evidence of the peer being part of the channel as far as I remember that correctly",
+        "ts": "1481635815.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "``` so it also depends on how you define \"a peer  is a member of channel C\". Is it the case that a peer is a member of a channel C if according to the ACLs of that channel the peer is allowed to read that channel's chain? ```\n<@U1BC5A0F9> : In gossip, a peer is considered a member of channel C if it belongs to an org that is part of C, *and* publishes itself to the channel that it is in the channel",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481635878.000000"
+        },
+        "ts": "1481635861.000452"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ok, read access would do then in this case :slightly_smiling_face:",
+        "ts": "1481635902.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't understand what you mean",
+        "ts": "1481635951.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "If the peer is a part of the organization, it can simply connect to the orderer and ask for a block for the channel right?",
+        "ts": "1481636006.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF>, than the Sign methods need to be enhanced to passed the channel name",
+        "ts": "1481636027.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1481636080.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why?",
+        "ts": "1481636082.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but you agreed with what Elli just said",
+        "ts": "1481636113.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't understand what she said... so how can I agree?",
+        "ts": "1481636124.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "Elli said: I would say it only needs to check that q's identity (certificate) is valid under any of the MSPs that are listed within channel C",
+        "ts": "1481636134.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "and you said: Yeah, we call the method provided by you guys for that. it receives a peer identity and returns error",
+        "ts": "1481636147.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I thought you referred to \"ok, read access would do then in this case\"",
+        "ts": "1481636153.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "sorry, the conversation was deviated",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481636187.000000"
+        },
+        "ts": "1481636170.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, it checks that `q`'s identity is valid but... what does it have to do with routing?",
+        "ts": "1481636234.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if you enhance Sign with the channel name then I'm done",
+        "ts": "1481636235.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's exactly what I don't want to do",
+        "ts": "1481636246.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I know :disappointed:",
+        "ts": "1481636252.000470"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481636257.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "hehehe",
+        "ts": "1481636261.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But you understand why",
+        "ts": "1481636266.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's find a solution then",
+        "ts": "1481636271.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I still don't see the problem Angelo but can you at least agree that the flow that I described, is OK security-wise?",
+        "ts": "1481636294.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "my issue is the following: I don't like a situation where a message is for channel A but is validated by the MSP of channel B",
+        "ts": "1481636297.000476",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that case looks meaningless to me",
+        "ts": "1481636305.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why is that a problem? if peer `q` created the message and it's both in A and B?",
+        "ts": "1481636398.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but it might be that the message is not valid for channel A",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481636453.000000"
+        },
+        "ts": "1481636433.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "do you see that we need an explicit enforcement here?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481636460.000000"
+        },
+        "ts": "1481636444.000480"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I might be wrong",
+        "ts": "1481636465.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I need to clarify this",
+        "ts": "1481636469.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You mean that a peer *not in A* signe a message `m` and sent it to a peer `q` and said \"hey, this message is for channel A\"?",
+        "ts": "1481636489.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yeah, then an honest peer in A would accept it even though it should reject",
+        "ts": "1481636529.000486"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Wait. That\u2019s very dangerous.",
+        "ts": "1481636542.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's the reason I want to clarify, I might be wrong",
+        "ts": "1481636562.000488"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "aha, but that's not really a problem in practice",
+        "ts": "1481636564.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "please help me in the understanding",
+        "ts": "1481636568.000490"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But before that- look here: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2353\/>\nYou and Elli +1 this didn't you? :slightly_smiling_face:",
+        "ts": "1481636584.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But maybe there was some kind of mis-understanding",
+        "ts": "1481636597.000492"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "OMG. Yacov is trying to distract me :wink:",
+        "ts": "1481636606.000493"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "huh? no I'm not",
+        "ts": "1481636617.000494"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let's continue with the flow",
+        "ts": "1481636625.000495"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Let me break down the question: How does adding a channel (name, or so) help us with the trust model.",
+        "ts": "1481636630.000496"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[Yes, please, I\u2019ll do some code reviewing later]",
+        "ts": "1481636643.000497"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait wait Jonathan this isn't about adding a channel",
+        "ts": "1481636647.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No, that is not for reviewing!",
+        "ts": "1481636659.000499"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "",
+        "attachments": [
+            {
+                "fallback": "[December 13th, 2016 5:37 AM] adc: if you enhance Sign with the channel name then I'm done",
+                "ts": "1481636235.000468",
+                "author_subname": "adc",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "if you enhance Sign with the channel name then I'm done",
+                "author_name": "Angelo De Caro",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/adc",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-07-21\/61823221170_e0795e87fc9eb0abb221_48.jpg",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481636235000468",
+                "is_share": true,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1481636664.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean something entirely else",
+        "ts": "1481636667.000501"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Go on, please.",
+        "ts": "1481636687.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "oh yeah, I meant something else",
+        "ts": "1481636690.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481636694.000504"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I meant to say that this contract\/API between the MSP layer and gossip was decided long ago and changing it now is a problem",
+        "ts": "1481636695.000505"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but just for the sake of the discussion let me explain why we have no problem",
+        "ts": "1481636717.000506"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "great",
+        "ts": "1481636723.000507"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481636724.000508"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The `no problem` part sounds very good. But go on please.",
+        "ts": "1481636746.000509"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Currently in gossip we have 2 types of messages that are channel-scoped",
+        "ts": "1481636751.000510"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) Block message\n2) StateInfo message- a peer says to other peers: \"I'm in channel `C` and my ledger height is `N` and signs this message",
+        "ts": "1481636782.000511"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) Can be verified and cannot be forged, right?",
+        "ts": "1481636806.000512"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the only \"problem\" here is data leakage",
+        "ts": "1481636821.000513"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the block should be verified against a specific channel anyway, right?",
+        "ts": "1481636843.000514"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes!",
+        "ts": "1481636847.000515"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and it is!",
+        "ts": "1481636849.000516"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Sure, go on.",
+        "ts": "1481636854.000517"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "2)...",
+        "ts": "1481636861.000518"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ok, so block messages, what do they include? Is it a block delivery request?",
+        "ts": "1481636865.000519"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait I'm not done with (1)!",
+        "ts": "1481636868.000520"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1BC5A0F9>  no no, that's the block itself actually",
+        "ts": "1481636885.000521"
+    },
+    {
+        "type": "message",
+        "user": "U26T99AQ4",
+        "text": "<@U13TWBRBL> <@U2Q0HP4HY> <@U1KFBBWG1> I can easily change the marshalling of an identity from ASN.1 to protobuf - is that acceptable? If so I'll have a patch up shortly",
+        "ts": "1481636926.000522"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So in (1) we still have the following problem: peer `p` is byzantine and is part of channel `C` and sends to `q` a block and `q` isn't in channel `C`",
+        "ts": "1481636974.000523"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[@aso: hold on pls. We have another thread going on here. I\u2019m trying not to interrupt Yacov]",
+        "ts": "1481637027.000524"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the honest q should reject, right?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481637035.000000"
+        },
+        "ts": "1481637029.000525"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and it does",
+        "ts": "1481637035.000527"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "well a byzantine p can do anything",
+        "ts": "1481637044.000528"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in the code I do something like: \"hmm? I don't know this channel! logger.Warning(...\"",
+        "ts": "1481637055.000529"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[@yacov, Yes, I saw it.]",
+        "ts": "1481637069.000530"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1BC5A0F9>  exactly! it can upload the block to twitter",
+        "ts": "1481637069.000531"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "but the breach would be from p not from q; but nevertheless q should reject if it refers to channels it does nto handle",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481637081.000000"
+        },
+        "ts": "1481637071.000532"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1481637085.000534"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah well we get it for free from the logic of the per-channel handling",
+        "ts": "1481637101.000535"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\n\tif msg.IsChannelRestricted() {\n\t\tgc := g.chanState.getGossipChannelByChainID(msg.Channel)\n\t\tif gc == nil {\n\t\t\tg.logger.Warning(\"No such channel\", msg.Channel, \"discarding message\", msg)\n\t\t}\n\t\tgc.handleMessage(msg)\n\t\treturn\n\t}\n```",
+        "ts": "1481637128.000537"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1BC5A0F9>  can you elaborate?",
+        "ts": "1481637150.000538"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh yeah",
+        "ts": "1481637165.000540"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I need a return there",
+        "ts": "1481637167.000541"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm currently refactoring it",
+        "ts": "1481637180.000542"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "heheh, nice, we found a bug live :slightly_smiling_face:",
+        "ts": "1481637194.000543"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I love review processing",
+        "ts": "1481637202.000544"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's because this commit is based on a commit that is based on another commit and so on and they are all not merged",
+        "ts": "1481637225.000546"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":disappointed:",
+        "ts": "1481637231.000547"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so I had so many conflicts because I rebased the commits underneath",
+        "ts": "1481637240.000548"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":smile:",
+        "ts": "1481637241.000549"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "literally the entire file was red",
+        "ts": "1481637249.000550"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's continue",
+        "ts": "1481637256.000551"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "is there anything further you would like me to elaborate?",
+        "ts": "1481637269.000552"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"but the breach would be from p not from q\"",
+        "ts": "1481637367.000561"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we need to continue, Let's say that q has the channel. Then q has to enforse the signature against that channel's MSP, no?",
+        "ts": "1481637529.000562"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ah right meaning that if p sends a block to q corresponding to  a channel q does not have access to, it is a violation of the access policy of the channel, but it is because of byzantine p",
+        "ts": "1481637542.000563"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "and such breaches as you said before we cannot avoid.",
+        "ts": "1481637563.000564"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Let's continue, not crucial at this point :slightly_smiling_face:",
+        "ts": "1481637577.000565"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1481637591.000566"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I\u2019m still waiting for (2)",
+        "ts": "1481637603.000567"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but we have to ensure that the honest q will reject",
+        "ts": "1481637603.000568"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah so like I said",
+        "ts": "1481637616.000569"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "currently it checks if it's in the channel or not",
+        "ts": "1481637624.000570"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "without the `return` it just dies with a NPE panic :wink:",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481637654.000000"
+        },
+        "ts": "1481637643.000571"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So are we OK with (1)?",
+        "ts": "1481637675.000573"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "no",
+        "ts": "1481637683.000574"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why?",
+        "ts": "1481637687.000575"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "the signature should be validated against the MSP of that specific channel if q belongs to it",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481637721.000000"
+        },
+        "ts": "1481637711.000576"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Wait, q is the recipient correct?",
+        "ts": "1481637725.000578"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes",
+        "ts": "1481637738.000579"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but <@U0ZR63HLK>  that's not true",
+        "ts": "1481637760.000580"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so that call would return false if the peer is not part of the channel g.chanState.getGossipChannelByChainID(msg.Channel)",
+        "ts": "1481637761.000581"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the validation of a block message isn't like that",
+        "ts": "1481637769.000582"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it doesn't go though that, it goes through the VerifyBlock",
+        "ts": "1481637778.000583"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that would do validation of blocks based on orderer signatures",
+        "ts": "1481637792.000584"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "correct",
+        "ts": "1481637794.000585"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1481637798.000586"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "exactly",
+        "ts": "1481637800.000587"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "by it is by channel",
+        "ts": "1481637803.000588"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "all the channels have the same orderers",
+        "ts": "1481637815.000589"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "orderers are the same for all channels i guess..",
+        "ts": "1481637816.000590"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "right",
+        "ts": "1481637817.000591"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay",
+        "ts": "1481637818.000592"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "1 is fine :slightly_smiling_face:",
+        "ts": "1481637825.000593"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "thanks",
+        "ts": "1481637827.000594"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok <@U11MANG9G>  (2)",
+        "ts": "1481637835.000595"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "**drum rolls*",
+        "ts": "1481637842.000596"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Alright, (2) it is! Thanks.",
+        "ts": "1481637842.000597"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "heheheheh",
+        "ts": "1481637851.000598"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": ":woo:",
+        "ts": "1481637852.000599"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":smile:",
+        "ts": "1481637857.000600"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So a StateInfo Message is just a peer saying that he is in a channel",
+        "ts": "1481637909.000601"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and it has the following fields:",
+        "ts": "1481637917.000602"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L85-L90>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L85-L90",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L85-L90",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1481637937.000603"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But actually it's encapsulated with a GossipMessage, that's where the Channel and Tag are, understood so far?",
+        "ts": "1481637999.000605"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "That would be  'bytes metadata' ?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481638019.000000"
+        },
+        "ts": "1481638011.000606"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "(btw, line 54 should be GossipHello hello = 8; and not 87 as it is now)",
+        "ts": "1481638023.000608"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what would be?",
+        "ts": "1481638028.000609"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, got it so far",
+        "ts": "1481638044.000610"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK>  yeah I already put that change in a PR",
+        "ts": "1481638046.000611"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "great",
+        "ts": "1481638061.000612"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "the list of channels a peer is in",
+        "ts": "1481638067.000613"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1481638075.000614"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "metadata is actually a serialization of something that contains the peer ledger's height",
+        "ts": "1481638097.000615"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ah ok ok",
+        "ts": "1481638107.000616"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "StateInfo is included in a gossip message that includes the channel id this state info corresponds to; did i get that correctly?",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481638140.000000"
+        },
+        "ts": "1481638129.000617"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the channel's ID is in the GossipMessage, and the StateInfo is actually a `oneof` field in the gossipMessage",
+        "ts": "1481638158.000619",
+        "reactions": [
+            {
+                "name": "white_check_mark",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So as I said earlier- the StateInfo is signed by each peer and is disseminated to all orgs of a channel",
+        "ts": "1481638238.000620"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, there q checks if the received message corresponds to a channel it follows, and ignores the message if it refers to a channel it does not concern it.",
+        "ts": "1481638247.000621"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Is it the StateINfo that is signed, or the gossip message that is ssigned?",
+        "ts": "1481638277.000622"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No",
+        "ts": "1481638290.000624"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That's not how it goes <@U1BC5A0F9>",
+        "ts": "1481638297.000626"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The StateInfo is disseminated to all peers in the organizations that are in the channel",
+        "ts": "1481638325.000628"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But there is a privacy breach there no?",
+        "ts": "1481638340.000629"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ah ok",
+        "ts": "1481638348.000630"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You mean- if I'm a peer `p` and I now know of the ChainID of a channel I'm not part of",
+        "ts": "1481638359.000631"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "it is announced within the peers belonging to the same organization.",
+        "ts": "1481638366.000632"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Yeah but as I said- now if I'm a peer `p` I can now know all channels of my organization",
+        "ts": "1481638390.000633"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sorry, say Channel ID instead of Chain ID",
+        "ts": "1481638401.000634"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ok",
+        "ts": "1481638411.000635"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why?",
+        "ts": "1481638416.000636"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "fine, you say q receive this stateInfo from p; what comes next?",
+        "ts": "1481638454.000637"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "next it may or may not disseminate this further",
+        "ts": "1481638468.000638"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to peers in the channel",
+        "ts": "1481638473.000639"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "BTW to your earlier question- the inner struct is signed",
+        "ts": "1481638485.000640"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "not the entire GossipMessage",
+        "ts": "1481638489.000641"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let me just check that",
+        "ts": "1481638502.000642"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "really???",
+        "ts": "1481638510.000643"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1481638528.000644"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm yep",
+        "ts": "1481638549.000645"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why not the entire message?",
+        "ts": "1481638565.000646"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no reason actually.",
+        "ts": "1481638606.000647"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll brb",
+        "ts": "1481638615.000648"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But in the meantime",
+        "ts": "1481638618.000649"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "why is it dangerous?",
+        "ts": "1481638622.000650"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I will have to check",
+        "ts": "1481638702.000651"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's progress on (2), please",
+        "ts": "1481638707.000652"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Hm a first thought is that one would be able to replay it using another channel id to the front... Not sure this is bad, but the more malleable we allow the information on a single message to be usually the more power we give to a potential attacker to chcange things...",
+        "ts": "1481638713.000653"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But not a clear attack from my side. Need to understand better the goal of this message, whether it can be replayed, and if this would cause problems...",
+        "ts": "1481638743.000654"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ZJZBJLF>, what happened?",
+        "ts": "1481639101.000655"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "he is in meeting",
+        "ts": "1481639137.000656"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481639228.000657"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "okay :slightly_smiling_face:",
+        "ts": "1481639235.000658"
+    },
+    {
+        "user": "U3DB4L15G",
+        "text": "<@U3DB4L15G|svergara> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481639876.000659"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "back",
+        "ts": "1481639927.000660"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Well that's the thing",
+        "ts": "1481639974.000661"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "If you have a GossipMessage `M` and inside a message `m` that is signed, what can you really do? you can only change the tag and the channel, that's it",
+        "ts": "1481640015.000662"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what does it give you?",
+        "ts": "1481640024.000663"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But I agree with the general approach and will strongly consider signing over the entire GossipMessage, <@U1HFNJB50>  what do you think?",
+        "ts": "1481640067.000664"
+    },
+    {
+        "type": "message",
+        "user": "U1HFNJB50",
+        "text": "I think that signature on `m` is enough, but yeah I agree that we might consider to sign over all GossipMessage",
+        "ts": "1481640251.000665"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0ZR63HLK>  <@U1BC5A0F9>  you want to continue?",
+        "ts": "1481640387.000666"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sure",
+        "ts": "1481640398.000667"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So the problem was:  a peer `p`  *not in A* signed a message `m` and sent it to a peer `q` and said \"hey, this message is for channel A\", right?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481640479.000000"
+        },
+        "ts": "1481640468.000668"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "And you don't want to iterate over all MSP instances and find the right one",
+        "ts": "1481640496.000670"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Ok, so at first stage, q cannot tell if p is a member of that channel if q is not part of the channel",
+        "ts": "1481640523.000671"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it can",
+        "ts": "1481640542.000672"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "how?",
+        "ts": "1481640549.000673"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I outlined it in the long message above: \n<https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481634752000432>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-crypto\/p1481634752000432",
+                "fallback": "[December 13th, 2016 5:12 AM] yacovm: Let's say I'm a peer `p` and I know I'm a part of channels `A`, `B`, `C` and I get a message `m` from some peer `q`.\nThat message can be signed, or not signed. \nIf it's signed, I verify it against the certificate of the peer that signed it. If the signature is invalid, I throw it away. \nNow, I (`p`) might want to send `m` to other peers, but I might also create `m` or a similar message for `m` myself.\nIf it should be signed, I sign it with my own private key and if I relay it, I don't touch the message structure. \n\nEach message has the following fields: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L29-L42> \nThe Tag specifies what peers that message can be routed to: {only to the channel and to organization, only to organization but to all channels in the org, to all orgs but in the same channel, and to all peers regardless of channels and orgs}\nThe channel specifies the channel, or it might be nil.\nnow, when a `p` selects to which peers to send `m` to it looks at the Tag, at the Channel and then selects peers according to it. \n`p` can query the MSP and obtain the following information:\n- Assuming it has the identity\/certificate of `q` it can obtain the org ID of `q` by invoking `OrgByPeerIdentity(PeerIdentityType) OrgIdentityType` from <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3179\/9\/gossip\/api\/channel.go>\n- Assuming it is in channel `C` it knows all organizations that belong to that channel from the `JoinChannel` message and\/or from the ledger's configuration blocks. \n- So, for each peer `q` that `p` knows about, it knows if that peer is in an organization that belongs to the channel, or not.\nBut how does `p` know that `q` is really a part of a channel? well - Each peer in a channel, disseminates *to all peers of the organizations of the channel* a message saying \"hey, I'm in this channel!\" and when `p` receives such a message from `q` and `q` is indeed in the org that's in the channel `C`, it believes `q` to be in the channel and it can select `q` to send the message to.",
+                "ts": "1481634752.000432",
+                "author_subname": "yacovm",
+                "channel_id": "C2GE7GXM1",
+                "channel_name": "fabric-crypto",
+                "is_msg_unfurl": true,
+                "text": "Let's say I'm a peer `p` and I know I'm a part of channels `A`, `B`, `C` and I get a message `m` from some peer `q`.\nThat message can be signed, or not signed. \nIf it's signed, I verify it against the certificate of the peer that signed it. If the signature is invalid, I throw it away. \nNow, I (`p`) might want to send `m` to other peers, but I might also create `m` or a similar message for `m` myself.\nIf it should be signed, I sign it with my own private key and if I relay it, I don't touch the message structure. \n\nEach message has the following fields: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/gossip\/proto\/message.proto#L29-L42> \nThe Tag specifies what peers that message can be routed to: {only to the channel and to organization, only to organization but to all channels in the org, to all orgs but in the same channel, and to all peers regardless of channels and orgs}\nThe channel specifies the channel, or it might be nil.\nnow, when a `p` selects to which peers to send `m` to it looks at the Tag, at the Channel and then selects peers according to it. \n`p` can query the MSP and obtain the following information:\n- Assuming it has the identity\/certificate of `q` it can obtain the org ID of `q` by invoking `OrgByPeerIdentity(PeerIdentityType) OrgIdentityType` from <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3179\/9\/gossip\/api\/channel.go>\n- Assuming it is in channel `C` it knows all organizations that belong to that channel from the `JoinChannel` message and\/or from the ledger's configuration blocks. \n- So, for each peer `q` that `p` knows about, it knows if that peer is in an organization that belongs to the channel, or not.\nBut how does `p` know that `q` is really a part of a channel? well - Each peer in a channel, disseminates *to all peers of the organizations of the channel* a message saying \"hey, I'm in this channel!\" and when `p` receives such a message from `q` and `q` is indeed in the org that's in the channel `C`, it believes `q` to be in the channel and it can select `q` to send the message to.",
+                "author_name": "Yacov Manevich",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/yacovm",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-30\/85916865123_74ecb5d18535acea44aa_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-crypto"
+            }
+        ],
+        "ts": "1481640581.000674"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "If you don't understand something just say I'll try to explain again",
+        "ts": "1481640616.000676"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "&gt; If it's signed, I verify it against the certificate of the peer that signed it. If the signature is invalid, I throw it away.",
+        "ts": "1481640634.000677"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So for you to verify the signature, you need to be equipped with the related MSP that would parse the certificate and know what signature verification algo to use.",
+        "ts": "1481640664.000678"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Plus you would still need to check against a list of CAs that you coonsider trusted, and that may change depending on the channel you are referring to.",
+        "ts": "1481640689.000679"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "How do you quote? with &gt; ?",
+        "ts": "1481640712.000680"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "right",
+        "ts": "1481640725.000681"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "with \"&gt;\"",
+        "ts": "1481640729.000682"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So what's the problem with iterating over all MSPs?",
+        "ts": "1481640764.000683"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait",
+        "ts": "1481640792.000684"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's not an issue.",
+        "ts": "1481640802.000685"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "&gt; and that may change depending on the channel you are referring to.\nWhy?",
+        "ts": "1481640803.000686"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I'm just saying that if p gets a message for a certain channel",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481640903.000000"
+        },
+        "ts": "1481640816.000687"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "p should verify it against the MSP of that channel",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481640909.000000"
+        },
+        "ts": "1481640823.000688",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "that's it",
+        "ts": "1481640825.000689"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but don't you agree that if that message is signed by `q` then you could in theory validate it against *multiple* MSPs - if all of these MSPs belong to channels that have the root CA of that cert?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481640905.000000"
+        },
+        "ts": "1481640872.000690"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we have to think in terms of channels and their MSPs",
+        "ts": "1481640934.000694"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "only that counts",
+        "ts": "1481640941.000695"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, take the following example",
+        "ts": "1481640970.000696"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "peer A and peer B are part of channel 1, and not part of channel 2",
+        "ts": "1481640997.000697"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1481641010.000698"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "however peer A is malicious \/ byzantine and constructs a signed stateInfo aiming for channel 2 that it sends to peer B",
+        "ts": "1481641021.000699"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So peer B who has not the info of whether peer A is member of the channel 2 (cause it does not have the MSPs desc of that channel) cannot assess if peer A is indeed a member of that channel..",
+        "ts": "1481641061.000700"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "Now you mentioned before that if peer A and B are part of the same organization then B may be implicitly know if the organizaiton both peers participates in that channel and have the local MSP of peer B assess validity of peer A's certificate.",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481641154.000000"
+        },
+        "ts": "1481641118.000701"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "But even if so, the latter would be a hack...",
+        "ts": "1481641167.000703"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the former you mean?",
+        "ts": "1481641178.000704"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, the resolving",
+        "ts": "1481641200.000705"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "I would say that messages should be followed with some channel id-s and maybe you have wildcards for you to include essentially more than on echannel",
+        "ts": "1481641206.000706"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "the resolving part yes",
+        "ts": "1481641214.000707"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, trying to understand the attack",
+        "ts": "1481641232.000708"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't get it",
+        "ts": "1481641250.000709"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "there is no attack, some limitation rather of validating a message",
+        "ts": "1481641260.000710"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you're basically saying- peer B tells peer A \"Hey I'm in channel 2\" although he's not?",
+        "ts": "1481641270.000711"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "so if you have signatures of messages this is for some one to be able to validate it",
+        "ts": "1481641277.000712"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what's the point?",
+        "ts": "1481641279.000713"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "if one cannot validate it, the message should be discarded no?",
+        "ts": "1481641290.000714"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, but the whole point of the discussion here is that adc wants to extend the Sign method with a channel",
+        "ts": "1481641317.000715"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "unless it aims for you to relay the message",
+        "ts": "1481641325.000716"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and I have messages that do not have any channel in them",
+        "ts": "1481641328.000717"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "for others to assess the signature",
+        "ts": "1481641330.000718"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I can also check against all the channels but then what it means to have a message for channel A that is validated by the MSP of channel B",
+        "ts": "1481641405.000719"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "this is the question",
+        "ts": "1481641409.000720"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1481641443.000721"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but that's what I'm saying",
+        "ts": "1481641446.000722"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "there is *no way* you can validate a message from channel B",
+        "ts": "1481641468.000723"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and you should not have been able to",
+        "ts": "1481641476.000724"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "but the channel field is there to tell the code that, no?",
+        "ts": "1481641502.000725"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the channel field is only for channel-restricted messages",
+        "ts": "1481641517.000726"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what do I do with messages that have no channel? like AliveMessages, and certificates?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481641546.000000"
+        },
+        "ts": "1481641528.000727"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "ah, good point",
+        "ts": "1481641546.000729"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "....",
+        "ts": "1481641552.000730"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "so, we agree that for channel-restricted messages we have to enforce the check I'm saying",
+        "ts": "1481641572.000731"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1481641576.000732"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we don't",
+        "ts": "1481641578.000733"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "let's analyze now the case of an AliveMessage",
+        "ts": "1481641582.000734"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no",
+        "ts": "1481641585.000735"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why not?",
+        "ts": "1481641585.000736"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": ":disappointed:",
+        "ts": "1481641591.000737"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because of the following:",
+        "ts": "1481641608.000738"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "MSP instances simply resemble \"domains\" of CAs. \nIn MSP1 you can have CA1, CA2, CA3\nand in MSP2 you can maybe have CA3, CA4, right?\nNow you get a message `m`.\nHow is it possible that you can verify this message using MSP_i despite the fact that the *correct* CA for that message isn't in MSP_i ?",
+        "ts": "1481641694.000739"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "for channel-restricted messages, they carry a single channel, no?",
+        "ts": "1481641745.000740"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if true, than it makes sense to check against that specific channel",
+        "ts": "1481641765.000741"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "if this is not the case",
+        "ts": "1481641769.000742"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "then we have to understand what to do",
+        "ts": "1481641777.000743"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "it has to be avalid cert w.r.t. the MSPs listed in the read-set of the channel the message refers to.",
+        "ts": "1481641879.000744"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "any would do; but there is a possibility of adding this mspid to the certificate itself",
+        "edited": {
+            "user": "U1BC5A0F9",
+            "ts": "1481641903.000000"
+        },
+        "ts": "1481641889.000745"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "a discussion we had with <@U26T99AQ4> a few weeks ago..",
+        "ts": "1481641918.000747"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U1BC5A0F9> , the deal here is simple- <@U0ZR63HLK>  claims that there is a danger in which you might have a false-positive verification",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481642363.000000"
+        },
+        "ts": "1481642095.000748"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Do you agree that if you *can't have* a false-positive verification then we're \"safe\"?",
+        "ts": "1481642110.000749"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and you guys can simply iterate over all MSPs?",
+        "ts": "1481642118.000750"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "why the false-positive are not possible?",
+        "ts": "1481642188.000751"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, before that- do you agree that if it's not possible, we're ok?",
+        "ts": "1481642313.000752"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, but I want a formal proof for that",
+        "ts": "1481642491.000754"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in latex?",
+        "ts": "1481642534.000755"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "yes, please. hehehehe :slightly_smiling_face:",
+        "ts": "1481642540.000756"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "please, go ahead",
+        "ts": "1481642550.000757"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": ":smile:",
+        "ts": "1481642553.000758"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "So, thinking of the alternatives",
+        "ts": "1481642634.000759"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok I'll go ahead",
+        "ts": "1481642643.000760"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "how easy it is to add a channel id in the gossip messages?",
+        "ts": "1481642647.000761"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "easy\/difficutl",
+        "ts": "1481642657.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we already have channel ids...",
+        "ts": "1481642659.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's not the point",
+        "ts": "1481642665.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the point is that Angelo wants to add a channel param both to Sign and to Verify",
+        "ts": "1481642679.000765"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "ah the sign message",
+        "ts": "1481642683.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and this doesn't make sense",
+        "ts": "1481642686.000767"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sorry, yes; so sign and verify would still need to leverage some MSP implementation to do the signature verification",
+        "ts": "1481642745.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "I don't want to add to Sign",
+        "ts": "1481642781.000769"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "cause this e.g., includes verification of the signer identity",
+        "ts": "1481642785.000770"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "that is channel specific ... i am a bit confused i have to say .. :disappointed:",
+        "ts": "1481642817.000771"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "where do you authenticat ethe signer?",
+        "ts": "1481642831.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "shall we have an hangout, please",
+        "ts": "1481642855.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "we have to come to a decision",
+        "ts": "1481642859.000774"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "you receive a message that has a creator of a message, a signature and the message",
+        "ts": "1481642862.000775"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sure",
+        "ts": "1481642874.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sure",
+        "ts": "1481642900.000777"
+    },
+    {
+        "text": "<@U0ZR63HLK|adc> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/wvunwgaufbhavickn47ih6voume|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1481642917.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, if `p` is in org `A` and `q` is in org  `B` and they're both in channel `1` and `q` is also in channel `2`",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481645758.000000"
+        },
+        "ts": "1481645750.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and then `p` is malicious and it sends a message signed by itself to `q` with the channel `2`",
+        "ts": "1481645803.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "if I invoke your cool per-channel method: `Verify(msg, sig, cert, channel_2)` it'll return an error, right? <@U0ZR63HLK> , <@U1BC5A0F9>",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1481645862.000000"
+        },
+        "ts": "1481645837.000782"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "correct",
+        "ts": "1481645869.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Could you please open a JIRA issue for that? :slightly_smiling_face:",
+        "ts": "1481645901.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to document, and stuff",
+        "ts": "1481645907.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so other people could also read",
+        "ts": "1481645928.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and say if they're for or against",
+        "ts": "1481645935.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and don't forget that writing on slack is like writing on sand",
+        "ts": "1481645946.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "cool per-channel method?? hehehehehhe",
+        "ts": "1481646171.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So can you?",
+        "ts": "1481646235.000791"
+    },
+    {
+        "type": "message",
+        "user": "U1BC5A0F9",
+        "text": "sure",
+        "ts": "1481646242.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "thanks",
+        "ts": "1481646246.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So, I  don't want to open this discussion again, but just for the sake of readers\/ <@U11MANG9G>  - about (2) (`StateInfo` message) - that's a message that a peer tells other peers about its existence in a channel. \nSo basically, the only thing you can do, is lie and tell other peers in different channels that you're in a certain channel, but only 1 of the conditions hold:\n- You're in an org that's in that channel and then it's \"safe\" to tell other peers about that because you could have went to the ordering service yourself and asked for blocks.\n- You're not in an org that's in that channel, and in that case- no peer of the channel would speak to you in that \"channel context\" because I have gossip-side filtering of that",
+        "ts": "1481646764.000794"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Thank you <@U0ZJZBJLF>. BTW: I have no problem opening that discussion, or another. I think it\u2019s good to talk about these actually, rather than making assumptions that later on might prove wrong, or out of sync with others.",
+        "ts": "1481646939.000795"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I think you are asking good questions, and it helps to frame many of these threads...",
+        "ts": "1481646993.000796",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U1BC5A0F9"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U2Q0HP4HY",
+        "text": "Is it feasible in the same chain that different peers could be signing and hashing with different algorithms and strengths and SDKs need to support that ?  I don't think from what I've seen a single Peer would expect proposals that support multiple algorithms and hashing",
+        "edited": {
+            "user": "U2Q0HP4HY",
+            "ts": "1481679468.000000"
+        },
+        "ts": "1481679049.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0ZR63HLK> not sure if you are the right person to ask\u2026 I see fabric\/accesscontrol . Couple of things (1)some  files in there (I saw api.go) do not have standard license header and (2) my vote would be for `fabric\/acl` instead of `fabric\/accesscontrol` :slightly_smiling_face:",
+        "edited": {
+            "user": "U0ULK2JPP",
+            "ts": "1481680498.000000"
+        },
+        "ts": "1481679977.000799"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also I see import statements such as `\"<http:\/\/github.com\/hyperledger\/fabric\/core\/crypto\/attributes|github.com\/hyperledger\/fabric\/core\/crypto\/attributes>\u201d` \u2026 is this cross import into `core\/crypto` ok ? or is this WIP ?",
+        "ts": "1481680249.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "shouldn\u2019t core\/crypto be gone by now?",
+        "ts": "1481691771.000804"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0ULK2JPP> that package is a working in progress. I will submit a change-set to add the header and rename the package. Actually, that stuff is for chaincode, should it go under fabric\/chaincode or something like this?",
+        "ts": "1481700570.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0KN2SSKE> core\/crypto contains the bccsp, do you want to move it to fabric\/ or fabric\/core?",
+        "edited": {
+            "user": "U0ZR63HLK",
+            "ts": "1481724510.000000"
+        },
+        "ts": "1481700597.000806"
+    }
+]

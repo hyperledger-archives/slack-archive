@@ -1,0 +1,302 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "To be honest I didn't ",
+        "ts": "1466406277.000045"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Do you mean the absolute time that was spent busy? Or?",
+        "ts": "1466406313.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1466406486.000047"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "this is not an official measurement just some kind of experiment but I get lines like this:\n     2.74s 36.53% 74.00%      2.74s 36.53%  runtime._ExternalCode",
+        "ts": "1466406752.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "where should that busily spent time amount be?",
+        "ts": "1466406792.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "is it possible to get more specific results? to get some kind of breakdown from that external code call",
+        "ts": "1466407594.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd guess rocksdb",
+        "ts": "1466407942.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "2.74s out of how many seconds?",
+        "ts": "1466407956.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I ve found it, total is 7,5",
+        "ts": "1466408243.000053"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's your total runtime",
+        "ts": "1466408293.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "30s?",
+        "ts": "1466408303.000055"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I only have the results from \"top10\", the profile file itself was overwritten because I experimented with other options for the profiler",
+        "ts": "1466408422.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "but lets say it was 5 minutes",
+        "ts": "1466408442.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I sent 10K TXs to the system",
+        "ts": "1466408475.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and created a profile from that",
+        "ts": "1466408487.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "&lt;3s for 5min runtime is negligible",
+        "ts": "1466408509.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what does this \"6.77s of 7.50s total (90.27%)\" mean in the output of pprof?",
+        "ts": "1466408594.000061"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I can show you some lines from that output:",
+        "ts": "1466408609.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "(pprof) top10\n6.77s of 7.50s total (90.27%)\nDropped 171 nodes (cum &lt;= 0.04s)\nShowing top 10 nodes out of 106 (cum &gt;= 0.05s)\n      flat  flat%   sum%        cum   cum%\n     2.81s 37.47% 37.47%      2.91s 38.80%  syscall.Syscall\n     2.74s 36.53% 74.00%      2.74s 36.53%  runtime._ExternalCode\n     0.59s  7.87% 81.87%      0.59s  7.87%  runtime.futex",
+        "ts": "1466408632.000063"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so what does that 6.77s of 7.50 mean? does it mean that the top10 calls used 7.50s from the total runtime?",
+        "ts": "1466408732.000064"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if yes that is a really small amount",
+        "ts": "1466408792.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0XR6J961>: how can I get the full runtime from the profiling log?",
+        "ts": "1466410744.000066"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "<@U0XR6J961>: \nQ1: I found there is always one goroutine do the commit work.  Is this the reason why my cpu time is less than 200%(I got 32 cores)? \nQ2: I saw this function <http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).recvCommit|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).recvCommit> took 9.67% of my cpu time. I was running a quite simple chaincode: chaincode_example02. Does that mean the perfmance would be much worse when I add more logicals to chaincode?\nThank you very much!\ngoroutine 13 [runnable]:\nreflect.Value.NumField(0xd50420, 0xc859cbe350, 0x199, 0xc8b9c40aee)\n\t\/opt\/go\/src\/reflect\/value.go:1152\nreflect.deepValueEqual(0xd50420, 0xc859cbe350, 0x199, 0xd50420, 0xc886b16bc0, 0x199, 0xc8b9c415d8, 0x3, 0xc8c94d6800)\n\t\/opt\/go\/src\/reflect\/deepequal.go:96 +0x12e6\nreflect.deepValueEqual(0xd821a0, 0xc8802c1080, 0x196, 0xd821a0, 0xc8be7ba440, 0x196, 0xc8b9c415d8, 0x2, 0x0)\n\t\/opt\/go\/src\/reflect\/deepequal.go:94 +0xfac\nreflect.deepValueEqual(0xd8b540, 0xc8802c1080, 0x199, 0xd8b540, 0xc8be7ba440, 0x199, 0xc8b9c415d8, 0x1, 0x7ff8c6ffa000)\n\t\/opt\/go\/src\/reflect\/deepequal.go:97 +0x140f\nreflect.deepValueEqual(0xd96c40, 0xc8802c1080, 0x16, 0xd96c40, 0xc8be7ba440, 0x16, 0xc8b9c415d8, 0x0, 0x7ff8c6ffa000)\n\t\/opt\/go\/src\/reflect\/deepequal.go:94 +0xfac\nreflect.DeepEqual(0xd96c40, 0xc8802c1080, 0xd96c40, 0xc8be7ba440, 0xc8c92fc600)\n\t\/opt\/go\/src\/reflect\/deepequal.go:185 +0x253\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcBatch).execute(0xc820270840|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcBatch).execute(0xc820270840>, 0x156, 0xc8a914e480, 0x208, 0x208)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/obc-batch.go:214 +0x8ec\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).executeOne(0xc8202a6000|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).executeOne(0xc8202a6000>, 0x0, 0x156, 0xc886b16a00)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/pbft-core.go:978 +0x77f\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).executeOutstanding(0xc8202a6000)|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).executeOutstanding(0xc8202a6000)>\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/pbft-core.go:933 +0x333\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).recvCommit(0xc8202a6000|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).recvCommit(0xc8202a6000>, 0xc886968a50, 0x0, 0x0)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/pbft-core.go:868 +0xcf0\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).ProcessEvent(0xc8202a6000|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*pbftCore).ProcessEvent(0xc8202a6000>, 0xd7b8a0, 0xc886968a50, 0x0, 0x0)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/pbft-core.go:338 +0x1559\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcBatch).ProcessEvent(0xc820270840|github.com\/hyperledger\/fabric\/consensus\/obcpbft.(*obcBatch).ProcessEvent(0xc820270840>, 0xd7b8a0, 0xc886968a50, 0x0, 0x0)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/obc-batch.go:383 +0x599\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.SendEvent(0x7ff8c6ffcea0|github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.SendEvent(0x7ff8c6ffcea0>, 0xc820270840, 0xd48fc0, 0xc8a5a59c90)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events\/events.go:113 +0x45\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).Inject(0xc820279720|github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).Inject(0xc820279720>, 0xd48fc0, 0xc8a5a59c90)\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events\/events.go:123 +0x4f\n<http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).eventLoop(0xc820279720)|github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).eventLoop(0xc820279720)>\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events\/events.go:132 +0xdb\ncreated by <http:\/\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).Start|github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events.(*managerImpl).Start>\n\t\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/consensus\/obcpbft\/events\/events.go:100 +0x35",
+        "ts": "1466414365.000067"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "<@U1AU8DRQR>  <@U0XR6J961> The profile I got is with 4 validator node on vagrant on my single windows machine. The part for runtime._ExternalCode is unexpectly high. But when I profile fabric on a cluster of 4 node. The result is make much sense.",
+        "ts": "1466414541.000068"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1CK6522F|zuowang> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/zuowang\/F1JAULGFM\/callgrind.benchmark|callgrind.benchmark>",
+        "file": {
+            "id": "F1JAULGFM",
+            "created": 1466414600,
+            "timestamp": 1466414600,
+            "name": "callgrind.benchmark",
+            "title": "callgrind.benchmark",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U1CK6522F",
+            "editable": true,
+            "size": 81204,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1JAULGFM\/callgrind.benchmark?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F1JAULGFM\/download\/callgrind.benchmark?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/zuowang\/F1JAULGFM\/callgrind.benchmark",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F1JAULGFM-949ea6b601",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/zuowang\/F1JAULGFM\/callgrind.benchmark\/edit",
+            "preview": "events: cpu(ms)\nfl=\nfn=(1) syscall.Syscall\n0 9990\ncfl=",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>events: cpu(ms)<\/pre><\/div>\n<div><pre>fl=<\/pre><\/div>\n<div><pre>fn=(1) syscall.Syscall<\/pre><\/div>\n<div><pre>0 9990<\/pre><\/div>\n<div><pre>cfl=<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 8318,
+            "lines_more": 8313,
+            "preview_is_truncated": true,
+            "channels": [
+                "C113WK2A1"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1CK6522F",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1CK6522F|zuowang>",
+        "bot_id": null,
+        "ts": "1466414600.000069"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "<@U1AU8DRQR>  <@U0XR6J961> This is the profile I get from a cluster of 4 nodes. open it with kcachegrind or qcachegrind on windows.",
+        "ts": "1466414691.000070"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi zuowang",
+        "ts": "1466415966.000071"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "are you still around?",
+        "ts": "1466415972.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1CK6522F",
+        "text": "<@U0XR6J961> yes!",
+        "ts": "1466421050.000073"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "`noops` adopts 200 channels to accept for transaction requests, and the average `invoke` TPS for `noops` on single peer node is around 700 per second, however, there's only one channel for `pbft`, and the average `invoke` TPS is only 15 per second or so.  \nDoes there exist further plan to improve the performance as much as possible?  According to the target, which claims to achieve 100K given 15 peer nodes, even if the performance could be linearly scalable, single peer node has to reach at least 7000 per second.",
+        "ts": "1466425887.000074"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yingfeng: do you see also 700 requests being committed per second?",
+        "ts": "1466426495.000075"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do you also see 700 queries per second?",
+        "ts": "1466426511.000076"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U142E5N0P>: that 100k target is completely unrealistic",
+        "ts": "1466426532.000077"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "performance is not scalable at all",
+        "ts": "1466426548.000078"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>: what is the aim of the performance for a single peer node?",
+        "ts": "1466428979.000079"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "as fast as possible",
+        "ts": "1466429161.000080"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": ":slightly_smiling_face:",
+        "ts": "1466429164.000081"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ideally at network line speed",
+        "ts": "1466429181.000082"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but right now this totally doesn't work",
+        "ts": "1466429193.000083"
+    },
+    {
+        "user": "U18P24857",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U18P24857|dongmingh> has joined the channel",
+        "ts": "1466458527.000084"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0XR6J961>  when `noops` is configured, the practical TPS is around 700 per peer node, and when jmeter is stopped, the CPU of peer node reduces to idle immediately, while when `pbft` is configured, there's an remarkable asynchronous behavior such that the peer node will keep CPU busy for a long time even if jmeter had been stopped long before.",
+        "ts": "1466470299.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "But noops is a fake consensus protocol which is basically a passthrough. I don't think you can get valid data comparing noops and pbft. ",
+        "ts": "1466473358.000086"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "<@U0UGH3X7X>: I'm just going to find the reason why pbft has such a poor performance, as well as how and when fabric could reach a reasonable performance target",
+        "ts": "1466473623.000087"
+    }
+]

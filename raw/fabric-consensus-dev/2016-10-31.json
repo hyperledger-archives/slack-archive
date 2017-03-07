@@ -1,0 +1,514 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0Y14MWA2> i don't think we should complicate things now before we finish the MVP",
+        "ts": "1477898756.002922"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0XR6J961> MVP should have pipelining",
+        "ts": "1477902235.002923"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "IMO",
+        "ts": "1477902238.002924"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think that will happen, realistically",
+        "ts": "1477902276.002925"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "why not",
+        "ts": "1477902382.002926"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "if you do not wish to focus on that one - that's fine - pls focus on other JIRA items",
+        "ts": "1477902427.002927"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yet eventually pipelining should be in MVP",
+        "ts": "1477902440.002928"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "MVP is march, right?",
+        "ts": "1477902516.002929"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "yes",
+        "ts": "1477902633.002930"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "approximately - I'd say",
+        "ts": "1477902648.002931"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so realistically nothing happens around dec\/jan, so that's one month out, one month testing\/feature freeze, leaves nov, jan, feb",
+        "ts": "1477902928.002932"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so maybe it'll happen",
+        "ts": "1477902954.002933"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "We just need to discuss <https:\/\/jira.hyperledger.org\/browse\/FAB-478> and how would one implement that with pipelining",
+        "ts": "1477903425.002934"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "we need a simple solution there (I think that resending pre-prepare, prepare, commit msgs might be overkill)",
+        "ts": "1477903452.002935"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that works with no pipelining but with pipelining it becomes more involved because of the buffering",
+        "ts": "1477903490.002936"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "so basically we may need to address <https:\/\/jira.hyperledger.org\/browse\/FAB-478> in a diff way",
+        "ts": "1477903517.002937"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm",
+        "ts": "1477903806.002938"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it is fair to assume that reconnect events should be rare",
+        "ts": "1477903829.002939"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "compared to the overall network activity",
+        "ts": "1477903847.002940"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so resending the in flight messages is a simple solution",
+        "ts": "1477903887.002941"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the alternative would be to wait for all in flight requests to finish",
+        "ts": "1477903920.002942"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but they may not finish (but timeout, because of reconnecting nodes waiting)",
+        "ts": "1477903958.002943"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this state transfer part is the most involved part of pipelining",
+        "ts": "1477904467.002944"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "the rest is making guard(s) such as (in preprepare.go, line 48)",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1477911188.000000"
+        },
+        "ts": "1477904475.002945"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "nextSeq := s.nextSeq()\n\tif *pp.Seq != nextSeq {\n\t\tlog.Infof(\"preprepare does not match expected %v, got %v\", nextSeq, *pp.Seq)\n\t\treturn\n\t}",
+        "ts": "1477904476.002946"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "aware of different counters",
+        "ts": "1477904486.002947"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and the replica would simply have different counters for each msg type",
+        "ts": "1477904498.002948"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "and an adapted .nextSeq() function",
+        "ts": "1477904512.002949"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1477904811.002952"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we already track request state partitioned",
+        "ts": "1477904829.002953"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right now i'm trying to working out some issues with hello on reconnect",
+        "ts": "1477904867.002954"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and which messages to discard and which ones to put in the backlog",
+        "ts": "1477904880.002955"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the problem is that i might discard messages that are about the future, because i'm not yet synced up with it",
+        "ts": "1477905446.002956"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i think on hello i might have to directly sync my state",
+        "ts": "1477905510.002957"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm",
+        "ts": "1477905523.002958"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "wdy mean by \"directly syncing\"",
+        "ts": "1477905529.002959"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is different from what i had planned",
+        "ts": "1477905531.002960"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, instead of processing my outstanding message before looking at the hello message",
+        "ts": "1477905564.002961"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i need to send the new-view on connect in a different way",
+        "ts": "1477911801.002963"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because it really happens out of sequence",
+        "ts": "1477911808.002964"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i think we shouldn't discard messages if we're not active",
+        "ts": "1477912399.002965"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the new-view message might arrive later than the prepare\/commit for requests in the new view",
+        "ts": "1477912424.002966"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Have an appointment during scrum time, so will report here.  Finally found agreement about message format for the orderer.  Conclusion was simple envelope with sig\/payload\/header.  With respect to ASN.1 vs Protobuf, the conclusion was to try to wrap the structure access in utility methods and avoid direct proto marshaling\/unmarshaling to make migration to another encoding easier, but to stick to Protos for the time being.  I'll be reworking that WIP changeset which uses a simpler envelope to use protos with finalized names, and hopefully when merged, will also try to help the fabric adopt.",
+        "ts": "1477921466.002967"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1477922344.002968"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's silly",
+        "ts": "1477922344.002969"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/4cki4gjnlfgoxfgt6j6j6q4hxae|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1477922366.002970"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh scrum changed because of daylight savings?",
+        "ts": "1477922388.002971"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1477922412.002973"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "daylight savings ends next weekend in us",
+        "edited": {
+            "user": "U0UGH3X7X",
+            "ts": "1477926351.000000"
+        },
+        "ts": "1477922419.002974"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "On holiday today, won't participate in scrum. Working with <@U0XR6J961> on other sbft tasks. ",
+        "ts": "1477925223.002976"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you're too late for scrum anyways :stuck_out_tongue:",
+        "ts": "1477925244.002977"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "Yeah now I see :-D ",
+        "ts": "1477925367.002978"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "Guys,  I think I have a work around to insure that  either  the user gets  the  \"Error: state may be inconsistent, cannot query\"  or the latest ledger is by invoking  a dummy chaincode  to force  \"syncBlocks\" to be invoked by the peer that was down.   it seems,  if a member firm that brought down their  validating peer    they will need to issue a  \"dummy chaincode\" to get the latest blocks as part of their operation procedures.",
+        "ts": "1477939912.002980"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U294C6FDW> You may want to look at enabling periodic null requests `CORE_PBFT_GENERAL_TIMEOUT_NULLREQUEST=3s` which does the same thing, but without the dummy chaincode or manual intervention",
+        "ts": "1477941954.002981"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "on the peer, we need to call the ordering service, is there a client side and where is it?",
+        "ts": "1477943902.002982"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0KN2SSKE>: There is. If you look into the `orderer\/sample_clients` directory, you'll find examples on how to invoke the ordering service.",
+        "ts": "1477943992.002983"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You basically import the `atomicbroadcast` package, do a `atomicbroadcast.NewAtomicBroadcastClient(conn)` to instantiate a gRPC client and proceed as usual from there.",
+        "ts": "1477944158.002984"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "cool, thanks",
+        "ts": "1477944421.002985"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Sure thing.",
+        "ts": "1477944428.002986"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "Jyellick,  Good news and bad news,  I added the nullrequest to 5 seconds on my all 4 VPs .  bring one down(vp2)  and start the  invoke again  on all three peers.  now I bring up vp2 and wait, it get the latest.  However, Bad news,   I started  the invoke again, what I notice  i'm in a loop  on all 4 peers of 15:59:57.541 [consensus\/pbft] recvViewChange -&gt; WARN 1f7 Replica 0 found view-change message incorrect\n15:59:58.433 [consensus\/pbft] ProcessEvent -&gt; INFO 1f8 Replica 0 processing event\n15:59:58.434 [consensus\/pbft] sendViewChange -&gt; INFO 1f9 Replica 0 sending view-change, v:95, h:76, |C|:2, |P|:1, |Q|:1\n15:59:58.436 [consensus\/pbft] recvViewChange -&gt; INFO 1fa Replica 0 received view-change from replica 0, v:95, h:76, |C|:2, |P|:1, |Q|:1\n15:59:58.437 [consensus\/pbft] recvViewChange -&gt; WARN 1fb Replica 0 found view-change message incorrect",
+        "ts": "1477944639.002987"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U294C6FDW> Which level of code are you running with? There is a known bug which was fixed which could cause this behavior",
+        "ts": "1477944685.002988"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "the one I download about few weeks ago. I do I check the level",
+        "ts": "1477944776.002989"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "HyperledgerVP0:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric # peer  --version\n16:14:00.541 [logging] LoggingInit -&gt; DEBU 001 Setting default logging level to DEBUG for command 'peer'\nFabric peer server version 0.7.0-snapshot-448d207\n16:14:00.544 [main] main -&gt; INFO 002 Exiting.....\nHyperledgerVP0:\/opt\/gopath\/src\/github.c",
+        "ts": "1477944840.002990"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Do you see a line at the beginning of the log that looks like: ?\n\n```\nReplica %d restored state: view: ...\n```",
+        "ts": "1477944878.002991"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=consensus\/pbft\/pbft-persist.go;h=a5b672ea26dbbf3124047d3fbbc967550b514e07;hb=refs\/heads\/v0.6#l174>\n\n^ This is the line you are looking for",
+        "ts": "1477945057.002992"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The fact that `h` is 76 in your debug output makes me think that you have this fix, but I think it's worth verifying",
+        "ts": "1477945074.002993"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looking more closely at your logs, it looks to me like vp0 has advanced its view while the rest of the network has not.  I'm not sure why it is sending a malformed view change, but I would expect that as the rest of the network advances, vp0 will state transfer, and this message will go away",
+        "ts": "1477945648.002994"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Assuming that you have K=10, and log multiplier of 4.  Then I would expect this to happen within 5s * 10 * (4+1) = 250s ~ 4 minutes.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477946040.000000"
+        },
+        "ts": "1477945697.002995"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "i see the   \"restored state\" and it's in line 174",
+        "ts": "1477945765.002996"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What does the line read?",
+        "ts": "1477946012.002997"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "logger.Infof(\"Replica %d restored state: view: %d, seqNo: %d, pset: %d, qset: %d, reqBatches: %d, chkpts: %d h: %d\",\n                instance.id, instance.view, instance.seqNo, len(instance.pset), len(instance.qset), len(instance.reqBatchStore), len(instance.chkpts), instance.h)",
+        "ts": "1477946221.002999"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looks like you have that patch.  Are you still seeing the 'message incorrect' lines?",
+        "ts": "1477946250.003000"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "no... I kill  all the  VPs   process",
+        "ts": "1477946347.003001"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd encourage you to take a look at <https:\/\/jira.hyperledger.org\/browse\/FAB-707>",
+        "ts": "1477946374.003002"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "okay... thnaks",
+        "ts": "1477946394.003003"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Essentially, it's possible to have one peer which erroneously votes to change views early because of a crash or network problem",
+        "ts": "1477946397.003004"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This will cause the continual issuing of view change messages.",
+        "ts": "1477946414.003005"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The logs look a little spammy, but from a protocol perspective, this is benign.",
+        "ts": "1477946440.003006"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "that what i was simulating, I kill the the peer without \"peer stop\"",
+        "ts": "1477946461.003007"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The replica's state will continue to be periodically synced, and once the network does view change, it will start participating again",
+        "ts": "1477946468.003008"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm a little curious about how it is constructing an incorrect view-change message",
+        "ts": "1477946499.003009"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would not have anticipated that.",
+        "ts": "1477946507.003010"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "Thanks for that links...   I am reading it now",
+        "ts": "1477946808.003011"
+    }
+]

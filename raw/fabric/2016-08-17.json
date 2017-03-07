@@ -1,0 +1,253 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1CS08EP3>: I do not know if it will be deprecated or not but one can use GRPC (from Java, easily) and the SDK",
+        "ts": "1471417525.001313"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "oh is that so.. then i m relieved..  I was just worried about the interfacing part..  Let me look up a bit on the gRPC.",
+        "ts": "1471417592.001314"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1CS08EP3>: as I know - anyone, please correct me - there are two 'usable' grpc apis: devops (it will be deprecated) and \"Peer API\"",
+        "ts": "1471417833.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "although grpc is fast, but maybe we should remain the restful api, which is more popular today. Many legacy components still need a rest api.",
+        "ts": "1471424942.001316"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I have no intent to remove it :slightly_smiling_face:",
+        "ts": "1471425287.001317"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "now, as you know, it needs base64 data for chaincode arguments (as those are []byte now) but <@U1LES78TT> is working on a changeset that will make it look like it did before",
+        "ts": "1471425341.001318"
+    },
+    {
+        "type": "message",
+        "user": "U10SJMAHH",
+        "text": "<@U0UHG4VP1>: thank you, I found mail threads in <http:\/\/lists.hyperledger.org\/pipermail\/hyperledger-fabric\/>",
+        "ts": "1471426035.001319"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "<@U1AU8DRQR>: Okay. Lets hope we keep Rest alongside anyways.  :pray::skin-tone-3:",
+        "ts": "1471430924.001320"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1CS08EP3>:   my opinion on the REST interface is that \"peer\" nodes should only implement \/ expose operations about the network, statistics, etc.   We should then have a standalone REST server \/ implementation which is built on top of the SDK.",
+        "ts": "1471431122.001321",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U10Q62R8X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "This way, you'd have the ability to provided whatever security integrations are required for the REST API without us having to pollute the peer code with an infinite number of options",
+        "ts": "1471431171.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this will be much cleaner in the long run",
+        "ts": "1471431188.001323"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "<@U0PB67X4K>: there are two types of peer code rite? System chain code and the user chaincode. When u said polluting the peer code with unnecessary options, u meant the System chain code part ?",
+        "edited": {
+            "user": "U1CS08EP3",
+            "ts": "1471431448.000000"
+        },
+        "ts": "1471431386.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what's the deal with \"ChaincodeInvocationSpecification\" etc?",
+        "ts": "1471431395.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why do we have this?",
+        "ts": "1471431399.001326"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why not directly a Transaction?",
+        "ts": "1471431410.001327"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "<@U0PB67X4K>: and what I understood is, the user chaincode level operations ( init\/invoke\/query) are going to be routed through the new REST server . And anything which u want to query directly on the peer - ( its own statistcs. health etc ) you would expose as REST API directed against the peer.",
+        "ts": "1471431602.001329"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "in that case where are we goin to run this REST server ? along with Peer itself?",
+        "ts": "1471431660.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "think of the REST server as being like a \"proxy\" client for your applications.  So for example instead of integrating the SDK with all of your applications, you deploy the REST server within your environment and then have your apps communicate with it instead of going directly to the Peer(s) via GRPC",
+        "ts": "1471432432.001331"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so you could technically run it anywhere that can connect to the peer",
+        "ts": "1471432455.001332"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't quite understand what the SDK does",
+        "ts": "1471432584.001333"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and why it is in node.js",
+        "ts": "1471432601.001334"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "let's say i have my existing system written in java",
+        "ts": "1471432623.001335"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "do i have to run the node.js SDK stuff somewhere, and my system talks to the SDK?",
+        "ts": "1471432653.001336"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or would i talk directly to the peers?",
+        "ts": "1471432662.001337"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "<@U0PB67X4K>: that sounds fair.",
+        "ts": "1471432847.001338"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "but as simon was asking, this SDK is based on Node.js alone?",
+        "ts": "1471432881.001339"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "as far as my current mental picture of an SDK goes, its a blackbox, which talks to me in CLI\/REST &amp; Some Node.js code",
+        "ts": "1471433047.001340"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "I have made hands dirty with CLI nd Restful side. but node.js has been left alone till now.",
+        "ts": "1471433096.001341"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "and the client program we have uses the Restful handle to interact with the Fabric now.",
+        "ts": "1471433133.001342"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "So with gari's approach, the only thing which changes is , I m not goin to talk to my peer for any chaincode ( user chaincode) stuff anymore *unless* i need to know some specific things which a physical peer can only tell.",
+        "ts": "1471433258.001343"
+    },
+    {
+        "type": "message",
+        "user": "U1CS08EP3",
+        "text": "is this understanding correct?",
+        "ts": "1471433278.001344"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yeah - instead of the REST endpoint being the peer for transactions, it would be to this mythical REST server I'd like to see us build",
+        "ts": "1471433366.001345"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "at this point, I really waiting to do this for the V.next architecture.",
+        "ts": "1471433413.001346"
+    },
+    {
+        "user": "U1KDHJT6H",
+        "text": "<@U1KDHJT6H|claytonsims> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1471466361.001367"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "whatever language the sdk is implemented based on. would like to suggest keeping it simple and stateless, by only take advantages of fabric functionalities, instead of having additional black code. This can also help decouple, and support new architecture.",
+        "ts": "1471487365.001369",
+        "reactions": [
+            {
+                "name": "+1::skin-tone-3",
+                "users": [
+                    "U1CS08EP3"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1Z6V101X",
+        "text": "Hi, i would like to use logger in my chaincode, to display logs in the stderr console like peer or shim. I use a vagrant VM, I use the following command to start my node: .\/peer node start --loggin-level=info, and I use the following code in my chaincode: \nvar logger = shim.NewLogger(\"mychaincode\")\nmain:\nlogger.SetLevel(shim.LogInfo)\nlogLevel, _ := shim.LogLevel(os.Getenv(\"SHIM_LOGGING_LEVEL\"))\nshim.SetLoggingLevel(logLevel)\n\nbut I haven't logs from my chaincode in the console!\nis somebody can help me ?\nthanks",
+        "ts": "1471499527.001371"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1Z6V101X> the chaincodes run in their own docker containers, named something like &lt;network&gt;-&lt;peer&gt;-&lt;chaincodeID&gt;, try looking in there for your logs with `docker logs &lt;containerID&gt;`",
+        "ts": "1471499822.001372"
+    },
+    {
+        "type": "message",
+        "user": "U1Z6V101X",
+        "text": "ok thanks",
+        "ts": "1471500199.001373"
+    }
+]

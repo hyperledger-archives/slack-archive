@@ -1,0 +1,824 @@
+[
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "Hi all, I have the latest gerrit code . Facing the following issue while make peer. Any idea? Please help.\n\n\n\nPushpalathas-MacBook-Pro:fabric pushpa$ make peer\nbuild\/bin\/peer\nCGO_CFLAGS=\" \" CGO_LDFLAGS=\"-lrocksdb -lstdc++ -lm -lz -lbz2 -lsnappy\" GOBIN=\/Users\/pushpa\/gocode\/src\/github.com\/hyperledger\/fabric\/build\/bin go install -ldflags \"-X <http:\/\/github.com\/hyperledger\/fabric\/metadata.Version=0.7.0-snapshot-551fa9b|github.com\/hyperledger\/fabric\/metadata.Version=0.7.0-snapshot-551fa9b>\" <http:\/\/github.com\/hyperledger\/fabric\/peer|github.com\/hyperledger\/fabric\/peer>\n# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/Sirupsen\/logrus|github.com\/hyperledger\/fabric\/vendor\/github.com\/Sirupsen\/logrus>\nvendor\/github.com\/Sirupsen\/logrus\/terminal_darwin.go:10: ioctlReadTermios redeclared in this block\n\tprevious declaration at vendor\/github.com\/Sirupsen\/logrus\/terminal_bsd.go:7\nvendor\/github.com\/Sirupsen\/logrus\/terminal_darwin.go:12: Termios redeclared in this block\n\tprevious declaration at vendor\/github.com\/Sirupsen\/logrus\/terminal_bsd.go:9\n# <http:\/\/github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb|github.com\/hyperledger\/fabric\/vendor\/github.com\/tecbot\/gorocksdb>\nvendor\/github.com\/tecbot\/gorocksdb\/options.go:328: not enough arguments in call to _Cfunc_rocksdb_options_set_compression_options\nmake: *** [build\/bin\/peer] Error 2",
+        "ts": "1476430265.002752"
+    },
+    {
+        "user": "U1BJGAHFC",
+        "text": "<@U1BJGAHFC|reube> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476439371.002755"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1WUAQJVC> you are building outside vagrant using what set of instructions to set up your environment?",
+        "ts": "1476444410.002756"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "I was just booting single peer alone outside vagrant",
+        "ts": "1476444702.002757"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you should really just use the Docker images with Docker for Mac.",
+        "ts": "1476447215.002759"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the errors you are getting:\n\n```\nvendor\/github.com\/Sirupsen\/logrus\/terminal_darwin.go:10: ioctlReadTermios redeclared in this block\n    previous declaration at vendor\/github.com\/Sirupsen\/logrus\/terminal_bsd.go:7\n```\n^^^ for this one the logrus package in vendor is broken for compiling on OSX.  Basically you need to edit `vendor\/github.com\/Sirupsen\/logrus\/terminal_bsd.go` and delete `darwin` \n\nThe second error means you have the wrong version of RocksDB.  Needs to be RocksDB 4.1.  If you used brew to install it, it will be the wrong version",
+        "ts": "1476447334.002760"
+    },
+    {
+        "user": "U2PE37K3J",
+        "text": "<@U2PE37K3J|n.ohagan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476453142.002762"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Is there a way to generate a random private key per node when testing PBFT consensus:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L83>\nOr is that the default behaviour if a privateKey is not specified?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L83",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L83",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1476467308.002765"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BGFAHC7>  - not sure why that is still around.  with security enabled, each peer gets it own enrollment key from membership services",
+        "ts": "1476467376.002766"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0PB67X4K> Thanks, guess that means I need to sort out my membershipsvc kubernetes config out first :slightly_smiling_face:",
+        "ts": "1476467423.002767"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Also, do the peer ids need to be unique?\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/peer\/core.yaml#L80>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476467904.000000"
+        },
+        "ts": "1476467484.002768"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Basically trying to work out what needs to be supplied by kubernetes config maps to each member of a petset.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476467526.000000"
+        },
+        "ts": "1476467518.002769"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Using this as a reference:\n<https:\/\/github.com\/OpenBlockMesh\/OBM-Fabric-GKE\/blob\/master\/dep-hl-vp1-3.yml#L69-L107>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476467909.000000"
+        },
+        "ts": "1476467633.002771"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "peer.id needs to be unique and for PBFT you should use vp0,vp1,...,vpX",
+        "ts": "1476467635.002772"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Setting your own peer id seems a little odd to me, as there could be accidental or malicious collisions. Ripple identifies nodes by generating an id from a hash of the public key of the private key, bitcoin account style.",
+        "ts": "1476467747.002773"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "point in time",
+        "ts": "1476467793.002775"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": ":wink:",
+        "ts": "1476467798.002776"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it was due to time constraints when getting working on the PBFT stuff",
+        "ts": "1476467829.002778"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ok, no worries, I\u2019ll stop nit-picking :slightly_smiling_face:",
+        "ts": "1476467845.002779"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "good questions - someone's gotta keep people on their toes",
+        "ts": "1476469332.002783"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and any suggestions on cryptographic \/ unique identities are most welcome",
+        "ts": "1476469362.002784"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Well here\u2019s the ripple way:\n<https:\/\/github.com\/rubblelabs\/ripple\/blob\/master\/crypto\/ed25519.go#L20-L23>\n<https:\/\/github.com\/rubblelabs\/ripple\/blob\/master\/crypto\/util.go#L35-L41>\nIn words, the id is the ripemd160 hash of a sha256 hash of the public key, which is of course generated from the private key. For fabric, I guess this means deferring the creation of a peer id until the peer has enrolled with the membership services.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476472485.000000"
+        },
+        "ts": "1476472215.002785"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "It's not that simple, you also need to prevent replay attacks",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476472295.000000"
+        },
+        "ts": "1476472282.002788"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In fabric, at least",
+        "ts": "1476472305.002790"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Replaying which message?",
+        "ts": "1476472323.002791"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Otherwise a cert-based key isn't sufficient IMO",
+        "ts": "1476472325.002792"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Authentication between peers",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476472343.000000"
+        },
+        "ts": "1476472336.002793"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I've been working on such a thing and its in my pipeline",
+        "ts": "1476472372.002795"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But no ETA yet ",
+        "ts": "1476472426.002796"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Not sure I understand the replay attack. You mean intercepting the message where the membership services supplies the enrollment key? If that happens, it\u2019s game over for everything?",
+        "ts": "1476472528.002799"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don'tknow how ripple works but obviously getting a message from a peer that proves that the messge originated from the real peer doesn't prove the peer that sent the message is the real peer",
+        "ts": "1476472551.002800"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I guess the requesting peer has to challenge the membership services to sign something it randomly generated.",
+        "ts": "1476472616.002801"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Yep",
+        "ts": "1476472621.002802"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Exactly",
+        "ts": "1476472630.002803"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "No, wait",
+        "ts": "1476472637.002804"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Not the membership",
+        "ts": "1476472645.002805"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The peer that is servicing the connection needs to challenge the peer connecting to it",
+        "ts": "1476472685.002806"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "&gt;&gt;with security enabled, each peer gets it own enrollment key from membership services\nI\u2019m talking about this step, are you as well?",
+        "ts": "1476472743.002807"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"Setting your own peer id seems a little odd to me, as there could be accidental or malicious collisions. Ripple identifies nodes by generating an id from a hash of the public key of the private key, bitcoin account style.\"",
+        "ts": "1476472801.002808"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm just saying that identifying nodes is also not trivial, because you need to corallate the connection with the peer",
+        "ts": "1476472848.002809"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "A node that says hey i'm totally the real node i swear here is my id isn't sufficient on a true byzantine environment",
+        "ts": "1476472919.002810"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yep, if you used openssl you can use the PeerFinishedMessage as the challenge that both peers must sign.",
+        "ts": "1476472968.002811"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Here\u2019s some ancient code that did that using Go openssl bindings:\n<https:\/\/github.com\/rubblelabs\/ripple\/blob\/912432194acc0afca7027228b0f8bdd177c3484c\/peers\/conn.go#L137-L149>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476473001.000000"
+        },
+        "ts": "1476472995.002812"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Hmmm",
+        "ts": "1476473009.002815"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Arguably that was susceptible to the Triple Handshake Attack though.",
+        "ts": "1476473029.002816"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Wait",
+        "ts": "1476473033.002817"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But we use gRPC",
+        "ts": "1476473041.002818"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "How can we use this?",
+        "ts": "1476473048.002819"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Is grpc not talking over tls?",
+        "ts": "1476473060.002820"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "We don't have access to these layers AFIK",
+        "ts": "1476473065.002821"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "At the connection servicing side, at least i never saw how from the API you can derive that",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476473121.000000"
+        },
+        "ts": "1476473103.002822"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The TLSUnique field might be of interest:\n<https:\/\/golang.org\/pkg\/crypto\/tls\/#ConnectionState>",
+        "ts": "1476473134.002824"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m no crypotgrapher though, you might want to consult an expert :slightly_smiling_face:",
+        "ts": "1476473153.002825"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But we don't have a reference to these structs from the gRPC stream from what i know :disappointed: ",
+        "ts": "1476473207.002826"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The theory is that you keep track of every message that went between the two TLS counterparties in the handshake and this is guaranteed to be the same on both ends.",
+        "ts": "1476473207.002827"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "You can use that as the challenge that needs to be signed.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476473245.000000"
+        },
+        "ts": "1476473228.002828"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/github.com\/grpc\/grpc-go\/blob\/master\/Documentation\/grpc-auth-support.md#enabling-tls-on-a-grpc-client>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476473282.000000"
+        },
+        "ts": "1476473277.002830"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't see how this helps",
+        "ts": "1476473353.002833"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "You need a challenge that both peers can sign. Both peers speak over GRPC. If this GRPC communication is over TLS, when the TLS connection is established, you have a hash of all the messages involved (tls-unique). The first GRPC message between peers is another handshake that contains a signature of that hash along with the peer\u2019s public key.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476473484.000000"
+        },
+        "ts": "1476473463.002834"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't have access to that hash however",
+        "ts": "1476473514.002837"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "From the API in the server side",
+        "ts": "1476473541.002838"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Where\u2019s the code that does the peer grpc.Dial?",
+        "ts": "1476473546.002839"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I need access in the server side method of the gRPC call",
+        "ts": "1476473605.002840"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The dial is in the client side, i need the server to know the client is who it claims it is",
+        "ts": "1476473650.002841"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/golang.org\/pkg\/crypto\/tls\/#Conn.ConnectionState>\nConnectionState hangs off a net.Conn, which you\u2019ll have access to on both sides.",
+        "ts": "1476473750.002842"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Where\u2019s the code you are referring to?",
+        "ts": "1476473777.002843"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/peer\/peer.go>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/peer\/peer.go",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/peer\/peer.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1476473845.002844"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "The Chat method",
+        "ts": "1476473852.002846"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Sorry i'm typing in the phone app :expressionless: , no way to reference the line exactly",
+        "ts": "1476473906.002847"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Basically, this is what ripple does: every peer has a self-signed certificate, they establish TLS connections with each other, and then sign the peer finished message (openssl equivalent of tls-unique) using their application level private key.",
+        "ts": "1476473930.002848"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Go to \"\/\/ Chat implementation of the the Chat bidi \"",
+        "ts": "1476473998.002849"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Frm that object in the arguments i don't see a way of extracting the ssl information",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476474036.000000"
+        },
+        "ts": "1476474028.002850"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/core\/peer\/peer.go#L161-L167>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474065.000000"
+        },
+        "ts": "1476474059.002852"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m sure you get access to the tls.Conn around here.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474104.000000"
+        },
+        "ts": "1476474088.002855"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That's the client side though",
+        "ts": "1476474094.002856"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I need to access that on the server side",
+        "ts": "1476474118.002860"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Where\u2019s the listen code?",
+        "ts": "1476474120.002861"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Not easy to find with a phone...",
+        "ts": "1476474224.002863"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/ceefb12425b7ccb09fc0f88dc78d395a459dca55\/peer\/node\/start.go#L296>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474233.000000"
+        },
+        "ts": "1476474228.002864"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Yep",
+        "ts": "1476474239.002867"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "A bit above that though",
+        "ts": "1476474284.002868"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In the serve method ",
+        "ts": "1476474330.002869"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Guess, you\u2019d have to look at:\n<https:\/\/godoc.org\/google.golang.org\/grpc\/credentials#TransportCredentials>\nOr maybe:\n<https:\/\/godoc.org\/google.golang.org\/grpc\/credentials#TLSInfo>\nDon\u2019t know for certain, but it will be in there somewhere :slightly_smiling_face:",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474372.000000"
+        },
+        "ts": "1476474366.002870"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Ok",
+        "ts": "1476474418.002873"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Hope that helps with some ideas :slightly_smiling_face:",
+        "ts": "1476474465.002874"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "It might, i dunno. I hope i can find the time to play with it a little. I was thinking of simply employing a standard handshake protocol with the gRPC messages and that's it but if we can extract the pub key from the ssl session underneath that's better",
+        "ts": "1476474580.002875"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s not the public key, but a hash of all the messages sent and received during the TLS handshake.",
+        "ts": "1476474628.002876"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Knowing the session symmetric key doesnt help",
+        "ts": "1476474635.002877"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Because we need to know who the peer that connected to us is",
+        "ts": "1476474658.002878"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "&gt;&gt;Basically, this is what ripple does: every peer has a self-signed certificate, they establish TLS connections with each other, and then sign the peer finished message (openssl equivalent of tls-unique) using their application level private key.",
+        "ts": "1476474706.002879"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "How does the signing of the peer finishes message help us?",
+        "ts": "1476474711.002880"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s a unique value to that particular network connection. If a peer signs it with its private key. You know who the peer is and that it told you that over a secure connection.",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474789.000000"
+        },
+        "ts": "1476474734.002881"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Maybe read this:\n<https:\/\/mitls.org\/pages\/attacks\/3SHAKE>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476474819.000000"
+        },
+        "ts": "1476474813.002885"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "How can you know who the peer is?",
+        "ts": "1476474837.002888"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "It tells the TLS layer that, not to the gRPC layer",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476474869.000000"
+        },
+        "ts": "1476474857.002889"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Because it sent you a signature of the hash of the TLS stage and it\u2019s public key via GRPC.",
+        "ts": "1476474886.002891"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "This is how ripple works, I\u2019m not making it up :slightly_smiling_face:",
+        "ts": "1476474913.002892"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Except they are still using old protobuf :slightly_smiling_face:",
+        "ts": "1476474933.002893"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That's what i'm missing here- who gets the public key via gRPC? surely not the application above the gRPC, right?",
+        "ts": "1476475042.002894"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/github.com\/ripple\/rippled\/blob\/35fa20a110e3d43ffc1e9e664fc9017b6f2747ae\/src\/ripple\/overlay\/impl\/TMHello.cpp#L39-L66>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476475051.000000"
+        },
+        "ts": "1476475045.002895"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<https:\/\/github.com\/ripple\/rippled\/tree\/35fa20a110e3d43ffc1e9e664fc9017b6f2747ae\/src\/ripple\/overlay#handshake>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476475097.000000"
+        },
+        "ts": "1476475093.002898"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It\u2019s now done via HTTP headers, but it did used to be over protobuf.",
+        "ts": "1476475122.002901"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But protobuf is above the gRPC isn't it?",
+        "ts": "1476475162.002902"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "GRPC is pretty much protobuf v3",
+        "ts": "1476475187.002903"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Ok so you're saying the authentication logic is in the *application layer* and involves sending the pub key",
+        "ts": "1476475252.002904"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yes! And a signature of the hash of the TLS stage.",
+        "ts": "1476475283.002905"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "See `Session-Signature` in the last link.",
+        "ts": "1476475314.002906"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Oh so you can verify that sig with the pub key sent via the grpc",
+        "ts": "1476475331.002907"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Yes.",
+        "ts": "1476475339.002908"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Got it",
+        "ts": "1476475342.002909"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Great :slightly_smiling_face:",
+        "ts": "1476475348.002910"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Still i don't think this exists in go grpc, i'd like to know i'm wrong, but thanks for the tips",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1476475444.000000"
+        },
+        "ts": "1476475387.002911"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'll try to find the time to play with it",
+        "ts": "1476475405.002912"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Worth tracing the code back from here to see what is actually does:\n<https:\/\/github.com\/golang\/go\/blob\/f28cf8346c4ce7cb74bf97c7c69da21c43a78034\/src\/crypto\/tls\/conn.go#L1302-L1308>\n<https:\/\/github.com\/golang\/go\/blob\/f28cf8346c4ce7cb74bf97c7c69da21c43a78034\/src\/crypto\/tls\/conn.go#L67-L72>\nAnyway, I\u2019ll leave you to it. Thanks for the crypto chat :slightly_smiling_face:",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1476475614.000000"
+        },
+        "ts": "1476475607.002914"
+    },
+    {
+        "user": "U2P2TMULF",
+        "text": "<@U2P2TMULF|xianjun> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476478078.002917"
+    },
+    {
+        "user": "U2PPH2PUZ",
+        "text": "<@U2PPH2PUZ|udon> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476512854.002923"
+    }
+]

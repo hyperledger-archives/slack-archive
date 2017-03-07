@@ -1,0 +1,382 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "still struggling with that error... does anybody have any idea?",
+        "ts": "1470817560.001207"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1AU8DRQR> do you mean this error? I've been getting similar in my local environment, it's been causing me some concern because I thought I broke something\n\n18:16:51 --- FAIL: TestChaincodeInvokeChaincode (22.65s)\n18:16:51 \tdb_test_exports.go:47: Creating testDB\n18:16:51 \texectransaction_test.go:886: Error invoking",
+        "ts": "1470818140.001208"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes I mean that. but please read this: \n&gt;hgabor 5:51 PM everyone: I have a very interesting problem with Jenkins?\/testing?\/...?\n&gt;https:\/\/gerrit.hyperledger.org\/r\/#\/c\/317\/\n&gt;patchset 12: locally, all the tests are OK, on Jenkins ChaincodeInvokesChaincode fails, seems to be a problem &gt;with the hardcoded chaincode id (hash) in example04\n&gt;patchset 15: I changed the ID to the one I saw in the Jenkins logs. the ChaincodeInvokes... test works OK on &gt;Jenkins, but locally, it fails\n&gt;So the hash of example02 that is called by example04 (that is why example04 contains the hash of it) seems to &gt;be different on my machine and on Jenkins??? How?",
+        "ts": "1470818251.001209"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "it is very funny - it seems that the local machine and the jenkins has different hashes for that file",
+        "ts": "1470818294.001210"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "yeah my best guess was example02 changed hash... so I've been trying to correct it, but I haven't had much success",
+        "ts": "1470818298.001211"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I was able to correct it locally -&gt; but that resulted that Jenkins did not work (the test failed)\nand if I corrected it according to Jenkins' hash printouts it began to fail locally but worked in Jenkins",
+        "ts": "1470818361.001212"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "oh ok... I'd be interested in how you fixed it locally",
+        "ts": "1470818494.001213"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "1 minute and I will tell you :-) ",
+        "ts": "1470818644.001214"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I see example02 has not changed",
+        "ts": "1470818697.001215"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "1) run that failing test locally, cd into core\/chaincode, execute go test -run \"ChaincodeInvokeChaincode\" - this will run 2 tests, chaincodeinvokechaincode and chaincodeinvokechaincodeerrorcase. \n2) search for the hashes in the logs. they are part of docker container names which look like this: dev-jdoe-HASH_IS_HERE ;  One of those hashes is for example02, grab it and put it into example04.go in examples\/chaincode\/go. at the top of the file there is a variable (chaincodetocall or something) the value of which must be the hash.",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1470819257.000000"
+        },
+        "ts": "1470819232.001216"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "which one of those hashes is the hash of example02? this can be found out from the logs and\/or by trying :slightly_smiling_face:",
+        "ts": "1470819296.001218"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw it would be  good if you could send me your logs",
+        "ts": "1470819457.001219"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U1LES78TT>",
+        "edited": {
+            "user": "U1AU8DRQR",
+            "ts": "1470819470.000000"
+        },
+        "ts": "1470819463.001220"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1AU8DRQR>: I too did not see a difference in chaincode_example02",
+        "ts": "1470831938.001224"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "from the one you sent me from jenkins and local",
+        "ts": "1470831966.001225"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "btw, the whole point of hardcoding chaincode_example02\u2019s hash in example04 was to catch these kind of  issues",
+        "ts": "1470832077.001226"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if nothing else changes, the hash should be identical",
+        "ts": "1470832092.001227"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "simon had an idea: maybe there was something in my chaincode example directory. something that was not under version control. but if this was it, how did it work for Zsolt? Or did he overlook something else?  Maybe yes",
+        "ts": "1470832784.001228"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "now, I have an even newer patchset, waiting for Jenkins build",
+        "ts": "1470832809.001229"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "look: <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/284\/console>",
+        "ts": "1470832832.001230"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": ":slightly_smiling_face:",
+        "ts": "1470832834.001231"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "yeah, that was my thought too \u2026 however, I didn\u2019t see anything extra in the tar you sent",
+        "ts": "1470835061.001232"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "unless it is a VERY transient thing",
+        "ts": "1470835071.001233"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we could have a wiki about these things. I mean if any newbie (like me) starts to hack things related to chaincodes... it is good to know",
+        "ts": "1470835214.001234"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "well, we need to get to the bottom of this first",
+        "ts": "1470835307.001235"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we shouldn't fix this with documentation",
+        "ts": "1470836268.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we should fix it with code",
+        "ts": "1470836275.001237"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "how?",
+        "ts": "1470836289.001238"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sorry\u2026 fix what ?",
+        "ts": "1470836546.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the fact that hashes disagree",
+        "ts": "1470836554.001240"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yes but my repo was polluted (or at least this is the most probable theory :slightly_smiling_face: )",
+        "ts": "1470836584.001241"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we need to get to the bottom of why they disagree first",
+        "ts": "1470836586.001242"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because the sources are different",
+        "ts": "1470836613.001243"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "some residual editor files",
+        "ts": "1470836621.001244"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "etc.",
+        "ts": "1470836624.001245"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we cannot fix until we know exactly what\u2019s causing the difference\u2026. in the worst case, what if the hash function computes differently on the same bytes ?",
+        "ts": "1470836685.001246"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1AU8DRQR> : what\u2019s hte current run doing to help ?",
+        "ts": "1470836762.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "are you outputting some data or something ?",
+        "ts": "1470836776.001248"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "the \"erroneous\" test worked on my local machine (in chaincode_example04, I wrote the same ID that worked for Jenkins, last time). now, I am waiting for Jenkins results.\nBtw: I did nothing else just git clean.",
+        "ts": "1470836929.001249"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "in a nutshell, if Jenkins says OK this time that means that I cannot reproduce the fault anymore. which is half good half bad",
+        "ts": "1470837022.001250"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "It seems that Jenkins is running behave tests. So the error \"is gone\".",
+        "ts": "1470837090.001251"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "And once again, I only did git clean.",
+        "ts": "1470837100.001252"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "Jenkins always starts from 0. It's a new VM and (obviously) fresh check out",
+        "ts": "1470837149.001253"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yep, but my local does not always start from 0. :slightly_smiling_face: it should but...",
+        "ts": "1470837230.001254"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "verification takes a lot of time...",
+        "ts": "1470837321.001255"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it is too easy to have some file debris in the chaincode directories and then mix up the hash",
+        "ts": "1470837400.001256"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it needs to be fixed",
+        "ts": "1470837406.001257"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I am not sure if this is a feature or a bug. One can have opinions for both",
+        "ts": "1470837466.001258"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bug",
+        "ts": "1470837883.001259"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "do you think it would be needed to filter some specific filetypes or..?",
+        "ts": "1470837975.001260"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we cannot differentiate between what is a \u201cgood\u201d file and a bad",
+        "ts": "1470838048.001261"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "note that this is the first time that some \u201cdebris\u201d entered the picture",
+        "ts": "1470838083.001262"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ULK2JPP> I must agree",
+        "ts": "1470838116.001263"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "other times it was actually a change to the chaincode itself",
+        "ts": "1470838128.001264"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "honestly, I\u2019m a bit scared that the bytes are same but somehow the two envs compute different hash",
+        "ts": "1470838192.001265"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "now that would be REALLY bad",
+        "ts": "1470838198.001266"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if you have any idea how I could reproduce it I can try",
+        "ts": "1470838226.001267"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "i missed that git clean appeared to have fixed it\u2026 adds support to the \u201cdebris\u201d theory",
+        "ts": "1470838419.001268"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/jenkins.hyperledger.org\/job\/fabric-merge-x86_64\/16\/console>",
+        "ts": "1470847539.001269"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bug in crypto code!",
+        "ts": "1470847543.001270"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "does anyone know how to get email notification when JIRA task created?",
+        "ts": "1470889606.001271"
+    },
+    {
+        "type": "message",
+        "user": "U0UHG4VP1",
+        "text": "grapebaba: I think it is a per-account preference in JIRA you would need to set for yourself",
+        "ts": "1470889939.001272"
+    }
+]

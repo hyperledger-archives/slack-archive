@@ -1,0 +1,449 @@
+[
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "I am getting the following errors registering chaincode after enable TLS\n`2017\/01\/19 00:34:40 transport: http2Client.notifyError got notified that the client transport was broken write tcp 172.17.0.1:45933-&gt;172.17.0.6:7051: write: connection reset by peer.\nError starting Simple chaincode: Error chatting with leader at address=172.17.0.6:7051:  rpc error: code = 13 desc = transport: write tcp 172.17.0.1:45933-&gt;172.17.0.6:7051: write: connection reset by peer`",
+        "ts": "1484835052.000294"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "does anyone know how to check if this is related to TLS?",
+        "ts": "1484835089.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3U0MV3PZ> is this on v0.6 or 1.0 ?",
+        "ts": "1484835146.000296"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "1.0",
+        "ts": "1484835153.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "from CLI or SDK ?",
+        "ts": "1484835194.000298"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "cli",
+        "ts": "1484835211.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "CLI is not yet enabled for working with TLS",
+        "ts": "1484835235.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "I suspect neither is SDK",
+        "ts": "1484835240.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(but please do check with the SDK team on the sdk slack channels)",
+        "ts": "1484835278.000302"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "will do. at the mean time is there anyway to enable it?",
+        "ts": "1484835308.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thinking...",
+        "ts": "1484835325.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "its just a matter of packaging the certs on deploy",
+        "ts": "1484835345.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the node SDK on 0.6 does this",
+        "ts": "1484835356.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "have to revisit that code and do the needful",
+        "ts": "1484835375.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "can you open a JIRA item for this ? Assign it me (or yourself if you like \u2026 and I can help you with that )",
+        "ts": "1484835432.000308"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "will open a JIRA item. Which package\/file is the code packing the certs? just to save me sometime. :slightly_smiling_face:",
+        "ts": "1484835520.000309"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "I will fix it iff it's easy :wink:",
+        "ts": "1484835537.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "perfect. We\u2019ll make sure it'll be easy :slightly_smiling_face:",
+        "ts": "1484835631.000311"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "as it was done in the SDK, that code is not in the peer",
+        "ts": "1484835647.000312"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so its a question of mimicjng the SDK code in 0.6 and putting it in the right place in the fabric CLI",
+        "ts": "1484835687.000313"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let me get you a pointer (if I can find it ) in the SDK \/ 0.6",
+        "ts": "1484835706.000314"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "thx. I've created <https:\/\/jira.hyperledger.org\/browse\/FAB-1757>",
+        "ts": "1484835857.000315"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "sure",
+        "ts": "1484835996.000316"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you go to the 0.6 SDK\u2019s `sdk\/node\/lib\/hfc.js`  and look for the implementation of `newNetModeTransaction`",
+        "ts": "1484836081.000317"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you shoukd see",
+        "ts": "1484836108.000318"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3TPMLSJ0\/pasted_image_at_2017_01_19_09_28_am.png|Pasted image at 2017-01-19, 9:28 AM>",
+        "file": {
+            "id": "F3TPMLSJ0",
+            "created": 1484836112,
+            "timestamp": 1484836112,
+            "name": "Pasted image at 2017_01_19 09_28 AM.png",
+            "title": "Pasted image at 2017-01-19, 9:28 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 74191,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3TPMLSJ0\/pasted_image_at_2017_01_19_09_28_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3TPMLSJ0\/download\/pasted_image_at_2017_01_19_09_28_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 81,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 108,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 162,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 216,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TPMLSJ0-38fe77da29\/pasted_image_at_2017_01_19_09_28_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 230,
+            "image_exif_rotation": 1,
+            "original_w": 1228,
+            "original_h": 276,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3TPMLSJ0\/pasted_image_at_2017_01_19_09_28_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3TPMLSJ0-52b8c66062",
+            "channels": [
+                "C27E2LGJY"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1484836114.000319"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thats the code we need to mimic in the CLI",
+        "ts": "1484836126.000320"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the constraints on the SDK at that time forced it to be not so user-friendly",
+        "ts": "1484836190.000321"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "so you might see some of that",
+        "ts": "1484836202.000322"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we can do it more cleanly this time",
+        "ts": "1484836214.000323"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the real question is what cert to use",
+        "ts": "1484836244.000324"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we should open this discussion on fabric-crypto channel to do this right",
+        "ts": "1484836261.000325"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "what I\u2019d suggest - to get going - is to put the code in place to use package the cert based on the above",
+        "ts": "1484836311.000326"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and then in a second step get the right cert in place",
+        "ts": "1484836334.000327"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "sounds good, let's get it working first and optimize later, I need to get a demo working by Friday, ideally with TLS enabled. :slightly_smiling_face:",
+        "ts": "1484836405.000328",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KM61BCP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "oh nice :slightly_smiling_face:",
+        "ts": "1484836418.000329"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "in chaincode_support.go",
+        "ts": "1484836704.000334"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0ULK2JPP|muralisr> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3TQ36GDT\/pasted_image_at_2017_01_19_09_38_am.png|Pasted image at 2017-01-19, 9:38 AM>",
+        "file": {
+            "id": "F3TQ36GDT",
+            "created": 1484836707,
+            "timestamp": 1484836707,
+            "name": "Pasted image at 2017_01_19 09_38 AM.png",
+            "title": "Pasted image at 2017-01-19, 9:38 AM",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0ULK2JPP",
+            "editable": false,
+            "size": 84885,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3TQ36GDT\/pasted_image_at_2017_01_19_09_38_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3TQ36GDT\/download\/pasted_image_at_2017_01_19_09_38_am.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 85,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 114,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 170,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 227,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F3TQ36GDT-0857890984\/pasted_image_at_2017_01_19_09_38_am_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 242,
+            "image_exif_rotation": 1,
+            "original_w": 1572,
+            "original_h": 372,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/muralisr\/F3TQ36GDT\/pasted_image_at_2017_01_19_09_38_am.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3TQ36GDT-7f73fd71c2",
+            "channels": [
+                "C27E2LGJY"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0ULK2JPP",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0ULK2JPP|muralisr>",
+        "bot_id": null,
+        "ts": "1484836709.000335"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "the path to the cert file is set there before launching the chaincode",
+        "ts": "1484836739.000336"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "let\u2019s take the rest on the JIRA so it won\u2019t get lost ?",
+        "ts": "1484836804.000337"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "hmm, so looks like we are use cert from the config already",
+        "ts": "1484837999.000338"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "except we are not packaging it when deploying the chaincode in the CLI - not sure about the SDK",
+        "ts": "1484838611.000339"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "does this mean there are 2 problems here: 1. during registration, which don't require packaging of the certs, 2. during cc execution in its own container, which requires all of the certs be packaged and ingested into the container\/image",
+        "ts": "1484840418.000340"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U3U0MV3PZ> - can you expand `during registration,` ?",
+        "ts": "1484840568.000341"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "I am getting the error when running the following command:\n`CORE_PEER_ADDRESS=172.17.0.6:7051 CORE_PEER_TLS_ENABLED=true CORE_CHAINCODE_ID_NAME=mycc .\/chaincode_example02`",
+        "ts": "1484840787.000342"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you are rnning in dev mode",
+        "ts": "1484840822.000343"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "you need to make sure you are passing the right command line vars",
+        "ts": "1484840835.000344"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "basically set the same envs as in the above image",
+        "ts": "1484840858.000345"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "and if you are running in dev mode you don\u2019t even need to do (2)",
+        "ts": "1484840885.000346"
+    },
+    {
+        "type": "message",
+        "user": "U3U0MV3PZ",
+        "text": "what's (2) referring to?",
+        "ts": "1484840911.000347"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that was from your remark `2. during cc execution in its own container, which requires all of the certs be packaged and ingested into the container\/image`",
+        "ts": "1484842536.000348"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "if you are doing dev mode and started the chaincode, the packaging of certs is not needed,\u2026 indeed, the packaging step is skipped in dev mode",
+        "ts": "1484842588.000349"
+    },
+    {
+        "user": "U0NCW1DPX",
+        "text": "<@U0NCW1DPX|gengjh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484876493.000350"
+    },
+    {
+        "user": "U3TD3G1GQ",
+        "text": "<@U3TD3G1GQ|vwan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484897967.000351"
+    }
+]

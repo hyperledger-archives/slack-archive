@@ -1,0 +1,111 @@
+[
+    {
+        "user": "U2RCN8W95",
+        "text": "<@U2RCN8W95|lanzen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477676333.000322"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "When using HFC to build a solution with Node, is the expected development environment to have the chaincode be included in the overall Node project?  Think of it from the perspective of managing the project in GitHub.  Or, is the expected environment to have 2 separate GitHub projects: one for the Node code and a second for the chaincode?  I ask because it looks tricky how HFC exposes a deploy() interface that takes a chaincodePath which gets (hardcoded) appended to the end of $GOPATH\/src\/.",
+        "ts": "1477676425.000323"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2RCN8W95> yes as of hfc 0.6.x chaincode deploy only supports deploying chaincode from a local folder, the chaincode is expected to be at $GOPATH\/src in its fully qualified package path, in addition a \u201cvendor\u201d folder must also exist at that folder (peer to the chaincode go file) and contains the fabric source tree",
+        "ts": "1477683462.000324"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "<@U13TWBRBL> Thanks.  That implies to me that $GOPATH is an env variable that should change every time you\u2019re working on a different project, whereas I originally thought that there should be a single\/common $GOPATH in a dev env on top of which many projects can be cloned.",
+        "ts": "1477684382.000325"
+    },
+    {
+        "user": "U2SN3M334",
+        "text": "<@U2SN3M334|jamesjong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477684502.000326"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "you can set it up so that all GO projects live under the same $GOPATH",
+        "ts": "1477685019.000327"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U2RCN8W95> say you have projectA and projectB both are golang projects",
+        "ts": "1477685058.000328"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "I\u2019ve got something like that set up now.",
+        "ts": "1477685088.000329"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "$GOPATH\/src\/\n    |__ <http:\/\/github.com\/mypackage|github.com\/mypackage>\n                    |__ projectA\n                    |__ projectB",
+        "ts": "1477685108.000330"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "assuming both project are in package \u201c<http:\/\/github.com\/mypackage|github.com\/mypackage>\"",
+        "ts": "1477685126.000331"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and \u201cprojectA\u201d and \u201cprojectB\u201d are your repo roots",
+        "ts": "1477685138.000332"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "But \u2026 in the context of creating a Node app that leverages HFC to deploy and invoke a chaincode project \u2026 that chaincode needs to be in the same source tree as the Node code.  That implies $GOPATH would need to be specific to my Node project.",
+        "ts": "1477685150.000333"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok i see what you are saying",
+        "ts": "1477685181.000334"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "best set up is having the go code (for chaincode) saved separate from application code using node.js",
+        "ts": "1477685202.000335"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "Right - so you could have your Node code in one github repo and your chaincode in another.  You\u2019d clone them down into separate places.  When running locally, your local $GOPATH will point to your generic one, like what you outlined above.  But when deploying to Bluemix, you\u2019d need to ensure a build step is taken to copy the chaincode into your Node project, and then ensure the $GOPATH running on Bluemix would point to the right location.",
+        "edited": {
+            "user": "U2RCN8W95",
+            "ts": "1477685434.000000"
+        },
+        "ts": "1477685360.000336"
+    },
+    {
+        "type": "message",
+        "user": "U2RCN8W95",
+        "text": "That\u2019s the tricky part I was getting stuck on \u2026 when the Node app is deployed to Bluemix.  In that environment, ONLY your Node app was pushed\/deployed.  It must therefore keep the chaincode embedded somewhere, and the hardcoded HFC path to it MUST start with $GOPATH\/src.",
+        "ts": "1477685529.000338"
+    },
+    {
+        "user": "U24M29R4G",
+        "text": "<@U24M29R4G|nikileshsa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477696068.000339"
+    }
+]

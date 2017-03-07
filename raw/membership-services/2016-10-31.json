@@ -1,0 +1,265 @@
+[
+    {
+        "user": "U2JCD7N7R",
+        "text": "<@U2JCD7N7R|georgeo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477926008.000810"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are suggesting that Membership Service will refer to the old implementation (ie for 0.5 and 0.6), COP will be the new word for default CA provider for version 1 to help prevent confusion,.. The only thing the fabric  for 1.0 knows about is CA provider",
+        "ts": "1477928226.000811"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We are in ad hoc meeting with Keith and Elli",
+        "ts": "1477928243.000812"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The CA provider interface with target to make it visible to anyone such that CA provider can be pluggable.  The default one is the COP.  The high level interface appears on fab289.   A definition in go lang to be used later on by peer code has been done by Keith.  And then, as soon as we finalize, Keith is waiting for feedback.  That interface will be the building blocks for the peer functionality (peer that checks proposals submitted by client and transactions received by the ordering service).",
+        "ts": "1477928472.000813"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There could be a simplification of the API- what peer should be used by SDK, what should be used by peer we need to make sure is in .  And of course exposure to chaincode.",
+        "ts": "1477928505.000814"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "What is missing or is not clear is definition of nodejs that picked up by Client SDK side.  WE have been talking to those in SDK team such as Jim Zhang- there is part of this API that has to talk to the COP server.  Again, this is the API that talks to COP server- register, enroll,etc,..?",
+        "ts": "1477928581.000815"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "egister and enroll- that will not be built in peer itself.  It will be a COP executable where it will call the COP server.",
+        "ts": "1477928687.000816"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For part of this api that runs in the peer- a simple api that says we load key here, we load list of certificates,.. and that is all that's on the peer API (ie the import functions) .  By separating the API- the peer API versus the SDK API is important to make clear.  Both command line tool will do register and enroll and SDK will do this over rest- there will be functionally equivalent.",
+        "ts": "1477928780.000817"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "COP based interface-&gt; we are not going to touch the server side of COP, or the client side (ie nodejs.)  For client side of nodejs sdk, SDK programming team is going to have to ask if they needs help on crypto primatives, but the SDK team owns that for now.  SDK team will have to ask Elli and team if they need help.  (ie signing identity)  Will the challenge during enroll- does that change dramatically from COP from membership services? For the current option, it won't change much at all.  We are supporting the HSM friendly version, which is going to be simpler on the client side.  But the HSM part only involves the early part of generating key pair, but from that point SDK has to talk to COP server for enroll?  The current method of TCERT generation requires that you use derivation keys on the client.  That won't work for HSM.  So there will be a change to support as option 2 according to document which basically means you are generating a bunch of certificate signing requests on the client side.  They are all being signed as a batch and being sent back.   That part will have to change with nodejs.sdk.",
+        "ts": "1477929059.000818"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "There is a CSR that is part of enroll that can be sent.  So you are asking does enroll change?  Today it does not involve CSR- it's the challenge mechanism.  Enroll does change for the node sdk.",
+        "ts": "1477929092.000819"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "first thing is integration of blockchain cyrpto service provider -- enroll, generate identities, sign,.. all these operations will need to be changed based on separations to refer to crypto service provider.  There has to be 2 crypto providers- one that Angelo built in go lang and an HSM based which is essentially conversing and relaying any kind of timing request or key generation request to HSM card.  One step is to have all the crypto in the SDK accessing single crypto library.  If someone wants to substitute this library with some custom implementation, they are able to do this by adding new provider.",
+        "ts": "1477929214.000820"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Centralization of the crypto libraries happen at a very low level.  Then, the modification of code to export this interface that is generic enough so enable CA providers which provides at higher level in a pluggable way.",
+        "ts": "1477929266.000821"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "From  nodejs,.. you can't it's go lang.  You would need to provide implementation in nodejs... That's the next question.  We currently have crypto primitives.   ARe you planning on building for nodejs.",
+        "ts": "1477929403.000822"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "if the change on javascript side to talk to golang and is just a matter of code refactoring- the crypto code is already in node sdk, but it's a matter of the bccsp interface.  With new code base start- we are refactoring the existing into new code blase- implementation doesn't change, but just refactor that it does apply to bccsp.",
+        "ts": "1477929494.000823"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For Java SDK- there is JCE apis-- do we want them to be compatible- or have java implementing without JSSE?  Not sure... Java comes with a nice crypto infrastructure- and you can go with that and be more compatible with that.  That seems like you would not implement another interface, but of course the BCCSP- if it has to be everywhere- then it would have to be done.  But because BCCSP- it provides the basic crypto algorithim.",
+        "ts": "1477929605.000824"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For JAva side- the way we change providers for go lang for BCCSP- it would be nice to present the same upfront on how people program to it- even if the backend is a little different.  The Java JCE is meant to abstract out the crypto providers- to me, it's equivalent to BCCSP, but perhaps the abstraction layer is a bit different.  AS a client talking to server, the interface will be abstracted as BCCSP, but the java code can be used applied to JCE implementation, but should also implement the BCCSP protocol.  To switch out Java providers- there is a property file you modify at run time.  if in config file, you want a software provider, fips provider,etc,.. when the JVM comes up you make the decision.  If you present the configs to everyone, to a user it looks uniform, but inside we can take care of the differences.",
+        "ts": "1477929742.000825"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "How similar are nodejs.sdk and Java SDK?   Java code is different structurewise how implementations and interfaces are done, but in the end the Java team should be able to take what nodejs, sdk -- what structure for endorsement, how you unmarshall the data, and how you structure input to the order.  All that should come across different SDKs.",
+        "ts": "1477929809.000826"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "How do you see this work between JCE and BCCSP side ?  Is there a proto adapter on top of java sdk with adapter on top with JCE?  Let's take registration as an example.  We know the client sdk has to provide method for registering the user.  This is the thing that matters from the developer .  The way it's implemented it does not care.  In Java, they would expect it to be implemented directly to JCE.  On top of Java, you implement the protocol.  Every time there is a crytpographic method- you just go to JCE.  In Golang, you implement the COP interface- you go to the BCCSP.",
+        "ts": "1477930050.000827"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Basically whether you are using JCE on Java or implementing BCCSP with node, the document it presents to server is the same- whether it's a certificate in 509 format or crypto encrypted challenge.  Both providers of interfaces need to understand.",
+        "ts": "1477930098.000828"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "we have protobufs that marshall and unmarshall that is agnostic to the platform.  Let's say I'm a client developer- do we need to adhere to interfaces for BCCSP--",
+        "ts": "1477930141.000829"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "In general you should follow the interface to cop- now, how you use the crytpographic algorithim- put your self in client SDK user.  I am developer who wants to use SDK- I would not see anything related to crypto.  I would only see interfaces for doing enrollment, getting identity.  I don't care what protocol.  As long as i use the COP service , it should be the same",
+        "ts": "1477930232.000830",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U24JMTPRQ"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "From our point of view- the fabric protocol should be HSM friendly- client sdk should not care about this- but should know about the options.  They should use the interfaces in the same way.",
+        "ts": "1477930379.000831"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The BCCSP implementation- do we have augmented implementation that factored go code on the server side like based on RSA for example?  do we have to change the BCCSP to use RSA?  Now that we defined interface, how do we know interface can support other crypto suites?  If we do, do we have alternate implementation that we can test?  The BCCSP can provide multiple algorithims- the problem of how to use the algorithims must be moved to the fabric- so the fabric has to recognize RSA,etc,. and other algorithims.  You built interface so rest of fabric can use interface- ECSA or RSA.  Do we have at least 2 implementations of the provider interface for the algorthims to test out the interface works and is sufficient?  And also the client to test against the implementations for testing purposes. ... The BCCSP- the software based implementation ECDSA and HMAC and others,...we have not implemented RSA yet.  But there are methods that are generic , but think it's good to have other primitives implemented through BCCSP.",
+        "ts": "1477930750.000832"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "We need to have at least 1 more implementation than ECSDA plus SHAR256,etc,.. so we know interface we defined is good.  And the rest of the peers get all they need to support different algorithms.  If no alternate implementation,.. how do we know?  We could provide RSA supported x509... we can do this (please note sorry about spelling)",
+        "ts": "1477930813.000833"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Why don't we have a document on BCCSP in community discussing this?  Maybe a googledoc?  There are folks in China who do want a different way to do things due to country requirements.  Maybe this helps with the review.",
+        "ts": "1477930874.000834"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "And then maybe the folks in China interested in this can contribute what they want.  They are very motivated to provide a different implementation based on HSM 123  as this is required by the government.",
+        "ts": "1477930919.000835"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Russia is also the same.",
+        "ts": "1477930939.000836"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "From client SDK perspective- we are doing a register enroll- we have to do a go implementation for the cli, but we also have to have the node version and the java",
+        "ts": "1477931255.000837"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "For next week- we should be able to finish the endorsement ordering for both deploy, invoke, and query for transactions.... but not sure all the security work we can get done.",
+        "ts": "1477931360.000838"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Could we run self signed certificate- could we use for sign and verify in 1 week away? Part of the API- they can plug in their own certificate-- so can our own CA be a self signed certificate for peers and on the orders?  If you use self-sign there is non CA. So yes client can use self sign, and COP would let anything go for certificate check- but we can exercise the sign and verify function.   We can have cop server running enroll for the peer and use the actual certificate and key that ist stored to do the signing.  This assumes the peer specific code can import that- just use the COP CLI, which is what we intend to use and get it downloaded to file and peer that Elli and team are loading that into a class.  It's currently equivalent to identity and signing identity in go to create the real signature in the peer.. then in the SDK code, you can't do that for next week, but the current code there to do primitives would not be difficult to verify a signature.  The main thing is we have to change from GRPC to REST.... that's the real issue.  HMM,.. i was just talking getting things back from the peer, but you not talking to the cop server.  If you don't have to do register or enroll- we could probably do, but sending endorsement and sending transactions-doesn't that involve COP?  On client side, you have to have member ID, you have to sign transaction and send through... But let's say we use COP CLI where client is running, we could enroll of web application. So then your code would load from file also .",
+        "ts": "1477931637.000839"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Are we going to involve TCERT? NO",
+        "ts": "1477931657.000840"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "That may work to do enroll and registration through CLI and we could have run files for private key to sign.",
+        "ts": "1477931683.000841"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The format that you are saving - is that the same as the SDK as we were doing before?  let's discuss this more.",
+        "ts": "1477931705.000842"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "If it's not the same and it's throw away code- we won't do this.",
+        "ts": "1477931741.000843"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Is it a valid scenario to do the CLI to enroll and then have SDK to support that file format?  Seems like that should not be a scenario we should not support.",
+        "ts": "1477931764.000844"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "The other thing is the one Hyperledger member thought of having certificates on the ledger.  The things that are going on the ledger is the trusted root CA.   We would run the COP CLI to put a certificate somewhere on the file system to load.  But what should happen is that it should be getting it off the ledger for all of it's trusted roots.  The private key that it gets is from the filesystem.  The trusted roots certificate for validating signatures..",
+        "ts": "1477931900.000845"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "That then dovetails into bootstrap. At boostrap we would need to collect certificates and boostrap orderer and peer to be able to build up the genesis block.",
+        "ts": "1477931937.000846"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Do you agree with separating the parts of the API in peer, chaincode and SDK Elli?   Elli take parts of that API need to be done in chaincode... Keith could try to do this for the peer and for the SDK.  Keith feels there need to be separate APIs,.. and then Elli and team would implement the peer and chaincode parts.",
+        "ts": "1477932093.000847"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "Has anyone given a thought to FIPS certification to crypto?  Vlad has some ideas on this.  Evidently we have team in australia who certifies crypto... we could have a fips certified crypto... This BCCSP work- we could get FIPS certification if we get GSKIT into there.",
+        "ts": "1477932287.000848"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "FIPS is important given every bank and government requires this.  BCCSP is step in right direction- software provider, HSM provider, and a FIPS provider.",
+        "ts": "1477932366.000849"
+    },
+    {
+        "user": "U0UHG4VP1",
+        "text": "<@U0UHG4VP1|ry> has left the channel",
+        "type": "message",
+        "subtype": "channel_leave",
+        "ts": "1477933905.000850"
+    },
+    {
+        "type": "message",
+        "user": "U2D13KBQD",
+        "text": "In the fabric-java-sdk, I want to add members, but the initialization code in the need for a test.properties configuration file, I do not know what is needed inside?",
+        "ts": "1477964214.000853"
+    }
+]

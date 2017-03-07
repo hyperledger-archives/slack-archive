@@ -1,0 +1,458 @@
+[
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "<@U11MANG9G> : You say that PersonA has \u2018granted\u2019 or \u2018allowed\u2019 PersonB to execute a transaction (when she, PersonA, deployed that transaction):\nIn order for PersonB to execute this transaction, using its name (binding)\u2026. PersonB need to sign it.\n\nSo PersonA adds \"metadata\": \"PersonB (in base64)\" while deploy to grant access ? \nAnd anything needs to be sent from PersonB while invoking any transaction? \nAnd by the way i am getting : \"Failed checking signature [asn1: syntax error: sequence truncated]\"\n\n2016\/09\/26 07:08:03 Check caller...\n2016\/09\/26 07:08:03 passed certificate []\n2016\/09\/26 07:08:03 passed sigma []\n2016\/09\/26 07:08:03 passed payload [12 07 61 64 64 43 49 41 56]\n2016\/09\/26 07:08:03 passed binding [c8 17 07 de 17 9d d0 79 4a 73 f8 db 7e 42 94 fd e2 44 ac d3 5e e0 7f d2 74 44 9b 4a 23 e7 36 ff]\n2016\/09\/26 07:08:03 Failed checking signature [asn1: syntax error: sequence truncated]\n\nAny idea? am i missing something?",
+        "edited": {
+            "user": "U1WUAQJVC",
+            "ts": "1474874577.000000"
+        },
+        "ts": "1474874539.000213"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1WUAQJVC>: I can\u2019t tell from here (you\u2019d need to debug it).",
+        "ts": "1474875811.000215"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Seems like the signature verification step fails.",
+        "ts": "1474875834.000216"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The expected signature values should be `calculatedSigma = Sign(<http:\/\/certificate.sk|certificate.sk>, tx.Payload||tx.Binding) `",
+        "ts": "1474875875.000217"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(that it, signing with the signing key)",
+        "ts": "1474875887.000218"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "You should probably try to debug it and see why the validation fails...",
+        "ts": "1474875920.000219"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(that\u2019s my hunch from the error message you posted: running in debug will get a lot of things written out as part of the run\u2026 so that you can see the cert, etc. BTW)",
+        "edited": {
+            "user": "U11MANG9G",
+            "ts": "1474876036.000000"
+        },
+        "ts": "1474875944.000220"
+    },
+    {
+        "user": "U2CFEGHV3",
+        "text": "<@U2CFEGHV3|arconederveen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474876835.000222"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "<@U11MANG9G> : Okay i will debug the failure.. But is my approach of sending metadata for the deployer and not sending metadata for other permitted invoker is fine?",
+        "ts": "1474879411.000223"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "The deployer grants the authorization",
+        "ts": "1474881501.000224"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "(Giving permission to who should be able to invoke that function, in the future)",
+        "ts": "1474881528.000225"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Makes sense?",
+        "ts": "1474881539.000226"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "<@U11MANG9G> : oh ok. is it not available as of now? And then what are we sending in metadata section now? what is it's significance?",
+        "ts": "1474881803.000227"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I\u2019m not sure we understand each other.",
+        "ts": "1474881999.000228"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I have to run, but just quickly:",
+        "ts": "1474882004.000229"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "There are two steps, right? Deploy and Invoke. At deploy time the deployer chooses\/specifies the access control\/permission he\/she (the deployer) grants to the to-be-deployed code.",
+        "ts": "1474882053.000230"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Later on, at Invocation time\u2026 these \u2018rules\u2019 are checked.",
+        "ts": "1474882070.000231"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "This is done by verifying the above calculatedSigma that I posted above.",
+        "ts": "1474882099.000232"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "---",
+        "ts": "1474882103.000233"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "I won\u2019t be here a lot today. Check the doc + code. It\u2019s pretty straight-forward once this flow \u2018registers\u2019 :wink:",
+        "ts": "1474882127.000234"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "HTH",
+        "ts": "1474882139.000235"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "At deploy time how deployer chooses\/specifies the access control?",
+        "edited": {
+            "user": "U1WUAQJVC",
+            "ts": "1474882208.000000"
+        },
+        "ts": "1474882171.000236"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Yes, exactly!",
+        "ts": "1474882300.000238"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "[btw, not my code, design, etc. just to be clear. I had to go through the same learning curve back in the day. In case this encourages you somewhat\u2026]",
+        "ts": "1474882333.000239"
+    },
+    {
+        "type": "message",
+        "user": "U1WUAQJVC",
+        "text": "Thank you so much for your patience...  :slightly_smiling_face:. Really sorry... \n\n My question is how deployer really do that. using metadata to pass all the users for whom he want to grant the access.. \n\nI think yes.. will get back to u again if this has issues..",
+        "ts": "1474882825.000240",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U1CTBUNEN> : Pre-key tree is being used to created your key used to derive encryption key , which is role based. So , you are correct. In next arch , Pre-Key will be per org and role based and hence , we'll do away with root pre-key. There will not be any affiliation.",
+        "ts": "1474897926.000241"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "We are not going to carry concept of affiliation group.",
+        "ts": "1474897982.000242"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U221LL03Z> thanks - is that coming soon or planned for v1.0 ?",
+        "ts": "1474898917.000243"
+    },
+    {
+        "user": "U2DHRR4TE",
+        "text": "<@U2DHRR4TE|tom.appleyard> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474899290.000244"
+    },
+    {
+        "user": "U1AU8DRQR",
+        "text": "<@U1AU8DRQR|hgabor> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474899293.000245"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "hey",
+        "ts": "1474899298.000246"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "<@U1AU8DRQR> hey x2 !",
+        "ts": "1474899844.000247"
+    },
+    {
+        "user": "U1SLE9PJN",
+        "text": "<@U1SLE9PJN|mohan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474900442.000248"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": ".\/asset_management_with_roles_test.go:395: cannot use server (type *\"<http:\/\/google.golang.org\/grpc|google.golang.org\/grpc>\".Server) as type *\"<http:\/\/github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc|github.com\/hyperledger\/fabric\/vendor\/google.golang.org\/grpc>\".Server in argument to aca.Start",
+        "ts": "1474903975.000249"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I'm trying to compile sset_management_with_roles_test.go but I'm getting that error",
+        "ts": "1474904012.000250"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "any ideas ?",
+        "ts": "1474904014.000251"
+    },
+    {
+        "user": "U1MSZ37NK",
+        "text": "<@U1MSZ37NK|sstone1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474906602.000252"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "<@U1CTBUNEN>\nit is planned for v1.0.",
+        "ts": "1474909217.000253"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U221LL03Z> got it. I'm a little confused though because it looks to me like the organization(affiliation) hierarchy is actually being used in order to create the Pre-key tree.... and you are saying the concept of affiliation group is going away",
+        "ts": "1474915308.000254"
+    },
+    {
+        "user": "U1KDHJT6H",
+        "text": "<@U1KDHJT6H|claytonsims> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474917167.000255"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "it'll be there , but instead of tree , it'll be forest structure.",
+        "ts": "1474919258.000256"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "we'll not be using term affiliation as with decentralized membership service , user affinity is to enterprise.",
+        "ts": "1474919340.000257"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "we are still working through details.",
+        "ts": "1474919357.000258"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "hum ok",
+        "ts": "1474919385.000259"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I thought it was rather neat - kinda like UID and GID in linux",
+        "ts": "1474919404.000260",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U11MANG9G"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "we are not changing basics of it , only management is going to change.",
+        "ts": "1474919443.000261"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "to make it more inlined to enterprise deployment.",
+        "ts": "1474919459.000262"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I hope delegate roles will stay in some form",
+        "ts": "1474919495.000263"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "that's part of my use case right now",
+        "ts": "1474919505.000264"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "(enterprise app)",
+        "ts": "1474919516.000265"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "what is your use case ?",
+        "ts": "1474921101.000266"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "We currently envision the following roles\n\t\u2022\tLead Auditor\n\t\u2022\tAuditor\n\t\u2022\tRegulator\/Law Enforcement Lead\n\t\u2022\tRegulator\/Law Enforcement Agent\n\t\u2022\tSupply-Chain Member Lead\n\t\u2022\tSupply-Chain Member General Agent\n\t\u2022\tSupply-Chain Member Limited Agent",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474921337.000000"
+        },
+        "ts": "1474921255.000267"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "the leads will create delegate roles (agents)",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1474921298.000000"
+        },
+        "ts": "1474921290.000268"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "ok. We'll look into Role management more closely.",
+        "ts": "1474922134.000271"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "ok <@U221LL03Z> let me know if I can be of any help",
+        "ts": "1474922204.000272"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I don't quite understand how the tree structure is morphing into a forest but I can provide real-life example feedback : ))",
+        "ts": "1474922237.000273"
+    },
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "really good input. Much appreciated.",
+        "ts": "1474922278.000274"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U221LL03Z> I also think that read-only, read-write and write-only could be useful permissions\/attrs in the future",
+        "ts": "1474922767.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "FYI, I\u2019ve been working on a design doc for the membership services in v1, which I\u2019m currently referring to as COP (fondly) since it provides policing capabilities for the fabric.   See <https:\/\/docs.google.com\/document\/d\/1TRYHcaT8yMn8MZlDtreqzkDcXx0WI50AV2JpAcvAM5w>",
+        "ts": "1474922824.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "I\u2019m beginning to work on using CFSSL to generate certs",
+        "ts": "1474922883.000277"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "Comments are very welcome \u2026 but keep in mind that the doc is a work in progress",
+        "ts": "1474922926.000278"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "awesome - I will take a look",
+        "ts": "1474922940.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0S5KF44D",
+        "text": "You can also follow the membership services dashboard at <https:\/\/jira.hyperledger.org\/secure\/RapidBoard.jspa?rapidView=67&amp;view=detail> and would welcome folks to help as you see the direction that we are taking",
+        "ts": "1474923013.000280"
+    },
+    {
+        "user": "U1WL0FZ35",
+        "text": "<@U1WL0FZ35|brianeno> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1474943236.000283"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Good morning. I am not sure understand this either. Is this proposal documented anywhere?",
+        "attachments": [
+            {
+                "fallback": "[September 26th, 2016 6:52 AM] ashutoshkumar: <@U1CTBUNEN> : Pre-key tree is being used to created your key used to derive encryption key , which is role based. So , you are correct. In next arch , Pre-Key will be per org and role based and hence , we'll do away with root pre-key. There will not be any affiliation.",
+                "ts": "1474897926.000241",
+                "author_subname": "ashutoshkumar",
+                "channel_id": "C1J0BM448",
+                "channel_name": "membership-services",
+                "is_msg_unfurl": true,
+                "text": "<@U1CTBUNEN> : Pre-key tree is being used to created your key used to derive encryption key , which is role based. So , you are correct. In next arch , Pre-Key will be per org and role based and hence , we'll do away with root pre-key. There will not be any affiliation.",
+                "author_name": "Ashutosh Kumar",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/ashutoshkumar",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/216a004f9bfab8ccf302ac52ac0096f8.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0005-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/membership-services\/p1474897926000241",
+                "is_share": true,
+                "footer": "Posted in #membership-services"
+            }
+        ],
+        "ts": "1474954097.000284"
+    }
+]

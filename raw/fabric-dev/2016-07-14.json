@@ -1,0 +1,93 @@
+[
+    {
+        "user": "U1MNES6NR",
+        "text": "<@U1MNES6NR|lbonniot> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1468482133.001449"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "is grpc considered a forever stable serialization format?",
+        "ts": "1468487908.001454"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because if not, we shouldn't use it to create bytestreams we hash + sign",
+        "ts": "1468487927.001455"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I don't think that the byte \/ wire format it uses would be forever stable",
+        "ts": "1468488320.001456"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "and fixed (the order of fields etc)",
+        "ts": "1468488339.001457"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "we ran into some problem with a behave test: chaincode example02 with 4 peers, stop and start alternates, reverse; the test wants 977 on A's account but we have 993. it seems that a query is executed before an invocation despite they are present in the opposite order in the behave test markup file",
+        "ts": "1468488493.001458"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "what can cause this?",
+        "ts": "1468488501.001459"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "all these tests are fragile",
+        "ts": "1468488798.001460"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because they're dealing with a distributed system",
+        "ts": "1468488805.001461"
+    },
+    {
+        "type": "message",
+        "user": "U0R7Q5C30",
+        "text": "<@U0XR6J961> I don\u2019t think its fragility in this case. The \u2018when\u2019 of the invocation is BEFORE the \u2018when\u2019 of the query in this scenario, however in the docker log, the first invoke happens 10 seconds AFTER the query. It seems, that behave will not keep the ordering of these \u2018when\u2019 sentences. If we put a 'wait \u201c20\u201d seconds\u2019 between these two, then the test passes. I am not familiar with this behave framework, but I hope there is someone here who does, and can explain this behaviour",
+        "ts": "1468489555.001462"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "heh",
+        "ts": "1468489654.001463"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that seems weird",
+        "ts": "1468489660.001464"
+    },
+    {
+        "type": "message",
+        "user": "U0R7Q5C30",
+        "text": "<@U0XR6J961> I agree :slightly_smiling_face:",
+        "ts": "1468489722.001465"
+    },
+    {
+        "type": "message",
+        "user": "U0R7Q5C30",
+        "text": "08:54:09.317 [shim] DEBU : [ca978112]Query completed. Sending QUERY_COMPLETED\nQuery Response:{\"Name\":\"a\",\"Amount\":\"993\"}\n08:54:18.750 [shim] DEBU : [ca5ba87c]Received message TRANSACTION from shim\n08:54:18.750 [shim] DEBU : [ca5ba87c]Handling ChaincodeMessage of type: TRANSACTION(state:ready)\n08:54:18.750 [shim] DEBU : [ca5ba87c]Received TRANSACTION, invoking transaction on chaincode(Src:ready, Dst:transaction)\n08:54:18.750 [shim] DEBU : [ca5ba87c]Sending GET_STATE\n08:54:18.751 [shim] DEBU : [ca5ba87c]Received message RESPONSE from shim\n08:54:18.751 [shim] DEBU : [ca5ba87c]Handling ChaincodeMessage of type: RESPONSE(state:transaction)\n08:54:18.751 [shim] DEBU : [ca5ba87c]before send\n08:54:18.751 [shim] DEBU : [ca5ba87c]after send\n08:54:18.751 [shim] DEBU : [ca5ba87c]Received RESPONSE, communicated (state:transaction)\n08:54:18.751 [shim] DEBU : [ca5ba87c]GetState received payload RESPONSE\n08:54:18.751 [shim] DEBU : [ca5ba87c]Sending GET_STATE\n08:54:18.752 [shim] DEBU : [ca5ba87c]Received message RESPONSE from shim\n08:54:18.753 [shim] DEBU : [ca5ba87c]Handling ChaincodeMessage of type: RESPONSE(state:transaction)\nAval = 992, Bval = 8",
+        "ts": "1468489727.001466"
+    },
+    {
+        "type": "message",
+        "user": "U0R7Q5C30",
+        "text": "this is the log, with the query and the first invoke",
+        "ts": "1468489742.001467"
+    }
+]

@@ -1,0 +1,810 @@
+[
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1483974045.001207"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/opsfqne475hzjl2cahb6wpxmree|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1483974078.001208"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0UGH3X7X> <@U0XPR4NP4> When a user client broadcasts a transaction to the orderer, the orderer service is supposed to deliver it in a block to the peers listening on that channel. The design docs do not talk about any broadcast responses to the user. Please clarify: Does the user always get some sort of immediate feedback in a response message - either Success or an appropriate error code (for example If the transaction badly formatted or not signed)? Or is it sent back only when an error is found?",
+        "ts": "1483980046.001209"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Given a stream of `cb.Envelope`s passed into `Broadcast`, each envelope will get a corresponding `cb.Status_SUCCESS` reply, until there is a failure, which will receive a non `cb.Status_SUCCESS` reply, and the server will terminate the stream.",
+        "ts": "1483980146.001210"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Any in flight non-acknowledged messages will be discarded.",
+        "ts": "1483980166.001211"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Only messages which are replied to with a `cb.Status_SUCCESS` are guaranteed to be 'in consensus'",
+        "ts": "1483980188.001212"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> ^",
+        "ts": "1483980199.001213"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XPR4NP4>  To clarify that point: if user sends two msgs quickly, where the first one leads to an error response such as 403 or 404, then what is the liklihood that the 2nd would be discarded? I.e. what does \"in-flight\" mean in this context? Or, maybe the more practical question would be: couldn't I expect the https to handle resending it for me? If so, then in practice I could essentially ignore this and interpret your answer to mean that \"yes the sender of every broadcast message should normally get a response\"",
+        "ts": "1483981385.001214"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> If the user sends two messages quickly, and the first one errors, then the second will, with 100% certainty be discarded.",
+        "ts": "1483981420.001215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you wish the second message to enter the system, you need to re-establish the `Broadcast` link and submit it again",
+        "ts": "1483981452.001216"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "oh, so a new stream is started by the sender, after receipt of the error-coded response?",
+        "ts": "1483981476.001217"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct, because the server will have terminated the `Broadcast` stream on error",
+        "ts": "1483981492.001218"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "ok. that answers my original question as well as provides expected behavior for more detailed use-cases. The user would be expected to resend any transactions that are not confirmed, But do you know - would that be a resposibility\/function of http, or of the client (behave test client, or the SDK\/applic code)?",
+        "ts": "1483981873.001219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It would be on the client",
+        "ts": "1483982236.001220"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The client should basically keep a buffer of unacknowledged requests, and, if the stream terminates, it should reconnect and resend what's in the buffer",
+        "ts": "1483982271.001221"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "ok. thanks. that is what I was thinking. I remember reading in common.pb.go that we use error codes similar to those used by http; so I need to keep straight what gets handled in which layer.",
+        "ts": "1483982937.001222"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Question- does the OS check for anything besides signatures of the client on the transaction broadcasted? Meaning- is it possible to broadcast() lots of fake\/un-endorsed transactions to the OS to make it cut blocks with mostly invalid transactions that would be marked as invalid in the peers?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1484002039.000000"
+        },
+        "ts": "1484001946.001223"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> The only check is on the outer signature.  There is no check on the endorsements, so yes, definitely a client could submit a bunch of bad trans to force frequent block cutting.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484003816.000000"
+        },
+        "ts": "1484003782.001227"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, since they are validly signed, it should be trivial to identify the misbehaving party, revoke their authorization on the system, and proceed normally.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484003866.000000"
+        },
+        "ts": "1484003852.001229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The ordering service does not know what an endorsement is, or how to decode the `Data` or an `Envelope` of type `ENDORSER_TRANSACTION`",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484003931.000000"
+        },
+        "ts": "1484003922.001231"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "only in retrospect though",
+        "ts": "1484003929.001232"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it'll be really hard",
+        "ts": "1484003935.001234"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "since the ordering service doesn't know something wrong is happening, and the peers I assume, only give indication in the logs",
+        "ts": "1484003964.001235"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so it'll be like: peers log lots of errors\/warnings --&gt; hopefully there is some log monitoring agnet *and* a monitoring\/operations team seeing alerts ---&gt; they contact the cop(?) and it publishes a CRL?",
+        "ts": "1484004025.001236"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Someone could also submit many transactions with knowingly bad MVCC sets.  It would be a slightly trickier thing, but unless the orderer is maintaining all the state and essentially becoming a peer committer, I think this is very hard to dodge.",
+        "ts": "1484004059.001237"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think in general, the network admins will want to monitor for 'invalid transactions', and if there's a high volume of any sort, investigate why",
+        "ts": "1484004098.001238"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, peer committer? I thought the OS is *orderer-ledger*",
+        "ts": "1484004099.001239"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't know the OS will do block validation",
+        "ts": "1484004126.001240"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It does not",
+        "ts": "1484004130.001241"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I also remember you said it currently has a \"toy ledger\"",
+        "ts": "1484004139.001242"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was simply saying, unless you want the ordering service to do exactly all of the validation that the peer does (which we do not want to do), then a clever client will be able to submit junk into the system",
+        "ts": "1484004170.001243"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1484004194.001244"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, this clever client will have to submit the junk under his own ID",
+        "ts": "1484004194.001245"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which makes the attack significantly less attractive.",
+        "ts": "1484004208.001246"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what about replay attacks?",
+        "ts": "1484004217.001247"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The envelope header is designed for replay attack detection",
+        "ts": "1484004235.001248"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It's unimplemented, but, all the pieces are there",
+        "ts": "1484004247.001249"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how? timestamp?",
+        "ts": "1484004253.001250"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Timestamp + epoch + nonce",
+        "ts": "1484004260.001251"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I see",
+        "ts": "1484004289.001252"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok thanks, was just curious",
+        "ts": "1484004302.001253"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure thing, let me know if I can answer any other questions",
+        "ts": "1484004328.001254",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ZJZBJLF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "<@U0XPR4NP4> , I somehow mustered the cognitive strength to answer the JIRA issue you commented today (MSP replication). But I have a follow up question I prefer asking here and  I hope isn't stupid or already discussed, and if it is- it's probably because of the hour here :wink:",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1484005422.000000"
+        },
+        "ts": "1484005404.001255"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "You know the story with the anchor peers right?",
+        "ts": "1484005491.001257"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I know you guys were against saving the peer membership in the ledger, I guess rightly-so because that would impact throughput if the churn rate is high, but- is it possible to update the anchor peer list, within a channel (if needed - meaning- if the anchor peers die) once in a long period of time? (I was thinking perhaps, once per a few minutes, if needed of course). \nThe only \"problem\" with the anchor peer (at least as I see it) is that it needs to be alive all the time. If somehow the gossip layer within an org could update its anchor peer in all channels of the org, that problem would go away.",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1484006178.000000"
+        },
+        "ts": "1484006164.001258"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> So absolutely, it _can_ be updated, but updating once every few minutes seems like far too frequent to me.  I thought the proposed solution here had been to use a DNS address which could rotate through IPs round robin or have updates pushed to it trivially",
+        "ts": "1484006895.001260"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Especially as you stay protected from bad connections via TLS)",
+        "ts": "1484006907.001261"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "a few min is the lower bound",
+        "ts": "1484006930.001262"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the upper bound is, never",
+        "ts": "1484006933.001263"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "the DNS solution has major drawbacks IMO",
+        "ts": "1484006975.001264"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "0) This is the major one: you need org A to be able to update the information in org B about the anchor peer(s) of org A. You assume org B would give org A access to update its DNS records? very unlikely...\n1) You can't program this into fabric because you would have to integrate with many types of DNS providers \\ server types, it seems brittle\n2) I was thinking that a customer could specify in the core.yaml whether this peer is a candidate to be an anchor peer or not. and that's all the customer would need to configure, the rest would be done by the fabric, magically.",
+        "ts": "1484007176.001265"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "0) I'm confused by this one.  Why does org A need to be able to update the info for org B? Why would org B allow this?\n1) Agreed\n2) I agree this is a nice idea, and I'd say this is something that could be implemented as a normal endorser transaction (and not a configuration transaction) but then you have the problem of bootstrapping.  The nice thing about the config transaction is that everything you need to bootstrap at any point is in there.  But the more frequently it changes, the worse properties it has.",
+        "ts": "1484007393.001266"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where is the bootstrapping problem?",
+        "ts": "1484007416.001267"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no need the bootstrap to have them (the anchor peers)",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1484007456.000000"
+        },
+        "ts": "1484007422.001268"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you don't need anchor peers at bootstrap, I'd say kick them out of the configuration block, and make it a normal chaincode.",
+        "ts": "1484007505.001271"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then you can change things as often as you'd like",
+        "ts": "1484007510.001272"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I thought it was needed for state transfer to function reasonably for a new organization",
+        "ts": "1484007529.001273"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh no, it is needed for cross-organization + it's now an implementation detail that I use in the code to enumerate the organizations of a channel (by the anchor peers)",
+        "ts": "1484007592.001274"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I know, perhaps I should have made it something like:",
+        "ts": "1484007603.001275"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "channel organizations := thisPeerOrg \\cup {organizations of anchor peer list}",
+        "ts": "1484007630.001276"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Regarding 0- sorry, I'm not thinking clearly at 2:20 AM. Obviously if org B can query org A's DNS server it's enough and org A can simply update *its own DNS records*",
+        "ts": "1484007688.001277"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it is also needed to establish view (membership) of all peers of the channel",
+        "ts": "1484007766.001278"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "some... clients, require this",
+        "ts": "1484007771.001279"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "&gt; The nice thing about the config transaction is that everything you need to bootstrap at any point is in there.  But the more frequently it changes, the worse properties it has.\n\nSo, what I'm saying is- if an anchor peer is selected wisely within an organization, and it doesn't die every few minutes - rather it stays stable- perhaps this is the right path to take?",
+        "ts": "1484007872.001280"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Re 0: Right, maybe this is unreasonable to think org A will publish its DNS names in a publically accessible way, this just seemed like a standard piece that most orgs already had.  Maybe feedback from someone like <@U0PB67X4K> on how real world deployments are likely to be done would help",
+        "ts": "1484007948.001281"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and advantage 3) not every hyperledger client wants to install a DNS server",
+        "ts": "1484007968.001282"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and fabric doesn't come with a DNS server",
+        "ts": "1484007979.001283"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Well, you don't _have_ to install a DNS server, for a small deployment, you can reference things by IP, but DNS would give you additional flexibility.",
+        "ts": "1484007995.001284"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what? IP is even worse",
+        "ts": "1484008010.001285"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this requires you to do L-3 load balancing\/clustering",
+        "ts": "1484008024.001286"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I mean you can roll it out without DNS, for a 'small deployment where deploying DNS is onerous'",
+        "ts": "1484008040.001287"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But publishing a few DNS records seems like it should be trivial for most people....",
+        "ts": "1484008063.001288"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah but in small deployments you mean the anchor peer is well, an anchor?",
+        "ts": "1484008065.001289"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, for something like a POC test net where you want things entirely hyperledger contained",
+        "ts": "1484008088.001290"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With TLS, publishing DNS records even through a third party seems relatively safe",
+        "ts": "1484008220.001291"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but the bottom line is, are you against my idea given the promise that the update rate per channel will have a lower bound of once per X minutes? \nI think that actually, if an anchor peer dies it's OK as long as a new channel isn't created",
+        "ts": "1484008271.001292"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, bottom line, I think that's too frequent.",
+        "ts": "1484008289.001293"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what time-span isn't too frequent in your opinion?",
+        "ts": "1484008307.001294"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'd say scheduled changes maybe quarterly? With obvious exceptions for something like adding a new org member.",
+        "ts": "1484008355.001295"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "quarterly is 15 min?",
+        "ts": "1484008382.001296"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "3 months",
+        "ts": "1484008387.001297"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm talking about lower bound. if the anchor peer dies, how long to wait until a new one is elected in the org, and published on all channels",
+        "ts": "1484008449.001298"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I always go back to something that Simon said a while back.  If someone actually wants to implement this system securely, they're going to put their admin keys on a USB key, and only access them on an air gapped machine inside a vault.  The notion that reconfiguration is automated is a bit antithetical to this idea.",
+        "ts": "1484008596.001299"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "btw- \"With TLS, publishing DNS records even through a third party seems relatively safe\" I assume you mean that org A and org B have DNS replication among them?",
+        "ts": "1484008644.001300"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because, DNS is plaintext UDP from what I know. so you assume that each org queries its own DNS for the records of the other org's DNS",
+        "ts": "1484008672.001301"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There's <https:\/\/en.wikipedia.org\/wiki\/Domain_Name_System_Security_Extensions>",
+        "attachments": [
+            {
+                "title": "Domain Name System Security Extensions",
+                "title_link": "https:\/\/en.wikipedia.org\/wiki\/Domain_Name_System_Security_Extensions",
+                "author_name": "Wikipedia",
+                "author_link": "http:\/\/en.wikipedia.org\/",
+                "text": "The Domain Name System Security Extensions (DNSSEC) is a suite of Internet Engineering Task Force (IETF) specifications for securing certain kinds of information provided by the Domain Name System (DNS) as used on Internet Protocol (IP) networks. It is a set of extensions to DNS which provide to DNS clients (resolvers) origin authentication of DNS data, authenticated denial of existence, and data integrity, but not availability or confidentiality.",
+                "fallback": "wikipedia: Domain Name System Security Extensions",
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/wikipedia.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484008701.001302"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But more that, if someone hijacks your records, they cannot impersonate you, because they do not have a correct certificate chain to make the TLS connection,.",
+        "ts": "1484008729.001304"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't think customers would like this, but maybe I'm wrong.",
+        "ts": "1484008762.001305"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm certainly open to other ideas, and would really like to hear what a real deployer is likely to like or not like",
+        "ts": "1484008808.001306"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Anyway, I need to get up tomorrow (today) morning too. if anyone is reading this you should start from: <https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1484006164001258>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1484006164001258",
+                "fallback": "[January 9th, 2017 3:56 PM] yacovm: I know you guys were against saving the peer membership in the ledger, I guess rightly-so because that would impact throughput if the churn rate is high, but- is it possible to update the anchor peer list, within a channel (if needed - meaning- if the anchor peers die) once in a long period of time? (I was thinking perhaps, once per a few minutes, if needed of course). \nThe only \"problem\" with the anchor peer (at least as I see it) is that it needs to be alive all the time. If somehow the gossip layer within an org could update its anchor peer in all channels of the org, that problem would go away.",
+                "ts": "1484006164.001258",
+                "author_subname": "yacovm",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "I know you guys were against saving the peer membership in the ledger, I guess rightly-so because that would impact throughput if the churn rate is high, but- is it possible to update the anchor peer list, within a channel (if needed - meaning- if the anchor peers die) once in a long period of time? (I was thinking perhaps, once per a few minutes, if needed of course). \nThe only \"problem\" with the anchor peer (at least as I see it) is that it needs to be alive all the time. If somehow the gossip layer within an org could update its anchor peer in all channels of the org, that problem would go away.",
+                "author_name": "Yacov Manevich",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/yacovm",
+                "author_icon": "https:\/\/avatars.slack-edge.com\/2016-09-30\/85916865123_74ecb5d18535acea44aa_48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1484008856.001307"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The configuration block is intended to be 'relatively static configuration for the chain'.  And so overloading it with information which is anticipated to change (beyond long term administrative tasks like key rotation) feels wrong to me.",
+        "ts": "1484008888.001309"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For instance, if an entity can make configuration changes, they can do a fairly effective denial of service to prevent others from reconfiguring the chain.",
+        "ts": "1484008925.001310"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can just send transactions",
+        "ts": "1484008941.001311"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what's the difference?",
+        "ts": "1484008945.001312"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that the conf. block has only 1 transaction?",
+        "ts": "1484008953.001313"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To construct a configuration transaction you must know the sequence number and contents of the previous configuration block.",
+        "ts": "1484008970.001314"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, if someone is rapidly sending reconfiguration transactions, incrementing the sequence number and tweaking the contents, then the other parties cannot guess the next seqno and contents",
+        "ts": "1484008996.001315"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is essentially an exclusive lock.",
+        "ts": "1484009017.001316"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In low trust networks, I would expect for no configuration modification to be allowed without at least two parties participating, more likely, the byzantine threshold",
+        "ts": "1484009044.001317"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, for me to modify my MSP, I should sign, and get f others to sign as well.",
+        "ts": "1484009058.001318"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but the only ones that can do that are the peers of the channel!",
+        "ts": "1484009059.001319"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "'do that'? What is 'that'?",
+        "ts": "1484009076.001320"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "send a conf. block",
+        "ts": "1484009087.001321"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Peers generally don't send configuration transactions",
+        "ts": "1484009096.001322"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The application can send one to construct a channel (which may have lower privilege requirements to allow automated creation)",
+        "ts": "1484009115.001323"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah, but I'm saying they all know the seq numbers.",
+        "ts": "1484009118.001324"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "They do",
+        "ts": "1484009125.001325"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, if someone were rapidly hammering on the service, incrementing the sequence number, the peer sequence numbers would lag",
+        "ts": "1484009147.001326"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I understand. this is a viable attack.",
+        "ts": "1484009170.001327"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "just like... you know what",
+        "ts": "1484009180.001328"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sending fake transactions that would make frequent block cutting",
+        "ts": "1484009212.001329"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "anyway, I'm off. ttyl",
+        "ts": "1484009219.001330"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Alright, we can discuss more tomorrow",
+        "ts": "1484009224.001331"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "I thought the anchor peers was a static list, that an admin can hand out to new member organizations that would like to join the network. If that list is changing regularly, that becomes an Administrator's pain-in-the-arse. Yes let's think carefully about the impact...",
+        "ts": "1484017481.001332"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "I have a different question, this time about what user-registration really means in v1.0.  <@U0XPR4NP4>  you said earlier that \"transactions which are not appropriately signed by an authorized user will never be put into a batch\".  Now, when a user registers with a peer, they are allowed to submit transaction proposals, right? Does that mean (as in v0.5) they can submit to just that one peer? Does it include ALL channels that the peer knows about (now, or in the past, or future)?  OK, what I really want to know is: Do the orderers ensure that a broadcast transaction is signed by an authenticated-user on a PER-CHANNEL basis? From the orderer's perspective, what exactly is an authenticated user?",
+        "ts": "1484018195.001333"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "Other thoughts: We must register a user with a peer component, but it does not make sense to register a user with a specific orderer component - because a peer could submit transactions to any orderer, right? Yet, we say the orderers will accept broadcasts only from authenticated users. Does the user submit broadcasts using a peer's cert (from one of the peers that endorsed its proposal, which is a member of the channel for which the transaction applies)?",
+        "ts": "1484018670.001334"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> The orderer cares only whether the signature on the transaction (`Envelope`) satisfies the orderer ingress policy.  Most likely, this policy is that the signature is an authorized user of any of the chain MSPs.  This policy is specified per chain.  There is no notion of 'user-registration' at the orderer, only identity and signature.  Also keep in mind that the peers no longer submit transactions in the new architecture, so there's no notion of a \"peer's cert\" submitting a transaction, this will be a user\/application cert.",
+        "ts": "1484020245.001335"
+    },
+    {
+        "type": "message",
+        "user": "U12452RAP",
+        "text": "guys, I remember some of you sent the sbft paper link yet, could anyone send me again? more appreciate",
+        "ts": "1484023068.001336"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XPR4NP4>  \"the signature is an authorized user of any of the chain MSPs\". I intrpret that as any user that registered with any peer in any member-organization that is participating in the transaction's associated channel. But your statement seems contradictory: if there is no notion of peer cert, then how does the orderer determine from the user's signature if it is part of a member org which is participating on that channel?",
+        "ts": "1484023166.001337"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "maybe it might help if  I could find the definition of what exactly is in the signature?",
+        "ts": "1484023232.001338"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> There is the notion of Policy.  In the case of `Broadcast`, this indicates what 'identities' (where identity may be a specific certificate, or certificate attribute, or any other principal supported by the MSP) are authorized to invoke `Broadcast` on a particular chain.  The orderer has no notion of what a peer is, only what the ingress policy for a specified chain is.   Typically, you can expect that the orderer ingress policy allows all MSP user certs for a chain to be allowed to invoke `Broadcast` for that chain.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1484056007.000000"
+        },
+        "ts": "1484025764.001339"
+    },
+    {
+        "user": "U1F3CQ2HX",
+        "text": "<@U1F3CQ2HX|nhrishi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484032821.001343"
+    }
+]

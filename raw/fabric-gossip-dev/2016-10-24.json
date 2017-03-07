@@ -1,0 +1,1026 @@
+[
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> To continue the thought from the earlier hangout, I would propose that:\n\n1. A non-byzantine peer which connects to the orderer _must_ validate the block received from ordering before gossiping about it.\n2. In order to validate a block, that peer must have all previous blocks committed, and therefore knows the index of the last configuration block.\n3. When the peer gossips about the block, it can also include the index of the last configuration block\n4. Any peer which receives a block who's last configuration block index is not committed must not gossip about that block until that index is committed\n\nAs I see it, the attacks are:\n1. A byzantine peer lies and claims a configuration change has not recently taken place.  This to me is a non-attack, as the result is the block being gossiped to an older set of authorized peers.  Because this is only information leakage, the byzantine peer could do this without the network's assistance.\n2. A byzantine peer lies and claims a configuration change has taken place when one has not, this could cause peers to buffer blocks which are invalid, because they cannot currently validate the block (because they do not have the corresponding config block).  This seems like a problem which must be addressed regardless of what information is in the block.  Even if the full configuration is embedded in the block header, if that configuration is different, there is no way to validate it until all preceeding blocks have been committed.",
+        "ts": "1477323612.000136"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "sorry, was on the phone. processing....",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477326644.000000"
+        },
+        "ts": "1477326635.000137"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1- what do you mean \"validate\"?",
+        "ts": "1477326748.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we have many notions of validations now. is it channel validation BVP, or security?",
+        "ts": "1477326771.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, I guess channel validation",
+        "ts": "1477326791.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; 1- what do you mean \"validate\"?\n\nThe peer must verify that the block returned by the orderer satisfies the chain block validation policies, in the PBFT case, this would be f+1 signatures from among the orderers",
+        "ts": "1477326802.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "maybe I should read everything and only then comment instead of acting like a ledger",
+        "ts": "1477326817.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1477326835.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, that always happens",
+        "ts": "1477326841.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that is enforced at the gossip entrance code basically",
+        "ts": "1477326852.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "we discard data blocks that are not signed properly",
+        "ts": "1477326862.000147"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but we have this problem with the configuration change",
+        "ts": "1477326871.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since the policy is embedded in the chain, the preceeding blocks must be committed before this validation can take place (2)",
+        "ts": "1477326949.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And, since we are talking about a peer connected directly to the orderer, this is a sane assumption (as it received blocks point to point in order)",
+        "ts": "1477326980.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "indeed",
+        "ts": "1477326992.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, the _first_ peer to gossip about a block must validate it before gossiping",
+        "ts": "1477326999.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep",
+        "ts": "1477327005.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, that peer could also say \"this block was validated by config from block N\"",
+        "ts": "1477327019.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because the code flow will go: peer code --&gt; ledger; gossip",
+        "ts": "1477327019.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "right?",
+        "ts": "1477327026.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1477327029.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1477327060.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But the first peer to gossip about a block, can definitely say \"This is block N, and it was validated by config from block M &lt; N\"?",
+        "ts": "1477327074.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "about 4- that's not true",
+        "ts": "1477327093.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1477327103.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so what I'm saying- if there are non-byzantine nodes:",
+        "ts": "1477327112.000162"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then since the blocks flow into the \"gossip network\" in-roder",
+        "ts": "1477327127.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "*in order",
+        "ts": "1477327129.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can deliver them to others out of order",
+        "ts": "1477327141.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "is that right?",
+        "ts": "1477327143.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would agree that blocks may be gossiped about out of order",
+        "ts": "1477327156.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm talking here strictly about the validation of signatures",
+        "ts": "1477327167.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, the 'originating gossiper' gossips in order",
+        "ts": "1477327172.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah",
+        "ts": "1477327181.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, let's say an originating gossip peer says \"This is block 10, and it was validated via config from block 9\"",
+        "ts": "1477327210.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If another peer receives this message, but has only committed through block 7",
+        "ts": "1477327235.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you mean say to itself, or to others?",
+        "ts": "1477327239.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "To others",
+        "ts": "1477327246.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, why should it say that?",
+        "ts": "1477327252.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I claim that if this architecture of \"first-order-gossipers initiating the gossip\" is non-byzantine, then we don't have to check anything",
+        "ts": "1477327307.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "because they already do the filtering of improperly-signed blocks",
+        "ts": "1477327317.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We are not assuming they are not byzantine",
+        "ts": "1477327363.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh, ok",
+        "ts": "1477327371.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "However, if they are byzantine, I only see the two attacks I outlined",
+        "ts": "1477327372.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, back to the example:\n\nSo, let's say an originating gossip peer says \"This is block 10, and it was validated via config from block 9\"\nIf another peer receives this message, but has only committed through block 7, then I assert it should _not_ forward this block until it has committed block 9, because it cannot be certain that (a) this block is valid, or (b) that others are authorized to hear about it",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477327522.000000"
+        },
+        "ts": "1477327489.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what does \"through block 7\" mean?",
+        "ts": "1477327551.000183"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "until 7?",
+        "ts": "1477327558.000184"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "inclusive of block 7, block 0,1,2,3,4,5,6,7",
+        "ts": "1477327572.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1477327576.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no I don't agree",
+        "ts": "1477327635.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't agree with you on that",
+        "ts": "1477327640.000188"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Why?",
+        "ts": "1477327644.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "like I said- it is best to assume optimistically that this block is valid, and gossip it anyway",
+        "ts": "1477327673.000190"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it will not get past the gossip layer",
+        "ts": "1477327681.000191"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "to the ledger",
+        "ts": "1477327685.000192"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You told me Friday that in this scenario, block 10 would be discarded",
+        "ts": "1477327694.000193"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "no... that's the opposite",
+        "ts": "1477327703.000194"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Which seems more pessimistic than retaining until commit",
+        "ts": "1477327704.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it'll be discarded if the block is considered *invalid*",
+        "ts": "1477327713.000196"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And how is that decided?",
+        "ts": "1477327718.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "of course, by the last validating policy we have",
+        "ts": "1477327732.000198"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I just said, block 10 was validated based on the policy from block 9",
+        "ts": "1477327747.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, there's no reason to believe it will be valid based on the previous policy",
+        "ts": "1477327762.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't get you",
+        "ts": "1477327823.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "At block 9, the chain configuration changed.  This may have included (a) what signatures are required to validate a block (b) which peer orgs are allowed to receive the block",
+        "ts": "1477327883.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ok",
+        "ts": "1477327893.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because of (a) block 10's signatures may not validate against the old policy",
+        "ts": "1477327907.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait, I thought you're *not* talking about channels now",
+        "ts": "1477327907.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would assert that you have the same problem with a single chain.  Presumably you can kick a peer org entirely out of the network.",
+        "ts": "1477327945.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I don't see what's the problem, besides gossiping garbage",
+        "ts": "1477328052.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you realize that gossiping garbage can *only* happen *during* an orderer membership change, right?",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477328095.000000"
+        },
+        "ts": "1477328082.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If the consortium decides to kick a member out, then none of the old member's peers should receive blocks after the block which contains that configuration change.",
+        "ts": "1477328108.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you optimistically gossip, then information may leak to the exiled org's peers",
+        "ts": "1477328139.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "ohhh... wait, you mean there are ACLs for a \"single channel\" too?",
+        "ts": "1477328140.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I didn't know that",
+        "ts": "1477328144.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Of course",
+        "ts": "1477328145.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I learn new stuff every day, this is awesome",
+        "ts": "1477328159.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "How else do you decide who is allowed to transact on the 'single channel'?",
+        "ts": "1477328183.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I assumed it's simple",
+        "ts": "1477328192.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you are denied at the membership service level",
+        "ts": "1477328201.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is no longer a centralized membership services",
+        "ts": "1477328223.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, when we designed gossip, there *was* :slightly_smiling_face:",
+        "ts": "1477328236.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you're right of course",
+        "ts": "1477328259.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and thanks for taking the time explaining all this, otherwise our part could've simply thrown into the trash",
+        "ts": "1477328284.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Always happy to help, hopefully I am also on the right page... there are the design docs out there, it is on my list today to go and add some more details about the chain config in particular.",
+        "ts": "1477328339.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, basically even a \"single channel network\" works in the same mechanism as a multi-channel network, right?",
+        "ts": "1477328343.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Exactly",
+        "ts": "1477328354.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "cool",
+        "ts": "1477328357.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "So... yeah you're right here. I can't gossip until I committed all blocks prior",
+        "ts": "1477328376.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "which from one hand, seriously effects latency, and you must understand why",
+        "ts": "1477328393.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmmm you weren't at the demo I showed to Gari and Sharon and Binh",
+        "ts": "1477328405.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I wouldn't say all blocks prior, you can't gossip until you've committed the prior configuration block",
+        "ts": "1477328408.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "basically I had a gossip network of size 30, ok?",
+        "ts": "1477328417.000231"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Was this with the dots in a browser? I think I saw this",
+        "ts": "1477328433.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep!",
+        "ts": "1477328436.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was not there live, but saw the recording",
+        "ts": "1477328451.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, that video you seen on youtube- I cheated there, I used a very large dissemination factor, that made everything look continues. but it shouldn't act like that",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477328628.000000"
+        },
+        "ts": "1477328458.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I showed to them live a cooler demonstration",
+        "ts": "1477328471.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in which you only gossip to 3 peers",
+        "ts": "1477328476.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and once in 5 sec, you pull information",
+        "ts": "1477328485.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so there were many peers that got blocks like: 1111111110000001111111111",
+        "ts": "1477328497.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and then these \"holes\" were completed",
+        "ts": "1477328502.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so this 2nd wave of \"1111111\" needed to wait a few seconds until it was gossiped forward, BUT!!!",
+        "ts": "1477328527.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I think that if we have multiple sources, AKA \"first-level-gossipers\"",
+        "ts": "1477328542.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's negligible",
+        "ts": "1477328546.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, okay.  So, I think this is still possible.  Let me elaborate, let CC be a configuration block, and BB be a normal block:\n\n```\n00 01 02 03 04 05 06 07 08 09 10 11 12 13 14\nCC BB BB BB BB BB BB BB BB CC BB BB BB BB BB\n```\n\nNow, when gossiping about this chain, assuming you were bootstrapped with 0 and clever, I posit, that you _could_ actually follow:\n\n```\nRX TX\n04 04\n08 08\n11 --\n07 07\n09 09 11\n14 14\n....\n```",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477328843.000000"
+        },
+        "ts": "1477328774.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Rx?Tx?",
+        "ts": "1477328885.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Receive, Transmit",
+        "ts": "1477328892.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh",
+        "ts": "1477328896.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can you explain?",
+        "ts": "1477328951.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- where is the \"time\" in this?",
+        "ts": "1477328969.000253"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Time is vertical, lower lines occur later",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477328993.000000"
+        },
+        "ts": "1477328989.000254"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, basically, bootstrapped with block 0, you can do first pass validation, and have knowledge of who to share with, through block 08",
+        "ts": "1477329014.000256"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, you receive block 04, block 08, and you can instantly gossip about them",
+        "ts": "1477329028.000257"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's what I thought, how do you know it's safe to send block 8?",
+        "ts": "1477329041.000258"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "When you received blocks 04 and 08, you were told that they were validated by the config at block 00",
+        "ts": "1477329060.000259"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then you receive block 11, and with it, metadata that there was a config change at block 09, so you know it's okay that you can't validate it now, so you just hold onto it, and don't forward it",
+        "ts": "1477329083.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but I thought you said that you shouldn't believe them, because if they're byzantine?",
+        "ts": "1477329085.000261"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Let's address the byzantine at the end",
+        "ts": "1477329113.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For now, happy path",
+        "ts": "1477329117.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so yeah I agree",
+        "ts": "1477329127.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then you receive block 07, great, validated and gossipped",
+        "ts": "1477329139.000265"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Now, you receive block 09, which can be validated against block 00, and is a config change, so you're good to gossip about it too.  Further, you now have a speculative config for block 11, and if block 11 validates against it, you can now gossip block 11 by the rules in block 09",
+        "ts": "1477329196.000266"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "wait",
+        "ts": "1477329238.000267"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "now I'm lost",
+        "ts": "1477329240.000268"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "how do you know for *certain* that 10 isn't a C block?",
+        "ts": "1477329252.000269"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You don't, you only know what the person who sent you block 11 told you, and that is that block 09 is a config block (and 10 is not)",
+        "ts": "1477329279.000270"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, if the person who sent you block 11 is byzantine, and they lied about the config change in block 10, then you might inappropriately forward the block (to the set of members from block 09)",
+        "ts": "1477329319.000271"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yes",
+        "ts": "1477329341.000272"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, I maintain this isn't a worthwhile attack, as they could have forwarded the block themselves",
+        "ts": "1477329342.000273"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "true",
+        "ts": "1477329349.000274"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I get where you're going to",
+        "ts": "1477329357.000275"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "\"if there are byzantines, they can simply invoke \"gameOver()\" without having to lie\"",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477329386.000000"
+        },
+        "ts": "1477329379.000276"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so you can trust the peers to be compliant to \"hey, I totally swear that there weren't any C blocks before X and Y\"",
+        "ts": "1477329411.000278"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, maybe there is an attack I missed, but I can't come up with any case where the attacker accomplishes anything by lying about this.  Maybe some garbage gets gossiped, but short of doing the in order commits, I see no way to avoid this.",
+        "ts": "1477329487.000279"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so, a first-order (pun intended) peer is the only one that sets the \"last configuration block at-\" label",
+        "ts": "1477329588.000280"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "and the rest forward by looking at it",
+        "ts": "1477329595.000281"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, exactly.",
+        "ts": "1477329612.000282"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "A forwarding peer could corrupt this metadata, and lie about it, but, there aren't any obvious viable attacks by doing this.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477329761.000000"
+        },
+        "ts": "1477329754.000283"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmmm",
+        "ts": "1477329835.000285"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "let me think",
+        "ts": "1477329839.000286"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "well, as you said- if it lies and says a lower number than it really is- then it's data leakage, and it could've done so itself. \notherwise- it says a higher number and simply \"stalls\" the peer (because it should've disseminated, but is waiting) but that won't work as long as there are non-byzantine forwarders",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477330136.000000"
+        },
+        "ts": "1477329917.000287"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean- they'll say the true number, and we can have a logic that assumes always the Min among all blocks",
+        "ts": "1477329947.000288"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not 100% on the logic about min, depends on how optimistic or pessimistic you want to be.  I could see it being over the set of config numbers you have for a block",
+        "ts": "1477330382.000290"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(For the very optimistic case)",
+        "ts": "1477330387.000291"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "min is the most optimistic isn't it?",
+        "ts": "1477330419.000292"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If you have two attestations for block 10, that config came from block 6, and block 9.  If you get block 9, and it is a config change, then you can validate it now",
+        "ts": "1477330553.000293"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so can I when I get block 6",
+        "ts": "1477330622.000294"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I can for sure validate when I get 9",
+        "ts": "1477330646.000295"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but can also validate when I got block 6",
+        "ts": "1477330655.000296"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, that's why I was thinking just retain all, and as soon as one validates, you're good",
+        "ts": "1477330673.000297"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "BTW I think it'd be also cool for a peer to \"sign\" his \"assertion\"",
+        "ts": "1477330678.000298"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I mean for the first-order peer",
+        "ts": "1477330684.000299"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, so you can prove that it's not your fault you blabbed to someone who shouldn't know",
+        "ts": "1477330696.000300"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I'm thinking about something else actually",
+        "ts": "1477330707.000301"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "In the membership layer of the gossip, a peer gossips information about itself, like- his PKI-id, endpoint, etc.",
+        "ts": "1477330731.000302"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "right?",
+        "ts": "1477330734.000303"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(going into a meeting, back in a bit)",
+        "ts": "1477330735.000304"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so basically there is nothing that prevents a peer from lying about his remote endpoint.",
+        "ts": "1477330747.000305"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so what I am going to do to tackle this- is to discourage them to lie by doing the following:",
+        "ts": "1477330763.000306"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "each peer \"hears\" these signed messages from other peers. If it catches a peer lying (by having two contradicting publications of its endpoint, for example- publishing your endpoint while someone else claims to have it, and publishing another one (your real endpoint))",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1477330821.000000"
+        },
+        "ts": "1477330805.000307"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "then it black-lists it",
+        "ts": "1477330829.000309"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I already have a black-list method in the communication, that turns off communication with a peer with a certain PKI-id (public key hash)",
+        "ts": "1477330866.000310"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "so peers wouldn't want to lie about their endpoint, otherwise they'll be short lived in the network and the network would punish them. \nSame logic can be applied to signing the \"last-config\" field",
+        "ts": "1477330902.000311"
+    }
+]

@@ -1,0 +1,231 @@
+[
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "i am running 4 peers using dockers under calssic pbft. But i am getting view change as soon as I deploy  a chaincode.   13:25:15.453 [consensus\/obcpbft\/events] loop -&gt; WARN 437 Attempting to stop an unfired idle timer",
+        "ts": "1465997254.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I'm guessing that the deploy transaction data structure is very big and is taking too long to broadcast which in turn is causing the request timeout timer to fire",
+        "ts": "1465997514.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "couple things you can try ... increase the request timeout value in obcpbft\/config.yaml   or check your hyperledger\/fabric source tree and see if there are old copies of logs and what not that can be deleted ( those files are getting pulled into the deploy transaction)",
+        "ts": "1465997624.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "if you're then still seeing a problem,  can you create an issue and include the debug logs ?",
+        "ts": "1465997679.000160"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "which logs ?",
+        "ts": "1465997698.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "set core_logging_level=debug",
+        "ts": "1465997725.000162"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "ohh okay",
+        "ts": "1465997736.000163"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "ill try that",
+        "ts": "1465997740.000164"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "thanks:-)",
+        "ts": "1465997745.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "That warning message is benign, and has been dropped in severity after <https:\/\/github.com\/hyperledger\/fabric\/pull\/1777>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Fix reset for event timers in consensus by kchristidis \u00b7 Pull Request #1777 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1777",
+                "text": "Description For the event timers in consensus, Reset() should reset an existing timer to a new timeout and clear out any pending events, while SoftReset() should reset the timer only if it's not a...",
+                "fallback": "GitHub: Fix reset for event timers in consensus by kchristidis \u00b7 Pull Request #1777 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/14876848?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1777",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466000882.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: can state transfer revert existing state?",
+        "ts": "1466004868.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought it does not, kostas thinks it does",
+        "ts": "1466004881.000169"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It can, it is configurable",
+        "ts": "1466004887.000170"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah so we do have an option to revert",
+        "ts": "1466004901.000171"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It can overwrite existing blocks, there is no mechanism to delete existing blocks unfortunately",
+        "ts": "1466004973.000172"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what about state?",
+        "ts": "1466005033.000173"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "will it apply deltas in reverse?",
+        "ts": "1466005047.000174"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It will not",
+        "ts": "1466005240.000175"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "State can be recovered completely, and played forward",
+        "ts": "1466005252.000176"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The ledger has the ability to apply deltas backwards",
+        "ts": "1466005264.000177"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But state transfer does not utilize this.  (In particular, because we want to try to verify the state snapshot before applying the deltas, but at that point, there is no point in going back in time)",
+        "ts": "1466005308.000178"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so currently when we figure out that we diverged from the majority of the network, we will start state transfer, and state transfer will fix all data?",
+        "ts": "1466005647.000179"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Correct",
+        "ts": "1466005740.000180"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Unless you have twiddled the config to panic in this scenario",
+        "ts": "1466005750.000181"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(But this is not the default)",
+        "ts": "1466005756.000182"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Rough flow is:\n\n1. Given state target which is different from what we have.\n2. Go fetch the blocks from that target to our current believed valid block\n3. Realize our state doesn't mesh with what's reported by the retrieved blocks, and that however much of the chain does not hash\n4. New copy of the state is grabbed, corrupt blocks are grabbed, written\n5. We're now in a good state, normal state transfer for recovery takes place",
+        "ts": "1466005897.000183"
+    },
+    {
+        "user": "U1B2FF8LR",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U1B2FF8LR|scottz> has joined the channel",
+        "ts": "1466016224.000184"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XR6J961> <@U0XPR4NP4> Hi, Do you have line of sight yet, and can you provide a forecast for merging the pull request 1793 for issue 1056? Sharon and Barry and many others of us are eagerly anticipating your delivery, so we can run our regression and performance tests on a loadbuild that includes this (along with 1798).",
+        "ts": "1466017298.000185"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1B2FF8LR> As this fixes a critical issue, I'm okay with 1793 as is, the theoretical negative implications are still better than the current bad behavior, and we can address those in the future",
+        "ts": "1466017486.000186"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'll post to that effect in the PR",
+        "ts": "1466017502.000187"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looks like <@U0XR6J961> will still need to rebase",
+        "ts": "1466017564.000188"
+    },
+    {
+        "type": "message",
+        "user": "U1B2FF8LR",
+        "text": "<@U0XR6J961> <@U0XPR4NP4> Thanks for the update. Then it sounds like we could get this fix by early tomorrow, if all goes well.",
+        "ts": "1466019357.000189"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U1B2FF8LR>: you do know you can cherrypick a pr and run tests... no need to wait",
+        "ts": "1466021925.000190",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "it would help reinforce that the pr is good",
+        "ts": "1466021949.000191"
+    }
+]

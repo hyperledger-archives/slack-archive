@@ -1,0 +1,184 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i pushed a first version of view change",
+        "ts": "1472824087.000139"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's always the most ugly code",
+        "ts": "1472824103.000140"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but overall it is in a state that we can now add a lot of tests to make sure that it works",
+        "ts": "1472824482.000141"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "deterministic tests!",
+        "ts": "1472824490.000142"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yey",
+        "ts": "1472824491.000143"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4> right now i let the new primary forfeit its position if it doesn't have a request that would be proposed in the new-view",
+        "ts": "1472824554.000144"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i figured that would be easier than doing a fetch-and-retry",
+        "ts": "1472824565.000145"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Seems sensible, especially for now.  Would need to think on potential attacks via that for a byzantine node to sieze leadership at will",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1472824670.000000"
+        },
+        "ts": "1472824663.000146"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1472824673.000148"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i'll switch to test writing now",
+        "ts": "1472824699.000149"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i wonder what happens if the primary sends an invalid pre-prepare",
+        "ts": "1472824741.000150"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "say the primary sent pp for 3, now sends one for 5",
+        "ts": "1472824796.000151"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how do i tell the difference to network outage",
+        "ts": "1472824822.000152"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think i need some transport layer information",
+        "ts": "1472824839.000153"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, i don't think that would help",
+        "ts": "1472824861.000154"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i could be disconnected, and reconnect without losing any messages",
+        "ts": "1472824872.000155"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so how do i tell that the primary is faulty",
+        "ts": "1472824882.000156"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess timeout?",
+        "ts": "1472824921.000157"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "On reconnect, I think you would need to do timeout",
+        "ts": "1472825071.000158"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Although, I still think ultimately we should come up with a network handshake",
+        "ts": "1472825082.000159"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess that primary fault would be handled by a request timeout",
+        "ts": "1472825109.000160"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1472825136.000000"
+        },
+        "ts": "1472825131.000161"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm, right now i just have a timeout starting from preprepare",
+        "ts": "1472825344.000163"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess i should remove that and instead have individual timeouts for all requests received",
+        "ts": "1472825364.000164"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i.e. not per batch, but per request",
+        "ts": "1472825370.000165"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "again, the big question, is the view change timer reset when a correct new view message is received, or when the next request commits?",
+        "ts": "1472825479.000166"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I never liked the need to commit a request after the new view.  I would say the view change timer resets when a correct new view message is received.  Then, if there are outstanding requests, the outstanding request timer starts.",
+        "ts": "1472826433.000167"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Since we are exploiting ordering, I can go dig up my old work on the request queue stuff.  I think the answer is to have a per client (in our case, replica) request timer",
+        "ts": "1472826511.000168"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1472826572.000169"
+    }
+]

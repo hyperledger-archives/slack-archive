@@ -1,0 +1,108 @@
+[
+    {
+        "user": "U39DK9LJH",
+        "text": "<@U39DK9LJH|amarpreet> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481725105.000089"
+    },
+    {
+        "type": "message",
+        "user": "U39DK9LJH",
+        "text": "hello friends, quick question, is there a way to get the peer to print only raw logs and not color coded logs?",
+        "ts": "1481725466.000090"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not sure <@U39DK9LJH> \u2026. perhaps <@U1L24390X> might know given his work with logging ?",
+        "ts": "1481725976.000091"
+    },
+    {
+        "type": "message",
+        "user": "U1L24390X",
+        "text": "<@U39DK9LJH> At the moment, there isn\u2019t a way to change the format of the logging messages. However, it\u2019s been discussed (more in regards to the other formatting options like date\/time, etc. but it would provide a way to remove the color coding) and I could definitely add a way with minimal effort.",
+        "ts": "1481728087.000092"
+    },
+    {
+        "type": "message",
+        "user": "U39DK9LJH",
+        "text": "<@U1L24390X> Yeah that would be awesome.  I am trying to send logs to an ELK stack, and the color coding is making things difficult :slightly_smiling_face:",
+        "ts": "1481728310.000093"
+    },
+    {
+        "type": "message",
+        "user": "U39DK9LJH",
+        "text": "raw logs would be fantastic",
+        "ts": "1481728332.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "As it turns out, this need to load the block here will affect `fabric-peer` image as well.",
+        "attachments": [
+            {
+                "fallback": "[December 13th, 2016 12:07 PM] c0rwin: I need the genesis block in `start.go` simply because that\u2019s how to best of my knowledge chain created and this suppose to be a trigger to see how is the leader to connect to ordering service with delivery client.",
+                "ts": "1481648855.000075",
+                "author_subname": "c0rwin",
+                "channel_id": "C27E2LGJY",
+                "channel_name": "fabric-peer-dev",
+                "is_msg_unfurl": true,
+                "text": "I need the genesis block in `start.go` simply because that\u2019s how to best of my knowledge chain created and this suppose to be a trigger to see how is the leader to connect to ordering service with delivery client.",
+                "author_name": "Artem Barger",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/c0rwin",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/dcfa65bddbbfe177e681e491f79ab48a.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0010-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-peer-dev\/p1481648855000075",
+                "is_share": true,
+                "footer": "Posted in #fabric-peer-dev"
+            }
+        ],
+        "ts": "1481767486.000095"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The reason for this is: the `provisional` bootstrapper (the only bootstrapper available) reads the `orderer.yaml` file before creating the genesis block.",
+        "ts": "1481767566.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "The fabric-peer image does not have access to that file and thus crashes. This is what's causing the build error in this changeset: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3201\/>",
+        "ts": "1481767607.000097"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "Now, we can patch the `fabric-peer` image so that it gets that file (thanks <@U0KPFAZNF>), but we're now reaching a point where a temporary change requires yet another temporary change.",
+        "ts": "1481767765.000098"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "That's a tricky slope right there.",
+        "ts": "1481767771.000099"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "How can we fix this in a better way?",
+        "ts": "1481767788.000100"
+    },
+    {
+        "type": "message",
+        "user": "U0KN2SSKE",
+        "text": "We should remove that dependency from fabric-peer image. We have code to create test block for peer that we should use.",
+        "ts": "1481780308.000101"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I agree. I looked into the source code, and I think this fix should do the job: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/3315\/>",
+        "ts": "1481786949.000102"
+    }
+]

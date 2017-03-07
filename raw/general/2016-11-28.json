@@ -1,0 +1,375 @@
+[
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "after then from guest machine to docker use docker-compose to expose the ports",
+        "ts": "1480320005.005647"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U36HLH8SC> Try \"sudo -E make peer\" (so that the environment variables of the current user will be available for the make).",
+        "ts": "1480322773.005648"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "<@U2KL18VPU> am getting below error when i run above cmd\n\nvendor\/github.com\/tecbot\/gorocksdb\/backup.go:4:24: fatal error: rocksdb\/c.h: No such file or directory\n\/\/ #include \"rocksdb\/c.h\"\n                       ^\ncompilation terminated.\nMakefile:168: recipe for target 'build\/bin\/peer' failed\nmake: *** [build\/bin\/peer] Error 2",
+        "ts": "1480327443.005649"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "It looks like a dependency problem. Please see whether you have installed rocksdb.",
+        "ts": "1480328096.005650"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "hy all i am  facing following error:-\n\nvp0_1  | 09:55:22.752 [dockercontroller] deployImage -&gt; ERRO 01d Error building images: dial unix \/var\/run\/docker.sock: connect: no such file or directory\nvp0_1  | 09:55:22.753 [dockercontroller] deployImage -&gt; ERRO 01e Image Output:\nvp0_1  | ********************\nvp0_1  | \nvp0_1  | ********************\nvp0_1  | 09:55:22.757 [dockercontroller] Start -&gt; ERRO 01f start-could not recreate container Post <http:\/\/unix.sock\/containers\/create?name=dev-vp0-ee5b24a1f17c356dd5f6e37307922e39ddba12e5d2e203ed93401d7d05eb0dd194fb9070549c5dc31eb63f4e654dbd5a1d86cbb30c48e3ab1812590cd0f78539>: dial unix \/var\/run\/docker.sock: connect: no such file or directory\nvp0_1  | 09:55:22.757 [chaincode] Launch -&gt; ERRO 020 launchAndWaitForRegister failed Error starting container: Post <http:\/\/unix.sock\/containers\/create?name=dev-vp0-ee5b24a1f17c356dd5f6e37307922e39ddba12e5d2e203ed93401d7d05eb0dd194fb9070549c5dc31eb63f4e654dbd5a1d86cbb30c48e3ab1812590cd0f78539>: dial unix \/var\/run\/docker.sock: connect: no such file or directory",
+        "ts": "1480328150.005651"
+    },
+    {
+        "type": "message",
+        "user": "U1F1CU61Y",
+        "text": "anyone can please help me to resolve this problem",
+        "ts": "1480328165.005652"
+    },
+    {
+        "user": "U37MEH7QU",
+        "text": "<@U37MEH7QU|stjaco> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480329407.005653"
+    },
+    {
+        "type": "message",
+        "user": "U2TSGCWS3",
+        "text": "A company in Germany is testing Hyperledger on z. They are using the IBM signed and tested images from github with the installation procedure from <https:\/\/hub.docker.com\/r\/ibmblockchain\/fabric-peer\/>\nThey can start the peers with consensus noop, after 3 blocks the hashes diverge, but the fabric continues.\nWhen they change consensus to pbft via parameter, the peers see each other and communicate. But \"deploy\" doesn't start a container. We don't know why.\nThen they took the fabric-peer, changed consensus to pbft via core.yaml, and compiled in the container with \"go build\". They moved the binary to \/opt\/gopath\/bin, committed the container, and tagged it with \"ibmblockchain\/fabric-peer:latest\"\nThen they did\ndocker run -d -it --name=vp0 -e CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375> -e CORE_LOGGING_LEVEL=DEBUG -e CORE_PEER_ID=vp0 -e CORE_PEER_ADDRESSAUTODETECT=true -e CORE_PEER_DISCOVERY_ROOTNODE=172.17.0.2:7051 -e CORE_PEER_VALIDATOR_CONSENSUS_PLUGIN=pbft ibmblockchain\/fabric-peer peer node start\n\nAgain the hashes diverged after 3 blocks, but the system panicked and the peers died.\n\nThe problem is reproducable.\n\nWe can provide core.yaml, logs, blockchecks and commands.\n\nCould you help?",
+        "ts": "1480329414.005654"
+    },
+    {
+        "type": "message",
+        "user": "U36HLH8SC",
+        "text": "<@U2KL18VPU>, yes rocksdb installed on that node",
+        "ts": "1480332863.005655"
+    },
+    {
+        "type": "message",
+        "user": "U2TSGCWS3",
+        "text": "{\"log\":\"\\u001b[33m15:02:24.967 [consensus\/pbft] sendPrePrepare -\\u003e WARN 21e\\u001b[0m Primary 0 not sending pre-prepare for batch Hb34eNOlu0Yb1ijI6u2yq\/oofCLEpAgb3IYX5y0HdjMSvTGQ3vHxURVTxdeCPFEF3tSg+kGu6wpMrnU70FEw0g== - out of sequence numbers\\r\\n\",\"stream\":\"stdout\",\"time\":\"2016-11-16T15:01:54.054261Z\"}\n\nkommen aus pbft-core.go, <https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/consensus\/pbft\/pbft-core.go>, line 645:\nif !instance.inWV(instance.view, n) || n &gt; instance.h+instance.L\/2 {\n\n\n\/\/ We don't have the necessary stable certificates to advance our watermarks\n\n\nlogger.Warningf(\"Primary %d not sending pre-prepare for batch %s - out of sequence numbers\", instance.id, digest)\n\nreturn",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/consensus\/pbft\/pbft-core.go",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/consensus\/pbft\/pbft-core.go",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1480333468.005656"
+    },
+    {
+        "type": "message",
+        "user": "U2KL18VPU",
+        "text": "<@U36HLH8SC> If rocksdb is already installed, then I don't know why you're getting that error. May be google search can help you..",
+        "ts": "1480333733.005658"
+    },
+    {
+        "user": "U370P3072",
+        "text": "<@U370P3072|alex_krikos> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480342207.005660"
+    },
+    {
+        "user": "U37Q6AZLM",
+        "text": "<@U37Q6AZLM|zhouky> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480342982.005661"
+    },
+    {
+        "user": "U38CG7PPZ",
+        "text": "<@U38CG7PPZ|dinesh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480343244.005662"
+    },
+    {
+        "type": "message",
+        "user": "U37Q6AZLM",
+        "text": "I got the following error when \"make linter\". \n\ngo vet .\/orderer\/...\norderer\/solo\/broadcast.go:145: <http:\/\/github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse|github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse> composite literal uses unkeyed fields\norderer\/solo\/broadcast.go:147: <http:\/\/github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse|github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse> composite literal uses unkeyed fields\norderer\/solo\/broadcast.go:152: <http:\/\/github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse|github.com\/hyperledger\/fabric\/orderer\/atomicbroadcast.BroadcastResponse> composite literal uses unkeyed fields\nexit status 1\nMakefile:107: recipe for target 'linter' failed\nmake: *** [linter] Error 1\n\nanyone can help? thx",
+        "ts": "1480344147.005663"
+    },
+    {
+        "user": "U37299Q49",
+        "text": "<@U37299Q49|masa> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480345128.005664"
+    },
+    {
+        "user": "U38DC9CCF",
+        "text": "<@U38DC9CCF|yedendra> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480346745.005665"
+    },
+    {
+        "type": "message",
+        "user": "U372Y8PJ7",
+        "text": "Hi all - I am very new with hyperledger :slightly_smiling_face: - I am testing the IBM docker images (<https:\/\/hub.docker.com\/r\/ibmblockchain\/fabric-peer\/>) - I have it running and \"init\" and \"invoke\" works fine, but \"query\" fails with this error : 15:08:55.092 [logging] LoggingInit -&gt; DEBU 001 Setting default logging level to DEBUG for command 'chaincode'\n15:08:55.092 [chaincodeCmd] getChaincodeSpecification -&gt; INFO 002 Local user 'test_user0' is already logged in. Retrieving login token.\nError: Error querying chaincode: rpc error: code = 2 desc = Error:Failed to launch chaincode spec(Could not get deployment transaction for ee5b24a1f17c356dd5f6e37307922e39ddba12e5d2e203ed93401d7d05eb0dd194fb9070549c5dc31eb63f4e654dbd5a1d86cbb30c48e3ab1812590cd0f78539 - LedgerError - ResourceNotFound: ledger: resource not found)",
+        "ts": "1480347209.005666"
+    },
+    {
+        "type": "message",
+        "user": "U372Y8PJ7",
+        "text": "any clues?",
+        "ts": "1480347213.005667"
+    },
+    {
+        "type": "message",
+        "user": "U372Y8PJ7",
+        "text": "another thing, is it possible to access a users \"public\" and \"private\" key in the chaincode, so I can encrypt and decrypt digital asserts ? - to be stored off-the-blockchain somewhere",
+        "ts": "1480347490.005670"
+    },
+    {
+        "type": "message",
+        "user": "U2XEJF649",
+        "text": "hi,  I want to run example Asset Management app. there is a link in documentation to fabric network conf \"<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/consensus\/docker-compose-files\/compose-consensus-4.md>\". that does not exist any more. Which docker-compose-4-consensus should i use for this example ?",
+        "ts": "1480350857.005671"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2XEJF649>  - check out the v0.6 branch",
+        "ts": "1480355081.005673"
+    },
+    {
+        "type": "message",
+        "user": "U2XEJF649",
+        "text": "<@U0PB67X4K>: no such file in v0.6 branch ",
+        "ts": "1480355871.005674"
+    },
+    {
+        "user": "U37P9822X",
+        "text": "<@U37P9822X|mwagner> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480356453.005675"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U2XEJF649>,  look in hyperledger\/fabric\/bddtests ,  for example,  docker-compose-4-consensus-batch.yml  sets up a 4-peer network.  You'll have to add the security and privacy configurations",
+        "ts": "1480357145.005676"
+    },
+    {
+        "user": "U37PMDKGT",
+        "text": "<@U37PMDKGT|jimmero> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480357835.005677"
+    },
+    {
+        "user": "U37RX6E6N",
+        "text": "<@U37RX6E6N|charlesliu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480358945.005678"
+    },
+    {
+        "user": "U38GR81GW",
+        "text": "<@U38GR81GW|wrabadi> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480360391.005679"
+    },
+    {
+        "type": "message",
+        "user": "U2TBCE9D3",
+        "text": "Hi, I am attempting to run go build .\/* from the IBM-Blockchain\/learn-chaincode\/start folder, on my Mac.  I already have run a simple hello-world go build on the system without any issues, but when I ran the go build.\/*, the build hung.  After ctrl-c out of the build command, any build attempts now fail with a fatal error unexpected signal during runtime execution.  runtime.sigpanic().  I was wondering if anyone else had experienced anything similar.  Thanks!",
+        "ts": "1480360473.005680"
+    },
+    {
+        "user": "U376RQHHP",
+        "text": "<@U376RQHHP|daniel.goodrich> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480361684.005681"
+    },
+    {
+        "user": "U37620UNL",
+        "text": "<@U37620UNL|andrewh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480362557.005682"
+    },
+    {
+        "user": "U38JCNW5V",
+        "text": "<@U38JCNW5V|divyank-sk> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480365554.005683"
+    },
+    {
+        "user": "U3781DR97",
+        "text": "<@U3781DR97|karl.e> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480366886.005684"
+    },
+    {
+        "user": "U38JGHMBQ",
+        "text": "<@U38JGHMBQ|shihao> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480367402.005685"
+    },
+    {
+        "type": "message",
+        "user": "U38JGHMBQ",
+        "text": "Is there a more detailed documentation regarding Fabric implementation available? I wish to know more about the project in detail but I can only find overviews",
+        "ts": "1480367750.005686"
+    },
+    {
+        "user": "U378W954G",
+        "text": "<@U378W954G|jos> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480375161.005688"
+    },
+    {
+        "user": "U379VMJTT",
+        "text": "<@U379VMJTT|francis.chen> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480375521.005689"
+    },
+    {
+        "user": "U382MLFNG",
+        "text": "<@U382MLFNG|jiayang.liu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480375934.005690"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "Hi, I'm trying to contribute code to cop, but can't get access to the gerrit repo\n```\ngit clone <ssh:\/\/tcz001@gerrit.hyperledger.org:29418\/fabric-cop>\nCloning into 'fabric-cop'...\nssh: connect to host <http:\/\/gerrit.hyperledger.org|gerrit.hyperledger.org> port 29418: Connection refused\nfatal: Could not read from remote repository.\n\nPlease make sure you have the correct access rights\nand the repository exists.\n```\nI followed the <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/CONTRIBUTING\/> section on document\nalso setup the ssh on <http:\/\/gerrit.hyperledger.org|gerrit.hyperledger.org>, but seems still not working. even can't download the repo locally",
+        "ts": "1480377797.005691"
+    },
+    {
+        "user": "U3801FW67",
+        "text": "<@U3801FW67|just4jcgeorge> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480388069.005692"
+    },
+    {
+        "user": "U384PGYAZ",
+        "text": "<@U384PGYAZ|tri.le> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480388950.005693"
+    },
+    {
+        "user": "U382JMN9G",
+        "text": "<@U382JMN9G|huyenduong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480392876.005694"
+    },
+    {
+        "user": "U37CGNMBK",
+        "text": "<@U37CGNMBK|atristan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480397406.005696"
+    },
+    {
+        "type": "message",
+        "user": "U2L125QGL",
+        "text": "Hi, I deploy a chaincode in peer, I am getting error as: Error: Error endorsing chaincode: rpc error: code = 12 desc = unknown service protos.Endorser\n10:25\nhow to solve this?",
+        "ts": "1480398601.005697"
+    },
+    {
+        "type": "message",
+        "user": "U2MLMERFD",
+        "text": "Hello all, Bluemix recently upgraded to fabric v0.6.1",
+        "ts": "1480399738.005698"
+    },
+    {
+        "type": "message",
+        "user": "U2MLMERFD",
+        "text": "which corresponding HFC version should I install?",
+        "ts": "1480399748.005699"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<@U2MLMERFD> ```npm install hfc@0.6.5```",
+        "ts": "1480400212.005700"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "Please refer to this for more detail.",
+        "ts": "1480400232.005701"
+    },
+    {
+        "type": "message",
+        "user": "U11CP8FF1",
+        "text": "<https:\/\/console.ng.bluemix.net\/docs\/services\/blockchain\/etn_sdk.html>",
+        "ts": "1480400235.005702"
+    },
+    {
+        "user": "U37BX5KQ8",
+        "text": "<@U37BX5KQ8|smiley> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480401277.005703"
+    },
+    {
+        "user": "U38PPQNT1",
+        "text": "<@U38PPQNT1|alexlitz> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1480403527.005704"
+    },
+    {
+        "type": "message",
+        "user": "U365KQ5MZ",
+        "text": "Can anybody please explain all fields return by this API : GET \/chain\/blocks\/{Block}   <@U0PB67X4K>",
+        "edited": {
+            "user": "U365KQ5MZ",
+            "ts": "1480404359.000000"
+        },
+        "ts": "1480404175.005705"
+    },
+    {
+        "type": "message",
+        "user": "U365KQ5MZ",
+        "text": "Has this page (<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/protos\/fabric.proto#L84>) been moved somewhere else?",
+        "ts": "1480404315.005706"
+    },
+    {
+        "type": "message",
+        "user": "U327VGGF9",
+        "text": "Hello all,  it seems that tools\/busywork was removed from latest fabric release.",
+        "ts": "1480405050.005708"
+    },
+    {
+        "type": "message",
+        "user": "U327VGGF9",
+        "text": "How can I apply performance testing now?",
+        "ts": "1480405193.005709"
+    }
+]

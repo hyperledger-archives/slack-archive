@@ -1,0 +1,605 @@
+[
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Hi, I\u2019m trying to get a five peer PBFT test rig running. When I do a `peer chaincode deploy` command on `peer-1` I get this in my logs:\n```11:39:19.874 [consensus\/pbft] ProcessEvent -&gt; INFO 02a Replica 0 batch timer expired\n11:39:19.874 [consensus\/pbft] sendBatch -&gt; INFO 02b Creating batch with 1 requests\n11:39:28.853 [consensus\/pbft] ProcessEvent -&gt; INFO 02c Replica 0 view change timer expired, sending view change: new request batch pt7Y3\/r6NmEbFMcknejbmQjcMRbI+3XOPhTN0KqNEf4Xy+\/+yMpKsGW7Xp7VEijXGZDj9gC\/WGUlDwNmCERwSA==\n11:39:28.854 [consensus\/pbft] sendViewChange -&gt; INFO 02d Replica 0 sending view-change, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:28.860 [consensus\/pbft] recvViewChange -&gt; INFO 02e Replica 0 received view-change from replica 0, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:30.860 [consensus\/pbft] sendViewChange -&gt; INFO 02f Replica 0 sending view-change, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:30.861 [consensus\/pbft] recvViewChange -&gt; INFO 030 Replica 0 received view-change from replica 0, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:30.861 [consensus\/pbft] recvViewChange -&gt; WARN 031 Replica 0 already has a view change message for view 1 from replica 0\n11:39:32.861 [consensus\/pbft] sendViewChange -&gt; INFO 032 Replica 0 sending view-change, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:32.862 [consensus\/pbft] recvViewChange -&gt; INFO 033 Replica 0 received view-change from replica 0, v:1, h:0, |C|:1, |P|:0, |Q|:1\n11:39:32.862 [consensus\/pbft] recvViewChange -&gt; WARN 034 Replica 0 already has a view change message for view 1 from replica 0\n11:39:34.863 [consensus\/pbft] sendViewChange -&gt; INFO 035 Replica 0 sending view-change, v:1, h:0, |C|:1, |P|:0, |Q|:1```\nBut no other peer seems to be receiving any view-changes and their logs are empty. Does it look like this peer is sending view-changes to itself?",
+        "ts": "1477395924.002612"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XQ35CDD> <https:\/\/jenkins.hyperledger.org\/job\/fabric-verify-x86_64\/2014\/console> not sure if this a one time thing but thought you might want to know...",
+        "ts": "1477401476.002613"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "from <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1977\/>",
+        "ts": "1477401519.002614"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2BGFAHC7>: The output makes sense, i.e. when counting view-change messages we also consider the one we sent. I am curious though as to why the peer is sending a view-change to vote off itself. How are you naming your peers?",
+        "ts": "1477401667.002615"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ULK2JPP>: Thanks for the heads up, will investigate right away. sarama's mock package is not the greatest. ",
+        "ts": "1477401715.002616"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2BGFAHC7> This looks like <https:\/\/jira.hyperledger.org\/browse\/FAB-707> which is odd looking behavior, but normal [edit: actually, I'm not so convinced, but it's probably still worth reading]",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1477401776.000000"
+        },
+        "ts": "1477401726.002617"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "``` kubectl get pods\nNAME      READY     STATUS    RESTARTS   AGE\npeer-0    2\/2       Running   0          1h\npeer-1    2\/2       Running   0          1h\npeer-2    2\/2       Running   0          1h\npeer-3    2\/2       Running   0          1h\npeer-4    2\/2       Running   0          1h```\nPeers have a hostname of `peer-0` but a DNS name of peer-0.peer.default.svc.cluster.local",
+        "ts": "1477401776.002619"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what's the peer.id for each?",
+        "ts": "1477401800.002620"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2BGFAHC7>: I figured. You need to do a vpX name for all.",
+        "ts": "1477401812.002621"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m doing:\n```command: [\"sh\",\"-c\",\"sleep 10;CORE_PEER_ID=$(hostname) CORE_PEER_ADDRESS=$(hostname).peer.default.svc.cluster.local:7051 peer node start\u201d]```",
+        "ts": "1477401843.002622"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "kostas, you're serious? vp-i is enforced?",
+        "ts": "1477401843.002623"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "i.e.  vp0, vp1, etc.",
+        "ts": "1477401853.002624"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this has been known for a while - this is for v0.6.x",
+        "ts": "1477401865.002625"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Kubernetes Petsets enforces the hyphen, unfortunately...",
+        "ts": "1477401875.002626"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ZJZBJLF>: Yes. A known weakness. ",
+        "ts": "1477401882.002627"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Wish someone had told me this a week ago :slightly_smiling_face:",
+        "ts": "1477401897.002628"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but its just the peer.id not necessarily is crypto id",
+        "ts": "1477401900.002629"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BGFAHC7>  - I think I might have a while back - sorry if it was not clear  :wink:",
+        "ts": "1477401921.002630"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2BGFAHC7>: I can point you to the point in the code where you can maybe play around with the naming scheme and get it to work. ",
+        "ts": "1477401928.002631"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XQ35CDD> that would be great :slightly_smiling_face:",
+        "ts": "1477401940.002632"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "can't you just set CORE_PEER_ID to something else?",
+        "ts": "1477401941.002633"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "you can derive the name from the hostname",
+        "ts": "1477401953.002634"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It has to be derived from the hostname, but could maybe do some `sed`-ing.",
+        "ts": "1477401963.002635"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yep",
+        "ts": "1477401969.002636"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "it's better IMO than doing a hacky code change in your stuff that will later might be over-written",
+        "ts": "1477401990.002637"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we just end all our hostnames with -vpX",
+        "ts": "1477401997.002638"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "in BMX",
+        "ts": "1477401999.002639"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "So I could have `peer-1-vp1`?",
+        "ts": "1477402046.002640"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(A sec, while I reboot the laptop.)",
+        "ts": "1477402109.002641"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2BGFAHC7>: <https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=consensus\/pbft\/pbft.go;hb=fa02382ab2fde8f767d525a21bbc9fe297f6303e#l91>",
+        "ts": "1477402289.002642"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You'll notice that it just strips away the first two characters from the handle, expect a `vpX` naming scheme. (lines 94-95)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1477402358.000000"
+        },
+        "ts": "1477402346.002643"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "And `getValidatorHandle()` right below will have to be edited accordingly. Let me know if you any help editing those.",
+        "ts": "1477402436.002645"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XQ35CDD> Ok, thanks. I can probably munge my peer.id to match that expectation. Made the point in the other channel, that the id scheme is abusable via collisions, maliciously or accidentally. An id derived from some entropy (private key would be best) and a signed HELLO message which contains both the id and a node type probably seems a bit more secure and less prone to mistakes like I\u2019ve been making :slightly_smiling_face:",
+        "ts": "1477402556.002646"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I agree. This current scheme is a terrible hack, I'm glad it's going away.",
+        "ts": "1477402606.002647"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I think we have reached consensus :slightly_smiling_face:",
+        "ts": "1477402622.002648",
+        "reactions": [
+            {
+                "name": "simple_smile",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            },
+            {
+                "name": "joy",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> I just pointed <@U0S5KF44D> to you to talk about the composition of the configuration in the genesis block (and at reconfiguration) so that you guys can coordinate on names and encodings etc.  I think it would be a great idea if you wanted to start a document which describes the assorted configuration objects which will be embedded (both their names and encodings)",
+        "ts": "1477404417.002649"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "thanks Jason !",
+        "ts": "1477404464.002650"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "I started the description in FAB-665 as well",
+        "ts": "1477404498.002651"
+    },
+    {
+        "user": "U11RW82PM",
+        "text": "<@U11RW82PM|david.acton> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477408394.002652"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XQ35CDD> Got it working with:\n```CORE_PEER_ID=$(hostname|sed 's\/peer-\/vp\/\u2018)```\nThanks!\nNext bug :slightly_smiling_face: I\u2019m using remote github urls to test deploying chaincode:\n```peer chaincode deploy -p <https:\/\/github.com\/donovanhide\/chaincode>  -c '{\"Function\":\"init\", \"Args\": []}\u2019```\nBut am getting this in my logs:\n```\n16:13:37.713 [consensus\/pbft] sendBatch -&gt; INFO 028 Creating batch with 1 requests\n16:13:37.959 [consensus\/pbft] executeOne -&gt; INFO 029 Replica 0 executing\/committing request batch for view=0\/seqNo=1 and digest 8h4lIhV7Q1ZHBO1gMN\/Z+dmkscCaDanPNxU9d0J5kC\/XVwgoO9x9BU70Mc2NidVO+akGuPbTKoCeA5Q\/DkZiyw==\n16:13:41.961 [dockercontroller] deployImage -&gt; ERRO 02a Error building images: Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n16:13:41.962 [dockercontroller] deployImage -&gt; ERRO 02b Image Output:\n********************\nStep 1 : FROM hyperledger\/fabric-baseimage\nPulling repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>\n\n********************```\nDoes this mean I need to prepare my Docker VM\u2019s for each peer with that image?",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477412441.000000"
+        },
+        "ts": "1477412426.002653"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U2BGFAHC7>: Cool, glad you got that one working. That second error is outside my area of expertise unfortunately. Paging <@U0ULK2JPP>.",
+        "ts": "1477412502.002656"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2BGFAHC7> My understanding is that this image is deliberately not tagged as 'latest' remotely so that older builds do not accidentally grab it.  Instead, the image is tagged as such locally during dev env construction.  <@U0KPFAZNF> I think has limited availability, but I believe he might be the best person to ask.\n\nIf you look at `.\/devenv\/setup.sh` you'll see references to `BASEIMAGE_RELEASE` which I think gets used in the `Makefile` to pick the image source.  (Sorry, this is also not my area of expertise) you might also find some help in <#C0YQ1NHGD|fabric-dev-env>",
+        "ts": "1477412999.002657"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U0XQ35CDD> <@U0XPR4NP4> Thanks! I\u2019ll wait for any other replies here rather than spamming all the channels :slightly_smiling_face:",
+        "ts": "1477413065.002658"
+    },
+    {
+        "user": "U294C6FDW",
+        "text": "<@U294C6FDW|echenrunner> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477413134.002659"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BGFAHC7> how did you build the peer and how are you running it ?",
+        "ts": "1477413398.002660"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BGFAHC7|donovanhide> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/donovanhide\/F2U12F8P3\/Untitled.yaml|Untitled>",
+        "file": {
+            "id": "F2U12F8P3",
+            "created": 1477413471,
+            "timestamp": 1477413471,
+            "name": "Untitled.yaml",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "yaml",
+            "pretty_type": "YAML",
+            "user": "U2BGFAHC7",
+            "editable": true,
+            "size": 2180,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2U12F8P3\/Untitled.yaml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2U12F8P3\/download\/Untitled.yaml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/donovanhide\/F2U12F8P3\/Untitled.yaml",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2U12F8P3-07d225e1e2",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/donovanhide\/F2U12F8P3\/Untitled.yaml\/edit",
+            "preview": "# A headless service to create DNS records\r\napiVersion: v1\r\nkind: Service\r\nmetadata:\r\n  name: peer\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre><span class=\"cm-comment\"># A headless service to create DNS records<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-atom\">apiVersion<\/span><span class=\"cm-meta\">: <\/span>v1<\/pre><\/div>\n<div><pre><span class=\"cm-atom\">kind<\/span><span class=\"cm-meta\">: <\/span>Service<\/pre><\/div>\n<div><pre><span class=\"cm-atom\">metadata<\/span><span class=\"cm-meta\">:<\/span><\/pre><\/div>\n<div><pre><span class=\"cm-atom\">  name<\/span><span class=\"cm-meta\">: <\/span>peer<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 80,
+            "lines_more": 75,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2BGFAHC7",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BGFAHC7|donovanhide>",
+        "bot_id": null,
+        "ts": "1477413472.002661"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Each peer is pulling `hyperledger\/fabric-peer:latest` on kubernetes and just running the peer binary",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477413505.000000"
+        },
+        "ts": "1477413487.002663"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where is it pulling it from?",
+        "ts": "1477413554.002665"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "So when I deploy some chaincode, it is trying to build the docker image on each peer and run it on it\u2019s own docker container that is local. It\u2019s pulling it from <http:\/\/hub.docker.com|hub.docker.com>.",
+        "ts": "1477413570.002666"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Each petset generates a peer container and a docker container within a \u201cpod\".",
+        "ts": "1477413604.002667"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Trying to simulate how a topology might work in real life.",
+        "ts": "1477413618.002668"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "I'm assuming you're running a PBFT network of at least 4 peers ... are you sending transactions to the network after you restarted your peer ? that peer won't know it is lagging unless it is receiving checkpoint messages from the other peers ... we can continue the discussion to <#C0Z4NBUN6|fabric-consensus-dev>",
+        "ts": "1477413675.002669"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "I\u2019m running a PBFT network of 5 peers.",
+        "ts": "1477413698.002670"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "How do I sent a checkpoint message?   are you testing DR in an event of Validating peer goes down?",
+        "ts": "1477413755.002671"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U294C6FDW> are you addressing me? :slightly_smiling_face:",
+        "ts": "1477413781.002672"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "yes..",
+        "ts": "1477413795.002673"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U294C6FDW> I have a working PBFT network. I just can\u2019t deploy chaincode, because of the error listed above. The <http:\/\/hub.docker.com|hub.docker.com> image doesn\u2019t have the correct tag, not sure how to work with that.",
+        "ts": "1477413912.002674"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(<@U294C6FDW>: A checkpoint message is sent automatically every K blocks, where K can be edited in the PBFT `config.yaml`.)",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1477413994.000000"
+        },
+        "ts": "1477413940.002675"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "The above petset configuration might be unfamiliar. To explain, it starts up 5 pods, each of which has a docker VM container and a fabric peer container. When it tries to build the chaincode docker image on each peer container, I get that error.",
+        "ts": "1477414057.002677"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "if I change   form    viewchangeperiod: 0   to  1  what impact does it have?",
+        "ts": "1477414136.002678"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U294C6FDW> Is that a question for me?",
+        "ts": "1477414213.002679"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BGFAHC7> I ran into issues with building peer due to tagging but rather give you my (homegrown) solution, let us check with <@U1AU8DRQR>",
+        "ts": "1477414280.002680"
+    },
+    {
+        "type": "message",
+        "user": "U294C6FDW",
+        "text": "anybody... thanks",
+        "ts": "1477414282.002681"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "(or <@U11HH3P7Y> \u2026 see you typing)",
+        "ts": "1477414328.002682"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U294C6FDW>: As the instructions in the `config.yaml` state, that means that every K blocks all validating peers will send a view-change request so that they proceed with a new primary\/leader.",
+        "ts": "1477414531.002683"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "You are then effectively rolling with a new primary per K blocks. (Assuming no Byzantine faults in between.)",
+        "ts": "1477414585.002684"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "<@U2BGFAHC7> you should have fabric-baseimage:latest",
+        "ts": "1477415033.002685"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "<@U11HH3P7Y> where? In each of my docker containers? By pulling and then tagging the <http:\/\/hub.docker.com|hub.docker.com> image?",
+        "ts": "1477415088.002686"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Should explain, I\u2019m using Docker In Docker as a test.",
+        "ts": "1477415137.002687"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "yes",
+        "ts": "1477415138.002688"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Ok, I can do that. Just wondering why you don\u2019t just tag the <http:\/\/hub.docker.com|hub.docker.com> image? Given the default in the deploy logic is to use `:latest`",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477415220.000000"
+        },
+        "ts": "1477415193.002689"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "docker pull hyperledger\/fabric-baseimage:x86_64-0.2.0 or other version tagged in <https:\/\/hub.docker.com\/r\/hyperledger\/fabric-baseimage\/tags\/> and tag with hyperledger\/fabric-baseimage:latest",
+        "ts": "1477415225.002691"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Just to share some information, <@U1AU8DRQR> pointed to this config line which is probably causing the issue:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/peer\/core.yaml#L289>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477415696.000000"
+        },
+        "ts": "1477415692.002692"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "could be the reason.. we are not pushing baseimage latest tag to hyperledger docker hub account..",
+        "ts": "1477415794.002695"
+    },
+    {
+        "type": "message",
+        "user": "U11HH3P7Y",
+        "text": "so you pull the baseimage with the tag we have and re-tag with latest",
+        "ts": "1477415845.002696"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "It seems like this is a Go peculiarity though as Java and CAR seem to use explicit tags:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/peer\/core.yaml#L299>\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/peer\/core.yaml#L307>",
+        "edited": {
+            "user": "U2BGFAHC7",
+            "ts": "1477415913.000000"
+        },
+        "ts": "1477415908.002697"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "maybe we should use that arch-... tag for go too",
+        "ts": "1477415979.002700"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "as it seems to be the same as the tags pushed to hub",
+        "ts": "1477415990.002701"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U0ULK2JPP> (I figured out what the issue is by the way, working on a fix now.)",
+        "ts": "1477417270.002702"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0XQ35CDD> thanks much",
+        "ts": "1477417293.002703"
+    },
+    {
+        "user": "U2HG2LQH4",
+        "text": "<@U2HG2LQH4|grbulat> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477417472.002704"
+    },
+    {
+        "user": "U2U1GAVL3",
+        "text": "<@U2U1GAVL3|senthil> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477421297.002705"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Anyone had issues with the building of chaincode being incredibly slow?\n```19:43:58.136 [consensus\/pbft] ProcessEvent -&gt; INFO 027 Replica 0 batch timer expired\n19:43:58.136 [consensus\/pbft] sendBatch -&gt; INFO 028 Creating batch with 1 requests\n19:43:58.373 [consensus\/pbft] executeOne -&gt; INFO 029 Replica 0 executing\/committing request batch for view=0\/seqNo=1 and digest HjKuvhOoO7kuwpNAUDLpRuLIi\/zLmBJr2xvZENIbzDlzFVYS4hRTZVLGH8P0U+qaXe+CWx6n068bhEwtvzVfew==\n20:11:30.383 [consensus\/pbft] execDoneSync -&gt; INFO 02a Replica 0 finished execution 1, trying next```\nIt\u2019s taken 28ish minutes to do the first part of the docker image build! I\u2019m running 5 peers on 3x3.75GB Google Cloud boxes. Must be doing something wrong :slightly_smiling_face:",
+        "ts": "1477426692.002706"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2BGFAHC7> I have not, though as you see, the transaction makes it through consensus to the `executing\/committing` phase, so you might want to try on <#C0YPYBVJM|fabric-dev> to reach a broader audience",
+        "ts": "1477426876.002707"
+    },
+    {
+        "type": "message",
+        "user": "U2BGFAHC7",
+        "text": "Okay, thanks, will re-post!",
+        "ts": "1477426919.002708"
+    }
+]

@@ -1,0 +1,343 @@
+[
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Hi Brad, those components are synthesized by chaintool when you do \"chaintool build\" in the example folder. The example was included in fabric because it's used in the UTs",
+        "ts": "1472730913.000008"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(There is explicit support for chaintool in the fabric code in general)",
+        "ts": "1472730949.000009"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1LES78TT>: ^^^",
+        "ts": "1472730975.000010"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "ok, thanks <@U0KPFAZNF> I'll see if I can get `chaintool build` to run over that before the unit tests get invoked on the examples",
+        "ts": "1472781451.000011"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "In the Makefile I can see chaintool being downloaded, but never actually used... I guess it was just a manual example before",
+        "ts": "1472781619.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "hmm... not sure I'm doing this right\n\nexamples\/chaincode\/chaintool\/example02\/build\/src\/hyperledger\/cci\/appinit\/server-stub.go:10:2: cannot find package \"hyperledger\/ccs\/api\" in any of:\n        \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/vendor\/hyperledger\/ccs\/api (vendor tree)\n        \/opt\/go\/src\/hyperledger\/ccs\/api (from $GOROOT)\n        \/opt\/gopath\/src\/hyperledger\/ccs\/api (from $GOPATH)\n\nI can see the files cci and ccs files being generated into examples\/chaincode\/chaintool\/example02\/build\/src\/hyperledger\/ but they need to make it into my $GOPATH somehow",
+        "ts": "1472784521.000013"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'm running `chaintool build` from the `examples\/chaincode\/chaintool\/example02` dir",
+        "ts": "1472784618.000014"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1LES78TT> thats odd, chaintool is supposed to synthesize the proper GOPATH",
+        "ts": "1472785014.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i might know what is happening",
+        "ts": "1472785030.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there was a bug in earlier versions of golang where really long GOPATHs were not handled properly",
+        "ts": "1472785044.000017"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "echo $GOPATH\n\/opt\/gopath",
+        "ts": "1472785066.000018"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "is that too long? :slightly_smiling_face:",
+        "ts": "1472785070.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "well, to be clear: the chaintool command will sythesize a dynamic GOPATH in the context of the compiler session",
+        "ts": "1472785100.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "ah ok",
+        "ts": "1472785106.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but, if the project happens to be in a really deep path, it ends up setting it to be really long",
+        "ts": "1472785126.000022"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "go version go1.6 linux\/amd64",
+        "ts": "1472785126.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "in this case, it would include \"examples\/chaincode\/chaintool\/example02\/build\u201d etc",
+        "ts": "1472785171.000024"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "to see if this is the problem, do something like",
+        "ts": "1472785180.000025"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ln -s path\/to\/chaincode\/example \/tmp\/foo &amp;&amp; cd \/tmp\/foo &amp;&amp; chaintool build",
+        "ts": "1472785203.000026"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect that will work",
+        "ts": "1472785207.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it still installed the cci and ccs under \/tmp\/foo\/build\/src\/hyperledger",
+        "ts": "1472785309.000028"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "should they have gone into my actual GOPATH too?",
+        "ts": "1472785317.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no no, thats expected",
+        "ts": "1472785325.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the tool would have set GOPATH=\/tmp\/foo\/build",
+        "ts": "1472785345.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "which is short enough",
+        "ts": "1472785349.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "same error?",
+        "ts": "1472785366.000033"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "ok... so it doesn't put the files into my actual GOPATH?",
+        "ts": "1472785370.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "no",
+        "ts": "1472785376.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "they are under .\/build relative to the project",
+        "ts": "1472785383.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "ok... I don't think they are going to work with `go test` then",
+        "ts": "1472785399.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure I fully understand yet, but thats ok",
+        "ts": "1472785430.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'm trying to add the examples dir to the `make unit-test` invocation",
+        "ts": "1472785449.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what are you trying to test?  a \u201cchaintool build\u201d + deploy scenario?",
+        "ts": "1472785482.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I basically want `go test <http:\/\/github.com\/hyperledger\/examples|github.com\/hyperledger\/examples>` to work",
+        "ts": "1472785512.000041"
+    },
+    {
+        "text": "looks",
+        "type": "message",
+        "subtype": "me_message",
+        "user": "U0KPFAZNF",
+        "ts": "1472785521.000042"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "as part of that it compiles the chaintool example... but that fails because of these cci and ccs packages not being in the normal GOPATH",
+        "ts": "1472785550.000043"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i see, so you are wanting the \u201cgo test\u201d command to descend down into <https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/chaintool\/example02\/src\/chaincode> and do something meaningful",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/chaintool\/example02\/src\/chaincode",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/chaintool\/example02\/src\/chaincode",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1472785581.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "yes... I was more interested in the other examples, but that is getting picked up as well",
+        "ts": "1472785613.000046"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "yeah, its probably not something that is advisable\u2026can we just exclude it from the test suite?",
+        "ts": "1472785622.000047"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i seem to recall there was an exclusion mechanism, but id have to look",
+        "ts": "1472785639.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "yep, working on that now",
+        "ts": "1472785653.000049"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, you probably already found this but",
+        "ts": "1472785667.000050"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/scripts\/goUnitTests.sh#L22>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/scripts\/goUnitTests.sh#L22",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/scripts\/goUnitTests.sh#L22",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1472785668.000051"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "just make it more precise to exclude chaintool examples and i think you are ok",
+        "ts": "1472785683.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "yeah, I took the `grep -v \/examples\/` off, and I am making it more specific :slightly_smiling_face:",
+        "ts": "1472785697.000054"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "cool",
+        "ts": "1472785704.000055"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "logging off for the night, but you seem to be on the right track",
+        "ts": "1472785718.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "a lot of the examples don't actually compile at the moment.... hence my trying to include them :slightly_smiling_face:",
+        "ts": "1472785720.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "no worries, thanks for the help",
+        "ts": "1472785725.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "have a good night :slightly_smiling_face:",
+        "ts": "1472785729.000059"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "a noble (and appreciated) effort",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1472785745.000000"
+        },
+        "ts": "1472785731.000060"
+    }
+]

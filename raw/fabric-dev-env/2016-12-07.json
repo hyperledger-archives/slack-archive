@@ -1,0 +1,189 @@
+[
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Sorry folks,  I need some help. \n\n1 -  I've  cloned master brach from <http:\/\/github.com\/hyperledger\/fabric|github.com\/hyperledger\/fabric>  \n2 - vagrant up\n3 - vagrant ssh\n4 cd \/hyperledger\n5 make\n\nEverything compiles. Most of unit tests passes. Everything looks ok.\n\nWhen I try to run a peer:  peer node start --peer-chaincodedev\n\nI get the following error:\n\n18:49:08.664 [nodeCmd] serve -&gt; INFO 05f Starting peer with ID=name:\"jdoe\" , network ID=dev, address=0.0.0.0:7051, rootnodes=, validator=true\n18:49:11.656 [committer] initDeliver -&gt; ERRO 060 Cannot dial to 0.0.0.0:7050, because of grpc: timed out when dialing\n18:49:11.656 [committer] startDeliver -&gt; ERRO 061 Can't initiate deliver protocol [grpc: timed out when dialing]",
+        "ts": "1481136565.000013"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Should I run membership services or something before staring peer on chaincodedev mode ?",
+        "ts": "1481136623.000014"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "It all used to run ok a couple of weeks ago",
+        "ts": "1481136649.000015"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U17CZFXGU> in another vagrant window start orderer first",
+        "ts": "1481137080.000016"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "cd orderer",
+        "ts": "1481137086.000017"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "go build",
+        "ts": "1481137089.000018"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ".\/orderer",
+        "ts": "1481137092.000019"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "then start the peer",
+        "ts": "1481137098.000020"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Excelent. Let me try",
+        "ts": "1481137107.000021"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also this was discussed yesterday",
+        "ts": "1481137347.000022"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<https:\/\/hyperledgerproject.slack.com\/archives\/chaincode\/p1481049171000171>",
+        "attachments": [
+            {
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/chaincode\/p1481049171000171",
+                "fallback": "[December 6th, 2016 10:32 AM] muralisr: oops .. `CORE_CHAINCODE_MODE=dev`",
+                "ts": "1481049171.000171",
+                "author_subname": "muralisr",
+                "channel_id": "C19ABCKPW",
+                "channel_name": "chaincode",
+                "is_msg_unfurl": true,
+                "text": "oops .. `CORE_CHAINCODE_MODE=dev`",
+                "author_name": "Srinivasan Muralidharan",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/muralisr",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/f2f14ee3d0f083c9afce9767faf6322d.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0000-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "id": 1,
+                "footer": "Posted in #chaincode"
+            }
+        ],
+        "ts": "1481137348.000023"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "that was regarding the use of \u2014peer-chaincodedev",
+        "ts": "1481137388.000025"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Thanks a lot <@U0ULK2JPP> \n\nI am runing ordered and I don't get that error message anymore.  Although I am not sure what orderer is all about :disappointed:\n\nNow I am trying to deploy some sample smart contracts\n\nCORE_CHAINCODE_MODE=dev   - Should let me compile go and java contracts and then deploy then without moving them to git ?\n\n1 cd \/hyperledger\/examples\/chaincode\/go\/chaincode_example01\n2 go build\n3 CORE_CHAINCODE_ID_NAME=example1  CORE_PEER_ADDRESS=0.0.0.0:7051 .\/chaincode_example01",
+        "ts": "1481138647.000026"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "9:24:39.649 [chaincode] processStream -&gt; DEBU 0e3 []Received message REGISTER from shim\n19:24:39.649 [chaincode] HandleMessage -&gt; DEBU 0e4 []Handling ChaincodeMessage of type: REGISTER in state created\n19:24:39.649 [chaincode] beforeRegisterEvent -&gt; DEBU 0e5 Received REGISTER in state created\n19:24:39.649 [chaincode] registerHandler -&gt; DEBU 0e6 registered handler complete for chaincode gg5\n19:24:39.649 [chaincode] beforeRegisterEvent -&gt; DEBU 0e7 Got REGISTER for chaincodeID = name:\"gg5\" , sending back REGISTERED\n\nLooks ok, I used to run peer chaincode deploy to deploy the smartcontract,  but now it asks me for a path even when I add the path I still get a message saying it can't find it\n\npeer chaincode deploy -n gg5  -p \/hyperledger\/examples\/chaincode\/go\/chaincode_example01  -c '{\"function\":\"init\", \"args\":[\"a\", \"100\", \"b\", \"200\"]}'\n\n\nError: Error getting chaincode code chaincode: Path to chaincode does not exist: \/hyperledger\/examples\/chaincode\/go\/chaincode_example01",
+        "ts": "1481138876.000027"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Shouldn't it work? I've started the peer as \n\nCORE_CHAINCODE_MODE=dev peer node start",
+        "ts": "1481138964.000028"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "I've got the following message on peer:\n\n19:18:23.305 [chaincode] processStream -&gt; ERRO 0ba Error handling chaincode support stream: stream error: code = 1 desc = \"context canceled\"\n19:18:23.306 [chaincode] deregisterHandler -&gt; DEBU 0bb Deregister handler: gg5\n19:18:23.306 [chaincode] deregisterHandler -&gt; DEBU 0bc Deregistered handler with key: gg5",
+        "ts": "1481139075.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "`CORE_CHAINCODE_MODE=dev peer chaincode deploy \u2026.`",
+        "ts": "1481139317.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "not on the `peer node start`",
+        "ts": "1481139333.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "there\u2019s some information in the link on the chaincode channels about using `peer-chaincodedev` mode that will be good to review",
+        "ts": "1481139385.000032"
+    },
+    {
+        "type": "message",
+        "user": "U17CZFXGU",
+        "text": "Let me try :smile:",
+        "ts": "1481139674.000033"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "Trying to follow the v1 skeletal environment, which was working before, and now I'm getting the following error when trying to make peer in vagrant",
+        "ts": "1481143060.000034"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "Step 3 : ADD payload\/goshim.tar.bz2 $GOPATH\/src\/\nError processing tar file(exit status 1): link \/github.com\/hyperledger\/fabric\/core\/chaincode\/shim\/java\/build\/classes\/main\/org\/hyperledger\/java\/shim\/ChaincodeBase.class \/github.com\/hyperledger\/fabric\/core\/chaincode\/shim\/java\/build\/classes\/main\/org\/hyperledger\/java\/shim\/ChaincodeBase.class: no such file or directory\nMakefile:195: recipe for target 'build\/image\/ccenv\/.dummy-x86_64-0.7.0-snapshot-5c9fcc3' failed\nmake: *** [build\/image\/ccenv\/.dummy-x86_64-0.7.0-snapshot-5c9fcc3] Error 1",
+        "ts": "1481143064.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U2NDE1ZCK> usually I see that when there is a file that hasnt been added\/removed from git",
+        "ts": "1481151715.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the issue is that the makefile uses \"git ls-files\" to determine which files to evaluate, and if you happen to be adding\/removing files to the tree, depending on how you do it, you can make git ls-files a liar :wink:",
+        "ts": "1481151764.000037"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, first question is; are you in the middle of knowingly adding\/removing files?",
+        "ts": "1481151796.000038"
+    },
+    {
+        "type": "message",
+        "user": "U2NDE1ZCK",
+        "text": "<@U0KPFAZNF> the only thing I did was copy a docker-compose file into the fabric root directory...I removed just to be safe, did a git pull to make sure I had the latest copy of master.....did a vagrant destroy then tried vagrant up again...same error while running make peer... <@U2NG5AX0A> was getting the same error, so don't think it's just me",
+        "edited": {
+            "user": "U2NDE1ZCK",
+            "ts": "1481154634.000000"
+        },
+        "ts": "1481154618.000039"
+    },
+    {
+        "user": "U3CPS8X62",
+        "text": "<@U3CPS8X62|vinodsankar> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1481168245.000041"
+    }
+]

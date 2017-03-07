@@ -1,0 +1,549 @@
+[
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> yes it is magic. <@U0KPFAZNF> and me thought that this is only temporary",
+        "ts": "1477469665.001776"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if you tell me where to detail the process of tagging (e.g. one has to download the image and tag it etc etc) and we agree in a proper process I can do that",
+        "ts": "1477469714.001777"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR>  - btw - realize my statement might have been a little harsh  :wink:   I just think that hard-coding things in code will get us into trouble.   Not sure where we should detail the process - maybe we need to do it here:    <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/#pulling-the-images-from-dockerhub>  (although this is for v0.6 at this point).  So perhaps we need to find a spot in the new SDK docs to add it?",
+        "ts": "1477479212.001778"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "although for v0.6 we should also add the \n```\ndocker pull hyperledger:fabric-baseimage:$ARCH\ndocker tag hyperledger:fabric-baseimage:$ARCH hyperledger\/fabric-baseimage:latest\n```\nor\n`docker tag hyperledger\/fabric-peer hyperledger\/fabric-baseimage:latest`",
+        "ts": "1477479344.001779"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I use the second one myself)",
+        "ts": "1477479359.001780"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if anyone's out there, this one is now ready:    <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1987\/>   (remove the sdk from fabric master)",
+        "ts": "1477479430.001781"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "any reason not to merge this:    <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2015\/>   ?",
+        "ts": "1477480367.001782"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0PB67X4K> just answered to a question from <@U1AU8DRQR>. I think its ready for merge",
+        "ts": "1477481584.001783",
+        "reactions": [
+            {
+                "name": "pray",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "merged",
+        "ts": "1477481844.001784",
+        "reactions": [
+            {
+                "name": "pray",
+                "users": [
+                    "U0ULK2JPP"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "thank s <@U0PB67X4K>",
+        "ts": "1477483010.001785"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> \n&gt; although for v0.6 we should also add the",
+        "ts": "1477483574.001786"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if we use the image:$ARCH tag then that will lead to automatic image download, or not?",
+        "ts": "1477483610.001787"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it will lead to download but of course right now the SDK uses the `:latest` tag when building the chaincode container.   So at some point in the \"setup\" process we'll need to tell people to download the image and re-tag it.     In the IBM images we just released (which are basically the HL images), we use a little trick in our compose file to \"create\" the base image on the fly -   <https:\/\/github.com\/IBM-Blockchain\/fabric-images\/tree\/master\/docker-compose>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "IBM-Blockchain\/fabric-images",
+                "title_link": "https:\/\/github.com\/IBM-Blockchain\/fabric-images\/tree\/master\/docker-compose",
+                "text": "fabric-images - Docker images and Docker Compose files for running the Hyperledger fabric",
+                "fallback": "GitHub: IBM-Blockchain\/fabric-images",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/17178768?v=3&s=400",
+                "from_url": "https:\/\/github.com\/IBM-Blockchain\/fabric-images\/tree\/master\/docker-compose",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1477484505.001788"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0PB67X4K>: why would we _not_ want to do this?  The software cannot function without the proper ccenv and the peer has enough information to automate the setup.  Why leave it as a manual step?",
+        "ts": "1477484698.001790"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ultimately the SDK needs to get away from specifying a Dockerfile, but that will take some more work...until then the image is required and I see no reason to leave it a manual step",
+        "ts": "1477484802.001791"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "All we really want to achieve is to have parity between build-from-source and binary-deployment ",
+        "ts": "1477484865.001792"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The build synthesizes the :latest tag, we want to move that to runtime so both modes are supported ",
+        "ts": "1477484914.001793"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'd like users to be able to stand up a peer with nothing more than \"docker run ...peer\"",
+        "ts": "1477484978.001794"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "as I said, people can override me.  History tells me that hardcoding things in code never leads to anything good.  We already tell people that they need to download or pull the peer and fabric images so why not just tell them to pull and tag the CC images as well?",
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1477485044.000000"
+        },
+        "ts": "1477484983.001795"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "then we should fix the SDK and not hardcode something in the peer",
+        "ts": "1477485007.001796"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "we can do the same thing in a compose file then",
+        "ts": "1477485067.001798"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and tell people to use compose to run the peer",
+        "ts": "1477485075.001799"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "all I am saying is that hardcoded strings are a bad idea IMHO  :wink:",
+        "ts": "1477485089.001800"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I fully agree that hardcoding is bad, but note that the hard coding of a FROM target in the SDK is the fundamental problem.  We are just trying to put a temporary solution in place to actually accommodate that decision.",
+        "ts": "1477485099.001801"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but we COULD fix that easily",
+        "ts": "1477485118.001802"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "With what?",
+        "ts": "1477485125.001803"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'm open to that",
+        "ts": "1477485131.001804"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hmm - maybe not so easily if we assume heterogeneous hosts for peers in a network.  So I take that back",
+        "ts": "1477485188.001805"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Exactly ",
+        "ts": "1477485197.001806"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That was our conclusion as well",
+        "ts": "1477485205.001807"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "This patch lets the peer do the right thing",
+        "ts": "1477485223.001808"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "In a heterogeneous environment ",
+        "ts": "1477485236.001809"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "\"latest\" then is contextually correct regardless of the composition ",
+        "ts": "1477485288.001810"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Moving forward, the vision\/proposal is that the chaincode\/SDK only declare requirements, and the peer can decide how to fulfill them ",
+        "ts": "1477485410.001811"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Kind of like \"Java 1.8\" vs 1.7",
+        "ts": "1477485442.001812"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "This is a baby step to address limitations to the current architecture ",
+        "ts": "1477485480.001813"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "but hang-on - maybe I am reading the code wrong - but it still seems that you need to actually download  \/ pull the CC image in any case",
+        "ts": "1477485540.001814"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "No, i think it will get pulled by the tag.  We should confirm that though ",
+        "ts": "1477485588.001815"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "unless \n```\nccenv := util.ParseDockerfileTemplate(\"hyperledger\/fabric-ccenv:$(ARCH)-$(PROJECT_VERSION)\")\n\ttagoptions := docker.TagImageOptions{Repo: \"hyperledger\/fabric-ccenv\", Tag: \"latest\"}\n\ttagerr := d.TagImage(ccenv, tagoptions)\n```\ndoes more than I think",
+        "ts": "1477485591.001816"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "maybe it actually does pull it?",
+        "ts": "1477485621.001817"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I'll try to confirm this pulls it too, that was the intent",
+        "ts": "1477485623.001818"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think so, and I agree that is a requirement ",
+        "ts": "1477485638.001819"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Otherwise has limited utility ",
+        "ts": "1477485652.001820"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "via `docker`  CLI does not appear to work",
+        "ts": "1477485761.001821"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "yeah I am not sure 'tag' will pull",
+        "ts": "1477485835.001822"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "`docker tag hyperledger\/fabric-ccenv:x86_64-0.6.1-preview gari:gari`  this failed until after I ran `docker pull docker tag hyperledger\/fabric-ccenv:x86_64-0.6.1-preview`",
+        "ts": "1477485838.001823"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Good catch",
+        "ts": "1477485872.001824"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U1AU8DRQR>: I assume that is a trivial mod to drive via the API",
+        "ts": "1477485894.001825"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "?",
+        "ts": "1477485897.001826"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<https:\/\/godoc.org\/github.com\/fsouza\/go-dockerclient#Client.PullImage>",
+        "attachments": [
+            {
+                "title": "Package docker",
+                "title_link": "https:\/\/godoc.org\/github.com\/fsouza\/go-dockerclient#Client.PullImage",
+                "text": "Package docker provides a client for the Docker remote API.",
+                "fallback": "Package docker",
+                "from_url": "https:\/\/godoc.org\/github.com\/fsouza\/go-dockerclient#Client.PullImage",
+                "service_icon": "https:\/\/godoc.org\/favicon.ico",
+                "service_name": "godoc.org",
+                "id": 1
+            }
+        ],
+        "ts": "1477485922.001827"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "personally I would still prefer to do it outside of the peer process but as I said I am just one dissenter  :wink:",
+        "ts": "1477485982.001829"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0KM61BCP> -  what are your thoughts here ^^^^",
+        "ts": "1477486017.001830"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0KPFAZNF> I hope yes",
+        "ts": "1477486034.001831"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0PB67X4K> should we go with this solution or prefer the manual tagging?",
+        "ts": "1477486373.001832"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I still think we should automate it.  I get a constant stream of bugs\/questions about this when a newbie joins the project ",
+        "ts": "1477486732.001833"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I vote for manual tagging but as I said that's just me.  I think telling people to do:\n\n```\ndocker pull hyperledger:fabric-peer:$ARCH-$RELEASE\ndocker pull hyperledger:fabric-membersrvc:$ARCH-$RELEASE\ndocker pull hyperledger:fabric-ccenv:$ARCH-$RELEASE\ndocker tag hyperledger:fabric-ccenv:$ARCH-$RELEASE  hyperledger:fabric-ccenv:latest\n```\n\nis no more complex than \n\n```\ndocker pull hyperledger:fabric-peer:$ARCH-$RELEASE\ndocker pull hyperledger:fabric-membersrvc:$ARCH-$RELEASE\n```\n\nwhich they will have to do anyway for each platform",
+        "ts": "1477486733.001834"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "And the peer has all the info\/access",
+        "ts": "1477486754.001835"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I see your point though",
+        "ts": "1477486774.001836"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "and we can do what we did here - <https:\/\/github.com\/IBM-Blockchain\/fabric-images\/tree\/master\/docker-compose> to make it easier for users on a single platform",
+        "ts": "1477486775.001837"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I've made my case and beat this to death so up to the rest of you   :wink:",
+        "ts": "1477486861.001838"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yes, I see your point.  We could address with doc until we have something that fixes it for real",
+        "ts": "1477486934.001839"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "like Docker supporting ARCH  :wink:  ?",
+        "ts": "1477486949.001840"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I think it is better to automate things but it is really weird that peer calls docker and tag and etc.",
+        "ts": "1477486978.001841"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "With a simple tag, I was happy as I thought it would handle pull vs locally available already.  But since it apparently doesn't, that could complicate things",
+        "ts": "1477486980.001842"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "btw I still on the automation side :smile: as a temporary solution",
+        "ts": "1477487023.001843"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "For instance, will the pull API call return failure if the image is local but not on dockerhub?",
+        "ts": "1477487023.001844"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "no",
+        "ts": "1477487036.001845"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "That could be a problem",
+        "ts": "1477487041.001846"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "I don't think",
+        "ts": "1477487041.001847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Ok",
+        "ts": "1477487044.001848"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if you pull   docker pull fabric\/ccenv:latest then it will find it locally or pull from docker hub, it doesn't care which happens. no?",
+        "ts": "1477487108.001849"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "it should just return that it already has the latest if you have it locally and the hash matches",
+        "ts": "1477487154.001850"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I seem to recall having to deal with the difference in the old docker.sh script",
+        "ts": "1477487307.001851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I might be mistaken, and the cmdline might act differently than the API",
+        "ts": "1477487326.001852"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "^^^ no doubt",
+        "ts": "1477487336.001853"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "so lets hear the voice of the others",
+        "ts": "1477487383.001854"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "has everyone abandoned us?",
+        "ts": "1477487473.001855"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "in connection with this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/843\/> do we plan any changes to the chaincode API? I am not concerned that there should be changes",
+        "ts": "1477488204.001856"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "I submitted <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2017\/> last night, which contains the chaincode deploy fix (using ccenv image plus adjusting the RUN commands to properly work with the image\u2019s content) because the problem it needs to address (Promise related issue with sendDeploymentProposal()) depends on the deploy fix",
+        "ts": "1477488888.001857"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KM61BCP> <@U0PB67X4K> <@U0KPFAZNF> please review and merge?",
+        "ts": "1477488919.001858"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1AU8DRQR>  - if we really want to remove those functions from the interface (which I agree is the right call) then now is probably the time to do that so I'd rebase and submit against master.  But again that's just me",
+        "ts": "1477489002.001859"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U13TWBRBL>  - was looking at this",
+        "ts": "1477489020.001860"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "<@U0ULK2JPP> what do you think?",
+        "ts": "1477489075.001861"
+    }
+]

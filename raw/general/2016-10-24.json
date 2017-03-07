@@ -1,0 +1,1767 @@
+[
+    {
+        "user": "U2T6RNUU8",
+        "text": "<@U2T6RNUU8|longwu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477297532.003167"
+    },
+    {
+        "user": "U2T78SHHP",
+        "text": "<@U2T78SHHP|lohitkrishnan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477298454.003168"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BF87970> - where in your config is port 5005?",
+        "ts": "1477302334.003169"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "also, how are you running the peer?",
+        "ts": "1477302350.003170"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K> I am running the peer with security and privacy disables using the procedure available at : <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/#running-the-chaincode>.  I have been able to make peer but encountered the error while running the command start peer node.",
+        "ts": "1477302515.003171"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "so you are running `peer node start` and getting that error?",
+        "ts": "1477302586.003172"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "yes",
+        "ts": "1477302624.003173"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "i ran the code : peer node start --peer-chaincodedev",
+        "ts": "1477302649.003174"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ah -   shoot - I know the problem",
+        "ts": "1477302735.003175"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "the `master` branch has now been updated to start development on the new v1 architecture",
+        "ts": "1477302786.003176"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "what you'll need to do is to checkout the `v0.6` branch instead.  better yet, you may just want to run the Docker images we have built for v0.6.1-release-preview",
+        "ts": "1477302834.003177"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K>  can you elaborate a bit... i am a fresher in this field. Currently playing out with docker toolbox and vagrant on my windows 7 to develop local environment for experimenting with block chain. \nDidnt get what u meant with checking out version  the new updated master branch 0.6?? I however downloaded the latest images and tired building peer in the non-vagrant environment. But I could not locate the peer using the address 127.0.0.1:2375.",
+        "ts": "1477303263.003178"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "sorry the address is 172.17.0.1:2375",
+        "ts": "1477303340.003179"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sure - so a couple of points:\n\n1) The documentation was written for the `v0.6` version of the fabric which is the latest stable release.   \n2) Over the past few days, we've been \"merging\" `v1.0` feature branches into the `master` branch of the repository so if you clone the source repository the `master` (default) branch will actually be for `v1.0` which means that things no longer work exactly as they did in `v0.6` (and as the docs describe)\n\nIs it safe to assume that you are more interested in using the fabric and developing chaincode and applications rather than actually doing development on the core fabric code itself?",
+        "ts": "1477303546.003180"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "be right back ....",
+        "ts": "1477303720.003181"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K>  yes actually I am trying to learn building a chain code first. Can you help me out with some links for the chain code development. and are the command for cloning v0.6 and v1.0 different?",
+        "edited": {
+            "user": "U2BF87970",
+            "ts": "1477304365.000000"
+        },
+        "ts": "1477303805.003182"
+    },
+    {
+        "user": "U2T7Z63NY",
+        "text": "<@U2T7Z63NY|synblockchainteam> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477305259.003185"
+    },
+    {
+        "user": "U2T6MTARH",
+        "text": "<@U2T6MTARH|smatsui> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477305592.003186"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BF87970>  - I'm back.   So hopefully what we can do here is get you up and running with the Docker images and then developing \/ running your chaincode on your Windows 7 host.\n\nStep 1:    Install Docker Toolbox for Windows  (I think you did this already)\n\nStep 2:    Use the \"Docker QuickStart Terminal\"  shortcut (either on your desktop or via the start menu) to launch Docker on your Windows host   (if you've done this already, I'd recommend closing any open \"QuickStart Terminal\" Windows\n\nStep 3:  After launching the \"QuickStart Terminal\", you'll see a line printed out underneath the Docker picture - something like `...configured to use the default machine with IP <http:\/\/XXX.XXX.XXX.XXX|XXX.XXX.XXX.XXX>`    - you will want to capture that IP address as we'll need it when we run the chaincode later\n\nStep 4:  Follow <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/#option-3-docker-toolbox>  to create a compose file and launch the peer and membership services",
+        "ts": "1477305840.003187"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Step 5:   If you don't have Go installed on your Windows host, install that next",
+        "ts": "1477306043.003188"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BF87970|sumitks> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T8UT7FC\/capture.png|Capture.PNG>",
+        "file": {
+            "id": "F2T8UT7FC",
+            "created": 1477306472,
+            "timestamp": 1477306472,
+            "name": "Capture.PNG",
+            "title": "Capture.PNG",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U2BF87970",
+            "editable": false,
+            "size": 23386,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T8UT7FC\/capture.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T8UT7FC\/download\/capture.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8UT7FC-c828d7f415\/capture_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8UT7FC-c828d7f415\/capture_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8UT7FC-c828d7f415\/capture_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 172,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8UT7FC-c828d7f415\/capture_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 230,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8UT7FC-c828d7f415\/capture_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 644,
+            "original_h": 308,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T8UT7FC\/capture.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T8UT7FC-222b2f3e88",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2BF87970",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BF87970|sumitks>",
+        "bot_id": null,
+        "ts": "1477306474.003189"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K> I have run the command docker-compose up and got the following response",
+        "ts": "1477306481.003190"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "the image above",
+        "ts": "1477306495.003191"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "ok - good looks like things are working up until now",
+        "ts": "1477306944.003192"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "do you have Go installed on your Windows host?",
+        "ts": "1477306966.003193"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "yes",
+        "ts": "1477307022.003194"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(I'm going to write out some additional steps which you might already have done but hopefully we can capture these for others to use as well)",
+        "ts": "1477307109.003195"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Step 6:   Launch another \"Docker QuickStart Terminal\"\nStep 7:   In that terminal,  `cd $GOPATH\/src`     (if GOPATH is not set, refer to the Golang instructions on setting up your GOPATH -  <https:\/\/golang.org\/doc\/install>\nStep 8:  run `mkdir -p <http:\/\/github.com\/hyperledger|github.com\/hyperledger>`\nStep 9:  `cd <http:\/\/github.com\/hyperledger|github.com\/hyperledger>`\nStep 10:  `git clone -b v0.6 --single-branch <http:\/\/gerrit.hyperledger.org\/r\/fabric>`\nStep 11:  `cd fabric\/examples\/chaincode\/go\/chaincode_example02`\nStep 12:  `go build`\nStep 13:  `CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=<http:\/\/XXX.XXX.XXX.XXX:7051|XXX.XXX.XXX.XXX:7051> .\/chaincode_example02`    - replace <http:\/\/XXX.XXX.XXX.XXX|XXX.XXX.XXX.XXX> with the IP address you capture in Step 3",
+        "ts": "1477307828.003196"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "if this works ( :pray: ) then you should be able to develop your own chaincode locally on your Windows host as well",
+        "ts": "1477307866.003197"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you'll just want to make sure that you emulate Step 13 but replace `chaincode_example02` with your compiled chaincode  - you can also of course give it a different name by passing a different value for `CORE_CHAINCODE_ID_NAME`",
+        "ts": "1477307948.003198"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(note that Step 10 above is a convenient way to ensure that you only have the v0.6 version of the src code in your GOPATH)",
+        "ts": "1477307995.003199"
+    },
+    {
+        "type": "message",
+        "user": "U2LHDBZM0",
+        "text": "Hi All,",
+        "ts": "1477308279.003200"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2LHDBZM0|abhisingh> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/abhisingh\/F2T99DK5G\/-.xml|Untitled>",
+        "file": {
+            "id": "F2T99DK5G",
+            "created": 1477308293,
+            "timestamp": 1477308293,
+            "name": "-.xml",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "xml",
+            "pretty_type": "XML",
+            "user": "U2LHDBZM0",
+            "editable": true,
+            "size": 645,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T99DK5G\/-.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T99DK5G\/download\/-.xml?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/abhisingh\/F2T99DK5G\/-.xml",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T99DK5G-b14b3cf238",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/abhisingh\/F2T99DK5G\/-.xml\/edit",
+            "preview": "vagrant@hyperledger-devenv:v0.0.11-c6e56d6:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/examples\/chaincode\/java\/Demo$ gradle -b build.gradle build\r\n\r\nFAILURE: Build failed with an exception.\r\n\r\n* Where:\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vagrant@hyperledger-devenv:v0.0.11-c6e56d6:\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/examples\/chaincode\/java\/Demo$ gradle -b build.gradle build<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>FAILURE: Build failed with an exception.<\/pre><\/div>\n<div><pre>&#8203;<\/pre><\/div>\n<div><pre>* Where:<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 18,
+            "lines_more": 13,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2LHDBZM0",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2LHDBZM0|abhisingh>",
+        "bot_id": null,
+        "ts": "1477308293.003201"
+    },
+    {
+        "type": "message",
+        "user": "U2LHDBZM0",
+        "text": "I am getting this error while building",
+        "ts": "1477308315.003202"
+    },
+    {
+        "type": "message",
+        "user": "U2LHDBZM0",
+        "text": "java chaincode",
+        "ts": "1477308369.003203"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "before you post here, I'd advise posting the the <#C1D3VRND8|java-chaincode> channel",
+        "ts": "1477308470.003204"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K>  I encountered the following error after executing the step 13",
+        "ts": "1477308559.003205"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BF87970|sumitks> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T8U0PEU\/capture1.png|Capture1.PNG>",
+        "file": {
+            "id": "F2T8U0PEU",
+            "created": 1477308568,
+            "timestamp": 1477308568,
+            "name": "Capture1.PNG",
+            "title": "Capture1.PNG",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U2BF87970",
+            "editable": false,
+            "size": 52157,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T8U0PEU\/capture1.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T8U0PEU\/download\/capture1.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8U0PEU-9616947b23\/capture1_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8U0PEU-9616947b23\/capture1_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8U0PEU-9616947b23\/capture1_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 217,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8U0PEU-9616947b23\/capture1_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 289,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T8U0PEU-9616947b23\/capture1_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 655,
+            "original_h": 395,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T8U0PEU\/capture1.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T8U0PEU-19e31c9139",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2BF87970",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BF87970|sumitks>",
+        "bot_id": null,
+        "ts": "1477308570.003206"
+    },
+    {
+        "user": "U2T8UR8BY",
+        "text": "<@U2T8UR8BY|ktekavec> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477308634.003207"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U2BF87970>   - I see the problem - I did not realize that the Docker compose file did not expose the ports  :disappointed:",
+        "ts": "1477308801.003208"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Please modify the compose file:\n\n```\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n      - \"7050:7050\"\n      - \"7051:7051\"\n      - \"7053:7053\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=<http:\/\/172.17.0.1:2375>\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"\n```",
+        "ts": "1477308860.003209"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "notice the addition of the \"ports\" entry above",
+        "ts": "1477308876.003210"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K> this docker compose corresponds for the docker for windows 10 according to the documentation.",
+        "ts": "1477308956.003211"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "this should work for Docker Toolbox on Windows 7",
+        "ts": "1477308997.003212"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "while the documentation says that foe docker toolbox we need to use the following file( as I am using windows 7):",
+        "ts": "1477309002.003213"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "ok will try and let you know",
+        "ts": "1477309012.003214"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BF87970|sumitks> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T9DK6BC\/capture2.png|Capture2.PNG>",
+        "file": {
+            "id": "F2T9DK6BC",
+            "created": 1477309047,
+            "timestamp": 1477309047,
+            "name": "Capture2.PNG",
+            "title": "Capture2.PNG",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U2BF87970",
+            "editable": false,
+            "size": 25393,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9DK6BC\/capture2.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9DK6BC\/download\/capture2.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 138,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 184,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9DK6BC-c886f46af1\/capture2_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 276,
+            "image_exif_rotation": 1,
+            "original_w": 746,
+            "original_h": 286,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T9DK6BC\/capture2.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T9DK6BC-b0939a2ce0",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2BF87970",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BF87970|sumitks>",
+        "bot_id": null,
+        "ts": "1477309051.003215"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "I just gave it a try and as they say \"it worked for me\"    :wink:",
+        "ts": "1477309492.003216"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "or \"it worked on my machine\"",
+        "ts": "1477309501.003217"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "gari, i have that in the docs",
+        "ts": "1477310929.003219"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "I should check all the places",
+        "ts": "1477310950.003220"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Hmm - I might have missed it",
+        "ts": "1477311028.003221"
+    },
+    {
+        "user": "U2T9N0MC7",
+        "text": "<@U2T9N0MC7|andrew.haim> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477311660.003222"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K> I got the same error with the new docker compose file:",
+        "ts": "1477312309.003223"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BF87970|sumitks> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T9MLFNZ\/capture3.png|Capture3.PNG>",
+        "file": {
+            "id": "F2T9MLFNZ",
+            "created": 1477312320,
+            "timestamp": 1477312320,
+            "name": "Capture3.PNG",
+            "title": "Capture3.PNG",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U2BF87970",
+            "editable": false,
+            "size": 26817,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9MLFNZ\/capture3.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9MLFNZ\/download\/capture3.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9MLFNZ-ed1dfeb026\/capture3_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9MLFNZ-ed1dfeb026\/capture3_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9MLFNZ-ed1dfeb026\/capture3_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 169,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9MLFNZ-ed1dfeb026\/capture3_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 226,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T9MLFNZ-ed1dfeb026\/capture3_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 657,
+            "original_h": 309,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T9MLFNZ\/capture3.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T9MLFNZ-febc153001",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U2BF87970",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BF87970|sumitks>",
+        "bot_id": null,
+        "ts": "1477312322.003224"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K> <@U0ULK2JPP> also the file created after the command go build has the extension .exe. Is that right?",
+        "ts": "1477313879.003225"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "I guess i am doing something wrong after step 12.",
+        "ts": "1477314755.003226"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "do i need to edit the file: chaincode_example02.exe created after executing the command: go build before running the command :CORE_CHAINCODE_ID_NAME=mycc CORE_PEER_ADDRESS=<http:\/\/XXX.XXX.XXX.XXX:7051|XXX.XXX.XXX.XXX:7051> .\/chaincode_example02",
+        "ts": "1477314894.003227"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U2BF87970> did you try CORE_PEER_ADDRESS=127.0.0.1:7051",
+        "ts": "1477314990.003228"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "also make sure 7051 is up with `netstat -an`",
+        "ts": "1477315012.003229"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0ULK2JPP> i didn't get what you mean with netstat -an",
+        "ts": "1477315137.003231"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "If you mean including 7051 in the compose file then it is already included in it",
+        "ts": "1477315174.003232"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "my core peer address was my vm ip:7051",
+        "edited": {
+            "user": "U2BF87970",
+            "ts": "1477315440.000000"
+        },
+        "ts": "1477315256.003233"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "i.e. 192.168.99.101:7051",
+        "ts": "1477315331.003234"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "it is not working with either of the core peer addresses",
+        "ts": "1477315554.003237"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "sorry - was away - not sure what is going on.   Can you run the following commands in the same quick start terminal window you are using:\n\n`docker run --rm --net host -it alpine \/bin\/sh`",
+        "ts": "1477316101.003238"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "once that runs, it you should be in another shell",
+        "ts": "1477316156.003239"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "then run\n\n`ifconfig eth1`   and check the ip address",
+        "ts": "1477316209.003240"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "also run \n`netstat -an |grep 7051` and make sure you get something back",
+        "ts": "1477316231.003241"
+    },
+    {
+        "user": "U2TAR9JAZ",
+        "text": "<@U2TAR9JAZ|mmassengill> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477317150.003242"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "<@U0PB67X4K>  <@U0ULK2JPP> thanks  it worked the second time",
+        "ts": "1477317510.003243"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "the snipped of the terminal is :",
+        "ts": "1477317539.003244"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2BF87970|sumitks> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T95M43D\/capture4.png|Capture4.PNG>",
+        "file": {
+            "id": "F2T95M43D",
+            "created": 1477317591,
+            "timestamp": 1477317591,
+            "name": "Capture4.PNG",
+            "title": "Capture4.PNG",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U2BF87970",
+            "editable": false,
+            "size": 51547,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T95M43D\/capture4.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T95M43D\/download\/capture4.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T95M43D-f43eeac9f4\/capture4_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T95M43D-f43eeac9f4\/capture4_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T95M43D-f43eeac9f4\/capture4_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 175,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T95M43D-f43eeac9f4\/capture4_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 233,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2T95M43D-f43eeac9f4\/capture4_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 675,
+            "original_h": 328,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/sumitks\/F2T95M43D\/capture4.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T95M43D-50d02515ee",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0,
+            "num_stars": 1
+        },
+        "user": "U2BF87970",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2BF87970|sumitks>",
+        "bot_id": null,
+        "ts": "1477317593.003245"
+    },
+    {
+        "type": "message",
+        "user": "U2BF87970",
+        "text": "but the core vm end point that i used was-- CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock and as they \"it worked for me\" also :relaxed: <@U0PB67X4K>",
+        "edited": {
+            "user": "U2BF87970",
+            "ts": "1477317783.000000"
+        },
+        "ts": "1477317647.003246",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0PB67X4K"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U2BF87970> <@U0PB67X4K> so, guys, the problem was in CORE_VM_ENDPOINT?",
+        "ts": "1477318544.003249"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I also have some problems with docker-compose start. Can\u2019t find what causes it",
+        "ts": "1477318603.003250"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1W210996> - what's your host OS?",
+        "ts": "1477318643.003251"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "MacOS",
+        "ts": "1477318648.003252"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "and no vagrant",
+        "ts": "1477318662.003253"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "starting from host",
+        "ts": "1477318671.003254"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I have a problem when deploying chaincode",
+        "ts": "1477318688.003255"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "``` [dockercontroller] deployImage -&gt; ERRO 02e Error building images: dial unix \/var\/run\/docker\/sock: connect: no such file or directory```",
+        "ts": "1477318711.003256"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Docker for Mac or Docker Toolbox",
+        "ts": "1477318714.003257"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "it is Docker, I guess",
+        "ts": "1477318733.003258"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "guess it does not really matter",
+        "ts": "1477318737.003259"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "you need to map a volume for it to work with `\/var\/run\/docker.sock`",
+        "ts": "1477318804.003260"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "```\nvolumes:\n      - \/var\/run\/docker.sock:\/var\/run\/docker.sock\n```",
+        "ts": "1477318813.003261"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "in docker-compose.yml?",
+        "ts": "1477318827.003262"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "yep",
+        "ts": "1477318842.003263"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "And to add it to each peer, right?",
+        "ts": "1477318853.003264"
+    },
+    {
+        "user": "U2TB1TLUE",
+        "text": "<@U2TB1TLUE|taylant> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477318873.003265"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "correct",
+        "ts": "1477318885.003266"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Ok, let me try. Thanks",
+        "ts": "1477318894.003267"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "np",
+        "ts": "1477318903.003268"
+    },
+    {
+        "user": "U2TBCE9D3",
+        "text": "<@U2TBCE9D3|jefftenn> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477319350.003269"
+    },
+    {
+        "user": "U2TB7EW4W",
+        "text": "<@U2TB7EW4W|cusdenia> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477319450.003270"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U0PB67X4K> was the tag latest removed? (I guess somebody wrote about it)",
+        "ts": "1477319563.003271"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "```Tag latest not found in repository <http:\/\/docker.io\/hyperledger\/fabric-baseimage|docker.io\/hyperledger\/fabric-baseimage>```",
+        "ts": "1477319568.003272"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "there's never been one",
+        "ts": "1477319594.003273"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "easiest thing to to is `docker tag hyperledger\/fabric-peer hyperledger\/fabric-baseimage:latest` or of course to `docker pull` the base image and then `docker tag` it",
+        "ts": "1477319648.003274"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "That error has gone",
+        "ts": "1477320184.003275"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1W210996|zemtsov> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2T9XJGSF\/-.sh|Untitled>",
+        "file": {
+            "id": "F2T9XJGSF",
+            "created": 1477320213,
+            "timestamp": 1477320213,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U1W210996",
+            "editable": true,
+            "size": 1440,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9XJGSF\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2T9XJGSF\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2T9XJGSF\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2T9XJGSF-9810298166",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2T9XJGSF\/-.sh\/edit",
+            "preview": "vp3_1         | 14:38:59.146 [dockercontroller] deployImage -> ERRO 02d Error building images: The command '\/bin\/sh -c go install build-chaincode && cp src\/build-chaincode\/vendor\/github.com\/hyperledger\/fabric\/peer\/core.yaml $GOPATH\/bin && mv $GOPATH\/bin\/build-chaincode $GOPATH\/bin\/4e4cfbc3b4eb2fd62f80d333b2d9c748757bde08c765b974dabc0c167562335f' returned a non-zero code: 1\r\nvp3_1         | 14:38:59.146 [dockercontroller] deployImage -> ERRO 02e Image Output:\r\nvp3_1         | ********************\r\nvp3_1         | Step 1 : FROM hyperledger\/fabric-baseimage\r\nvp3_1         |  ---> 21cb00fb27f4\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vp3_1         | <span class=\"cm-number\">14<\/span>:38:59.146 [dockercontroller] deployImage <span class=\"cm-attribute\">-<\/span>&gt; ERRO 02d Error building images: The command <span class=\"cm-string\">'\/bin\/sh -c go install build-chaincode &amp;&amp; cp src\/build-chaincode\/vendor\/github.com\/hyperledger\/fabric\/peer\/core.yaml $GOPATH\/bin &amp;&amp; mv $GOPATH\/bin\/build-chaincode $GOPATH\/bin\/4e4cfbc3b4eb2fd62f80d333b2d9c748757bde08c765b974dabc0c167562335f'<\/span> returned a non-zero code: <span class=\"cm-number\">1<\/span><\/pre><\/div>\n<div><pre>vp3_1         | <span class=\"cm-number\">14<\/span>:38:59.146 [dockercontroller] deployImage <span class=\"cm-attribute\">-<\/span>&gt; ERRO 02e Image Output:<\/pre><\/div>\n<div><pre>vp3_1         | ********************<\/pre><\/div>\n<div><pre>vp3_1         | Step <span class=\"cm-number\">1<\/span> : FROM hyperledger\/fabric-baseimage<\/pre><\/div>\n<div><pre>vp3_1         |  <span class=\"cm-attribute\">--<\/span><span class=\"cm-attribute\">-<\/span>&gt; 21cb00fb27f4<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 18,
+            "lines_more": 13,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U1W210996",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1W210996|zemtsov>",
+        "bot_id": null,
+        "ts": "1477320213.003276"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Is it something wrong inside image?",
+        "ts": "1477320495.003277"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Hi, there",
+        "ts": "1477320553.003278"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I\u2019m also a newbie about Hyperledger",
+        "ts": "1477320578.003279"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "My env are macOS sierra",
+        "ts": "1477320603.003280"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "No error so far",
+        "ts": "1477320613.003281"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I followed the instructions, and it works",
+        "ts": "1477320670.003282"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Something changed??",
+        "ts": "1477320696.003283"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I followed this page, <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/>",
+        "attachments": [
+            {
+                "title": "Hyperledger Fabric",
+                "title_link": "http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/",
+                "text": "Welcome to the Hyperledger fabric documentation",
+                "fallback": "Hyperledger Fabric",
+                "from_url": "http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/",
+                "service_icon": "http:\/\/hyperledger-fabric.readthedocs.io\/favicon.ico",
+                "service_name": "hyperledger-fabric.readthedocs.io",
+                "id": 1
+            }
+        ],
+        "ts": "1477320782.003284"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/>",
+        "ts": "1477321106.003286"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U1M9R3C8Z> have you tried to deploy your chaincode?",
+        "ts": "1477321240.003287"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "yup",
+        "ts": "1477321284.003288"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "did you use the same docker-compose.yml as it is on the page?",
+        "ts": "1477321320.003289"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "uh, yes and no",
+        "ts": "1477321344.003290"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "wait a minute",
+        "ts": "1477321357.003291"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I create 1 membersrvc and 4 peers.",
+        "ts": "1477321394.003292"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1W210996>  - are you using the Node SDK - aka \"hfc\"  to deploy the chaincode?",
+        "ts": "1477321446.003293"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I used compose-defaults.yml, and docker-compose-4-consensus-batch.yml",
+        "ts": "1477321458.003294"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U0PB67X4K>  yes, I deploy it from my script",
+        "ts": "1477321474.003295"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "so did I <@U1W210996>",
+        "ts": "1477321487.003296"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "did either of you \"vendor\" the fabric source?",
+        "ts": "1477321511.003297"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1M9R3C8Z> - my guess is you did",
+        "ts": "1477321531.003298"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "mmm. I don\u2019t know. That probably means NO :slightly_smiling_face:",
+        "ts": "1477321565.003299"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I made an example go file as hyperleger\/fabric\/examples2\/chaincode_counter\/main.go,",
+        "ts": "1477321574.003300"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "and I edited yml files little bit",
+        "ts": "1477321615.003301"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "What does it mean, \u201cto vendor\u201d?",
+        "ts": "1477321635.003302"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I\u2019d like to hear too",
+        "ts": "1477321653.003303"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/nodeSDK\/node-sdk-indepth\/#chaincode-deployment>",
+        "ts": "1477321720.003304"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "```\nAfter you have placed your chaincode project under the $GOPATH\/src, you will need to vendor the dependencies. From the directory containing your chaincode source, run the following commands:\n\n  go get -u <http:\/\/github.com\/kardianos\/govendor|github.com\/kardianos\/govendor>\n  cd $GOPATH\/src\/github.com\/chaincode_example02\n  govendor init\n  govendor fetch <http:\/\/github.com\/hyperledger\/fabric|github.com\/hyperledger\/fabric>\n```",
+        "ts": "1477321738.003305"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(from the docs)",
+        "ts": "1477321760.003306"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "HFC lets us to registrar a new user, right?",
+        "ts": "1477321787.003307"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "How can I kind of \u201cbookmark\u201d in slack?",
+        "ts": "1477321899.003308"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I note that xD on my notepad",
+        "edited": {
+            "user": "U1M9R3C8Z",
+            "ts": "1477322121.000000"
+        },
+        "ts": "1477321921.003309"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Is it kind of rule?",
+        "ts": "1477321957.003310"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "<@U0PB67X4K>",
+        "ts": "1477321979.003311"
+    },
+    {
+        "type": "message",
+        "user": "U184J2R7S",
+        "text": "I have had a lot of questions in terms of where all the design documentation is for Hyperledger-fabric for the version 1.  Apparently there are people in the community that have problems finding it.  As a result, Binh Nguyen created a link in Hyperledger wiki to help. Hopefully this helps everyone: <https:\/\/wiki.hyperledger.org\/community\/fabric-design-docs>",
+        "ts": "1477322238.003313"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "wow",
+        "ts": "1477322367.003314"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "so helpful",
+        "ts": "1477322388.003315"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "COP means a sort of summit or anything? <@U184J2R7S>",
+        "ts": "1477322440.003316"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "thanks",
+        "ts": "1477322756.003317"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "By the way, <@U1W210996> , I did \u201cvagrant up \u2014provision\u201d and \u201cvagrant ssh\u201d in fabric\/devenv dir from my terminal",
+        "ts": "1477322897.003318"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I don\u2019t use vagrant. I start docker-compose from my host OS",
+        "ts": "1477322922.003319"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "oh",
+        "ts": "1477322934.003320"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "sorry",
+        "ts": "1477322938.003321"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "hmm",
+        "ts": "1477322941.003322"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1W210996>  - just as a quick test - can you try something?   I assume that you pulled and re-tagged the fabric-baseimage?",
+        "ts": "1477322996.003323"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "```hyperledger\/fabric-membersrvc   latest              b3654d32e4f9        6 days ago          1.417 GB\nhyperledger\/fabric-baseimage    latest              21cb00fb27f4        6 days ago          1.424 GB\nhyperledger\/fabric-peer         latest              21cb00fb27f4        6 days ago          1.424 GB```",
+        "ts": "1477323030.003324"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "did you pull the base image or did you try to trick of re-tagging the peer image?  looks like the latter but just want to make sure",
+        "ts": "1477323086.003325"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I pulled `hyperledger\/fabric-peer:latest` and re-retagged it to `hyperledger\/fabric-baseimage:latest`",
+        "edited": {
+            "user": "U1W210996",
+            "ts": "1477323287.000000"
+        },
+        "ts": "1477323152.003326"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Is it what you want to know?",
+        "ts": "1477323214.003327"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Warning: failed to get default registry endpoint from daemon (Cannot connect to the Docker daemon. Is the docker daemon running on this host?). Using system default: <https:\/\/index.docker.io\/v1\/>\nCannot connect to the Docker daemon. Is the docker daemon running on this host?",
+        "ts": "1477323531.003329"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I can't",
+        "ts": "1477323551.003330"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "oops",
+        "ts": "1477323744.003331"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "My daemon wasn\u2019t up xD on the host OS",
+        "edited": {
+            "user": "U1M9R3C8Z",
+            "ts": "1477324092.000000"
+        },
+        "ts": "1477324067.003332"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I\u2019m gonna test",
+        "ts": "1477324117.003334"
+    },
+    {
+        "user": "U2TD4Q7NW",
+        "text": "<@U2TD4Q7NW|jkilpatr> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477324122.003335"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "If I can run it on the host OS",
+        "ts": "1477324154.003336"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U0PB67X4K> I vendored my chaincode (I try to deploy chaincode_example02) but it didn\u2019t help.\nLooks like ` src\/build-chaincode\/vendor\/github.com\/hyperledger\/fabric\/peer\/core.yaml` is missed inside the image. Should I install govendor inside the image?",
+        "ts": "1477324163.003337"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "<@U1W210996> did you make peer-image?",
+        "ts": "1477324249.003338"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "no. I pulled images with docker",
+        "ts": "1477324264.003339"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "But I\u2019ve tried it before",
+        "ts": "1477324277.003340"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "oh",
+        "ts": "1477324282.003341"
+    },
+    {
+        "user": "U2TB92KAP",
+        "text": "<@U2TB92KAP|jacg> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477324549.003342"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "hmm - this is odd",
+        "ts": "1477324945.003343"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "I\u2019m testing on the host",
+        "ts": "1477325002.003344"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Probably I\u2019m doing something wrong",
+        "ts": "1477325012.003345"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "oh, those came down",
+        "ts": "1477325022.003346"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "hmm, those\u2019re working",
+        "ts": "1477325120.003347"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1M9R3C8Z|rascal> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/rascal\/F2TCVC03W\/____________________________2016-10-25_01.04.52.png|on the host OS> and commented: <@U1W210996>",
+        "file": {
+            "id": "F2TCVC03W",
+            "created": 1477325177,
+            "timestamp": 1477325177,
+            "name": "\u30b9\u30af\u30ea\u30fc\u30f3\u30b7\u30e7\u30c3\u30c8 2016-10-25 01.04.52.png",
+            "title": "on the host OS",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U1M9R3C8Z",
+            "editable": false,
+            "size": 1806381,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCVC03W\/____________________________2016-10-25_01.04.52.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TCVC03W\/download\/____________________________2016-10-25_01.04.52.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 203,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 270,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 406,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 541,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F2TCVC03W-946122dd6a\/____________________________2016-10-25_01.04.52_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 577,
+            "image_exif_rotation": 1,
+            "original_w": 2830,
+            "original_h": 1594,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/rascal\/F2TCVC03W\/____________________________2016-10-25_01.04.52.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2TCVC03W-1eb2c51601",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2TD5PBA9",
+                "created": 1477325177,
+                "timestamp": 1477325177,
+                "user": "U1M9R3C8Z",
+                "is_intro": true,
+                "comment": "<@U1W210996>",
+                "channel": ""
+            }
+        },
+        "user": "U1M9R3C8Z",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1M9R3C8Z|rascal>",
+        "bot_id": null,
+        "ts": "1477325182.003348"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Is it a start?",
+        "ts": "1477325208.003349"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "yup",
+        "ts": "1477325222.003350"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Mine starts also :slightly_smiling_face:",
+        "ts": "1477325238.003351"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "It fails on chaincode deploying",
+        "ts": "1477325252.003352"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "okay, I\u2019m gonna test it",
+        "ts": "1477325268.003353"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Too many messages with DEBUG logging level in the log :slightly_smiling_face:",
+        "ts": "1477325299.003355"
+    },
+    {
+        "user": "U2TDF7Q3B",
+        "text": "<@U2TDF7Q3B|andrea.pagano> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477325599.003356"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U1W210996|zemtsov> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2TDCRLBF\/-.sh|Untitled> and commented: <@U1M9R3C8Z> this is my starting log. 4 peers with pbft",
+        "file": {
+            "id": "F2TDCRLBF",
+            "created": 1477325892,
+            "timestamp": 1477325892,
+            "name": "-.sh",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "shell",
+            "pretty_type": "Shell",
+            "user": "U1W210996",
+            "editable": true,
+            "size": 21834,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TDCRLBF\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TDCRLBF\/download\/-.sh?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2TDCRLBF\/-.sh",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2TDCRLBF-071f3caa2c",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/zemtsov\/F2TDCRLBF\/-.sh\/edit",
+            "preview": "vp0_1         | 16:14:52.049 [peer] func1 -> INFO 001 Auto detected peer address: 172.17.0.3:7051\r\nvp0_1         | 16:14:52.050 [peer] func1 -> INFO 002 Auto detected peer address: 172.17.0.3:7051\r\nvp0_1         | 16:14:52.053 [nodeCmd] serve -> INFO 003 Security enabled status: true\r\nvp0_1         | 16:14:52.054 [nodeCmd] serve -> INFO 005 Privacy enabled status: false\r\nvp0_1         | 16:14:52.054 [eventhub_producer] start -> INFO 004 event processor started\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>vp0_1         | <span class=\"cm-number\">16<\/span>:14:52.049 [peer] func1 <span class=\"cm-attribute\">-<\/span>&gt; INFO <span class=\"cm-number\">001<\/span> Auto detected peer address: <span class=\"cm-number\">172<\/span>.17.0.3:7051<\/pre><\/div>\n<div><pre>vp0_1         | <span class=\"cm-number\">16<\/span>:14:52.050 [peer] func1 <span class=\"cm-attribute\">-<\/span>&gt; INFO <span class=\"cm-number\">002<\/span> Auto detected peer address: <span class=\"cm-number\">172<\/span>.17.0.3:7051<\/pre><\/div>\n<div><pre>vp0_1         | <span class=\"cm-number\">16<\/span>:14:52.053 [nodeCmd] serve <span class=\"cm-attribute\">-<\/span>&gt; INFO <span class=\"cm-number\">003<\/span> Security enabled status: <span class=\"cm-atom\">true<\/span><\/pre><\/div>\n<div><pre>vp0_1         | <span class=\"cm-number\">16<\/span>:14:52.054 [nodeCmd] serve <span class=\"cm-attribute\">-<\/span>&gt; INFO <span class=\"cm-number\">005<\/span> Privacy enabled status: <span class=\"cm-atom\">false<\/span><\/pre><\/div>\n<div><pre>vp0_1         | <span class=\"cm-number\">16<\/span>:14:52.054 [eventhub_producer] <span class=\"cm-builtin\">start<\/span> <span class=\"cm-attribute\">-<\/span>&gt; INFO <span class=\"cm-number\">004<\/span> event processor started<\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 176,
+            "lines_more": 171,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2TDPGS9Y",
+                "created": 1477325892,
+                "timestamp": 1477325892,
+                "user": "U1W210996",
+                "is_intro": true,
+                "comment": "<@U1M9R3C8Z> this is my starting log. 4 peers with pbft",
+                "channel": ""
+            }
+        },
+        "user": "U1W210996",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U1W210996|zemtsov>",
+        "bot_id": null,
+        "ts": "1477325894.003357"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "hmm",
+        "ts": "1477326285.003358"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "<@U0PB67X4K> what happens when I deploy a code? Are any new containers creating?",
+        "ts": "1477327498.003359"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "when you deploy chaincode, you get a new container for each chaincode for each peer",
+        "ts": "1477327827.003360"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Rascals-MacBook-Pro:chaincode_example02 Rascal$ CORE_SECURITY_ENABLED=true CORE_SECURITY_PRIVACY=true peer chaincode deploy -u jim -l golang -n mycc -c '{\"Function\":\"init\", \"Args\": [\"Tom\", \"100\", \"Ken\", \"200\"]}' --peer-chaincodedev\nbash: peer: command not found\noops",
+        "ts": "1477328646.003361"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "path isn\u2019t ..",
+        "ts": "1477328699.003362"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "Hmm\u2026 I can\u2019t run it on the host OS now",
+        "ts": "1477329065.003363"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "<@U1W210996> sorry...",
+        "ts": "1477329160.003364"
+    },
+    {
+        "type": "message",
+        "user": "U1M9R3C8Z",
+        "text": "It works on the Docker on the VM, though...",
+        "ts": "1477329207.003365"
+    },
+    {
+        "type": "message",
+        "user": "U2TD4Q7NW",
+        "text": "Ok, new here, trying to grok the project organization. For example whats the intersection between sawtooth and frabric?",
+        "ts": "1477332618.003366"
+    },
+    {
+        "user": "U2TFYQ5AB",
+        "text": "<@U2TFYQ5AB|kevan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477334433.003367"
+    },
+    {
+        "type": "message",
+        "user": "U22H7GFGA",
+        "text": "Hi all, I am having a problem while returning the errors from chiancode invoke methods to CLI or NodeSDK. Can anyone help out with this ?\n \nIs there anyway i can return errors from invoke function to NodeSDK in case of any errors",
+        "ts": "1477334806.003368"
+    },
+    {
+        "user": "U2TH1PM24",
+        "text": "<@U2TH1PM24|pcallen1015> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477339732.003369"
+    },
+    {
+        "user": "U2TG9RBA7",
+        "text": "<@U2TG9RBA7|remmy> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477342649.003371"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U22H7GFGA> what you are looking for is the events mechanism, its still WIP",
+        "ts": "1477350097.003372"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right now, invoke status is not returned in any meaningful way to the SDK",
+        "ts": "1477350117.003373"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there\u2019s people working on it, though",
+        "ts": "1477350127.003374"
+    },
+    {
+        "user": "U2TKQKMPF",
+        "text": "<@U2TKQKMPF|justinhoo> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477351726.003375"
+    },
+    {
+        "user": "U2TM1PLBC",
+        "text": "<@U2TM1PLBC|john-s> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477359565.003377"
+    },
+    {
+        "user": "U2TK4J8E7",
+        "text": "<@U2TK4J8E7|huangye> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477360388.003380"
+    },
+    {
+        "user": "U2TM0B9L1",
+        "text": "<@U2TM0B9L1|figoliu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477360551.003381"
+    },
+    {
+        "user": "U2TM70DJS",
+        "text": "<@U2TM70DJS|dtamplin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477365512.003382"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U2MLMERFD|mrbuggy> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/mrbuggy\/F2TMWDTPX\/-.txt|Untitled> and commented: hello all, I am trying to build the HFC sdk docs as instructed here <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/nodeSDK\/app-developer-env-setup\/> ... I am trying to build the docs from the *starter kit* but it is showing me  the following output.",
+        "file": {
+            "id": "F2TMWDTPX",
+            "created": 1477371058,
+            "timestamp": 1477371058,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U2MLMERFD",
+            "editable": true,
+            "size": 1081,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TMWDTPX\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2TMWDTPX\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/mrbuggy\/F2TMWDTPX\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2TMWDTPX-7bbdaa9f1c",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/mrbuggy\/F2TMWDTPX\/-.txt\/edit",
+            "preview": "Error: ENOENT, no such file or directory '\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/typings\/globals\/node\/index.d.ts'\r\n    at Error (native)\r\n    at Object.fs.statSync (fs.js:797:18)\r\n    at \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/typedoc\/lib\/application.js:130:20\r\n    at Array.forEach (native)\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>Error: ENOENT, no such file or directory '\/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/typings\/globals\/node\/index.d.ts'<\/pre><\/div>\n<div><pre>    at Error (native)<\/pre><\/div>\n<div><pre>    at Object.fs.statSync (fs.js:797:18)<\/pre><\/div>\n<div><pre>    at \/opt\/gopath\/src\/github.com\/hyperledger\/fabric\/sdk\/node\/node_modules\/typedoc\/lib\/application.js:130:20<\/pre><\/div>\n<div><pre>    at Array.forEach (native)<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 13,
+            "lines_more": 8,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2TL6NRPD",
+                "created": 1477371058,
+                "timestamp": 1477371058,
+                "user": "U2MLMERFD",
+                "is_intro": true,
+                "comment": "hello all, I am trying to build the HFC sdk docs as instructed here <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/nodeSDK\/app-developer-env-setup\/> ... I am trying to build the docs from the *starter kit* but it is showing me  the following output.",
+                "channel": ""
+            }
+        },
+        "user": "U2MLMERFD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U2MLMERFD|mrbuggy>",
+        "bot_id": null,
+        "ts": "1477371058.003383"
+    },
+    {
+        "type": "message",
+        "user": "U2MLMERFD",
+        "text": "where can I find this index.d.ts?",
+        "ts": "1477371077.003384"
+    },
+    {
+        "user": "U2TNRUG2D",
+        "text": "<@U2TNRUG2D|viv8up> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1477378592.003386"
+    }
+]

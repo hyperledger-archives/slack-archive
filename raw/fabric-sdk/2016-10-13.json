@@ -1,0 +1,193 @@
+[
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U0KQ9QKH6> I\u2019ve just looked at those tests, as I also had the same question. I don\u2019t think that\u2019s enough though. There needs to be a way to tie the received event to the transaction (query\/invoke\/deploy request) if multiple transactions are in flight. That\u2019s quite difficult as hfc doesn\u2019t seem to expose the transaction ID. Any ideas?",
+        "ts": "1476347238.000913"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "Also - the chaincode is already raising a specific error by returning an error from Query\/Invoke\/Init. Now the chaincode has to raise it\u2019s specific error twice (once via return to reject the transaction, and again via event to inform the calling application)?",
+        "ts": "1476347375.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U1MSZ37NK> : I'll look into the transaction id issue and get back to you. The chaincode does have the option of returning a error and failing the transaction. Events are not necessarily the used for error conditions.  For instance, they could be used to indicate thresholds being exceeded etc",
+        "ts": "1476366199.000916"
+    },
+    {
+        "type": "message",
+        "user": "U1MSZ37NK",
+        "text": "<@U0KQ9QKH6> Thanks for taking a look. My wish here is for hfc to submit a transaction, the chaincode to reject that transaction with an error, and for hfc to give me that error. I think it should be as easy as `transactionContext.on(\u2018chaincodeerror\u2019, (error) =&gt; { \/\/ handler function });` - it seems like it would be a common requirement.",
+        "ts": "1476368250.000918"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF> continuing some of the discussions above on the proposed changes on images for runtime dependencies. I just realized that baseimage as is today contains node.js engine and JRE. why are they needed?",
+        "ts": "1476373385.000919"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "i can see including JRE might be thinking ahead for supporting java chaincode down the road, is it used for anything else?",
+        "ts": "1476373387.000920"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "and as far as I\u2019m aware, there\u2019s really no need to include the node.js engine.",
+        "ts": "1476373404.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "JRE needed for chaintool",
+        "ts": "1476373425.000922"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Someone else asked for node, I'm guessing related to SDK but not sure of full breadth of requirements ",
+        "ts": "1476373481.000923"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "is the chaintool used in the normal course of chaincode deployment (either by invoking the REST API or submitted by node.js SDK)?",
+        "ts": "1476373551.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Yes",
+        "ts": "1476373560.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Otherwise I would have limited to devenv",
+        "ts": "1476373582.000926"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ah ok, i know you did a lot of work on chaintool for packaging, but up till now i had thought that\u2019s only used when deploy is done via a CAR archive",
+        "ts": "1476373588.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Correct",
+        "ts": "1476373600.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "The type of deploy is specified in the deploy payload",
+        "ts": "1476373622.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If it's CAR, chaintool will be invoked",
+        "ts": "1476373635.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "And needs JRE",
+        "ts": "1476373639.000931"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "ok got it.",
+        "ts": "1476373641.000932"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "I\u2019m almost 100% certain we don\u2019t need node.js engine in the baseimage. and I\u2019m 100% sure that\u2019s the case with v1.0.",
+        "ts": "1476373717.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ok, good to know",
+        "ts": "1476374763.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "is there a chance we are conflating node with npm?",
+        "ts": "1476374801.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "maybe the original authors needed npm but not the full platform",
+        "ts": "1476374814.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "(I dont know enough about it to know whether we can install one vs the other)",
+        "ts": "1476374844.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just want to make sure we capture any requirements properly",
+        "ts": "1476374853.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0KQ9QKH6",
+        "text": "<@U1MSZ37NK>: the chaincode event that the callback receives (registerChaincodeEvent) contains txID. I think that covers your first question. I looked at the rejection event for implementing what you would like to see when an error is returned by the chaincode. I understand what you are saying and will look at implementing",
+        "ts": "1476385976.000940"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "<@U0Z81GL6S> We are moving to v0.6, which exact version\/branch should we get in order to have latest TLS patches working?",
+        "edited": {
+            "user": "U1AASP2SJ",
+            "ts": "1476387572.000000"
+        },
+        "ts": "1476387538.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "v0.6 branch works with hfc v0.6.x",
+        "ts": "1476388267.000943"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "BUT there is one error on the fabric side right now if you use the ACA feature of membership services it does not work with TLS.  But hfc 0.6.x works fine with fabric and ECA, TCA parts of membership services.\n\nwhich TLS patches are you looking for?",
+        "ts": "1476388358.000944"
+    },
+    {
+        "type": "message",
+        "user": "U1AASP2SJ",
+        "text": "per <@U0Z81GL6S> we need these for TLS: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1303\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1305\/>\n<https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1307\/>",
+        "ts": "1476391709.000945"
+    },
+    {
+        "user": "U2P2DHQSJ",
+        "text": "<@U2P2DHQSJ|zakhar.sukhanov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476392491.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0Z81GL6S",
+        "text": "<@U1AASP2SJ> you should be fine on the latest version of hfc package, v0.6.2. but as soon as the fix referenced by <@U0PB67X4K> goes in, I will publish another version. should be in the next few days. thanks!",
+        "ts": "1476415407.000948"
+    }
+]

@@ -1,0 +1,176 @@
+[
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U1CTBUNEN> The document id we set is the \u2018key' in the chaincode, this is so that it can be retrieved later.  Basically we want to maintain the key\/value store concept and PutState\/GetState APIs, it\u2019s just that the \u2018key\u2019 is the CouchDB document id, and the \u2018value\u2019 is the CouchDB json document.",
+        "ts": "1476698473.000188"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Saving the transaction id in the document is indeed for audit\/traceability purpose.  In fact there is talk of using the txid as the document version instead of an incrementing version number.",
+        "ts": "1476698531.000189"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "And we are investigating if CouchDB can be updated so that instead of setting it\u2019s own revision number, it could just use the passed in transaction id as the document\u2019s revision number.",
+        "edited": {
+            "user": "U1KFCPFQA",
+            "ts": "1476698623.000000"
+        },
+        "ts": "1476698594.000190"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> thanks for the update",
+        "ts": "1476706472.000192"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "in my use case the document ID doesn't matter (so I let CouchDB assing one) since I'm mostly quering the documents via selectors",
+        "ts": "1476706528.000193"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I never have to edit old documents too (which I guess makes my case unusual)",
+        "ts": "1476706543.000194"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "this is the API call that I'm trying to implement: <http:\/\/docs.couchdb.org\/en\/2.0.0\/api\/database\/find.html>",
+        "ts": "1476706667.000195"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "it's a POST request",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1476710494.000000"
+        },
+        "ts": "1476706680.000196"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> any updates in terms of the roadmap for getting the CouchDB into the master branch?",
+        "ts": "1476712537.000198"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "now when I think about it - it makes more sense in my case to use the TXID as the key for the record",
+        "ts": "1476732588.000199"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "since I will never have to edit old documents",
+        "ts": "1476732596.000200"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "in my case this will also help to audit the path and provenance of product since querying the couchDB for a serial number can also give me a list of all the transaction IDs related to that product and then further obtain the relevant transactions with certificate attributes and others",
+        "ts": "1476732858.000201"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> does that make sense ?",
+        "ts": "1476732866.000202"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Hi, is there not an external logical id that you can use for the keys?",
+        "ts": "1476733073.000203"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "From within chaincode, you will not have access to the txid (I think)",
+        "ts": "1476733093.000204"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "to answer your previous question, we are trying to get the prototype pushed into fabric this week via FAB-728.  and we are trying to get CouchDB installed into vagrant dev env via FAB-729.",
+        "ts": "1476733210.000205"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "<@U1KFCPFQA> well my queries all involve data within the JSON documents so I will be using selectors most likely",
+        "ts": "1476733901.000206"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "my JSON documents describe transactions related to a product or a set of products",
+        "ts": "1476733933.000207"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "It won\u2019t make sense to use the product SN as the PK because I have many docs\/transactions related to the same product",
+        "edited": {
+            "user": "U1CTBUNEN",
+            "ts": "1476733966.000000"
+        },
+        "ts": "1476733957.000208"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "also wouldn\u2019t it make sense to include an existing go library for CouchDB REST wrapper?",
+        "ts": "1476735739.000210"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "I didnt see a go library for CouchDB that had a lot of traction.  Since the REST interactions are fairly trivial we are intending to just use go http.",
+        "ts": "1476735858.000211"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "yeah I\u2019m looking at the existing stuff and it kinda sucks",
+        "ts": "1476736158.000212"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": ": )",
+        "ts": "1476736176.000213"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "We are working on some updates to the http interaction before we merge the code in",
+        "ts": "1476736195.000214"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "I hope there\u2019s the _find API call somewhere there :wink:",
+        "ts": "1476736214.000215"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "not yet, but we will certainly have an API that calls couchdb _find",
+        "ts": "1476736259.000216"
+    },
+    {
+        "type": "message",
+        "user": "U1CTBUNEN",
+        "text": "cool - awesome stuff",
+        "ts": "1476736376.000217"
+    }
+]

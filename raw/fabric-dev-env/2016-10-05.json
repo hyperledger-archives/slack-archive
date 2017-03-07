@@ -1,0 +1,27 @@
+[
+    {
+        "user": "U2KBRUPL2",
+        "text": "<@U2KBRUPL2|rik> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1475684356.001499"
+    },
+    {
+        "type": "message",
+        "user": "U138W4A1F",
+        "text": "Hi, guys, Morning!",
+        "ts": "1475726269.001500"
+    },
+    {
+        "type": "message",
+        "user": "U138W4A1F",
+        "text": "I think fabric v1\u2019s write-set have some problem. In the document, is said write-set will like this: \n```\n&lt;TxReadWriteSet&gt;\n  &lt;NsReadWriteSet name=\"chaincode1\"&gt;\n    &lt;read-set&gt;\n      &lt;read key=\"K1\", version=\"1\"&gt;\n      &lt;read key=\"K2\", version=\"1\"&gt;\n    &lt;\/read-set&gt;\n    &lt;write-set&gt;\n      &lt;write key=\"K1\", value=\"V1\u201d&gt;\n      &lt;write key=\"K3\", value=\"V2\u201d&gt;\n      &lt;write key=\"K4\", isDelete=\"true\u201d&gt;\n    &lt;\/write-set&gt;\n  &lt;\/NsReadWriteSet&gt;\n&lt;TxReadWriteSet&gt;\n``` \n\nBut , this will cause can just update once for a specific key in one batch transactions, \nin one batch txs just can write once for a key, that means in a one \n\nchaincode1's instance 1:\n```\n&lt;TxReadWriteSet&gt;\n  &lt;NsReadWriteSet name=\"chaincode1\"&gt;\n    &lt;write-set&gt;\n      &lt;write key=\"K1\", value=\u201c150\u201d&gt;\n    &lt;\/write-set&gt;\n  &lt;\/NsReadWriteSet&gt;\n&lt;TxReadWriteSet&gt;\n```\n\nchaincode1's instance 2:\n```\n&lt;TxReadWriteSet&gt;\n  &lt;NsReadWriteSet name=\"chaincode1\"&gt;\n    &lt;write-set&gt;\n      &lt;write key=\"K1\", value=\u201c200\u201d&gt;\n    &lt;\/write-set&gt;\n  &lt;\/NsReadWriteSet&gt;\n&lt;TxReadWriteSet&gt;\n```\n\nThe same chaincode's two instance can not execute in one batch, but if it change \nlike next:\n\n```\n&lt;TxReadWriteSet&gt;\n  &lt;NsReadWriteSet name=\"chaincode1\"&gt;\n    &lt;write-set&gt;\n      &lt;write key=\"K1\", version=\u201c1\u201d, action=\u201c+100\u201d&gt;\n    &lt;\/write-set&gt;\n  &lt;\/NsReadWriteSet&gt;\n&lt;TxReadWriteSet&gt;\n```\n\nand next:\n```\n&lt;TxReadWriteSet&gt;\n  &lt;NsReadWriteSet name=\"chaincode1\"&gt;\n    &lt;write-set&gt;\n      &lt;write key=\"K1\", version=\u201c1\u201d, action=\u201c-10\u201d&gt;\n    &lt;\/write-set&gt;\n  &lt;\/NsReadWriteSet&gt;\n&lt;TxReadWriteSet&gt;\n```\n\nit will be ok.",
+        "ts": "1475727557.001501"
+    },
+    {
+        "type": "message",
+        "user": "U138W4A1F",
+        "text": "and it will more security because add version field",
+        "ts": "1475727655.001502"
+    }
+]

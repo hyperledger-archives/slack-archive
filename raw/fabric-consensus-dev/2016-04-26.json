@@ -1,0 +1,1206 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hi",
+        "ts": "1461669604.000757"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: you around?",
+        "ts": "1461672243.000758"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm trying to understand `TestViewChangeWatermarksMovement` - and why it worked without panic",
+        "ts": "1461672272.000759"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>: i think `b47c4c3` is wrong",
+        "ts": "1461673808.000760"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think we need to initiate a state transfer when lastExec is lagging behind",
+        "ts": "1461673841.000761"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or is that related to the executor",
+        "ts": "1461673852.000762"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "probably it is",
+        "ts": "1461673876.000763"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Let me take a look",
+        "ts": "1461674208.000764"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, we are picking a new checkpoint to begin executing from.  I suppose if we believe we have all commit certificates leading up to that checkpoint, then we could simply attempt to execute them, but it should be safe to move our watermarks and perform state transfer.  By design the view change guarantees we pick a checkpoint which has at least one non-byzantine node to replicate from.",
+        "ts": "1461674454.000765"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`b47c4c3` actually made state transfer less likely to occur, we used to perform state transfer if our low watermark was below the checkpoint, even if we had already executed beyond that checkpoint, which was definitely wrong.  The executor mitigated it by discarding the state transfer (as it was for a sequence number less than had already been executed to), but it still screwed up our `lastExec` by lowering it.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1461674619.000000"
+        },
+        "ts": "1461674594.000766"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah i see",
+        "ts": "1461674626.000768"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what i was thinking was that we may have already have a commit certificate and could execute a request",
+        "ts": "1461674666.000769"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but we just didn't get to it yet",
+        "ts": "1461674671.000770"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in that case we don't need to do a state transfer either",
+        "ts": "1461674687.000771"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "the reason i'm talking about this is because suddenly that test is failing and I don't quite understand how it didn't fail before",
+        "ts": "1461674713.000772"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "specifically this triggered: ```\tif !(len(msgList) == 0 &amp;&amp; len(nv.Xset) == 0) &amp;&amp; !reflect.DeepEqual(msgList, nv.Xset) {\n\t\tlogger.Warning(\"Replica %d failed to verify new-view Xset: computed %+v, received %+v\",\n\t\t\tinstance.id, msgList, nv.Xset)\n\t\treturn instance.sendViewChange()\n\t}\n```",
+        "ts": "1461674753.000773"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "of course the msgList is populated (we have at least one request per xset), and xset injected in the test is empty",
+        "ts": "1461674802.000774"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i'm scratching my head",
+        "ts": "1461674816.000775"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`(len(msgList) == 0 &amp;&amp; len(nv.Xset) == 0)` should be true, so the first piece should be false, and the second half should not be evaluated, and we should skip it?",
+        "ts": "1461674872.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess I'm unsure why `msgList` is non-empty",
+        "ts": "1461674896.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1461674927.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because there is always at least one request in an Xset",
+        "ts": "1461674938.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "at least one null request",
+        "ts": "1461674944.000780"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or not?",
+        "ts": "1461674951.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah yes",
+        "ts": "1461675011.000782"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I would need to check the paper, really, that test is just supposed to be very specifically against the watermark movement and that bit was not being executed, so I did not worry about it",
+        "ts": "1461675032.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is anyways our modification - original pbft fills the whole log with null requests",
+        "ts": "1461675056.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'm just wondering how it didn't fail before :simple_smile:",
+        "ts": "1461675079.000785"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "I'm getting a panic not implemented, because it is trying to sign the view change message :simple_smile:",
+        "ts": "1461675098.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "although you stubbed out the viewchangeimpl",
+        "ts": "1461675164.000787"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i don't know",
+        "ts": "1461675169.000788"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no, that is called as response",
+        "ts": "1461675197.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm, so, looking at `assignSequenceNumbers` quickly, it meshes with that's in my head, if there is nothing in the P-set, because we have not prepared any requests",
+        "ts": "1461675335.000790"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then there is no need to fill in any null requests",
+        "ts": "1461675347.000791"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, there is always at least one request",
+        "ts": "1461675502.000792"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "(in original pbft, the whole L size is filled, with null requests if need be)",
+        "ts": "1461675523.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that was a bug we fixed long ago (as evidenced by a viewchange timeout because nothing executed after view change)",
+        "ts": "1461675562.000794"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Then that seems like a bit of a silly check on the length of `msgList`",
+        "ts": "1461675565.000795"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "indeed",
+        "ts": "1461675573.000796"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "still, how come that test didn't fail before?",
+        "edited": {
+            "user": "U0XR6J961",
+            "ts": "1461675715.000000"
+        },
+        "ts": "1461675700.000797"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, looking at little harder at `assignSequenceNumbers`, it seems like `maxN` should be our checkpoint seqNo+1, we have a quorum from the vSet, we should get 1 null request.",
+        "ts": "1461675720.000799"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yep",
+        "ts": "1461675806.000800"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But yes, I agree, I'm not sure how it didn't fail.  I'd say pretty clearly something must have changed, but I didn't think we'd been doing any real mucking around in the view change code (other than this, and another fix or two)",
+        "ts": "1461675807.000801"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "[And obviously I wouldn't have pushed any of those if they caused a panic in our tests]",
+        "ts": "1461675831.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea",
+        "ts": "1461675855.000803"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "weird",
+        "ts": "1461675858.000804"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So do you have an opinion on how to fix `process()` with PBFT processing not on the message thread?",
+        "ts": "1461676290.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "regarding your proposed patch?",
+        "ts": "1461676337.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1461676339.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or, other feedback on said patch is also welcome",
+        "ts": "1461676360.000808"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'll have a look in a minute",
+        "ts": "1461676502.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what i noticed when i had a look this morning: there is no back channel when the request gets dropped",
+        "ts": "1461676561.000810"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you call it reject, but I don't see how the rejection works",
+        "ts": "1461676576.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ideally the request wouldn't be dequeued in the first place",
+        "ts": "1461676606.000812"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In `handler.go`?",
+        "ts": "1461676978.000813"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "If so, I moved the reply into a deferred function, so that whatever is set in `response` gets sent when the function exits.  The logic before was pretty messy around setting and sending that `response` and the defer simplifies it considerably.  So, in the event that a request is not queued, it sends back an error response to the sender.",
+        "ts": "1461677116.000814"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmm, actually looks like I may have missed some.",
+        "ts": "1461677200.000815"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I only do the rejection reply for the chain transactions, as that was the only place we did it before.",
+        "ts": "1461677267.000816"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Would you suggest we reply with a reject for consensus messages as well?  I'm not sure what the other side would do with that.",
+        "ts": "1461677329.000817"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah no",
+        "ts": "1461677357.000818"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(And we must dequeue even if there is no space in the buffer.  Otherwise we expose ourselves to the same sort of deadlock conditions which this changeset attempts to remove)",
+        "ts": "1461677372.000819"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "first, i think we agreed that there are different types of messages\/events to consensus that need to be handled differently",
+        "ts": "1461677426.000820"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "consensus messages should always be acted upon, while locally generated requests may back up (so that the frontend can inform the clients about overload)",
+        "ts": "1461677474.000821"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that implies that these different events should have different ingress routes.  I never liked the generic `RecvMsg` interface",
+        "ts": "1461677512.000822"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, we don't have the promise that consensus messages are always acted upon today.  In the event that consensus does not read them fast enough, the gRPC buffer backs up, and they start getting discarded.  We are just trading a gRPC buffer, for one we control.",
+        "ts": "1461677592.000823"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah right",
+        "ts": "1461677606.000824"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, that is even acceptable",
+        "ts": "1461677617.000825"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess",
+        "ts": "1461677618.000826"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we just want to be able to prioritize consensus messages over new requests?",
+        "ts": "1461677634.000827"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or rather, we want to be able to accept new local requests at our own pace (maybe we only have X oustanding requests per replica)",
+        "ts": "1461677668.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, yes, local request actually stay somewhat synchronous thusfar in this changeset, as `engine.go` directly injects them via `RecvMsg` to consensus",
+        "ts": "1461677761.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1461677770.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For remote peers, their transactions go into a per peer channel",
+        "ts": "1461677781.000831"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I haven't moved queries into a channel yet, but that can be done.",
+        "ts": "1461677801.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The original impetus for the change, and the one that the changeset thusfar targets, is to make sure that consensus messages cannot indefinitely block peer messages.",
+        "ts": "1461677831.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my vision is an object with a defined set of input events, and a shell around it that ensures that this state machine runs synchronously",
+        "ts": "1461677837.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there would also be a queue of output events (broadcast, execute, start state transfer)",
+        "ts": "1461677871.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Where the important peer message, is state transfer.",
+        "ts": "1461677874.000836"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then we drop the locks internally",
+        "ts": "1461677905.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, if you look at `pbft-core.go` for instance.  You can see that this tries to put the first bit of that in place.",
+        "ts": "1461677947.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is a channel which `RecvMsg` writes into, same with the `stateUpdate`, etc.",
+        "ts": "1461677981.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh so many channels",
+        "ts": "1461678019.000840"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hmm",
+        "ts": "1461678022.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "And then there is a single main thread which selects across these channels, the channel which is read from determined your 'type of input', then modifies the state machine.  Obviously not as clean as you'd like, but I think it's a first step.",
+        "ts": "1461678037.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Channels seems to be the preferred method of Go concurrency, and the constructs like select do make using them pretty nice.",
+        "ts": "1461678079.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1461678098.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "they have different semantics from a single queue, but okay",
+        "ts": "1461678124.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "could we remove the goroutine call from newPbftCore?",
+        "ts": "1461678144.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and instead put the burden of processing on some outside entity (i.e. handler)",
+        "ts": "1461678167.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that would simplify our tests as well",
+        "ts": "1461678180.000848"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because then there are no multiple goroutines anymore",
+        "ts": "1461678190.000849"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Hmmm",
+        "ts": "1461678212.000850"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So I like the idea of moving the `go` call out of `pbft-core.go`, but I don't think it works coming from the handler.",
+        "ts": "1461678259.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i would even go so far to split the dispatch out of pbftcore",
+        "ts": "1461678261.000852"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that we really only receive events",
+        "ts": "1461678276.000853"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The problem is, we have events like the view change timer, which we need to act on, which do not originate from the handler.",
+        "ts": "1461678287.000854"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and somebody else cares about making those events appear in sequence",
+        "ts": "1461678290.000855"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right, so the handler will have to provide a timeout service",
+        "ts": "1461678302.000856"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and it will inject a timeout event",
+        "ts": "1461678310.000857"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "make the consensus a completely event driven thing",
+        "ts": "1461678350.000858"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm still not sure where the actual execution comes from, there needs to be a go routine from somewhere.  It seems like it's simply pushing the burden of listening for and serializing events, then driving execution out of pbft and into somewhere else.",
+        "ts": "1461678479.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, change the encapsulation",
+        "ts": "1461678499.000860"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it would make sense to have a goroutine created by the handler",
+        "ts": "1461678546.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or helper.  i don't know why there are two",
+        "ts": "1461678561.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't dislike it in theory, though I still think the handler is a funny place to put it, since there is one handler per connection.",
+        "ts": "1461678563.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh",
+        "ts": "1461678598.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1461678599.000865"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you are correct",
+        "ts": "1461678603.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "engine then",
+        "ts": "1461678607.000867"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think this might be a bigger piece of work than fits into this sprint though.",
+        "ts": "1461678636.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it's a goal to aspire to :simple_smile:",
+        "ts": "1461678647.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i hope my monster #1000 will be done",
+        "ts": "1461678665.000870"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i can go and work on some of this refactoring",
+        "ts": "1461678673.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "FYI did you see the message about the Sieve de-emphasis?",
+        "ts": "1461678777.000872"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1461678839.000873"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "that's good",
+        "ts": "1461678847.000874"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why isn't it triggering state transfer now :confused:",
+        "ts": "1461678896.000875"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "aha, yes",
+        "ts": "1461678975.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: so #680 bdd test",
+        "ts": "1461679094.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does that work",
+        "ts": "1461679096.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, so, that will probably stop failing once crash recovery works",
+        "ts": "1461679132.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we put in 30 requests",
+        "ts": "1461679136.000880"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ahahaha",
+        "ts": "1461679142.000881"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and i've been fixing crash recovery to get it working",
+        "ts": "1461679152.000882"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "duh :simple_smile:",
+        "ts": "1461679161.000883"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Er, yes, but failing I mean, it probably won't initiate state transfer.",
+        "ts": "1461679198.000884"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so we put in 30 requests, then stop vp3, one more request, restart vp3, then 6 more requests",
+        "ts": "1461679240.000885"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somehow that means 37 in total, but i can see requests 38 being executed",
+        "ts": "1461679260.000886"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Deploy is a transaction",
+        "ts": "1461679268.000887"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah right",
+        "ts": "1461679283.000888"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so 31, stop vp3, 32, start vp3, 33..38",
+        "ts": "1461679298.000889"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In the past, VP would restart, thinking its seqNo was 0, so, it would witness enough checkpoints outside its watermarks, and initiate state transfer",
+        "ts": "1461679300.000890"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "K=2, L=8",
+        "ts": "1461679322.000891"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, with crash fault working, then it will not see those as outside its watermarks.",
+        "ts": "1461679330.000892"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "checkpoint is 30",
+        "ts": "1461679347.000893"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because it knows its last seqNo was 31",
+        "ts": "1461679348.000894"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1461679352.000895"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh i just realized...",
+        "ts": "1461679380.000896"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, if you bump up the tail end of the requests from 6 additional to say, 10, I think you should get it.",
+        "ts": "1461679383.000897"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i should move the low watermarks to the highest restored checkpoint",
+        "ts": "1461679397.000898"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1461679411.000899"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not to lastexec's previous low watermark",
+        "ts": "1461679412.000900"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1461679439.000901"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in any case - need to inject 2 more, i guess?",
+        "ts": "1461679505.000902"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that checkpoint 40 is reached",
+        "ts": "1461679516.000903"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which should trigger a state transfer",
+        "ts": "1461679522.000904"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or do i wait for 42?",
+        "ts": "1461679527.000905"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think you want 4 more",
+        "ts": "1461679563.000906"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i never understood why `weakCheckpointSetOutOfRange` stops `recvCheckpoint` processing",
+        "ts": "1461679565.000907"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, it shouldn't",
+        "ts": "1461679619.000908"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "There is a TODO saying that we should basically resubmit those 'out of watermark range' checkpoints, because chances are, we already have a weak checkpoint cert",
+        "ts": "1461679640.000909"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But that's an optimization, not a correctness statement",
+        "ts": "1461679654.000910"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh, resubmit",
+        "ts": "1461679656.000911"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because we discarded them",
+        "ts": "1461679671.000912"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1461679673.000913"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "because they were out of watermarks",
+        "ts": "1461679681.000914"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hehe",
+        "ts": "1461679685.000915"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Haha, yep",
+        "ts": "1461679690.000916"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "once you practically implement such a system and can't assume infinite storage for messages...",
+        "ts": "1461679712.000917"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "did you ever see how applications in erlang use state machines?",
+        "ts": "1461679794.000918"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or in general in most functional languages",
+        "ts": "1461679806.000919"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Erleng is unfortunately something I've never gotten a chance to explore, though it might be worth doing, since the whole 'actor model' message passing  thing I think originates there?",
+        "ts": "1461679860.000920",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0KPFAZNF"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i suppose",
+        "ts": "1461679944.000921"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "1 scenario passed, 0 failed, 26 skipped",
+        "ts": "1461679947.000922",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "woohoo!",
+        "ts": "1461679950.000923"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XPR4NP4>: Erlang is awesome",
+        "ts": "1461679962.000924"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i dont know if they invented the actor model, but it certainly uses it",
+        "ts": "1461679981.000925"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you want to build highly available clusters though, it makes a great backend platform",
+        "ts": "1461680012.000926"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so what they usually do is: `fun machine(state, inputchan) { dispatch msg &lt;- inputchan { case &lt;pattern match 1&gt; ....; case &lt;pattern match 2&gt; ...; case &lt;pattern match N&gt; do something with msg; machine({new state based on old state}, inputchan) }`",
+        "ts": "1461680080.000927"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ghaskins: imagine BFT as erlang runtime service",
+        "ts": "1461680103.000928"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i have, it would work pretty well I would imagine",
+        "ts": "1461680127.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and you send messages to other processes",
+        "ts": "1461680139.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not sure whether the queues are bounded",
+        "ts": "1461680149.000931"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i forget how it manages that",
+        "ts": "1461680329.000932"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "lol, now it even works with sieve",
+        "ts": "1461680840.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yey",
+        "ts": "1461680840.000934"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i just pushed my remaining commits",
+        "ts": "1461680899.000935"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Great, thanks <@U0XR6J961>",
+        "ts": "1461680922.000936"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "last behave run before i submit the pull request",
+        "ts": "1461680925.000937"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but issue #680 passed for all 3 consensus plugins",
+        "ts": "1461680940.000938"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it got a bit longer :confused:",
+        "ts": "1461680963.000939"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it thought it would be maybe 10 commits",
+        "ts": "1461680973.000940"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not 70",
+        "ts": "1461680975.000941"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<https:\/\/github.com\/hyperledger\/fabric\/pull\/1265>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Persistence and more; #1000 by corecode \u00b7 Pull Request #1265 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1265",
+                "text": "This addresses #1000 and many other small bug fixes. Signed-off-by: Simon Schubert <mailto:sis@zurich.ibm.com|sis@zurich.ibm.com>",
+                "fallback": "GitHub: Persistence and more; #1000 by corecode \u00b7 Pull Request #1265 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/177979?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1265",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1461691514.000942"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "appreciate some more review",
+        "ts": "1461691545.000944"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Working on finishing up my changeset, will post it here and then try to give yours some review.",
+        "ts": "1461691866.000945"
+    },
+    {
+        "user": "U0KM3Q4FL",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0KM3Q4FL|stan.liberman> has joined the channel",
+        "ts": "1461706136.000946"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0XR6J961>: Your PR seems to cause a slight problem in the ledger tests:\n\n`core\/ledger\/ledger_test.go:682: ledger.GetTXBatchPreviewBlock undefined (type *Ledger has no field or method GetTXBatchPreviewBlock)`",
+        "ts": "1461706165.000947"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<!here|@here> A minor milestone. With <@U0XR6J961>'s latest changeset and the locking\/threading changes from the impending 919\/973 changeset on top of it, my standard vagrant environment has managed to process a 10k request flood (20 threads issuing 500 requests each as fast as they could be accepted) with no problems (no deadlock, not even any view changes)",
+        "ts": "1461731120.000948",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0ULK2JPP",
+                    "U0TFEHX8E",
+                    "U0UGH3X7X"
+                ],
+                "count": 3
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "^^ very cool",
+        "ts": "1461731227.000949"
+    },
+    {
+        "type": "message",
+        "user": "U0NCW1DPX",
+        "text": "<@U0XPR4NP4>: did you try to enable the security and privacy in your env?",
+        "ts": "1461736074.000950"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: cool!",
+        "ts": "1461740317.000951"
+    }
+]

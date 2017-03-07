@@ -1,0 +1,395 @@
+[
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "Does fabric have the sequential semantic?  \nSay, there are a series of messages A,B,C,D with an increasing timestamp, does fabric guarantee the execution order of transactions, such that transactions with larger timestamp will never be executed before those with smaller timestamp?",
+        "ts": "1466159723.000195"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no",
+        "ts": "1466159980.000196"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "so A,B,C,D will be concurrently executed without order guaranteed ?",
+        "ts": "1466160134.000197"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if you submit them concurrently, they will be executed in a random order",
+        "ts": "1466160325.000198"
+    },
+    {
+        "type": "message",
+        "user": "U142E5N0P",
+        "text": "got it, thanks~",
+        "ts": "1466161005.000199"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: you around?",
+        "ts": "1466169006.000200"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yep",
+        "ts": "1466169018.000201"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Working on that fix to #1874",
+        "ts": "1466169032.000202"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but what is the problem?",
+        "ts": "1466169047.000203"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i've been trying to replicate problems all morning and didn't get anywhere",
+        "ts": "1466169081.000204"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or rather, found that you fixed it already",
+        "ts": "1466169094.000205"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The big one, is that after view change, you can get duplicate executions, if the view changes after a request makes it into the pset, then gets scheduled for resubmission before the primary executes it",
+        "ts": "1466169198.000206"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "All my stress testing for view changes with this was at checkpoint boundaries, so my psets were generally empty",
+        "ts": "1466169221.000207"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "how does that lead to freeze?",
+        "ts": "1466169272.000208"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, it doesn't! But, <@U0UGH3X7X>'s behave test failed because the result was 'wrong'",
+        "ts": "1466169326.000209"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "So, no freeze, but potentially multiply executing transactions, which is is the problem I'm fixing",
+        "ts": "1466169352.000210"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ah",
+        "ts": "1466169374.000211"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so that's in the executor?",
+        "ts": "1466169378.000212"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but don't we advance lastexec?",
+        "ts": "1466169388.000213"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "No, it's not in executor, it's a view change logic bug",
+        "ts": "1466169559.000214"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We need to pull the requests out of the pset\/qset which are in the new view, but which the new primary didn't initially order, and make sure we do not submit them to the network as outstanding requests",
+        "ts": "1466169612.000215"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Otherwise we end up executing the same request in two different batches",
+        "ts": "1466169625.000216"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "oh we're talking about an issue in batch",
+        "ts": "1466169648.000217"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not the core",
+        "ts": "1466169655.000218"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "On the second execute, we'll see, that somehow, even as the primary, we didn't know about that request (as we deleted it from our store), but, so as not to fork, we execute anyway",
+        "ts": "1466169662.000219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right",
+        "ts": "1466169663.000220"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ha!",
+        "ts": "1466169687.000221"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well, as we said, somebody down the line should prevent replays anyways",
+        "ts": "1466169705.000222"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "was that problem also in my complainer\/deduplicator?",
+        "ts": "1466169753.000223"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess my code filters more aggressively",
+        "ts": "1466169770.000224"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think it was",
+        "ts": "1466170095.000225"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or rather, I would should say, you could certainly multiply submit requests to the network on view change",
+        "ts": "1466170122.000226"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But, on execute, some or all of the nodes might filter it out",
+        "ts": "1466170137.000227"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1466170285.000228"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "did you guys see the question about `TestOutstandingReqsSubmission` failing in  PR #1877 ?",
+        "ts": "1466171021.000229"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not yet, let me take a look",
+        "ts": "1466171435.000230"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm planning to push the outstanding req fix to #1877 so will fix it if it is still failing then",
+        "ts": "1466173505.000231",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: can you rebase it so that only new commits are in the PR?",
+        "ts": "1466173535.000232"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I tried to do that... any handy commands I should know?",
+        "ts": "1466173563.000233"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(Since my commits were squashed in that other PR, even when rebasing to master, all those other commits linger)",
+        "ts": "1466173602.000234"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "git rebase --onto upstream\/master aa69ef",
+        "ts": "1466173653.000235"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "hm",
+        "ts": "1466173657.000236"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or one below?",
+        "ts": "1466173662.000237"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "8b54?",
+        "ts": "1466173680.000238"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i have a handy UI in emacs for that",
+        "ts": "1466173695.000239"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks, I'll give it a shot",
+        "ts": "1466174340.000240"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: Are you planning on submitting a PR for those behave test, or should I include them in the PR I'm submitting?",
+        "ts": "1466175496.000241"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "simon has a pr for the #1874 behave test  ... go ahead and add the #1873 one to your pr",
+        "ts": "1466175581.000242"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thanks, will do",
+        "ts": "1466175673.000243"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Have code changes which fix the behave test, need to write some unit tests, then will rebase and submit",
+        "ts": "1466176231.000244"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0XPR4NP4>:  code changes for #1874 ?   if so, check if .behaverc is skipping @issue_1874 and remove.   I just sent pr #1898  because all the builds are failing",
+        "ts": "1466176582.000245"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, for #1874",
+        "ts": "1466176603.000246"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Thought you said I should include that behave test in my PR, it's already there?",
+        "ts": "1466176635.000247"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "include the behave test for #1873",
+        "ts": "1466176677.000248"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, got it",
+        "ts": "1466177899.000249"
+    },
+    {
+        "type": "message",
+        "user": "U0TFEHX8E",
+        "text": "Tests have started to fail with\n```\n--- FAIL: TestSieveNoDecision (7.01s)\n\tobc-sieve_test.go:139: replica 0 in epoch 2, expected 1\n\tobc-sieve_test.go:139: replica 1 in epoch 2, expected 1\n\tobc-sieve_test.go:139: replica 2 in epoch 2, expected 1\n\tobc-sieve_test.go:139: replica 3 in epoch 2, expected 1\n```\nIs this a known issue? Seems it started on an unrelated change",
+        "ts": "1466194037.000250"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I've seen this, I'll add a skip to it",
+        "ts": "1466194192.000251"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0TFEHX8E>: <https:\/\/github.com\/hyperledger\/fabric\/pull\/1909>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Disable TestSieveNoDecision until its stability can be improved by jyellick \u00b7 Pull Request #1909 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1909",
+                "text": "Description Skips the unstable TestSieveNoDecision test. Motivation and Context This is breaking CI, and Sieve is currently experimental, with known stability problems which are not currently be...",
+                "fallback": "GitHub: Disable TestSieveNoDecision until its stability can be improved by jyellick \u00b7 Pull Request #1909 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1909",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466202583.000252"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X>: <@U0XQ35CDD> <@U0XR6J961> Added some commits to <https:\/\/github.com\/hyperledger\/fabric\/pull\/1877> unfortunately it spiked the complexity a little, but I've spent the afternoon testing, passing it through busywork, etc., so hopefully it is pretty stable.  Would like to write some more specific unit tests for the `requestStore`, but ran out of time and wanted to at least put it out there for review",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Stabilize PBFT under stress with periodic viewchange by jyellick \u00b7 Pull Request #1877 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1877",
+                "text": "Description This changeset contains three new commits, to accomplish three things. If a view change occurs and selects an initial checkpoint which is higher than our lastExec, but which can be r...",
+                "fallback": "GitHub: Stabilize PBFT under stress with periodic viewchange by jyellick \u00b7 Pull Request #1877 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/7431583?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1877",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "service_icon": "https:\/\/a.slack-edge.com\/e8ef6\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1466202671.000254"
+    }
+]

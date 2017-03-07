@@ -1,0 +1,391 @@
+[
+    {
+        "type": "message",
+        "user": "U3SCKQB4P",
+        "text": "Hi I am getting following error on root node when one of the peer tries to connect (2 different setups)\n\nvp3_1         | 07:39:53.256 [crypto] Errorf -&gt; ERRO 0e9 [validator.test_vp0] Failed requesting read certificate [rpc error: code = 2 desc = sql: no rows in result set].\nvp3_1         | 07:39:53.257 [crypto] Errorf -&gt; ERRO 0ea [validator.test_vp0] Failed requesting enrollment certificate [rpc error: code = 2 desc = sql: no rows in result set].\nvp3_1         | 07:39:53.257 [crypto] Errorf -&gt; ERRO 0eb [validator.test_vp0] Failed getting enrollment certificate for [8sFtrhS4XAG\/mb0YzUTVcqhZriDEOUVvY8MgGBPOKBA=]: [rpc error: code = 2 desc = sql: no rows in result set]\nvp3_1         | 07:39:53.257 [crypto] Errorf -&gt; ERRO 0ec [validator.test_vp0] Failed getting enrollment cert for [f2 c1 6d ae 14 b8 5c 01 bf 99 bd 18 cd 44 d5 72 a8 59 ae 20 c4 39 45 6f 63 c3 20 18 13 ce 28 10]: [rpc error: code = 2 desc = sql: no rows in result set]\nvp3_1         | 07:39:53.257 [peer] handleChat -&gt; ERRO 0ed Error handling message: Peer FSM failed while handling message (DISC_HELLO): current state: created, error: transition canceled with error: Erro",
+        "ts": "1484899743.003737"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "<@U390MSC0G>  thanks :wink: Do you know how i can deploy the chaincode via CLI, like first step `.\/peer node start`, 2nd `?` \u2026 ? Because in the docu there is an example with `.\/peer chaincode deploy -n ccID -c {\u2026}`  What is ccID?",
+        "edited": {
+            "user": "U2ZPJHMNY",
+            "ts": "1484902396.000000"
+        },
+        "ts": "1484902381.003738"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "If i trying to run the docker-compose file i see following error message: `ERROR: for vp0  Cannot start service vp0: driver failed programming external connectivity on endpoint fabric_vp0_1 (ee017fdbe1d00570e1a7fcf7c0da727cff50d43b6162190167707199a0b02557): Error starting userland proxy: Bind for 0.0.0.0:7051 failed: port is already allocated\nERROR: Encountered errors while bringing up the project.`.\n\nThis is my docker-compose:\n```\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"7050:7050\"\n    - \"7051:7051\"\n    - \"7052:7052\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n  command: peer node start\n```\n\nI have restart the docker and checked twice whether the port is used by another process (netstat), but without success. Any ideas?",
+        "ts": "1484904639.003741"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "i have deployed it through REST interface only using the POSTMAN client",
+        "ts": "1484904741.003742"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "<@U2ZPJHMNY> ccid is chaincode id",
+        "ts": "1484904778.003743"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "regarding port bind error.. have you checked 7051 on your native OS..where the docker container is deployed",
+        "ts": "1484904817.003744"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "<@U390MSC0G> yep, I have (lsof -Pn -i4 | grep 7050). but there is no other process using 7051.",
+        "ts": "1484905043.003745"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "<@U2ZPJHMNY> can you try starting it in devmode",
+        "ts": "1484905099.003746"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "?",
+        "ts": "1484905115.003747"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "by using the \"peer node start \u2014peer-chaincodedev\"",
+        "ts": "1484905128.003748"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "command",
+        "ts": "1484905129.003749"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "it seems on the non-dev mode it is trying to bind to another peer on port 7051",
+        "ts": "1484905151.003750"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "do you have another peer running?",
+        "ts": "1484905157.003751"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "native osx: \"peer node start \u2014peer-chaincodedev\u201d -&gt; Works\nnative osx: \u201cpeer node start\u201d &gt;Works\nboth commands in docker using the example docker-compose files, it doesn\u00b4t work :disappointed:",
+        "ts": "1484905483.003752"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "I\u00b4m using the docker-compose.yml from the documentation: <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Network-setup\/>",
+        "ts": "1484905568.003753"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "<@U390MSC0G> Restart of OSX helps :wink:",
+        "ts": "1484906023.003754"
+    },
+    {
+        "type": "message",
+        "user": "U390MSC0G",
+        "text": "ok",
+        "ts": "1484906086.003755"
+    },
+    {
+        "user": "U3U8EQ44V",
+        "text": "<@U3U8EQ44V|omar0117> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484906390.003756"
+    },
+    {
+        "type": "message",
+        "user": "U3U8EQ44V",
+        "text": "Hey everyone, \n\nI and a friend have started to do our master thesis based on Blockchains potential in customer data management. The motivation behind it was because of the new EU regulation General Data Protection Regulation for 25th may 2018. In the regulation, Organisations outside the EU are subject to this regulation when they collect data concerning any EU citizen.\nGDPR is designed to give individuals better control over their personal data held by organisations. Personal data is defined as any information relating to a person who can be identified directly or indirectly. This includes online identifiers, such as IP addresses and cookies, if they are capable of being linked back to the data subject.\nIndirect information might include physical, physiological, genetic, mental, economic, cultural or social identities that can be linked back to a specific individual.\n\nA key part of the regulation requires consent to be given by the individual whose data is held. Consent means \u201cany freely given, specific, informed and unambiguous indication of his or her wishes by which the data subject, either by statement or by a clear affirmative action, signifies agreement to personal data relating to them being processed\u201d.\n\nMost of the factors the Blockchain can work well with, however, consumers have the right to access, rectify or erase the data and the right to withdraw consent at any time.\n\nIs there a way to tackle the erasure of data at all?",
+        "ts": "1484906486.003757"
+    },
+    {
+        "user": "U3U3Y7Q8K",
+        "text": "<@U3U3Y7Q8K|ishanroy2005> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484906964.003758"
+    },
+    {
+        "type": "message",
+        "user": "U3RSDRDED",
+        "text": "<@U3U8EQ44V>  I am new here, so don't actually know anything:\nBut what data do you want to erase? Would it be enough to forget the link between the person and their identity in the system; instead of completely removing something on the blockchain?\nThen it would be a question regarding how the membeship services\/registration authorities work; which someone who understands them might explain.",
+        "edited": {
+            "user": "U3RSDRDED",
+            "ts": "1484910393.000000"
+        },
+        "ts": "1484907609.003761"
+    },
+    {
+        "type": "message",
+        "user": "U3RSDRDED",
+        "text": "(Is my (very uneducated) guess)",
+        "ts": "1484907654.003762"
+    },
+    {
+        "user": "U3U8S9N2G",
+        "text": "<@U3U8S9N2G|bear2107> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484910097.003763"
+    },
+    {
+        "type": "message",
+        "user": "U3SCKQB4P",
+        "text": "Has anybody tried too implement inward remittance using Blockchain Hyperledger ?",
+        "ts": "1484910267.003764"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "I\u00b4m a little confused about the used version and endorsing feature. I have fetched the latest fabric code and every time i\u00b4m trying to deploy the code i see an error message `Error: Error endorsing chaincode: rpc error: code = 12 desc = unknown service protos.Endorser`. Endorser is a 1.0 feature and the latest tagged version is 0.6, right?",
+        "ts": "1484910998.003766"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<@U2ZPJHMNY> suggest you post this to <#C0Y4PEU22|fabric>",
+        "ts": "1484912012.003767"
+    },
+    {
+        "type": "message",
+        "user": "U2ZPJHMNY",
+        "text": "<@U0KM61BCP> done, thanks!",
+        "ts": "1484915448.003769"
+    },
+    {
+        "user": "U3U6P66F5",
+        "text": "<@U3U6P66F5|rajchowdhury> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484921642.003772"
+    },
+    {
+        "user": "U3U8RG62W",
+        "text": "<@U3U8RG62W|clembac> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484921819.003773"
+    },
+    {
+        "user": "U3UBGFRQD",
+        "text": "<@U3UBGFRQD|denisglotov> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484922530.003774"
+    },
+    {
+        "user": "U3U7GKG5R",
+        "text": "<@U3U7GKG5R|pezzin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484924799.003777"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U3U8EQ44V> you and your friend may find this link of interest  <http:\/\/fortune.com\/2016\/09\/20\/accenture-blockchain\/>  and while Accenture is a premier member of the Hyperledger consortium, I am not sure whether or not this work on their part is being done within or outside of the rubric of the Hyperledger consortium.",
+        "attachments": [
+            {
+                "service_name": "Fortune",
+                "title": "Why Accenture's Plan to 'Edit' the Blockchain Is a Big Deal",
+                "title_link": "http:\/\/fortune.com\/2016\/09\/20\/accenture-blockchain\/",
+                "text": "Banks will like it. Purists not so much.",
+                "fallback": "Fortune: Why Accenture's Plan to 'Edit' the Blockchain Is a Big Deal",
+                "image_url": "https:\/\/fortunedotcom.files.wordpress.com\/2016\/09\/gettyimages-608877599.jpg?w=720",
+                "from_url": "http:\/\/fortune.com\/2016\/09\/20\/accenture-blockchain\/",
+                "image_width": 376,
+                "image_height": 250,
+                "image_bytes": 518554,
+                "service_icon": "http:\/\/fortune.com\/favicon.ico",
+                "id": 1
+            }
+        ],
+        "ts": "1484926865.003778"
+    },
+    {
+        "user": "U3UCVTV8V",
+        "text": "<@U3UCVTV8V|davidpeyronnin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484927625.003781"
+    },
+    {
+        "user": "U3V0WTBV4",
+        "text": "<@U3V0WTBV4|bosco.lai> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484927740.003782"
+    },
+    {
+        "type": "message",
+        "user": "U3NKHU4F7",
+        "text": "do someone knows what does \"handler not found for chaincode mycc\u201d exactly means?",
+        "ts": "1484930304.003783"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U3NKHU4F7> - when running in \"net\" mode it means that your chaincode was not properly deployed \/ started\n\nwhen running in dev mode, pretty much the same thing - usually happens if you have not launched your chaincode executable",
+        "ts": "1484933624.003785"
+    },
+    {
+        "user": "U3TLX2Q8Y",
+        "text": "<@U3TLX2Q8Y|param3216> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484934385.003787"
+    },
+    {
+        "type": "message",
+        "user": "U3P7ELDTN",
+        "text": "I\u2019m having this problem on bluemix blockchain:",
+        "ts": "1484934505.003788"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U3P7ELDTN|jtrayfield> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/jtrayfield\/F3UAAH41Z\/-.txt|Untitled>",
+        "file": {
+            "id": "F3UAAH41Z",
+            "created": 1484934512,
+            "timestamp": 1484934512,
+            "name": "-.txt",
+            "title": "Untitled",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U3P7ELDTN",
+            "editable": true,
+            "size": 4633,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3UAAH41Z\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F3UAAH41Z\/download\/-.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/jtrayfield\/F3UAAH41Z\/-.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F3UAAH41Z-a5888b416a",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/jtrayfield\/F3UAAH41Z\/-.txt\/edit",
+            "preview": "  hfc Read in deployment archive from [\/tmp\/deployment-package.tar.gz] +1ms\r\n  hfc Set confidentiality level to PUBLIC +17ms\r\n  hfc Temporary archive deleted successfully ---> \/tmp\/deployment-package.tar.gz +0ms\r\n  hfc File deleted successfully ---> \/Users\/jtray\/git2\/bales\/blockchain\/..\/src\/chaincode\/Dockerfile +1ms\r\n  hfc Calling TransactionContext.execute +0ms\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>  hfc Read in deployment archive from [\/tmp\/deployment-package.tar.gz] +1ms<\/pre><\/div>\n<div><pre>  hfc Set confidentiality level to PUBLIC +17ms<\/pre><\/div>\n<div><pre>  hfc Temporary archive deleted successfully ---&gt; \/tmp\/deployment-package.tar.gz +0ms<\/pre><\/div>\n<div><pre>  hfc File deleted successfully ---&gt; \/Users\/jtray\/git2\/bales\/blockchain\/..\/src\/chaincode\/Dockerfile +1ms<\/pre><\/div>\n<div><pre>  hfc Calling TransactionContext.execute +0ms<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 63,
+            "lines_more": 58,
+            "preview_is_truncated": true,
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U3P7ELDTN",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U3P7ELDTN|jtrayfield>",
+        "bot_id": null,
+        "ts": "1484934513.003789"
+    },
+    {
+        "type": "message",
+        "user": "U3P7ELDTN",
+        "text": "looks like after a successful deployment:\nerror: blockchain.js::invoke() [SDK] error on invoke: \n{ error: { code: 13, metadata: { _internal_repr: {} } },\n  msg: 'Error: {\"created\":\"@1484934361.225874000\",\"description\":\"OS Error\",\"errno\":32,\"file\":\"..\/src\/core\/lib\/iomgr\/tcp_posix.c\",\"file_line\":340,\"os_error\":\"Broken pipe\",\"syscall\":\"sendmsg\"}' }",
+        "ts": "1484934558.003790"
+    },
+    {
+        "type": "message",
+        "user": "U3B2JNK9S",
+        "text": "<@U2URL5G8P> \nThankyou for responding to my message. Here are the details.\n\nI am following this tutorial : <http:\/\/hyperledger-fabric.readthedocs.io\/en\/v0.6\/starter\/fabric-starter-kit\/>\nwhat happens after i run \"node app\"?\n\nI also looked at this tutorial : \n<http:\/\/hyperledger-fabric.readthedocs.io\/en\/v0.6\/Setup\/Chaincode-setup\/>\n\nEven though i was able to do all POST and GET requests, this documentation does not provide a good overview of what exactly is happening?\n\nHere are my questions :\n1) What is the difference between ethereum and fabric? I have worked on ethereum a bit and i would like to know what does fabric have that ethereum doesnt?\n\n2) How can i build a DAPP on fabric?\n\n3) How do i mine using fabric? are there any commands that i can run in terminal?",
+        "ts": "1484935587.003791"
+    },
+    {
+        "user": "U3V60LBM4",
+        "text": "<@U3V60LBM4|htyagi90> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484946530.003792"
+    },
+    {
+        "type": "message",
+        "user": "U3R8W5LAG",
+        "text": "Hi I am trying to do a query using the example code 02 but I kept getting error \"Chaincode handler FSM cannot handle message (RANGE_QUERY_STATE) with payload size (10) while in state: READY\"",
+        "ts": "1484948202.003793"
+    },
+    {
+        "type": "message",
+        "user": "U3R8W5LAG",
+        "text": "I saw there are some commit to remove query from example. How do we achieve the same thing? Should the documentation be updated? <https:\/\/github.com\/hyperledger\/fabric\/commit\/6ddbefec0891b9d84fc0b5846d5c39f0c7b3e7b3>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "[FAB-1055] remove query from chaincode example \u00b7 hyperledger\/fabric@6ddbefe \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/commit\/6ddbefec0891b9d84fc0b5846d5c39f0c7b3e7b3",
+                "text": "Part of FAB-1055. Chaincode query interface will not be used in v1.0. It will be removed by several step. This commit change old \"Query\" function in go examples to \"Invoke\". Change-Id: Ic00828b8cd...",
+                "fallback": "GitHub: [FAB-1055] remove query from chaincode example \u00b7 hyperledger\/fabric@6ddbefe",
+                "thumb_url": "https:\/\/avatars2.githubusercontent.com\/u\/6777418?v=3&s=200",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/commit\/6ddbefec0891b9d84fc0b5846d5c39f0c7b3e7b3",
+                "thumb_width": 200,
+                "thumb_height": 200,
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/github.png",
+                "id": 1
+            }
+        ],
+        "ts": "1484948280.003794"
+    },
+    {
+        "user": "U3TR4N680",
+        "text": "<@U3TR4N680|afarhan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484951537.003796"
+    },
+    {
+        "type": "message",
+        "user": "U0YJUECE8",
+        "text": "<@U3R8W5LAG> *If* you are using the Fabric v0.6 Docker images, this *could* be your problem:  I've seen this where people are trying to use the v0.6 branch of the code and then are following the instructions in the v0.6 branch of the documentation, but....get twisted up because there are a couple spots in this doc where it has a wget (for the chaincode) and a git clone (for getting the fabric code available locally in order to build the chaincode) that refer to *master*.   The problem is, that *master* is now v1.0 code.    So, they are running Docker images with v0.6 code but when they build the chaincode locally, it incorporates v1.0 code in into it.   The solution is, in the *wget* and the *git clone*,  change *master* to *v0.6* in the path name.   I am being purposely vague as to where this documentation is, because if I've guessed correctly, you know what I'm referring to, but if I've guessed wrong, it's something else and I don't want to lead you on a wild goose chase.   I hope this helps.",
+        "ts": "1484955693.003797"
+    },
+    {
+        "user": "U3UFVEUDR",
+        "text": "<@U3UFVEUDR|zhengh> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484962185.003798"
+    },
+    {
+        "user": "U3V8WRM0W",
+        "text": "<@U3V8WRM0W|pfernan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484968820.003799"
+    },
+    {
+        "user": "U3UJL454J",
+        "text": "<@U3UJL454J|hackfisher> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1484973882.003800"
+    }
+]

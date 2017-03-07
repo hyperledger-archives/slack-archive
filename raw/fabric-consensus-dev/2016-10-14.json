@@ -1,0 +1,281 @@
+[
+    {
+        "type": "message",
+        "user": "U1P1ZV6RF",
+        "text": "Can someone confirm if SIEVE consensus is still on the agenda? Many presentations and documents quote it as being one of 3 pluggable consensus protocols available in Fabric but I cannot find any further details on it.",
+        "ts": "1476429711.002117"
+    },
+    {
+        "type": "message",
+        "user": "U0XV1HDL3",
+        "text": "SIEVE is not a proper consensus protocol but a filter for preventing non-deterministic chaincode to disrupt the operation of the system. Sieve exists in prototype stage in V0.5\/V0.6. The V1.0 architecture does not rely on it, as it provides the same filtering function in a different way.",
+        "ts": "1476431204.002118"
+    },
+    {
+        "user": "U2PAB405S",
+        "text": "<@U2PAB405S|benjamin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476431547.002119"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "one big step forward, it seems that the bug is solved:\n1) some small modifications in the bootup process of the starting (restarting) node (1-2 missing lines setting the state properly)\n2) new view timer instead of a timer producing view changes (if anyone interested: see the last comment from <https:\/\/jira.hyperledger.org\/browse\/FAB-624>)\n3) added a pull based synch protocol (parts of it). a pull is sent to a random node, which sends back its last batch",
+        "ts": "1476441363.002120"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "problem: the pull protocol was meant to be periodical, node has to periodically send a pull to one of its random neighbours. now only a 'one shot' version is implemented (after node start). this solves the problem (not just the testcase but the root cause, a specific situation) I had and does no harm to other test cases. BUT if the protocol would be periodical, the test would never terminate.",
+        "ts": "1476441537.002121"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "reason: tests use (sbft tests) a queue for message passing and if it is empty then the system terminates. but in case of a periodical pull it will be never empty as a new pull will always be queued.",
+        "ts": "1476441632.002122"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "something like this: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/1737\/>",
+        "ts": "1476445428.002123"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "<@U0YMACQSW> consenter state is basically pbft protocol state - in that sense it is well understood.",
+        "edited": {
+            "user": "U0Y14MWA2",
+            "ts": "1476451451.000000"
+        },
+        "ts": "1476451393.002124"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "this includes sequence number, view number, p set q set (optionally)",
+        "ts": "1476451420.002125"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "what we add, specific to fabric, is previous batch hash",
+        "ts": "1476451435.002126"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "that's about it",
+        "ts": "1476451437.002127"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "there is other auxiliary state (like list of pending requests)",
+        "ts": "1476451520.002129"
+    },
+    {
+        "user": "U2PE37K3J",
+        "text": "<@U2PE37K3J|n.ohagan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1476453322.002130"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0UGH3X7X|tuand> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F2PFCBHMM\/draft_genesis_block.txt|draft genesis block> and commented: <@U0XPR4NP4>  <@U0UKTPMG8>  ... working on the tool that's creating the genesis block.  thinking of using JSON file for input to tool  ... what fields do we need for the modification policies ?",
+        "file": {
+            "id": "F2PFCBHMM",
+            "created": 1476456382,
+            "timestamp": 1476456382,
+            "name": "draft_genesis_block.txt",
+            "title": "draft genesis block",
+            "mimetype": "text\/plain",
+            "filetype": "text",
+            "pretty_type": "Plain Text",
+            "user": "U0UGH3X7X",
+            "editable": true,
+            "size": 650,
+            "mode": "snippet",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2PFCBHMM\/draft_genesis_block.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F2PFCBHMM\/download\/draft_genesis_block.txt?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F2PFCBHMM\/draft_genesis_block.txt",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F2PFCBHMM-b07892d5a2",
+            "edit_link": "https:\/\/hyperledgerproject.slack.com\/files\/tuand\/F2PFCBHMM\/draft_genesis_block.txt\/edit",
+            "preview": "{\r\n   \"thisorderernode\": {\r\n      \"address\": \"ip:port\",\r\n      \"cert\": \"filename or content of .pem\"\r\n   },\r",
+            "preview_highlight": "<div class=\"CodeMirror cm-s-default CodeMirrorServer\" oncopy=\"if(event.clipboardData){event.clipboardData.setData('text\/plain',window.getSelection().toString().replace(\/\\u200b\/g,''));event.preventDefault();event.stopPropagation();}\">\n<div class=\"CodeMirror-code\">\n<div><pre>{<\/pre><\/div>\n<div><pre>   &quot;thisorderernode&quot;: {<\/pre><\/div>\n<div><pre>      &quot;address&quot;: &quot;ip:port&quot;,<\/pre><\/div>\n<div><pre>      &quot;cert&quot;: &quot;filename or content of .pem&quot;<\/pre><\/div>\n<div><pre>   },<\/pre><\/div>\n<div><pre><\/pre><\/div>\n<\/div>\n<\/div>\n",
+            "lines": 28,
+            "lines_more": 23,
+            "preview_is_truncated": false,
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc2PFCBRFH",
+                "created": 1476456382,
+                "timestamp": 1476456382,
+                "user": "U0UGH3X7X",
+                "is_intro": true,
+                "comment": "<@U0XPR4NP4>  <@U0UKTPMG8>  ... working on the tool that's creating the genesis block.  thinking of using JSON file for input to tool  ... what fields do we need for the modification policies ?",
+                "channel": ""
+            }
+        },
+        "user": "U0UGH3X7X",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0UGH3X7X|tuand>",
+        "bot_id": null,
+        "ts": "1476456383.002131"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "I think that is a form of the Policy struct defined in ab.proto",
+        "ts": "1476456425.002132"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "... and any other fields that I'm missing ?  I'm following what we have in FAB-359 and FAB-665",
+        "ts": "1476456425.002133"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0XPR4NP4> may be able to provide a more specific answer",
+        "ts": "1476456470.002134"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> Maybe simpler is better for the tool, but think about whether we want to allow different orderer or peer entity policies",
+        "ts": "1476456663.002135"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "For instance, what if the orderer service is not BFT and we want to support an orderer CA",
+        "ts": "1476456685.002136"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Or, what if we want 2 signatures from peer entities for transaction ingress",
+        "ts": "1476456708.002137"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right now I'm working the other end of this problem, creating the genesis block statically with the necessary embedded policy.  There is a changeset out there, but shortly after pushing it, I decided I hated it, so am really reworking both the messages and the implementation, so it may be of limited value to reference now",
+        "ts": "1476456755.002138"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "so i'm working my way through the flow like this \n1.admin gathers certs\/policies\/addresses:ports",
+        "ts": "1476457086.002139"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "2. admin creates this json file and inputs to tool",
+        "ts": "1476457107.002140"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "3.tool munges on input json file and creates a serialized genesis block to disk",
+        "ts": "1476457167.002141"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "4.orderer starts, reads, unmarshalls and writes to system ledger",
+        "ts": "1476457215.002142"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "i think you're working on 4. ?  or parts of 3. as well ?",
+        "ts": "1476457270.002143"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "at this point, i'm trying to see if i can describe the policy in json so that i can map to protobuf ... i'll go look at ab again",
+        "ts": "1476457371.002144"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0XPR4NP4>  <@U0UGH3X7X>  fyi I am working on the bootstrap BDD",
+        "ts": "1476457697.002145"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "I will ping as soon as I get to that point",
+        "ts": "1476457714.002146"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "ie the gen block",
+        "ts": "1476457719.002147"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0UGH3X7X> You can generate JSON from protobuf, FYI, and unmarshal JSON into protobuf objects",
+        "ts": "1476457761.002148"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "With respect to 4, I am handling the bit where the startup consumes a genesis block, and creating a genesis block statically in code",
+        "ts": "1476457820.002149"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The piece I am working on at this instant, is taking a config transaction, validating that it matches all of the existing policies, then generating a new configuration with new policies",
+        "ts": "1476457857.002150"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "In order to generate the genesis block, you will ultimately need the proto I am working on for the configuration, but it is not ready yet",
+        "ts": "1476457890.002151"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "jason, what's keeping you :smile:  good deal.  I'm going to play around a bit more with json &lt;-&gt; protobuf",
+        "ts": "1476457964.002152"
+    },
+    {
+        "user": "U2PE37K3J",
+        "text": "<@U2PE37K3J|n.ohagan> has left the channel",
+        "type": "message",
+        "subtype": "channel_leave",
+        "ts": "1476458755.002153"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U1AU8DRQR> From earlier you said:\n\n&gt; problem: the pull protocol was meant to be periodical, node has to periodically send a pull to one of its random neighbours. now only a 'one shot' version is implemented (after node start). this solves the problem (not just the testcase but the root cause, a specific situation) I had and does no harm to other test cases. BUT if the protocol would be periodical, the test would never terminate.\n\nI have been thinking about this.  Because we have a stateful network protocol, we can tell when a connection is established\/ended.  All online nodes have come to an agreement on the world state, would it be safe to stop this timer? It could always be restarted once someone joins.  I dislike the idea of the network operating in a 'special' mode for tests (like having a limited number of times this timer can pop, or disabling it for some tests) so a solution like that would preferable to me.",
+        "ts": "1476502749.002154"
+    }
+]

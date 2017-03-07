@@ -1,0 +1,868 @@
+[
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "The scenario for example,\nwe want to transfer money from *A* to *B* at tomorrow 15:00\nSo, how can we implement a smart contract correctly?\n\nCurrently,\n1. I implemented simple functions, e.g. create_acc() and money_transfer(), then deploy it as a chaincode.\n2. Create users *A* and *B* with the initial money.\n3. If I want to transfer money at 15:00, I have to call money_transfer() at 15:00. (not smart)\n4. The block is then appends to the chain.\n\nCan I implement the function that will accept a transaction with a specific contract detail, then the chaincode will execute for me.\ne.g. Submitting a transaction at 8:00, transfer money from *A*-&gt;*B*, exec at 15:00?",
+        "ts": "1473058963.000012"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1T95QCUE> the chaincode can persist state between invocations... GetState() PutState()",
+        "ts": "1473058965.000013"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "the time thing is interesting... you could technically write a chaincode that is long-lived and waits until 15:00 to commit",
+        "ts": "1473059141.000014"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "but it won't be on the blockchain until then",
+        "ts": "1473059146.000015"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Yes, that is what I think it is smart.",
+        "ts": "1473059190.000016"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I mean, I just want the value to be store temporary on the chaincode, and when the condition meet, the block is then append to the blockchain.",
+        "ts": "1473059243.000017"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "GetState and PutState will interact with the current state from the blockchain, somehow from the validating node, not from the variable of the chaincode.",
+        "ts": "1473059288.000018"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "If my understanding is correct.",
+        "ts": "1473059316.000019"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, please correct me if I'm wrong, somewhere",
+        "ts": "1473059333.000020"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "if the peer doesn't reboot, you could very well let the chaincode sleep until a specific time... maybe even write a temporary file to disk?",
+        "ts": "1473059339.000021"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "you're pretty free to do what you want in the chaincode",
+        "ts": "1473059353.000022"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "you could have a \"temporary\" space on disk (not on the chain) that the peer maintains...",
+        "ts": "1473059379.000023"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "not sure how you would check it on startup to load those still-pending transactions though... perhaps another type of \"startup\" invoke",
+        "ts": "1473059407.000024"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "You mean, R\/W file? well that's another way",
+        "ts": "1473059435.000025"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I take it you're comparing to Ethereum... do you know how it happens in those systems?",
+        "ts": "1473059458.000026"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, if the chaincode done, it will not be back until I call it from API",
+        "ts": "1473059459.000027"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I don't know how Etherium works in practical, actually.",
+        "ts": "1473059497.000028"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "another idea would be you could have a chain for \"pending\" transactions and a chain for \"committed\" transactions... then you just need a way to check and commit them at the right time ... perhaps an independent program?",
+        "ts": "1473059544.000029"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "How about, can I implement a kind like event emitter on the chaincode?\nAnd this event will be fired, like javascript, e.g. setTimeout ?",
+        "ts": "1473059649.000030"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "That will be interesting, and that's exactly smart contract, probably.",
+        "ts": "1473059695.000031"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "there are events ... I'm not familiar with them though",
+        "ts": "1473059698.000032"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "you can definitely invoke one chaincode from another too",
+        "ts": "1473059716.000033"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "You mean, one normal chaincode, and one timer-like chaincode?",
+        "ts": "1473059753.000034"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "and timer chaincode will run indefinitely? kind of?",
+        "ts": "1473059792.000035"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "as long as the peer doesn't shut down, I think they can run forever, yes",
+        "ts": "1473059811.000036"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "so you could have a chaincode that accepts a \"singleton-timer\" function... then a \"add-new-timer-task\" function",
+        "ts": "1473059838.000037"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Now sure how heavy load of this chaincode...",
+        "ts": "1473059884.000038"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Probably while(true) {\n  GetState()....\n}\n?",
+        "ts": "1473059935.000039"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "that one? a lot\n\nput some sleeps in there :slightly_smiling_face:",
+        "ts": "1473059953.000040"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "And can we trust a time of the container?",
+        "ts": "1473059994.000041"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "<@U1T95QCUE> you might find this one interesting <https:\/\/golang.org\/pkg\/time\/#Ticker>",
+        "ts": "1473060017.000042"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "To be exactly a smart-contract platform, I think this should be with Hyperledger job, actually.",
+        "ts": "1473060056.000043"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I'm checking...",
+        "ts": "1473060066.000044"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Well, I will check about Ticker, it must be kind of interesting. But not sure if it will fire at the specific time after I called it within an invoke",
+        "ts": "1473060253.000045"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, thanks for <@U1LES78TT> and <@U1MNES6NR> . Now I have some idea to try.",
+        "ts": "1473060295.000046"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "good luck :slightly_smiling_face:",
+        "ts": "1473060415.000047"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I'm tempted to read up on how Ethereum would work with your example",
+        "ts": "1473060426.000048"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Me too, not sure how the others work, smartly.\nThanks you, again, btw :slightly_smiling_face:",
+        "ts": "1473060501.000049"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "\"smart\" is just hand waving for \"programming\" :smile:",
+        "ts": "1473060528.000050"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it's just a matter of who has to do the programming",
+        "ts": "1473060577.000051"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "well, let's embed the 'smart' to each transaction, that's a bit smarter. haha",
+        "ts": "1473060707.000052"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, can we actually create a variable on the chaincode? I mean local variable, not to use PutState\/GetState.",
+        "ts": "1473060885.000053"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "With that, it will let timer works, otherwise I need to go through while(){ sleep... } which will may caused the whole chain sleep, and may caused some negative affects about synchronization....",
+        "ts": "1473061113.000054"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "BTW, just ask, I'm trying my side..",
+        "ts": "1473061135.000055"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1T95QCUE> when you're writing your chaincode (e.g. in Go) you can do pretty much whatever you like locally",
+        "ts": "1473061334.000056"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "so `var &lt;name&gt; &lt;type&gt;` to make local variables",
+        "ts": "1473061422.000057"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "<@U1LES78TT> are these variables conserved between queries \/ invokes \/ reboots? And if we use local files, are they kept in the container between peer restarts?\nIf yes, that's pretty cool :slightly_smiling_face:",
+        "ts": "1473061506.000058"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "no, they're not, they're local",
+        "ts": "1473061641.000059"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "file between restarts? I guess that might work",
+        "ts": "1473061664.000060"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "if you want variables to persist between queries\/invokes\/reboots then you should use PutState() :slightly_smiling_face:",
+        "ts": "1473061685.000061"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "save them to some specially named key that won't be used otherwise",
+        "ts": "1473061705.000062"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "thanks, I'm just working on something that might need each endorsing peer to hold different (secret) data, so files could be the answer :wink:",
+        "ts": "1473061740.000063"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "(not you can't PutState in a query)",
+        "ts": "1473061746.000064"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1MNES6NR> sounds like a plan, just make sure your peers don't get their disks wiped :slightly_smiling_face:",
+        "ts": "1473061784.000065"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "or keep them in another blockchain I guess",
+        "ts": "1473061793.000066"
+    },
+    {
+        "type": "message",
+        "user": "U1MNES6NR",
+        "text": "sure!",
+        "ts": "1473061802.000067"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "When I first trying to learn Go, that's the same time when I'm trying to understand Hyperledger :stuck_out_tongue:\n\nWell, just to confirm some understanding,\nA deployed chaincode actually run forever with shim.start() to listen on the gRPC from the validating peer.\nAnd we can create any local variable on our chaincode_xxx.go, which will be persistent as just a normal process.\nAnd storage, is to keep it persistent after reboot, etc.",
+        "ts": "1473062207.000068"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I see, thanks, I'm trying, will see the result..",
+        "ts": "1473062237.000069"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "the chaincodes actually run as their own docker container inside hyperledger\/fabric... thinking about it I'm not sure how persistent their disks are",
+        "ts": "1473062401.000070"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "so deploying a chaincode really starts up a new container",
+        "ts": "1473062413.000071"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "I think we cannot mount the external volume on the chaincode container, at least this version...",
+        "ts": "1473062457.000072"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "the chaincodes also run on each peer... so if something is derived from a local file on disk, your other peers might not have it and might not reach consensus",
+        "ts": "1473062469.000073"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "sounds like an interesting thing to try out",
+        "ts": "1473062482.000074"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Yes, interesting, at least some kind of value need not to be stored in the chain.\nBtw, a bit complicate, if the system shutdown...\nThinking about the better way..",
+        "ts": "1473062739.000075"
+    },
+    {
+        "user": "U287YT8N9",
+        "text": "<@U287YT8N9|zhangke> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473062782.000076"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Can we send the data to peer, which has the attachable volume?\nIn that case, peer can store the data locally, and can send the data back to the chaincode when it need to be recovered.",
+        "ts": "1473062905.000077"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "But I think, peer does not have this ability this time.",
+        "ts": "1473062953.000078"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "... just my first randomized idea.",
+        "ts": "1473063024.000079"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "If it affects the block chain then all peers would need that data",
+        "ts": "1473063309.000080"
+    },
+    {
+        "user": "U2897RSD8",
+        "text": "<@U2897RSD8|crawlem> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473069843.000081"
+    },
+    {
+        "user": "U2891BNAG",
+        "text": "<@U2891BNAG|rvaughan> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473072620.000082"
+    },
+    {
+        "user": "U289G8BGW",
+        "text": "<@U289G8BGW|hoshino> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473074450.000083"
+    },
+    {
+        "type": "message",
+        "user": "U0X3PTHN0",
+        "text": "Which channel would you recommend for discussing deploying \/ managing blockchain networks? Specifically the work we\u2019ve been doing which was featured here - <https:\/\/developer.ibm.com\/blockchain\/2016\/08\/03\/running-hyperledger-fabric-on-ibm-blue-box-with-cloudsoft-amp\/>",
+        "ts": "1473079606.000084"
+    },
+    {
+        "user": "U28AB65TP",
+        "text": "<@U28AB65TP|viking1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473079831.000085"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0X3PTHN0> \u201cfabric\u201d seems appropriate",
+        "ts": "1473079866.000086"
+    },
+    {
+        "user": "U28AF10A3",
+        "text": "<@U28AF10A3|imas> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473080095.000087"
+    },
+    {
+        "user": "U28AE6205",
+        "text": "<@U28AE6205|sviehrig-de.ibm.com> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473080478.000088"
+    },
+    {
+        "type": "message",
+        "user": "U0X3PTHN0",
+        "text": "<@U0ULK2JPP> thx",
+        "ts": "1473080911.000089"
+    },
+    {
+        "user": "U28AW4KCP",
+        "text": "<@U28AW4KCP|vriffier> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473083438.000091"
+    },
+    {
+        "user": "U28B4V2AG",
+        "text": "<@U28B4V2AG|courtnayguima> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473087886.000093"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "Hello, I'm trying to start a node with security enabled and getting this error:\n`[rpc error: code = 2 desc = \"grpc: the client connection is closing\"]`\nCan anyone help me to find out what I missed?",
+        "ts": "1473092421.000094"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1W210996>  - do you have a membersrvc node running and is your peer configured to point at it?",
+        "ts": "1473094118.000095"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "I think I have only one node running. I followed this tutorial to build and start it:\n<https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/docs\/dev-setup\/devenv.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1473094275.000096"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Assuming that you are really looking to be able to develop and test chaincode, you might want to have a look at <http:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/Setup\/Chaincode-setup\/>\n\nYou'll see some example Docker Compose files like the one below for running a single peer with a membersrvc node as well (membersrvc is needed when enabling security)\n\n```\nmembersrvc:\n  image: hyperledger\/fabric-membersrvc\n  ports:\n    - \"7054:7054\"\n  command: membersrvc\nvp0:\n  image: hyperledger\/fabric-peer\n  ports:\n    - \"7050:7050\"\n    - \"7051:7051\"\n    - \"7053:7053\"\n  environment:\n    - CORE_PEER_ADDRESSAUTODETECT=true\n    - CORE_VM_ENDPOINT=unix:\/\/\/var\/run\/docker.sock\n    - CORE_LOGGING_LEVEL=DEBUG\n    - CORE_PEER_ID=vp0\n    - CORE_PEER_PKI_ECA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TCA_PADDR=membersrvc:7054\n    - CORE_PEER_PKI_TLSCA_PADDR=membersrvc:7054\n    - CORE_SECURITY_ENABLED=true\n    - CORE_SECURITY_ENROLLID=test_vp0\n    - CORE_SECURITY_ENROLLSECRET=MwYpmSRjupbT\n  links:\n    - membersrvc\n  command: sh -c \"sleep 5; peer node start --peer-chaincodedev\"\n```",
+        "ts": "1473095143.000098"
+    },
+    {
+        "type": "message",
+        "user": "U1W210996",
+        "text": "thank you! I'll read it and try to start all required services",
+        "ts": "1473095271.000099"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "hi, everyone, I have a question. We know that fabric rest api is based on swagger. And so I am using swagger client generator to generate client sdk for golang. The generated code looks seems good, but can't be use. ```\"ConfidentialityLevel\":{\n            \"type\": \"string\",\n            \"default\": \"PUBLIC\",\n            \"example\": \"PUBLIC\",\n            \"enum\":[\n                \"PUBLIC\",\n                \"CONFIDENTIAL\"\n              ],\n            \"description\": \"Confidentiality level of the Chaincode.\"\n        },```",
+        "ts": "1473097947.000100"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "ConfidentialityLevel will be generated as ``` \n\/*ConfidentialityLevel Confidentiality level of the Chaincode.\n\nswagger:model ConfidentialityLevel\n*\/\ntype ConfidentialityLevel string\n\n\/\/ for schema\nvar confidentialityLevelEnum []interface{}\n\nfunc (m ConfidentialityLevel) validateConfidentialityLevelEnum(path, location string, value ConfidentialityLevel) error {\n\tif confidentialityLevelEnum == nil {\n\t\tvar res []ConfidentialityLevel\n\t\tif err := json.Unmarshal([]byte(`[\"PUBLIC\",\"CONFIDENTIAL\"]`), &amp;res); err != nil {\n\t\t\treturn err\n\t\t}\n\t\tfor _, v := range res {\n\t\t\tconfidentialityLevelEnum = append(confidentialityLevelEnum, v)\n\t\t}\n\t}\n\tif err := validate.Enum(path, location, value, confidentialityLevelEnum); err != nil {\n\t\treturn err\n\t}\n\treturn nil\n}\n\n\/\/ Validate validates this confidentiality level\nfunc (m ConfidentialityLevel) Validate(formats strfmt.Registry) error {\n\tvar res []error\n\n\t\/\/ value enum\n\tif err := m.validateConfidentialityLevelEnum(\"\", \"body\", m); err != nil {\n\t\treturn err\n\t}\n\n\tif len(res) &gt; 0 {\n\t\treturn errors.CompositeValidationError(res...)\n\t}\n\treturn nil\n}\n```",
+        "ts": "1473098010.000101",
+        "reactions": [
+            {
+                "name": "upside_down_face",
+                "users": [
+                    "U1QQP7KP0"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "but vp will get ```[rest] ProcessChaincode -&gt; ERRO 04f Error unmarshalling chaincode request payload: json: cannot unmarshal string into Go value of type protos.ConfidentialityLevel ``` Is there a solution to avoid the bug?",
+        "ts": "1473098080.000102"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "I registered an account in <https:\/\/jira.hyperledger.org>, but it seems avoid me to login. And GitHub can not open a issue,  make me creazy",
+        "ts": "1473098726.000103"
+    },
+    {
+        "user": "U28DBE65P",
+        "text": "<@U28DBE65P|mcampora> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473106394.000104"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U21PYLBH7> you need to register here <https:\/\/identity.linuxfoundation.org>",
+        "ts": "1473115214.000105"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U268EB76W|chainsaw> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/chainsaw\/F28E2SCTF\/screen_shot_2016-09-05_at_6.59.55_pm.png|Building the Hyperledger community in Austin!> and commented: Any participation and or ideas for future technical sessions I can facilitate are welcome. Maybe get some real feedback the emerging community?",
+        "file": {
+            "id": "F28E2SCTF",
+            "created": 1473120164,
+            "timestamp": 1473120164,
+            "name": "Screen Shot 2016-09-05 at 6.59.55 PM.png",
+            "title": "Building the Hyperledger community in Austin!",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U268EB76W",
+            "editable": false,
+            "size": 80603,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28E2SCTF\/screen_shot_2016-09-05_at_6.59.55_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F28E2SCTF\/download\/screen_shot_2016-09-05_at_6.59.55_pm.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28E2SCTF-ced6b47592\/screen_shot_2016-09-05_at_6.59.55_pm_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28E2SCTF-ced6b47592\/screen_shot_2016-09-05_at_6.59.55_pm_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28E2SCTF-ced6b47592\/screen_shot_2016-09-05_at_6.59.55_pm_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 170,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28E2SCTF-ced6b47592\/screen_shot_2016-09-05_at_6.59.55_pm_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 227,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F28E2SCTF-ced6b47592\/screen_shot_2016-09-05_at_6.59.55_pm_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "image_exif_rotation": 1,
+            "original_w": 657,
+            "original_h": 311,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/chainsaw\/F28E2SCTF\/screen_shot_2016-09-05_at_6.59.55_pm.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F28E2SCTF-c2fd64205b",
+            "channels": [
+                "C0J02NU1E"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 1,
+            "initial_comment": {
+                "id": "Fc28DVVDQE",
+                "created": 1473120164,
+                "timestamp": 1473120164,
+                "user": "U268EB76W",
+                "is_intro": true,
+                "comment": "Any participation and or ideas for future technical sessions I can facilitate are welcome. Maybe get some real feedback the emerging community?",
+                "channel": ""
+            }
+        },
+        "user": "U268EB76W",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U268EB76W|chainsaw>",
+        "bot_id": null,
+        "ts": "1473120166.000106"
+    },
+    {
+        "type": "message",
+        "user": "U268EB76W",
+        "text": "They are the same and Austin Hyperledger is new.",
+        "ts": "1473120230.000107"
+    },
+    {
+        "user": "U28CT0C1Z",
+        "text": "<@U28CT0C1Z|rabuckley> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473125187.000108"
+    },
+    {
+        "type": "message",
+        "user": "U21PYLBH7",
+        "text": "<@U1LES78TT> thks, I can create issue now.",
+        "ts": "1473128337.000109"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U21PYLBH7> you are welcome and that's great :)",
+        "ts": "1473128776.000110"
+    },
+    {
+        "user": "U28ELEF9A",
+        "text": "<@U28ELEF9A|jsong> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473131316.000111"
+    },
+    {
+        "user": "U28F68UDV",
+        "text": "<@U28F68UDV|tuanba1> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473134463.000112"
+    },
+    {
+        "user": "U28FLKBTK",
+        "text": "<@U28FLKBTK|lserafin> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473140462.000113"
+    },
+    {
+        "user": "U28F9NALC",
+        "text": "<@U28F9NALC|heshansp> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1473141457.000114"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "Hi guys, is there any documentation around how to spawn a Non Validating Peer please? I am trying to spawn a Non Validating Peer to communicate with a four peer network and so far not a lot of luck\u2026.",
+        "ts": "1473141929.000115"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "@heshanp is it not the same as when you run a normal peer, except set CORE_PEER_VALIDATOR_ENABLED=false (or equivalent in a peer\/core.yaml)?",
+        "ts": "1473143394.000116"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "<@U1LES78TT>: Exactly my understanding as well so far but how is it going to communicate with a given validator? Can I invoke a function in the NVP using CLI? I can't get these to work. ",
+        "ts": "1473143724.000117"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "it communicates the same way as the other peers, over gRPC, and I think it talks directly to whichever peer you specified as CORE_PEER_DISCOVERY_ROOTNODE",
+        "ts": "1473143958.000118"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I seem to be able to invoke CLI commands on my NVP\n\nvagrant@hyperledger-devenv:v0.0.10-84431e3:\/hyperledger$ CORE_PEER_ADDRESS=172.17.0.6:7051 peer network list\n{\"Peers\":[{\"ID\":{\"name\":\"vp1\"},\"address\":\"172.17.0.3:7051\",\"type\":1},{\"ID\":{\"name\":\"vp0\"},\"address\":\"172.17.0.2:7051\",\"type\":1},{\"ID\":{\"name\":\"vp2\"},\"address\":\"172.17.0.4:7051\",\"type\":1},{\"ID\":{\"name\":\"vp3\"},\"address\":\"172.17.0.5:7051\",\"type\":1}]}\n\nnote that .6 is not part of the peer network list",
+        "ts": "1473144002.000119"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "So does a NVP get a copy of the chaincode? I guess thats a no... ",
+        "ts": "1473144043.000120"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "no, it wouldn't need it",
+        "ts": "1473144054.000121"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "So how will it validate the request coming through CLI please? Does it run its own GO code with a main func? ",
+        "ts": "1473144119.000122"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "my understanding is that NVPs get a copy of the current blockchain state (e.g. a rocksDB) to handle `query` requests... anything else gets sent to a VP",
+        "ts": "1473144166.000123"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "hmm... query would need the chaincode",
+        "ts": "1473144192.000124"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "let me spin up some chaincode :slightly_smiling_face:",
+        "ts": "1473144200.000125"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "In my case, there is no block in NVP, and I can query only from VP.",
+        "ts": "1473144287.000126"
+    },
+    {
+        "type": "message",
+        "user": "U1T95QCUE",
+        "text": "Not sure if I missed some parameter, but it happens",
+        "ts": "1473144384.000127"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "definitely not got any chaincode running on my NVP",
+        "ts": "1473144450.000128"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "Hmmmmmm interesting... So how exactly is the NVP signing the transaction before sending to the VP? ",
+        "ts": "1473144591.000129"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "signing?",
+        "ts": "1473144620.000130"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "Oh I mean adding the security metadata ",
+        "ts": "1473144676.000131"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U1T95QCUE> I seem to be able to query my NVP, get the same results as the VPs",
+        "ts": "1473144702.000132"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "I can even invoke on the NVP",
+        "ts": "1473144724.000133"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "<@U28F9NALC> sorry, not sure what or if the NVP adds to the requests on the way to the VP",
+        "ts": "1473144787.000134"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "my NVP is definitely not handling the chaincode side of things ... the logs just show a transaction ID and nothing else",
+        "ts": "1473144817.000135"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "06:51:23.490 [devops] invokeOrQuery -&gt; INFO 010 Transaction ID: 91b42ce4-29d3-4a7a-b2f1-26e20d199f4f\n06:51:29.825 [devops] invokeOrQuery -&gt; INFO 011 Transaction ID: 371f5582-d4df-435c-9e70-aece9a63d490\n06:51:51.411 [devops] invokeOrQuery -&gt; INFO 012 Transaction ID: 95417023-06ea-49c2-b3be-0186fb4e5621\n06:51:54.014 [devops] invokeOrQuery -&gt; INFO 013 Transaction ID: e8a958e0-3c87-4cce-920a-1ee71ab7fe5b",
+        "ts": "1473144832.000136"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "whereas my VP has a whole bunch of rest \/ devops \/ consensus logs as well",
+        "ts": "1473144866.000137"
+    },
+    {
+        "type": "message",
+        "user": "U1LES78TT",
+        "text": "06:47:17.894 [rest] ProcessChaincode -&gt; INFO 03c REST successfully query chaincode: {\"jsonrpc\":\"2.0\",\"result\":{\"status\":\"OK\",\"message\":\"99\"},\"id\":0}\n06:51:20.797 [devops] invokeOrQuery -&gt; INFO 03d Transaction ID: 9ed46def-2ddf-4b87-9d1a-34c7ce950d63\n06:51:52.414 [consensus\/pbft] ProcessEvent -&gt; INFO 03e Replica 0 batch timer expired\n06:51:52.414 [consensus\/pbft] sendBatch -&gt; INFO 03f Creating batch with 1 requests\n06:51:52.429 [consensus\/pbft] executeOne -&gt; INFO 040 Replica 0 executing\/committing request batch for view=0\/seqNo=4 and digest uKRPmdaugfUjqHBtSoegxP1N\/BeGojpNZ+3Y7ZDM9Uheh48GXa\/zHzVFOrx2\/5BfHKMIA8QTXd6qk4dGncabAA==\n06:51:52.456 [consensus\/pbft] execDoneSync -&gt; INFO 041 Replica 0 finished execution 4, trying next\n06:51:58.113 [devops] invokeOrQuery -&gt; INFO 042 Transaction ID: 059680e5-c391-42a4-8890-57077d4ed171",
+        "ts": "1473144882.000138"
+    },
+    {
+        "type": "message",
+        "user": "U28F9NALC",
+        "text": "<@U1LES78TT> I was referring to this example here... <https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app> where the NVP adds the security metadata to the transaction which gets validated by the VP. ",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/tree\/master\/examples\/chaincode\/go\/asset_management\/app",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "ts": "1473145047.000139"
+    },
+    {
+        "type": "message",
+        "user": "U1RLZ5729",
+        "text": "Hey all,\nI am running in \u201cnon-dev\u201d environment. Therefore, I need to give the url to the chaincode in the \u201cpath\u201d. But most of the tym, I get this error which is very frustrating.\n\n{\n  \"jsonrpc\": \"2.0\",\n  \"error\": {\n    \"code\": -32001,\n    \"message\": \"Deployment failure\",\n    \"data\": \"Error when deploying chaincode: Error getting chaincode package bytes: Error getting code Getting chaincode took too long\"\n  },\n  \"id\": 1\n}\nAnyone having any clue of it?",
+        "ts": "1473145061.000141"
+    }
+]

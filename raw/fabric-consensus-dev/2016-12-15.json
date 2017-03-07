@@ -1,0 +1,259 @@
+[
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "Hi, is there any discussion on migrating the orderer service outside of fabric code, into some separate one (fabric-orderer), like fabric-cop?",
+        "ts": "1481800232.000775"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "there could be :slightly_smiling_face:",
+        "ts": "1481802544.000776"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "great, gabor, wanna hear more feedbacks to see if we can make it separate soon.",
+        "ts": "1481802823.000777"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U0Z41KY5V>  - what exactly are you trying to accomplish?    even today you can run \/ use the ordering service without running any peer nodes.  There's a few shared components under the fabric src tree, but you can definitely build and run it all by itself.",
+        "ts": "1481803121.000778"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "Thanks, gari. As in the new arch, there are mainly several service roles: endoser\/committer\/consenters. I guess it would be somehow nature to decouple a orderer role from a common peer. This may also bring advantage of pluggable order service implementation. How do you think?",
+        "ts": "1481803248.000779"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "actually even in the current architecture , orderers are actually entirely different executables \/ code base from the peer code.   If you take a look at the \"common\" components under orderer, you'll actually see that the base \"server\" is entirely different than that of a peer.  And the ordering service is actually pluggable - externally it implements Broadcast and Deliver RPCs.   So as long as your ordering service nodes implement those RPCs, you can plug them in (there's a little more detail in how you need to contract the genesis block as well but again that's common code which ca be shared across different orderer implementations)\n\nSo a peer node can either be an endorser or committer (and endorsers really have to be committers as well for the most part).\n\nOrdering nodes are separate and need to implement the interfaces described above \n\nNow it technically possible that a peer node could be an ordering node but the current code is not implemented that way",
+        "ts": "1481804573.000780",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XQ35CDD"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "Sure garisingh. i also notice that the code base for peer and orderer are different, and also they share not many code base. So think they will evolve into two individual components functionally. Thanks~",
+        "ts": "1481806022.000781"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "scrum ...",
+        "ts": "1481814062.000782"
+    },
+    {
+        "text": "<@U0UGH3X7X|tuand> has started a Google+ Hangout for this channel. <https:\/\/hangouts.google.com\/hangouts\/_\/nvzhhad6h5b7lbrnybi4x6k3mye|Join Hangout>.",
+        "username": "hangouts",
+        "bot_id": "B0UKUAJ0Y",
+        "type": "message",
+        "subtype": "bot_message",
+        "ts": "1481814097.000783"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "<@U0ZR63HLK> ^^^",
+        "ts": "1481814175.000784"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "oh yes",
+        "ts": "1481814408.000785"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "Some quick questions about the Hyperledger v1 proposal:\n\nWhen we say endorsers check code is 'deterministic' and 'stable', what does this mean?\n\nDoesn't channelling transactions mean the consenters will have different ledgers If not, how are ledgers exchanged between consenters?  How are they kept in sync?\n\nWhen we say consenters 'validate the integrity' of the transaction, what does this mean?\n\nWhy does having a consenters increase transaction throughput, was the previous throughput limit constraint solely due to it needing to speak to all the nodes?\n\nDo both endorsers and consenters have a copy of the ledger, who stores it?\n\nCan anyone help me out with these?",
+        "ts": "1481824220.000786"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U2DHRR4TE>\n\n&gt; When we say endorsers check code is 'deterministic' and 'stable', what does this mean?\n\nThe endorsers execute the chaincode to produce a read\/write set.  If the code is non-deterministic and multiple endorsements are required, there will be different results, which will be detected, and the transaction will be rejected.  The read write sets are inherently deterministic.\n\n&gt; Doesn't channelling transactions mean the consenters will have different ledgers If not, how are ledgers exchanged between consenters?  How are they kept in sync?\nThe ordering network (what you call consenters here I think) is necessarily a member of all channels for the ordering network.  There is no technical reason which prevents multiple ordering networks for a set of peers, but this is not targeted for v1.\n\n&gt; When we say consenters 'validate the integrity' of the transaction, what does this mean?\nThe ordering network will make sure that the transactions are appropriately signed by an authorized transactor on the chain.  After transactions have been ordered, the committing peers will do further checks based on MVCC and endorsement policies to further filter the transactions.\n\n&gt; Why does having a consenters increase transaction throughput, was the previous throughput limit constraint solely due to it needing to speak to all the nodes?\nThis is not an accurate statement.  The throughput limit before was actually much more closely tied to the fact that the consenters were executing transactions (via chaincode) rather than just ordering them. Removing the execution from the path resulted in transaction rates which were orders of magnitude faster.\n\n&gt; Do both endorsers and consenters have a copy of the ledger, who stores it?\nAll peers retain a copy of the ledger for the chains they are participating in.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1481824571.000000"
+        },
+        "ts": "1481824546.000787"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> Thanks, that's shed some light - a few more questions if I may:\n\n&gt;All peers retain a copy of the ledger for the chains they are participating in\n\nI assume this means there are now multiple ledgers, one for each channel they are connected to?\n\n&gt;The ordering network will make sure that the transactions are appropriately signed by an authorized transactor on the chain.  After transactions have been ordered, the committing peers will do further checks based on MVCC and endorsement policies to further filter the transactions.\n\nI take it a 'transactor' is the same as an endorder?\n\nWho does the ordering? How is it decided? Is it done by endorsers, consentors or both?\n\nAre they called 'consentors' or 'committers'? - here they are called 'consentors': <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md> and here committers: <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/abstract_v1\/>\n\nWhat is MVCC?\n\nWhat is an endorsement policy exactly? I thought it was a list of endorsers (or a minimum amount of them) that have to sign a transaction for it to be committed?",
+        "edited": {
+            "user": "U2DHRR4TE",
+            "ts": "1481825643.000000"
+        },
+        "ts": "1481825590.000789"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; I assume this means there are now multiple ledgers, one for each channel they are connected to?\n\nThis is a question of semantics to me.  Internally, I believe this is a single 'ledger' which supports multiple chains.  There's nothing that would prevent flipping it though multiple ledgers, which each support individual  chains.  <@U1KFCPFQA> can maybe help here.\n\n&gt; I take it a 'transactor' is the same as an endorder?\n\nActually, not at all! A transactor is someone who is authorized to submit transactions on a chain.  (An endorser is able to endorse transactions, but does not actually submit them.  (Loosely) Instead, the client\/SDK creates a proposal, the proposal is sent to some set of endorsers for endorsement, who reply to the client with a proposalresponse.  The client then assembles these proposal responses into a transaction, signs that transaction, and sends it to the ordering service (who validates this last outer signature).  The transaction is ordered, makes its way to the committers, who then verify the endorsements etc.\n\n&gt; Are they called 'consentors' or 'committers'? - here they are called 'consentors': <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md> and here committers: <https:\/\/hyperledger-fabric.readthedocs.io\/en\/latest\/abstract_v1\/>\n\nI personally like to avoid using the word 'consenter' because it means different things to different people.  The ordering network will be backed by some form of consensus implementation, but this consensus is only on the ordering, not on the output of the transactions.  The peers take the ordered transactions to create the validated ledger, these are referred to usually as 'committer's.\n\n&gt; What is MVCC?\n\nMVCC is multi-version concurrency control <https:\/\/en.wikipedia.org\/wiki\/Multiversion_concurrency_control> . \n\n&gt; What is an endorsement policy exactly? I thought it was a list of endorsers (or a minimum amount of them) that have to sign a transaction for it to be committed?\n\nClose.  The endorsement policy can be a little more powerful than this, for instance, it could require that an endorser from each of 3 different peer organizations signs a transaction (not just 3 endorsements required).  <@U0ULK2JPP> might have more for you here.",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/proposals\/r1\/Next-Consensus-Architecture-Proposal.md",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            },
+            {
+                "title": "Multiversion concurrency control",
+                "title_link": "https:\/\/en.wikipedia.org\/wiki\/Multiversion_concurrency_control",
+                "author_name": "Wikipedia",
+                "author_link": "http:\/\/en.wikipedia.org\/",
+                "text": "Multiversion concurrency control (MCC or MVCC), is a concurrency control method commonly used by database management systems to provide concurrent access to the database and in programming languages to implement transactional memory.\nIf someone is reading from a database at the same time as someone else is writing to it, it is possible that the reader will see a half-written or inconsistent piece of data. There are several ways of solving this problem, known as concurrency control methods. The simplest way is to make all readers wait until the writer is done, which is known as a lock. This can be very slow, so MVCC takes a different approach: each user connected to the database sees a snapshot of the database at a particular instant in time. Any changes made by a writer will not be seen by other users of the database until the changes have been completed (or, in database terms: until the transaction has been committed.)\nWhen an MVCC database needs to update an item of data, it will not overwrite the old data with new data, but instead marks the old data as obsolete and adds the newer version elsewhere. Thus there are multiple versions stored, but only one is the latest. This allows readers to access the data that was there when they began reading, even if it was modified or deleted part way through by someone else. It also allows the database to avoid the overhead of filling in holes in memory or disk structures but requires (generally) the system to periodically sweep through and delete the old, obsolete data objects. For a document-oriented database it also allows the system to optimize documents by writing entire documents onto contiguous sections of disk\u2014when updated, the entire document can be re-written rather than bits and pieces cut out or maintained in a linked, non-contiguous database structure.\nMVCC provides point in time consistent views. Read transactions under MVCC typically use a timestamp or transaction ID to determine what state of the DB to read, and read these versions of the data. Read and write transactions are thus isolated from each other without any need for locking. Writes create a newer version, while concurrent reads access the older version.",
+                "fallback": "wikipedia: Multiversion concurrency control",
+                "service_icon": "https:\/\/a.slack-edge.com\/bfaba\/img\/unfurl_icons\/wikipedia.png",
+                "id": 2
+            }
+        ],
+        "ts": "1481826316.000793"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "^ <@U2DHRR4TE>",
+        "ts": "1481826328.000795"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4> Ah brilliant - thanks again, a few more questions:\n\n&gt;The consenters form the consensus service, i.e., a communication fabric that provides delivery guarantees... Peers are clients of the consensus service, to which the consensus service provides a shared communication channel offering a broadcast service for messages containing transactions.\n\nAre there many consensus services (i.e. one for each channel) or just one consensus service which provices all channels?\n\n&gt;The ordering network will be backed by some form of consensus implementation, but this consensus is only on the ordering, not on the output of the transactions.\n\nWhat's the relationship between the consensus service and the ordering network? Who is part of the ordering network?\n\n&gt;Internally, I believe this is a single 'ledger' which supports multiple chains\n\nI'm a bit confused then, what's the difference between a chain and a ledger?\n\n&gt;A transactor is someone who is authorized to submit transactions on a chain\n\nIs that the same as a client submitter?",
+        "ts": "1481826948.000796"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "&gt; Are there many consensus services (i.e. one for each channel) or just one consensus service which provices all channels?\n\nOut of the gate, we'll simply have one ordering service for all chains.  As I mentioned, there's no technical reason this has to be the case, but, in the interest of walking before we run, we're sticking to one to start.\n\n&gt; What's the relationship between the consensus service and the ordering network? Who is part of the ordering network?\n\nMost likely, 'consensus service' and 'ordering network' are referring to the same entity.  We switched to using 'ordering' instead of 'consensus' because of the confusion the word 'consensus' was causing.  The ordering network may be offered as a service and not involve any of the entities transacting on the chain, or it may be run by one or more of the transacting entities.  Out of the gate, our target is CFT, which mostly lends itself to a single entity running the ordering network, however, in parallel we are working on bringing a pbft based implementation of the ordering network to add BFT which will make a shared ordering network make more sense.\n\n&gt; I'm a bit confused then, what's the difference between a chain and a ledger?\n\nMy usage is that chain is the sequence of blocks, and the ledger is state associated with that sequence.  But, I think you'll find people mix these words around a lot.\n\n&gt; Is that the same as a client submitter?\n\nYes",
+        "ts": "1481827502.000797"
+    },
+    {
+        "type": "message",
+        "user": "U2DHRR4TE",
+        "text": "<@U0XPR4NP4>  ah brilliant, thanks again!",
+        "ts": "1481827584.000798",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "People do use the term ledger for different things.  I therefore try to avoid it and speak specifically about the \u2018chain' and the associated \u2018state database\u2019. When we say \u2018ledger\u2019 we often mean both taken together. For each channel there will be a chain and associated state database.",
+        "ts": "1481830189.000799"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "Another thing to clear up from above, is that committers will not have a validated ledger as defined in the Next Consensus Architecture document.  Each committer will have a raw ledger, with the blocks having a non-hashed section for indicating which of the transactions in the block were validated vs invalidated.  This design serves much of the purpose of the validated ledger, keeps things simple by having the same blocks and same hashes on ordering service and committing peers, and makes it easier for auditors to understand which transactions were validated vs invalidated.",
+        "ts": "1481830414.000800"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "When checkpointing is introduced post-v1, we will likely prune the invalid transactions out as part of the checkpoint process, leaving us with a validated ledger.",
+        "ts": "1481830467.000801"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "<@U0XPR4NP4> FYI due to the above, we will likely rename RawLedger and ValidatedLedger in the code, to be OrdererLedger and CommitterLedger in FAB-1390",
+        "ts": "1481831013.000802"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U1KFCPFQA> `When checkpointing is introduced post-v1, we will likely prune the invalid transactions out as part of the checkpoint process, leaving us with a validated ledger.` \u2026 any reason to do that ?",
+        "ts": "1481831121.000803"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "seems a valuable piece of info, no ?",
+        "ts": "1481831151.000804"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "simply to save space, if somebody has spammed a lot of invalid trans",
+        "ts": "1481831155.000805"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "ok",
+        "ts": "1481831159.000806"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "we\u2019ll be throwing the baby with the bath water IMO",
+        "ts": "1481831190.000807"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": ":slightly_smiling_face:",
+        "ts": "1481831191.000808"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "i expect there will be a config option to prune or not",
+        "ts": "1481831211.000809"
+    },
+    {
+        "type": "message",
+        "user": "U0Z41KY5V",
+        "text": "<@U1KFCPFQA> Is there any protection scheme now by detecting too much invalid trans from some   entities (e.g., DDOS) and take some control? Thanks!",
+        "ts": "1481846960.000810"
+    },
+    {
+        "type": "message",
+        "user": "U1KFCPFQA",
+        "text": "I don\u2019t know of any DDOS protections, let\u2019s see if anybody else has thoughts...",
+        "ts": "1481855815.000811"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "No DDoS protection built on the ordering side (yet at least) either.",
+        "ts": "1481857622.000812"
+    },
+    {
+        "type": "message",
+        "user": "U1AU8DRQR",
+        "text": "if I use `main` instead of `sbft` as executable in the test, will it work? I mean, is the main executable compiled before the test? I guess it is <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2515\/>",
+        "ts": "1481874745.000813"
+    }
+]

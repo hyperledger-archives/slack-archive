@@ -1,0 +1,151 @@
+[
+    {
+        "user": "U0N1K6Z0X",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0N1K6Z0X|georglink> has joined the channel",
+        "ts": "1461852070.000019"
+    },
+    {
+        "user": "U13TWBRBL",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U13TWBRBL|jzhang> has joined the channel",
+        "ts": "1461856676.000020"
+    },
+    {
+        "user": "U14HPL6RW",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U14HPL6RW|prism> has joined the channel",
+        "ts": "1461856865.000021"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "first question for the channel: i have some questions on building the right chaincode, is that considered part of this channel\u2019s purpose? i suspect in many cases building an application involves building both the chaincode and code that acts on the user\u2019s behalf (\"application code?\")",
+        "ts": "1461856915.000022"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "if answer is yes, here\u2019s my question on the chaincode: what\u2019s the requirements on building the right chaincode? guess some of the most obvious ones include the code must be executable without extra state that has to be acquired out-of-band like credentials to external APIs? what about idempotency?",
+        "ts": "1461857055.000023"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Hi <@U13TWBRBL>. Yes, we haven't done enough work on describing the purpose of this channel in detail (yet).",
+        "ts": "1461860715.000024"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It depends also on the definitions\/semantics\/logical separation of what belongs to the application layer part of the stack.",
+        "ts": "1461860809.000025"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "Other than just reply to you with generalities\/guidelines - do you have a specific application in mind?",
+        "ts": "1461860865.000026"
+    },
+    {
+        "type": "message",
+        "user": "U11MANG9G",
+        "text": "It will probably be easier to talk about the 'right' code, knowing more of what you are looking to build.",
+        "ts": "1461860932.000027"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "so let\u2019s use a hypothetical scenario: 3 banks participate in a blockchain network, each having their own validating peer, now a chaincode is deployed to the network and they need to execute and validate, let\u2019s say the code calls an external API owned by a private financial services company for, i don\u2019t know, getting the current exchange rate. this service API is obviously protected so the caller must pass along a valid credential to access it (let\u2019s say it\u2019s oauth based so the expected credential is an access token).",
+        "ts": "1461864404.000028"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "it\u2019s not clear to me whether it\u2019s legitimate to ask each validator to use their own credentials to access the API, which could result in discrepancies if, say, the API has pricing tiers tied to timeliness of the returned quote and all banks have not purchased the same pricing tier.",
+        "ts": "1461864648.000029"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13TWBRBL>: while I don\u2019t believe the current environment is actually locked down to prevent chaincode from reaching outside, architecturally I think it is intended that chaincode can only react to invoke\/queries",
+        "ts": "1461865754.000030"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "there is some ongoing work to have specially privileged chaincode that can reach outside, but there are a bunch of advanced considerations to make that happen",
+        "ts": "1461865812.000031"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "normal chaincode should be thought of as pure functions that are approximately S\u2019 = f(M, S)",
+        "ts": "1461865855.000032"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or, a collection of pure functions is a more accurate description",
+        "ts": "1461865899.000033"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF>: I\u2019m very interested in the ongoing work you referred to above, I assume that includes the identity WG\u2019s effort to figure out identity for enrollment vs. transactions, and access control based on pseudonymity?",
+        "ts": "1461867043.000034"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U13TWBRBL>: no, nothing to do with identity or AAA",
+        "ts": "1461876311.000035"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i just meant that #1 chaincode needs to be deterministic, and #2 the validator needs to protect itself from malicious\/broken chaincode, and that implies its probably unwise to let chaincode access the network",
+        "ts": "1461876361.000036"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0ULK2JPP> put the ground-work down for the system chaincode which should have enhanced priviledge here <https:\/\/github.com\/hyperledger\/fabric\/pull\/1192>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "System Chaincode Implementation - v2  by muralisrini \u00b7 Pull Request #1192 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1192",
+                "text": "The PR implements <https:\/\/github.com\/hyperledger\/fabric\/wiki\/System-Chaincode-Specification>. NOTE - The difference between v1 and current version is moving SYSTEM type from protos.ChaincodeSpec to...",
+                "fallback": "GitHub: System Chaincode Implementation - v2  by muralisrini \u00b7 Pull Request #1192 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/14361488?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1192",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1461876438.000037"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "I misunderstood when you said \"specially privileged chaincode\u201d, guess you meant the system chaincode with elevated privilege, but not for application-level chaincode.",
+        "ts": "1461877617.000039"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "correct",
+        "ts": "1461877683.000040"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "guess I\u2019m trying to figure out if there are legit business scenarios that would require (or best served) by the chaincode making calls to external APIs",
+        "ts": "1461877895.000041"
+    }
+]

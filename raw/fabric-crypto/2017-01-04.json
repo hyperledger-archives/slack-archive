@@ -1,0 +1,67 @@
+[
+    {
+        "type": "message",
+        "user": "U221LL03Z",
+        "text": "AFAIK , we are keeping SHA2 family in Fabric 1.0.",
+        "ts": "1483534611.000927"
+    },
+    {
+        "type": "message",
+        "user": "U31M2620Z",
+        "text": "thanks!",
+        "ts": "1483542546.000928"
+    },
+    {
+        "type": "message",
+        "user": "U1V6SJ1FF",
+        "text": "Hi - Just looking through HFC 0.6.4 and I see that for confidentiality the message is encrypted with the chain public key, and then the chaincodeID, payload and metadata fields are encrypted with the public TKey. What\u2019s the difference between the message being encrypted with the chain public key and the payload (encrypted with public TKey)? I assumed the message would include the payload?",
+        "ts": "1483549616.000929"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "<@U1V6SJ1FF> - it's a little tricky, but I'll try to explain:\n\n1) As you may know elliptic curve cryptography does not have a native encryption function\n\n2) So we use a hybrid encryption scheme called ECIES (in simplest terms, given KeyPairA and KeyPairB, you can derive the same encryption key from PrivateKeyA\/PublicKeyB and PublicKeyA\/PrivateKeyB  \n\n3)  So the SDK basically does this twice but in one case (txKey) the validators don't actually have either the public or private key for txKey so we use the chainKey to encrypt that and send it over  -   <https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1548>  adds it to an ASN structure and <https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1548> uses the chainKey for ECIES encryption (the SDK has the public chainKey)\n\n4) The SDK then uses the public key of txKey to again use ECIES to encrypt the various parts of the transaction message",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "hyperledger\/fabric",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1548",
+                "text": "Read-only mirror of <https:\/\/gerrit.hyperledger.org\/r\/#\/admin\/projects\/fabric>",
+                "fallback": "GitHub: hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars3.githubusercontent.com\/u\/7657900?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/blob\/v0.6\/sdk\/node\/src\/hfc.ts#L1548",
+                "thumb_width": 142,
+                "thumb_height": 142,
+                "service_icon": "https:\/\/github.com\/apple-touch-icon.png",
+                "id": 1
+            }
+        ],
+        "edited": {
+            "user": "U0PB67X4K",
+            "ts": "1483557235.000000"
+        },
+        "ts": "1483557193.000930"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "(that's the simplest version I can come up with)",
+        "ts": "1483557252.000933"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "even more simply put we use the chainKey to encrypt the per transaction key used to encrypt the rest of the transaction data",
+        "ts": "1483557751.000934"
+    },
+    {
+        "type": "message",
+        "user": "U12AHQ3NK",
+        "text": "<@U0PB67X4K>  if a client wants to decrypt the payload than he will have to store\/save tx private key for each transactions right ? I guess even peers do not keep track of the private key",
+        "edited": {
+            "user": "U12AHQ3NK",
+            "ts": "1483593284.000000"
+        },
+        "ts": "1483593157.000935"
+    }
+]

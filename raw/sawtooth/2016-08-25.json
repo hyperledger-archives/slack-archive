@@ -1,0 +1,70 @@
+[
+    {
+        "user": "U1P1ZV6RF",
+        "text": "<@U1P1ZV6RF|matanyahu> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472123644.000258"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "<@U0YQQRNU8> I looked into the validator, and found server-side validation \nhandle the pending transaction and the transaction of the enqueued messages \"if self.Validator.Config.get(\"LocalValidation\", True):\" in forward_page.py, this is different from you said that \"the server-side does have validation-upon-submission today, but only of the transaction being submitted against the current state (which does not include any pending transactions).\", didn't I get your point?",
+        "ts": "1472130536.000259"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "And you said \"so one idea would be to add the ability to start a session with the validator that has it's own state\", a session means what? Does it mean server apply the pending transactions to the current state (the most recent committed block), save the new state, create a session, and a session object reference the new state, and provide the sessionID to the client for next requests to use?",
+        "ts": "1472130750.000260"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "<@U1ZUSJHAA>: about pending, I was wrong when I said \"which does not include any pending transactions\" - because it clearly does apply them to it's temporary state.  after the comment \"# apply any local pending transactions\" in forward_page.py",
+        "ts": "1472130922.000261"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "OK, I see.",
+        "ts": "1472130980.000262"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "<@U1ZUSJHAA>: in any case, the difference between our current client-side validation in mktclient and server-side \"LocalValidation\", is that in mkclient it has only applied it's own transactions against the state (not mixed with transactions from other sources).",
+        "ts": "1472131027.000263"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "the reason I thought a session would be interesting is that a client could submit transactions against the session, and be able to determine whether they would all succeed or not.  right now if we have transactions A, B, C, you can test them client-side to make sure they all pass is_valid\/apply before submitting any of them to the validator.  (if C fails, no not submit any of A, B, C)",
+        "ts": "1472131293.000264"
+    },
+    {
+        "type": "message",
+        "user": "U0YQQRNU8",
+        "text": "your description of session is indeed what I meant, though maybe without applying pending transactions to it first. maybe that should be an option.  current mktclient behavior starts with the committed state as far as I know",
+        "ts": "1472131396.000265"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "That's clear, so server-side pre-validation does the same as the mktclient validation, I see. And we  should provide a new http interface about pre-validation?",
+        "ts": "1472131554.000266"
+    },
+    {
+        "type": "message",
+        "user": "U1ZUSJHAA",
+        "text": "I'll leave my office, it's very late in my time zone, see you.  and I'll finish this pre-validation work as soon as possible.",
+        "ts": "1472131824.000267"
+    },
+    {
+        "user": "U0N4D2T61",
+        "text": "<@U0N4D2T61|bfuentes> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1472141510.000268"
+    }
+]

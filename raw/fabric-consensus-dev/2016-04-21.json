@@ -1,0 +1,761 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: i finally understood what your executor is about",
+        "ts": "1461229218.000381"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0XRC0KLH>: I hear you, and understand.  My only point was that you don\u2019t need the entire MVCC+postimage design as outlined in your notes to achieve replay-ability of the transaction log\u2026I can\u2019t speak for sieve specifically but most state-hash based designs that I can think of only use the state hash as a representational convenience (for instance, cheap equivalency tests and on-the-wire compression).  The underlying persistence layers would still be some form of a log of deltas and thus offer the same basic ability in a replay the log in auditing scenarios.  I wanted to avoid conflating the issues with the solution, thats all.",
+        "ts": "1461234778.000382"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "To be clear, I am not saying I am against your design, just pointing out that I think that particular problem can be solved in many ways.",
+        "ts": "1461234886.000383"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we currently have deltas, but they are locally generated, like the blocks themselves",
+        "ts": "1461237191.000384"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the deltas are not cryptographically linked in the blocks",
+        "ts": "1461237207.000385"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i would prefer to assemble the blocks before sending them through consensus",
+        "ts": "1461237938.000386"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you can, though the problem that I have seen with that approach is that a protocol restart due to non-determinism can be expensive",
+        "ts": "1461238825.000387"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "like, how EVE does a viewchange+serial execution when that happens",
+        "ts": "1461238853.000388"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "my preference is to have the protocol converge on block inventory rather than use a block as a core negotiating state",
+        "ts": "1461238892.000389"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "ala ripple",
+        "ts": "1461238913.000390"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not sure how sieve does it, but I envision that is is closer to EVE than ripple",
+        "ts": "1461238950.000391"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "could you explain more?",
+        "ts": "1461240169.000392"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I mean generally is: start with the notion that transactions flow in to a given peer, some of those will be \u201cvalid\" and some will not",
+        "ts": "1461241727.000393"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what constitutes valid is of course a complicated criteria",
+        "ts": "1461241742.000394"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "some validity checks can be done locally, others are related to whether there is agreement",
+        "ts": "1461241764.000395"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "but generally speaking, the node can immediately discard the ones it doesnt believe are valid, and keep the ones that it does think are valid in a \u201cproposed\u201d state",
+        "ts": "1461241802.000396"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "and then consensus can whittle that set of proposed transactions down",
+        "ts": "1461241824.000397"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so the set in a block is converged upon, rather than the block being negotiated up front",
+        "ts": "1461241858.000398"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so, maybe 20 come in, 5 are discarded right away, and eventually 10 are agreed to go in the next block, and 5 are deferred to the next round",
+        "ts": "1461241901.000399"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "as opposed to taking 20 in the assumed block and then restarting the block process when there is a discrepancy (which is how EVE works, generally)",
+        "ts": "1461242011.000400"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1461242345.000401"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "EVE is just about optimistic concurrency",
+        "ts": "1461242359.000402"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "bitcoin does the same - collect transactions into blocks, consensus accepts blocks",
+        "ts": "1461242383.000403"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right, though I dont think the optimism is bad\u2026what is bad is the penalty for non-determinism is relatively high (viewchange+serial)",
+        "ts": "1461242439.000404"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I prefer is a design that assumes some non-determinism might occur and make it less exceptional to handle",
+        "ts": "1461242474.000405"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the trade off is that the overall protocol might have more overhead than the pure optimism approach, but the benefit is that non-determinism is just handled naturally as part of that rather than causing a hiccup",
+        "ts": "1461242523.000406"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so you eliminate that hiccup as a DoS attack vector",
+        "ts": "1461242555.000407"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "or mitigate it is a better term",
+        "ts": "1461242562.000408"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "non-deterministic results just get deferred\/dropped (according to TTL rules) rather than cause a slower mode of operation",
+        "ts": "1461242620.000409"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ripple is pessimistic by default",
+        "ts": "1461243643.000410"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think that ripple would outperform",
+        "ts": "1461243654.000411"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "with mvcc, the burden of proof is on the submitter",
+        "ts": "1461243688.000412"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and only if the submitter can collect enough signatures from endorsers, the transaction would even make it into a block",
+        "ts": "1461243718.000413"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and at that point, the postimage is already defined, and everybody now only applies the state delta, instead of executing the transaction again",
+        "ts": "1461243754.000414"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I dont have any objection to the proposal per se, though I was a little concerned about the sequence",
+        "ts": "1461244186.000415"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I was merely pointing out you don\u2019t need the proposal to provide log replay capability",
+        "ts": "1461244222.000416"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "no, you just need to keep the deltas",
+        "ts": "1461244304.000417"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "right",
+        "ts": "1461244390.000418"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "actually, the requirement is that any given state is retrievable, but practical matters probably dictate that is stored as deltas",
+        "ts": "1461244459.000419"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "why does any given state have to be retrievable?",
+        "ts": "1461244486.000420"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "logically",
+        "ts": "1461244496.000421"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "if you cant reproduce the state at position X, you at least need to be able to retrieve the state at position X",
+        "ts": "1461244556.000422"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats all we are talking about here",
+        "ts": "1461244575.000423"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't understand",
+        "ts": "1461244642.000424"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you're saying that an auditor needs to be able to check the correctness of the blockchain",
+        "ts": "1461244674.000425"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "what I am saying is that normally a PBFT-style blockchain is valid if each entry in the chain has a valid commit certificate with the requisite 2f+1 sigs and don\u2019t need to be able to re-run past transactions\u2026but if you are something like and auditor and want to re-run each transaction but are unable to achieve the same result, you have two choices: stall, or accept the previously accepted value",
+        "ts": "1461244840.000426"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1461244857.000427"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "for the former, you need to retrieve that state",
+        "ts": "1461244860.000428"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "sorry, for the latter",
+        "ts": "1461244864.000429"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "well or you just apply the delta",
+        "ts": "1461244879.000430"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "applying a delta is an implementation detail",
+        "ts": "1461244898.000431"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "the logical operation is accepting the committed state",
+        "ts": "1461244928.000432"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess that depends on how you see it",
+        "ts": "1461244958.000433"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in bitcoin, the blockchain does not talk about state, but only about transactions (deltas)",
+        "ts": "1461244997.000434"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the state is purely local and ephemeral, and only for speed",
+        "ts": "1461245022.000435"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "in fabric, it is more databasey",
+        "ts": "1461245053.000436"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i think its largely semantics",
+        "ts": "1461245088.000437"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1461245105.000438"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "you could say \u201cthe state of the system at blockheight X\u201d which is the aggregate of all mutations before it",
+        "ts": "1461245139.000439"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thats all I am really referring to",
+        "ts": "1461245151.000440"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "not literally a chaincode Get\/PutState per se",
+        "ts": "1461245179.000441"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "jyellick: around?",
+        "ts": "1461249033.000442"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes",
+        "ts": "1461249040.000443"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i'm trying to add persistence",
+        "ts": "1461249057.000444"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can add the sequence number to the consensus metadata",
+        "ts": "1461249087.000445"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but what happens to the checkpoints?",
+        "ts": "1461249095.000446"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i guess i can persist the checkpoint info",
+        "ts": "1461249116.000447"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "elsewhere",
+        "ts": "1461249120.000448"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but it seems so odd to use checkpoints when we have a blockchain",
+        "ts": "1461249135.000449"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "This is in the executor-less branch?",
+        "ts": "1461249143.000450"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1461249161.000451"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I don't think you can add sequence number to the consensus metadata, this is how things used to work, but had to be undone in order to support sieve, which wanted the 'checkpoint value' (block hash) at speculative execution time, before final ordering.",
+        "ts": "1461249212.000452"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "right",
+        "ts": "1461249254.000453"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think it will work",
+        "ts": "1461249267.000454"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But the consensus-metadata is included in the blockhash? How do you get around that?",
+        "ts": "1461249305.000455"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes, it will",
+        "ts": "1461249313.000456"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i thought we could include the validate set",
+        "ts": "1461249382.000457"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but that's not correct",
+        "ts": "1461249388.000458"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "honestly, i prefer to send the execute via pbft as well",
+        "ts": "1461249402.000459"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then *all* of this goes away",
+        "ts": "1461249414.000460"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, I have always thought it would make far more sense to do the execution and rollback as a 4th phase or second round of PBFT, but I thought <@U0Y14MWA2> said there was something subtly wrong with this?",
+        "ts": "1461249520.000461"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "what do you mean, do the execution as 4th phase?",
+        "ts": "1461249567.000462"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it would be pbft(execute), outside(verify), pbft(verify-set), pbft(execute), ....",
+        "ts": "1461249630.000463"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and verify-set and execute could be sent in one single pbft request",
+        "ts": "1461249647.000464"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Yes, so what you describe there would be basically 2 rounds?",
+        "ts": "1461249897.000465"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "As far as a fourth phase, trying to think it out on the fly here, and running into troubles, but essentially to send something like a checkpoint out every round, which then is used to make a decision as to whether to commit, state transfer, or rollback.",
+        "ts": "1461249942.000466"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I think the 2 ~phase~ rounds approach is more obviously correct, and I think would make Sieve a much simpler plugin.",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1461250052.000000"
+        },
+        "ts": "1461249994.000467"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It seems like it would even potentially return some of the windowing properties to Sieve which the current approach loses.",
+        "ts": "1461250034.000468"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "two rounds, yes",
+        "ts": "1461250036.000469"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "but strictly if you have enough requests queued, you can combine both rounds into one",
+        "ts": "1461250059.000471"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Ah, sure,",
+        "ts": "1461250079.000472"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "you're basically saying \"this is the result of the last execution, and that's the next execution\"",
+        "ts": "1461250080.000473"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "then you're getting rid of race conditions between delivery of exec and other pbft messages",
+        "ts": "1461250117.000474"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Right, yes, I like this approach.",
+        "ts": "1461250129.000475"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yea i suggested that long ago, but for some reason we decided not to implement it that way",
+        "ts": "1461250151.000476"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe just because \"we have it the other way right now\"",
+        "ts": "1461250163.000477"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Is this something you're going to implement now?",
+        "ts": "1461250414.000478"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I guess the comment from <@U0XRC0KLH> worries me a bit, since Sieve will not really be relevant in an MVCC world, I hate for us to spend too many cycles on it.  Do you know what the requirements around Sieve are for this first release?",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1461250567.000000"
+        },
+        "ts": "1461250541.000479"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "until mvcc arrives, i think we need sieve",
+        "ts": "1461250590.000481"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i'd be the first to throw it out",
+        "ts": "1461250596.000482"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "if we didn't have to deal with non-determinism",
+        "ts": "1461250609.000483"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ok, i'll head outside for a bit and join you in the scrum",
+        "ts": "1461250719.000484"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Maybe this is something to bring up to Sharon, is tolerating non-determinism but losing replay-ability okay? I think that was Chet's big dismissal",
+        "ts": "1461250721.000485"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "bring up to binh\/marko\/chet ?",
+        "ts": "1461250776.000486"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "in <https:\/\/github.com\/hyperledger\/fabric\/issues\/925> have we agreed on what the acceptable behavior should be?",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "obc-peer PBFT Classic does not work on queue after two VPs bounce \u00b7 Issue #925 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/925",
+                "text": "Description: PBFT does not recognize or make any effort to recognize two VPs that were down but rejoined, Deploy sent during downphase is queued, but does not execute once the two VPs are back up,...",
+                "fallback": "GitHub: obc-peer PBFT Classic does not work on queue after two VPs bounce \u00b7 Issue #925 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/17052305?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/925",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1461252097.000487"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "my take is exactly the same as Simon's <https:\/\/github.com\/hyperledger\/fabric\/issues\/925#issuecomment-204421674>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "obc-peer PBFT Classic does not work on queue after two VPs bounce \u00b7 Issue #925 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/issues\/925#issuecomment-204421674",
+                "text": "Description: PBFT does not recognize or make any effort to recognize two VPs that were down but rejoined, Deploy sent during downphase is queued, but does not execute once the two VPs are back up,...",
+                "fallback": "GitHub: obc-peer PBFT Classic does not work on queue after two VPs bounce \u00b7 Issue #925 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars0.githubusercontent.com\/u\/17052305?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/issues\/925#issuecomment-204421674",
+                "thumb_width": 420,
+                "thumb_height": 420,
+                "id": 1
+            }
+        ],
+        "ts": "1461252122.000489"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "you got f=2 so all bets are off",
+        "ts": "1461252127.000491"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "but I am guessing that since we are keeping it alive and assigning it, we have a take on the expected behavior",
+        "edited": {
+            "user": "U0XQ35CDD",
+            "ts": "1461252171.000000"
+        },
+        "ts": "1461252150.000492"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "sorry guys, back (too many calls, kill me): crash-fault-tolerance is a non-negotiable.  Frankly, \"tolerating non-determinism\"?  I'd punt on it, if it's a choice.  B\/c we know two different ways of -fixing-it for good",
+        "ts": "1461254308.000496"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "chetsky: bihn said it is important",
+        "ts": "1461254527.000497"
+    },
+    {
+        "user": "U126PEMNH",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U126PEMNH|harshal> has joined the channel",
+        "ts": "1461256154.000498"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "okay, i can now restore persisted state (except for requests)",
+        "ts": "1461260765.000499"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "still needs to be tested with the outer plugins, but I don't see any problems there",
+        "ts": "1461260793.000500"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can stop a primary and restart it, and everything proceeds as normal",
+        "ts": "1461260807.000501",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0UGH3X7X"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "<@U0XR6J961>: more important than crash-fault-tolerance?  really? *grin*",
+        "ts": "1461262522.000502"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "crash-fault-tolerance, and being able to catch-up lagging peers, is non-negotiable",
+        "ts": "1461262540.000503"
+    },
+    {
+        "type": "message",
+        "user": "U0XRC0KLH",
+        "text": "sieve?  -whatever-",
+        "ts": "1461262546.000504"
+    },
+    {
+        "user": "U0UKTPMG8",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0UKTPMG8|jeffgarratt> has joined the channel",
+        "ts": "1461300109.000505"
+    }
+]

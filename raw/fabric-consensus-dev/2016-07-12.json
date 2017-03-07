@@ -1,0 +1,322 @@
+[
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i think we should get rid of the replicaid thing",
+        "ts": "1468314717.001986"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and pass it in via recvmsg",
+        "ts": "1468314730.001987"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "wait, we do that",
+        "ts": "1468314738.001988"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so hm",
+        "ts": "1468314741.001989"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "we need to figure out how to store the consensus config",
+        "ts": "1468315783.001990"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "options:\n1. yaml text, parsed on start. cons: viper tolerates misspelled keys.  i don't like it\n2. ini text, parsed on start. there are ini parsers that parse directly into config structs.\n3. $config text, parsed on network creation, into config struct.  struct stored as grpc bytestream, grpc unmarshal on start.\n4. $config text, parsed on network creation.  values are stored in separate keys, and individually parsed on startup.  seems fiddly.",
+        "ts": "1468316349.001991"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "something happened and i seem to only be able to process one request per second, very odd",
+        "ts": "1468322536.001992"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "somehow not all requests make it into the batch...",
+        "ts": "1468322622.001993"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "OH",
+        "ts": "1468322669.001994"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "my requests are all the same -_-",
+        "ts": "1468322677.001995"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and therefore get filtered",
+        "ts": "1468322685.001996"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so i get around 8500 transactions per second",
+        "ts": "1468328565.001997"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "which is really really bad",
+        "ts": "1468328582.001998"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "and the cpu profile is all over the place",
+        "ts": "1468328597.001999"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "marshaling, network IO, tls?",
+        "ts": "1468328610.002000"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "maybe the rpc overhead indeed is too high",
+        "ts": "1468328692.002001"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "15500 with pbft short circuited",
+        "ts": "1468328939.002002"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so the overhead seems to be 50:50 pbft and grpc",
+        "ts": "1468328956.002003"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "super poor number, 15k",
+        "ts": "1468329194.002004"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "<@U0XPR4NP4>, <@U0XQ35CDD>, <@U0UGH3X7X>: ideas about the config thing?",
+        "ts": "1468332879.002005"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Are you on the phone?",
+        "ts": "1468332895.002006"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i am",
+        "ts": "1468332897.002007"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i can hear your slack sounds :slightly_smiling_face:",
+        "ts": "1468332906.002008"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "So, going back to this:",
+        "attachments": [
+            {
+                "fallback": "[July 12th, 2016 5:39 AM] simon: options:\n1. yaml text, parsed on start. cons: viper tolerates misspelled keys.  i don't like it\n2. ini text, parsed on start. there are ini parsers that parse directly into config structs.\n3. $config text, parsed on network creation, into config struct.  struct stored as grpc bytestream, grpc unmarshal on start.\n4. $config text, parsed on network creation.  values are stored in separate keys, and individually parsed on startup.  seems fiddly.",
+                "author_subname": "simon",
+                "ts": "1468316349.001991",
+                "channel_id": "C0Z4NBUN6",
+                "channel_name": "fabric-consensus-dev",
+                "is_msg_unfurl": true,
+                "text": "options:\n1. yaml text, parsed on start. cons: viper tolerates misspelled keys.  i don't like it\n2. ini text, parsed on start. there are ini parsers that parse directly into config structs.\n3. $config text, parsed on network creation, into config struct.  struct stored as grpc bytestream, grpc unmarshal on start.\n4. $config text, parsed on network creation.  values are stored in separate keys, and individually parsed on startup.  seems fiddly.",
+                "author_name": "Simon Schubert",
+                "author_link": "https:\/\/hyperledgerproject.slack.com\/team\/simon",
+                "author_icon": "https:\/\/secure.gravatar.com\/avatar\/676aeb5acbd353b77e077be1b7bd1a6e.jpg?s=48&d=https%3A%2F%2Fa.slack-edge.com%2F66f9%2Fimg%2Favatars%2Fava_0016-48.png",
+                "mrkdwn_in": [
+                    "text"
+                ],
+                "color": "D0D0D0",
+                "from_url": "https:\/\/hyperledgerproject.slack.com\/archives\/fabric-consensus-dev\/p1468316349001991",
+                "is_share": true,
+                "footer": "Posted in #fabric-consensus-dev"
+            }
+        ],
+        "ts": "1468338603.002009"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "I'm not sure what $config text means?",
+        "ts": "1468338683.002010"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure any of the options are great.\n1. I have no real issue with this, beyond yours stated\n2. ini is an odd choice to me, seems like a somewhat antiquated and fiddly format of itself\n3. I see the benefit to doing this is binary, keeps people from thinking they can screw with it, but, simultaneously hard to see what's going on\n4. Not really sure what this means\n\nI think my vote is 1.",
+        "ts": "1468338900.002011"
+    },
+    {
+        "type": "message",
+        "user": "U0UGH3X7X",
+        "text": "should we have the same config system across all of fabric ? I vote for 1  or make a change across the board",
+        "ts": "1468338933.002012"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yaml is way bad",
+        "ts": "1468338957.002013"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "not acceptable for a product",
+        "ts": "1468338966.002014"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "or at least viper",
+        "ts": "1468338974.002015"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "ini is just `key = value` pairs, essentially",
+        "ts": "1468338994.002016"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "What is so way bad about it?",
+        "ts": "1468339060.002017"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "(But agree, consistency is valuable here)",
+        "ts": "1468339078.002018"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "it doesn't validate keys",
+        "ts": "1468339336.002019"
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "(Still not clear on the $config text by the way.)",
+        "ts": "1468339352.002020"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "so you can hunt for hours for a typo",
+        "ts": "1468339354.002021"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "i don't think we should stick with a bad way just for perceived consistency",
+        "ts": "1468339426.002022"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I'm not sure what makes it 'perceived' and not 'actual'",
+        "ts": "1468339552.002023"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "But I guess the complaint is that viper has no config schema to complain about unnecessary or missing keys?",
+        "ts": "1468339577.002024"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "yes",
+        "ts": "1468339583.002025"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "together with yaml whitespace formatting, etc.",
+        "ts": "1468339600.002026"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "just not good",
+        "ts": "1468339607.002027"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Because my recollection is that yaml does support schemas",
+        "ts": "1468339635.002028"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Not certain if viper does",
+        "ts": "1468339646.002029"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Looks like not.  But I'm not sure how ini solves any of these? I've seen multiple ini formats, and there's no native way to detect missing or misspelled keys.   Obviously you could code something up to do that, but I'm not sure what prevents this from being done against yaml as well.",
+        "ts": "1468339912.002030"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "( [what I was thinking of](<http:\/\/www.kuwata-lab.com\/kwalify\/>) )",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1468339961.000000"
+        },
+        "ts": "1468339941.002031"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "there are go packages that do ini parsing",
+        "ts": "1468340262.002033"
+    },
+    {
+        "type": "message",
+        "user": "U0XR6J961",
+        "text": "into a struct",
+        "ts": "1468340264.002034"
+    },
+    {
+        "user": "U1QUW6W82",
+        "text": "<@U1QUW6W82|michele> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1468343057.002035"
+    }
+]

@@ -1,0 +1,303 @@
+[
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Anyone home?",
+        "ts": "1479647635.004185"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<@U0ZJZBJLF> Did you need something?",
+        "ts": "1479655440.004186"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "`\/\/ Creator of the message, specified as a certificate chain`",
+        "ts": "1479655475.004187"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "that's in SignatureHeader",
+        "ts": "1479655486.004188"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "what is the real run time type of the bytes field?",
+        "ts": "1479655497.004189"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nmessage SignatureHeader {\n    \/\/ Creator of the message, specified as a certificate chain\n    bytes creator = 1;\n\n    \/\/ Arbitrary number that may only be used once. Can be used to detect replay attacks.\n    bytes nonce = 2;\n}\n```",
+        "ts": "1479655511.004190"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "in case of multiple orderers",
+        "ts": "1479655520.004191"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It is.  We should probably update the text of this, essentially this is an 'identity' which the MSP will be able to evaluate.",
+        "ts": "1479655522.004192"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "It may be a certificate chain, or, it may be some other things the MSP knows how to evaluate",
+        "ts": "1479655542.004193"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "This is exactly what I don't understand- how do you put there multiple PBFT orderes? in 1 identity",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1479655658.000000"
+        },
+        "ts": "1479655543.004194"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Oh",
+        "ts": "1479655664.004196"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`SignatureHeader` is only intended to support a single identity",
+        "ts": "1479655680.004197"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You'll see for instance in `SignedConfigurationItem` ultimately, there is a repeated section of `SignatureHeader`s embedded which is used for multi-sigs",
+        "ts": "1479655715.004198"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "I did a grep -ri and didn't find SignedConfigurationItem",
+        "ts": "1479655797.004199"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "where is it?",
+        "ts": "1479655800.004200"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "The `Envelope` message is the outermost wrapping message for transactions going into the system, and its `creator` field should always be the identity which submitted the message.  If the message requires additional signatures, (say endorsements), then this should be done internally.",
+        "ts": "1479655806.004201"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "`fabric\/protos\/common\/configuration.proto`",
+        "ts": "1479655812.004202"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "```\n$ grep -ril SignedConfigurationItem .\n.\/orderer\/common\/configtx\/configtx_test.go\n.\/orderer\/common\/bootstrap\/static\/static.go\n.\/orderer\/orderer\n.\/bddtests\/common\/configuration_pb2.py\n.\/protos\/common\/configuration.pb.go\n.\/protos\/common\/common.pb.go\n.\/protos\/common\/configuration.proto\n```",
+        "ts": "1479655888.004203"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "```\nyacovm@yacoVM ~\/OBC\/shared\/gopath\/src\/github.com\/hyperledger\/fabric (commCertLearn) $ grep -ri \ufeff\u2060\u2060\u2060\u2060\"SignedConfigurationItem\ufeff\u2060\u2060\u2060\u2060\" *\nyacovm@yacoVM ~\/OBC\/shared\/gopath\/src\/github.com\/hyperledger\/fabric (commCertLearn) $ \n```",
+        "ts": "1479655914.004204"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "hmm your command finds it",
+        "ts": "1479655940.004205"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "<https:\/\/gerrit.hyperledger.org\/r\/gitweb?p=fabric.git;a=blob;f=protos\/common\/configuration.proto;h=5409a8b4d60380134c2bb94b708f7226780aba2e;hb=HEAD#l51>",
+        "ts": "1479655989.004206"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "You'll see that a `SignedConfigurationItem` embeds a repeated section of `ConfigurationSignature`, each of which contains a signature as bytes, and a `SignatureHeader` (as marshaled bytes)",
+        "ts": "1479656065.004207"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "yeah I found it, now trying to figure out where is that `SignedConfigurationItem ` is being put",
+        "ts": "1479656097.004208"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "I was just giving an example of using `SignatureHeader` to express multiple identities (by embedding it multiple times)",
+        "edited": {
+            "user": "U0XPR4NP4",
+            "ts": "1479656135.000000"
+        },
+        "ts": "1479656120.004209"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "who references it? I don't see any pb.go apart from `configuration.pb.go` referencing it",
+        "ts": "1479656129.004210"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Per my grep above, you can find it being used in\n\n```\n.\/orderer\/common\/configtx\/configtx_test.go\n.\/orderer\/common\/bootstrap\/static\/static.go\n```",
+        "ts": "1479656183.004212"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I understand, you're explaining to me the \"policy\", right?",
+        "ts": "1479656245.004213"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "More generic configuration, it was just an example of `SignatureHeader` and multiple identities.",
+        "ts": "1479656272.004214"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But what I am interested to know is: \nI get a block multi-signed, how do I validate it now? all I have is what is found in common.proto",
+        "ts": "1479656280.004215"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "right?",
+        "ts": "1479656286.004216"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "Sure, so, if you've got a multi-signed block, you'll ask the `policies.Manager` for the block validation policy, then pass the messages, set of signatures, and identities into the `Policy` for validation, and it will validate, or not.",
+        "ts": "1479656358.004217"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "but I only have 1 message, don't i? \n```\n\/\/ Payload is the message contents (and header to allow for signing)\nmessage Payload {\n\n    \/\/ Header is included to provide identity and prevent replay\n    Header header = 1;\n\n    \/\/ Data, the encoding of which is defined by the type in the header\n    bytes data = 2;\n}\n```",
+        "ts": "1479656414.004218"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "this is encapsulated in \n```\n\/\/ Envelope wraps a Payload with a signature so that the message may be authenticated\nmessage Envelope {\n    \/\/ A marshaled Payload\n    bytes payload = 1;\n\n    \/\/ A signature by the creator specified in the Payload header\n    bytes signature = 2;\n}\n```",
+        "ts": "1479656438.004219"
+    },
+    {
+        "type": "message",
+        "user": "U0XPR4NP4",
+        "text": "We have not yet defined the block signature structure.  We could define a simple proto like:\n\n```\nmessage BlockSignature {\n    bytes signatureHeader = 1;\n    bytes signature = 2; \/\/ The signature over the concatenation of the block header hash and the signature header bytes\n}\n```\n\nThen, define a new envelope header type of `BLOCK_SIGNATURE` which embeds a repeated section of the `BlockSignature` as the payload.  Would want to run this scheme by the crypto folks, but I imagine it would work.",
+        "ts": "1479656847.004220"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "oh I see. I thought it was already inside so I didn't understand what I'm missing.",
+        "ts": "1479656924.004221"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "was distracted by <#C0YPYBVJM|fabric-dev> , thanks a lot for the explanations <@U0XPR4NP4>  !",
+        "ts": "1479658756.004222",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0XPR4NP4"
+                ],
+                "count": 1
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0XQ35CDD",
+        "text": "<@U13TWBRBL>: <https:\/\/gerrit.hyperledger.org\/r\/#\/c\/2657\/>",
+        "ts": "1479680189.004223"
+    },
+    {
+        "type": "message",
+        "subtype": "file_share",
+        "text": "<@U0XQ35CDD|kostas> uploaded a file: <https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F353N8TBP\/screen_shot_2016-11-20_at_17.14.56.png|Screen Shot 2016-11-20 at 17.14.56.png>",
+        "file": {
+            "id": "F353N8TBP",
+            "created": 1479680210,
+            "timestamp": 1479680210,
+            "name": "Screen Shot 2016-11-20 at 17.14.56.png",
+            "title": "Screen Shot 2016-11-20 at 17.14.56.png",
+            "mimetype": "image\/png",
+            "filetype": "png",
+            "pretty_type": "PNG",
+            "user": "U0XQ35CDD",
+            "editable": false,
+            "size": 250966,
+            "mode": "hosted",
+            "is_external": false,
+            "external_type": "",
+            "is_public": true,
+            "public_url_shared": false,
+            "display_as_bot": false,
+            "username": "",
+            "url_private": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F353N8TBP\/screen_shot_2016-11-20_at_17.14.56.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "url_private_download": "https:\/\/files.slack.com\/files-pri\/T0J024XGA-F353N8TBP\/download\/screen_shot_2016-11-20_at_17.14.56.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_64": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_64.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_80": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_80.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_360.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_360_w": 360,
+            "thumb_360_h": 170,
+            "thumb_480": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_480.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_480_w": 480,
+            "thumb_480_h": 227,
+            "thumb_160": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_160.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_720.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_720_w": 720,
+            "thumb_720_h": 340,
+            "thumb_960": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_960.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_960_w": 960,
+            "thumb_960_h": 454,
+            "thumb_1024": "https:\/\/files.slack.com\/files-tmb\/T0J024XGA-F353N8TBP-fded13d543\/screen_shot_2016-11-20_at_17.14.56_1024.png?t=xoxe-18002167554-139099126023-137701436192-e599afc92e",
+            "thumb_1024_w": 1024,
+            "thumb_1024_h": 484,
+            "image_exif_rotation": 1,
+            "original_w": 1138,
+            "original_h": 538,
+            "permalink": "https:\/\/hyperledgerproject.slack.com\/files\/kostas\/F353N8TBP\/screen_shot_2016-11-20_at_17.14.56.png",
+            "permalink_public": "https:\/\/slack-files.com\/T0J024XGA-F353N8TBP-699ae18c20",
+            "channels": [
+                "C0Z4NBUN6"
+            ],
+            "groups": [],
+            "ims": [],
+            "comments_count": 0
+        },
+        "user": "U0XQ35CDD",
+        "upload": true,
+        "display_as_bot": false,
+        "username": "<@U0XQ35CDD|kostas>",
+        "bot_id": null,
+        "ts": "1479680213.004224"
+    }
+]

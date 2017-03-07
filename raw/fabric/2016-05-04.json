@@ -1,0 +1,395 @@
+[
+    {
+        "type": "message",
+        "user": "U139XHJCB",
+        "text": "<@U0KPFAZNF>: Thanks Greg, I will try that, if you heard anyone built it successful , would you please let me know?",
+        "ts": "1462345305.000826"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "There are also official docker images for the (built) peer and the CA (docker pull ibmblockchain\/fabric). I haven't gotten them to work yet, getting a SIGILL: illegal instruction message and a hard crash when it's trying to create the database. Did anyone have more luck?",
+        "ts": "1462356421.000827"
+    },
+    {
+        "type": "message",
+        "user": "U11QC59MY",
+        "text": "Need help - while running '.\/peer login diego', I got an error \"Failed invoking CreateCertificatePair, Failed getting enrollment data, Failed registering crypto engine. Failed registering[diego], Failed registering client [diego] with name [diego]  - identity or token do not match\"",
+        "ts": "1462365146.000828"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U15LJGQPN>: we saw a similar issue in the early days with how rocksdb was compiled",
+        "ts": "1462369549.000829"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "Are you using a rocksdb that you built yourself?",
+        "ts": "1462369570.000830"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "If so, you want to use the PORTABLE (iirc) flag",
+        "ts": "1462369601.000831"
+    },
+    {
+        "user": "U0XQX3U9G",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U0XQX3U9G|diego_m> has joined the channel",
+        "ts": "1462369602.000832"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "See devenv\/baseimage for details",
+        "ts": "1462369623.000833"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I think rocksdb is compiled in the common script",
+        "ts": "1462369645.000834"
+    },
+    {
+        "type": "message",
+        "user": "U0V2F6PU4",
+        "text": "<@U0KPFAZNF>: hey -- openblockchain\/baseimage doesnt seem to include any of the fabric bits",
+        "ts": "1462369924.000835"
+    },
+    {
+        "type": "message",
+        "user": "U0V2F6PU4",
+        "text": "is that supposed to be provided somehow else?",
+        "ts": "1462369938.000836"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "Hi <@U0KPFAZNF>, this was straight from the ibmblockchain\/fabric image (<https:\/\/hub.docker.com\/r\/ibmblockchain\/fabric\/>). It seems like a bug in the build then? Is the Dockerfile available somewhere?  (<@U0V2F6PU4> I think this is what you would be looking for as well)",
+        "ts": "1462370306.000837"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0V2F6PU4>: yes, that is intentional\u2026baseimage is just the base that we use for various fabric functions (such as devenv, chaincode-containers, and network simulation",
+        "ts": "1462370368.000838"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I can see the merits of having a complete image, but I envision that would be something in parallel to baseimage (and probably based on it)",
+        "ts": "1462370392.000839"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U15LJGQPN>: ah, ok, i am not familiar with the ibmblockchain build process",
+        "ts": "1462370433.000840"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i can say that we saw an illegal instruction issue in the early days that was fixed once we compiled rocksdb with the PORTABLE flag set",
+        "ts": "1462370455.000841"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "so that is my guess as to what you are seeing",
+        "ts": "1462370464.000842"
+    },
+    {
+        "type": "message",
+        "user": "U0V2F6PU4",
+        "text": "<@U0KPFAZNF>: ah yes ok thanks.  i believe i do want an image that includes everything (what would be actually used by users not devenv)",
+        "ts": "1462370478.000843"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0V2F6PU4>: yeah, def a nice to have\u2026if you come up with a pipeline for producing it im sure others would find it useful as well",
+        "ts": "1462370517.000844"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i suspect there are people already doing this, they just arent publishing it to the upstream repos",
+        "ts": "1462370546.000845"
+    },
+    {
+        "type": "message",
+        "user": "U0V2F6PU4",
+        "text": "mmm",
+        "ts": "1462370561.000846"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U15LJGQPN>: this is the line in question: <https:\/\/github.com\/hyperledger\/fabric\/blob\/master\/devenv\/baseimage\/scripts\/common\/setup.sh#L105>",
+        "edited": {
+            "user": "U0KPFAZNF",
+            "ts": "1462370664.000000"
+        },
+        "ts": "1462370660.000847"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "failure to build with that will allow the rocksdb build to set aggressive gcc optimizations based on the platform that happens to be running the build",
+        "ts": "1462370693.000850"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "Thanks!",
+        "ts": "1462370748.000851"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "anytime, good luck!",
+        "ts": "1462370755.000852"
+    },
+    {
+        "user": "U163J7MRT",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U163J7MRT|hill> has joined the channel",
+        "ts": "1462372286.000853"
+    },
+    {
+        "type": "message",
+        "user": "U15LJGQPN",
+        "text": "If anybody knows who created the ibmblockchain images please let me know :simple_smile:",
+        "ts": "1462373810.000854"
+    },
+    {
+        "type": "message",
+        "user": "U0KM61BCP",
+        "text": "<!channel>:  congratulations <@U0KPFAZNF> on becoming a hyperledger\/fabric maintainer! <https:\/\/github.com\/hyperledger\/fabric\/pull\/1337>",
+        "attachments": [
+            {
+                "service_name": "GitHub",
+                "title": "Nominate Greg Haskins as a maintainer by srderson \u00b7 Pull Request #1337 \u00b7 hyperledger\/fabric \u00b7 GitHub",
+                "title_link": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1337",
+                "text": "I would like to nominate Greg Haskins (@ghaskins) from the London Stock Exchange Group as a new maintainer on the Hyperledger Fabric project. Greg has been the leading contributor to the Fabric\u2019s d...",
+                "fallback": "GitHub: Nominate Greg Haskins as a maintainer by srderson \u00b7 Pull Request #1337 \u00b7 hyperledger\/fabric",
+                "thumb_url": "https:\/\/avatars1.githubusercontent.com\/u\/4872087?v=3&s=400",
+                "from_url": "https:\/\/github.com\/hyperledger\/fabric\/pull\/1337",
+                "thumb_width": 400,
+                "thumb_height": 400,
+                "id": 1
+            }
+        ],
+        "ts": "1462376263.000855",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0Z3BE0F5",
+                    "U12AHQ3NK",
+                    "U0UGH3X7X",
+                    "U0XQ35CDD",
+                    "U0NEY4F17",
+                    "U0Q7KRNSJ",
+                    "U0PKMSYKG",
+                    "U11CP8FF1"
+                ],
+                "count": 8
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "<@U0KM61BCP>: thank you!",
+        "ts": "1462376285.000857"
+    },
+    {
+        "type": "message",
+        "user": "U0Y55KNG2",
+        "text": "<@U0KPFAZNF>: hey, congrats!",
+        "ts": "1462376306.000858"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0KPFAZNF>: congrats, Greg!",
+        "ts": "1462376335.000859"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "<@U0KPFAZNF>: now get to work!! :wink:",
+        "ts": "1462376357.000860"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "heh, indeed",
+        "ts": "1462376372.000861"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "jk, awesome stuff!!",
+        "ts": "1462376373.000862"
+    },
+    {
+        "type": "message",
+        "user": "U0UKTPMG8",
+        "text": "well earned",
+        "ts": "1462376387.000863"
+    },
+    {
+        "type": "message",
+        "user": "U0ZR63HLK",
+        "text": "<@U0KPFAZNF>: congrats :simple_smile:",
+        "ts": "1462376559.000864"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "well deserved!",
+        "ts": "1462376565.000865"
+    },
+    {
+        "user": "U13Q594J2",
+        "type": "message",
+        "subtype": "channel_join",
+        "text": "<@U13Q594J2|ratnakar> has joined the channel",
+        "ts": "1462376600.000866"
+    },
+    {
+        "type": "message",
+        "user": "U0Y14MWA2",
+        "text": "Congrats <@U0KPFAZNF> ",
+        "ts": "1462376670.000867"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0KPFAZNF>: congrats and thank you for your assistance.",
+        "ts": "1462376830.000868"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "<@U0KPFAZNF>: congrats! ",
+        "ts": "1462383211.000869"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "thanks all",
+        "ts": "1462383401.000870",
+        "reactions": [
+            {
+                "name": "+1",
+                "users": [
+                    "U0W7D64LC",
+                    "U0YR44350",
+                    "U0MM86C84",
+                    "U0PKMSYKG",
+                    "U0TFEHX8E"
+                ],
+                "count": 5
+            }
+        ]
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "I have a comprehensive question, when a chaincode calls another chaincode is this then also a transaction? ",
+        "ts": "1462388601.000871"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "I believe it all executes under the originating transaction",
+        "ts": "1462388907.000872"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "i.e. the second chaincode would see the tcert context of the caller that hit the first chaincode",
+        "ts": "1462388950.000873"
+    },
+    {
+        "type": "message",
+        "user": "U0KPFAZNF",
+        "text": "though I would also like to see the identity of the calling chaincode represented somehow, i dont think this is in place today",
+        "ts": "1462388974.000874"
+    },
+    {
+        "type": "message",
+        "user": "U13TWBRBL",
+        "text": "<@U0KPFAZNF>: congrats!",
+        "ts": "1462389927.000875"
+    },
+    {
+        "type": "message",
+        "user": "U152VHPFT",
+        "text": "So I'm a newbie. Just looking for some quick information on where to get some introduction info.  Where to get beginners info.",
+        "ts": "1462396971.000876"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "<@U152VHPFT> have you installed the environment yet?",
+        "ts": "1462403802.000877"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "if not I suggest you start with that, just follow the installation instructions from the README and get the environment set up",
+        "ts": "1462403843.000878"
+    },
+    {
+        "type": "message",
+        "user": "U0P2GSA8Z",
+        "text": "run the tests to make sure it works",
+        "ts": "1462403851.000879"
+    },
+    {
+        "type": "message",
+        "user": "U0ULK2JPP",
+        "text": "<@U0MM86C84>: as <@U0KPFAZNF> said, there\u2019s only one transaction\u2026 the one initiated by the user",
+        "ts": "1462404191.000880"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<@U0MM86C84>: <@U0KPFAZNF> <@U0ULK2JPP> I will post your question and answers on SO.",
+        "ts": "1462417222.000881"
+    },
+    {
+        "type": "message",
+        "user": "U11TAFPUP",
+        "text": "<http:\/\/stackoverflow.com\/questions\/37041702\/chaincode-calling-is-a-transaction\/37041703#37041703>",
+        "attachments": [
+            {
+                "title": "Chaincode calling is a transaction?",
+                "title_link": "http:\/\/stackoverflow.com\/questions\/37041702\/chaincode-calling-is-a-transaction\/37041703#37041703",
+                "text": "I have a comprehensive question, when a chaincode calls another chaincode is this then also a transaction?I have a comprehensive question, when a chaincode calls another chaincode is this then al...",
+                "fallback": "Chaincode calling is a transaction?",
+                "thumb_url": "http:\/\/cdn.sstatic.net\/Sites\/stackoverflow\/img\/apple-touch-icon@2.png?v=73d79a89bded&a",
+                "from_url": "http:\/\/stackoverflow.com\/questions\/37041702\/chaincode-calling-is-a-transaction\/37041703#37041703",
+                "thumb_width": 316,
+                "thumb_height": 316,
+                "id": 1
+            }
+        ],
+        "ts": "1462418056.000882"
+    },
+    {
+        "type": "message",
+        "user": "U0MM86C84",
+        "text": "Thanks guys",
+        "ts": "1462429414.000884"
+    }
+]

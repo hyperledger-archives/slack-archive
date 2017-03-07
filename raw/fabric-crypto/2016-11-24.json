@@ -1,0 +1,55 @@
+[
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Hi <@U0ZJZBJLF> - \n\n1) I think the real question here is what we support in terms of *trust* with respect to TLS certificates, meaning the most scalable method is to trust at a CA level, but of course we could explicitly trust individual certificates as well.  But we can't support a peer generating a self-signed certificate on the fly without it sharing that certificate with the rest of the network prior to trying to communicate\n\n\n2) While the same certificate CAN be used for both TLS and signing, not sure whether or not we should require this to be the case.",
+        "ts": "1479984712.002598"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "1) why? What if the peer first connects via ssl and then authenticates using the cop-signed credentials? \n2) ok. I think we should go to the most flexible approach because flexibility is more adaptive",
+        "edited": {
+            "user": "U0ZJZBJLF",
+            "ts": "1479985515.000000"
+        },
+        "ts": "1479984952.002599"
+    },
+    {
+        "type": "message",
+        "user": "U0PB67X4K",
+        "text": "Let's say that peer1 tries to connect to peer2 via TLS.  peer1 initiates the TLS connection and as part of the TLS handshake peer2 will send out its public TLS certificate.  By default (which is actually secure), peer1 will check the following things:\n\n1) hostname verification -peer1 checks to see whether or not the certificate from peer2 matches the hostname\/IP which peer1 used to connect to peer2  (basically either the common name or one of the subject alternative names (SANs) need to match)\n\n2) PKIX checking - peer1 checks to see whether or not it trusts the issuer of the certificate (which means that if it has no knowledge of the certificate itself or the root chain for the certificate it will never establish the TLS connection)\n\nYou can override these parameters, but then TLS is essentially useless from a \"trust\" perspective and could only be used to secure the transport communication",
+        "ts": "1479986903.002601"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "That's all i'm saying. Maybe you can use tls just for that and authenticate the session in the gRPC handling method",
+        "ts": "1479989335.002602"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "Or use a signed by cop certificate which will be different than the msp one",
+        "ts": "1479989376.002603"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "(the one you use to sign messages manually)",
+        "ts": "1479989392.002604"
+    },
+    {
+        "type": "message",
+        "user": "U0ZJZBJLF",
+        "text": "But my question is- have these things been decided and coded? <@U0PB67X4K> ?",
+        "ts": "1479989430.002605"
+    },
+    {
+        "user": "U2URL5G8P",
+        "text": "<@U2URL5G8P|satyam_agl> has joined the channel",
+        "type": "message",
+        "subtype": "channel_join",
+        "ts": "1479995251.002606"
+    }
+]
